@@ -1,6 +1,10 @@
 var ccxt = require ('ccxt')
-let exchange  = new ccxt.poloniex //({ verbose: true });
+let exchange = new ccxt.poloniex ({
+    apiKey: 'EUJD7ARY-Z67X3XGB-AWI7MIVI-JNLU34L8', 
+	secret: '8876ca0e7808b3aae83ba5ccb30ad12e0754fc8dde81fe24c4c52d51da7c3861f9ca6f57f6682a342b01983209db2077eb0e19c2a6b10323e9deb89057cc488f',
+})
 
+var symbol = "USDT_BTC";
 
 /*poloniex
 bitfinex.loadMarkets().then((results) => {
@@ -11,7 +15,7 @@ bitfinex.loadMarkets().then((results) => {
 /*
 fetchMarkets ()
 loadMarkets ([reload])
-fetchOrderBook(symbol)
+fetchOrderBook (symbol)
 fetchTrades (symbol, [params = {}])
 fetchTicker (symbol)
 fetchBalance ()
@@ -20,6 +24,7 @@ createMarketBuyOrder
 createMarketSellOrder (symbol, amount)
 createLimitBuyOrder (symbol, amount, limit)
 createLimitSellOrder ('BTC/USD', 1, 10, { 'type': 'trailing-stop' })
+cancelOrder (id)
 */
 function fetchMarkets() {
 	exchange.fetchMarkets().then((results) => {	
@@ -30,6 +35,12 @@ function fetchMarkets() {
 	})
 }
 
+function loadM (symbol) {
+	exchange.loadMarkets().then((results) => {
+		console.log(results);
+	}).catch((error) => {
+		console.error(error)
+	})}
 function fetchTrades (symbol) {
 	exchange.fetchTrades().then((results) => {	//"BCH/BTC"  "BTC/USDT"
 		console.log("Trades:");
@@ -47,7 +58,7 @@ function loadMarkets (symbol) {
 	})}
 
 function fetchOrderBook(symbol) {
-	exchange.fetchOrderBook(symbol).then((results) => {	
+	exchange.fetchOrderBook(symbol).then((results) => {	({})
 		console.log("Last bid: "+results.bids[0])
 		console.log("Last ask: "+results.asks[0])
 		return results;
@@ -62,10 +73,28 @@ function fetchTicker(symbol) {
 		console.error(error)	
 	})
 }
+function fetchBalance(currency) {	
+	exchange.fetchBalance().then((results) => {	
+		console.log(results[currency].free);	//free used total
+		return results;
+	}).catch((error) => {
+		console.error(error)	
+	})}
+function createMarketSellOrder(symbol) {	
+	exchange.createMarketSellOrder('BTC/USD', 0.00000001).then((results) => {	
+		console.log(results);	
+		return results;
+	}).catch((error) => {
+		console.error(error)	
+	})
+}	
 
 console.log("___________start___________");
-//fetchTicker("USDT/BTC");
-//loadMarkets ("BTC/USDT");
-//setInterval(function(){fetchOrderBook("BTC/USDT")}, 5000);
-//setInterval(function(){loadMarkets ("BTC/USDT")}, 3000);
-setTimeout(function(){console.log("------------end-----------")}, 5000);
+//fetchTicker (symbol);
+//loadMarkets (symbol);
+//setInterval(function(){fetchOrderBook(symbol)}, 5000);
+//setInterval(function(){loadMarkets (symbol)}, 3000);
+fetchBalance("USDT");
+//console.log (ccxt.exchanges[5])
+
+setTimeout(function(){console.log("------------end-----------")}, 6000);
