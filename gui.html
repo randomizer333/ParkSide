@@ -5,7 +5,8 @@
 		<meta charset = "utf-8" http-equiv="refresh" content="width=device-width, initial-scale=1.0">
         <!--link rel="stylesheet" href="style.css"-->
         <style>*{background-color:chocolate};button{float: right}</style>
-        <script type="text/javascript" src="funks.js" 	></script>
+		<script type="text/javascript" src="funks.js" 	></script>
+		<script type="text/javascript" src="scripts/require.js" 	></script>
     </head>
 	<body>
 <h1>BitTradeBot</h1>
@@ -73,10 +74,10 @@ last max:
 <fieldset>
     <legend>Wallet:</legend>
         <textarea id="wallet" rows="5" cols="30" wrap="soft">
-        <script>    
+		<script>    
+		fetchBalance("USDT");
         </script>	
-        fetchBalance("USDT");
         </textarea>
-    </fieldset>
+</fieldset>
 </body>
 </html>

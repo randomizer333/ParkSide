@@ -59,8 +59,8 @@ function loadMarkets (symbol) {
 
 function fetchOrderBook(symbol) {
 	exchange.fetchOrderBook(symbol).then((results) => {	({})
-		console.log("Last bid: "+results.bids[0])
-		console.log("Last ask: "+results.asks[0])
+		console.log("Last bid: "+results.bids[0][0])
+		console.log("Last ask: "+results.asks[0][0])
 		return results;
 	}).catch((error) => {
 		console.error(error)
@@ -75,26 +75,45 @@ function fetchTicker(symbol) {
 }
 function fetchBalance(currency) {	
 	exchange.fetchBalance().then((results) => {	
-		console.log(results[currency].free);	//free used total
-		return results;
+		var r = console.log(results[currency].free);	//free used total
+		return r;
+	}).catch((error) => {
+		console.error(error)	
+	})}
+function fetchWallet(currency) {	
+	exchange.fetchBalance().then((results) => {
+		var r = console.log("Free:"+results[currency].free+": Used:"+results[currency].used+": Total:"+results[currency].total+currency);	//free used total
+		return r;
 	}).catch((error) => {
 		console.error(error)	
 	})}
 function createMarketSellOrder(symbol) {	
-	exchange.createMarketSellOrder('BTC/USD', 0.00000001).then((results) => {	
+	exchange.createMarketSellOrder('BTC/USD', 0.00001).then((results) => {	
 		console.log(results);	
 		return results;
 	}).catch((error) => {
 		console.error(error)	
 	})
 }	
+function createLimitSellOrder() {	
+	exchange.createLimitSellOrder('BTC/USD', 0.000001, 4900, { 'type': 'trailing-stop' }).then((results) => {	
+		console.log(results);	
+		return results;
+	}).catch((error) => {
+		console.error(error)	
+	})
+}
 
 console.log("___________start___________");
 //fetchTicker (symbol);
 //loadMarkets (symbol);
-//setInterval(function(){fetchOrderBook(symbol)}, 5000);
+//setInterval(function(){fetchOrderBook(symbol)}, 10000);
 //setInterval(function(){loadMarkets (symbol)}, 3000);
-fetchBalance("USDT");
-//console.log (ccxt.exchanges[5])
+//fetchBalance("USDT");
+fetchWallet("USDT");
+console.log (exchange.name)
+console.log (ccxt.exchanges[6])
+fetchOrderBook(symbol)
+createLimitSellOrder();
 
 setTimeout(function(){console.log("------------end-----------")}, 6000);
