@@ -96,7 +96,7 @@ function createMarketSellOrder(symbol) {
 	})
 }	
 function createLimitSellOrder() {	
-	exchange.createLimitSellOrder('BTC/USD', 0.000001, 4900, { 'type': 'trailing-stop' }).then((results) => {	
+	exchange.createLimitSellOrder('BTC/USD', 0.000001, 4900, { 'type': 'buy' }).then((results) => {	
 		console.log(results);	
 		return results;
 	}).catch((error) => {
@@ -110,10 +110,10 @@ console.log("___________start___________");
 //setInterval(function(){fetchOrderBook(symbol)}, 10000);
 //setInterval(function(){loadMarkets (symbol)}, 3000);
 //fetchBalance("USDT");
-fetchWallet("USDT");
+// fetchWallet("USDT");
 console.log (exchange.name)
 console.log (ccxt.exchanges[6])
-fetchOrderBook(symbol)
-createLimitSellOrder();
+//fetchOrderBook(symbol)
+//createLimitSellOrder();
 
 setTimeout(function(){console.log("------------end-----------")}, 6000);
