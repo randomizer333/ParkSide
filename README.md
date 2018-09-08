@@ -1,6 +1,9 @@
 # README #
 
+
+
 To run you need:
+- NodeJS runing 24/7 
 - PC, mac, server with runing NodeJS,...
 - cryptocurrency exhange account
  
@@ -23,9 +26,26 @@ additional Node packages:
 
 ### Contribution guidelines ###
 
-- code: lean and clean
-- case: drinking camel
+- code style: lean and clean
+- letter case: drinking camel
 - spacing: often
 - use suffix insted of prefix
 - comment: every object and function
 - 4 space TAB
+
+### Trading slang
+
+- exhange
+- market
+- product
+- symbol
+- pair
+- base
+- quote
+- analitic signal
+- order
+- ticker
+- ask
+- bid
+- spread
+- volumegit init

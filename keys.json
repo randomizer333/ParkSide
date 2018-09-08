@@ -1,5 +1,9 @@
 {
     "poloniex":{ "apiKey": "T9VBLSDH-Q07TBNSO-GTJBKJGW-B2TPXVRH", "secret": "a443906acda94c705bd0f836cc38ec5e5ee55a1f0ce920b2666b2ccaac25251613932573b2473e8e0aff13c28acc974fd958239112d8f7d9697683248875f393" },
     "bittrex":{ "apiKey": "7f65a2da88404c6e972d18d09d4db172", "secret": "c503e4d5814749ba9fe15568c96dfcbe" },
-    "coinbase":{ "apiKey": "aqrTr3z4jzRVp1u8", "secret": "C7ywTWLeVt2vmaQZzrlkXaIxsWG4ObQD" }
+    "coinbase":{ "apiKey": "aqrTr3z4jzRVp1u8", "secret": "C7ywTWLeVt2vmaQZzrlkXaIxsWG4ObQD" },
+    "binance":{ "apiKey": "5lJOnFu5af9WEYXp8Mkk2Q5tb4IRTYBrJvTiPMnqflwfblYOHz5bSB2kqj51dMpT", "secret": "b6r6nrhvCT458RXIQYPHLGSmeCehEYc4GNnRSic6A5gdhrx9SsnMqFeAM78SOUOi" },
+    "hitbtc":{ "apiKey": "d47f12ce1ee210f5d7daef8bce0bb0ba", "secret": "75f31f529c842907b6e9aa19fd563ec5" },
+    "bitmex":{ "apiKey":"9LF-4fCGG9jpLvV_P_Epid5t", "secret": "Xeo1OYKf6pH3YukdPMFGq376fO4jKJ9bhrmvtbVIqwaVMXAP"},
+    "bitstamp":{ "apiKey":"H4J9zmqzi2nxhVzCZegHsw5zoEXh8lPO", "secret": "qJEjCPrULKxDJyfdWwsGPZmFpnnTJOSF", "uid": "790782"}
 }
