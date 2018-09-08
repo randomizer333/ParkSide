@@ -2,13 +2,15 @@
   "name": "parkside",
   "version": "1.0.0",
   "description": "",
-  "main": "gui.html",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ccxt": "1.5.47"
+    "ccxt": "^1.10.349",
+    "nodemailer": "^4.4.1",
+    "technicalindicators": "^1.0.21"
   }
 }

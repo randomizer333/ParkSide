@@ -1,16 +1,15 @@
-var ticker = 0.2;                              //D!
+var ticker = 0.02;                              //D!
 var enableOrders = false;                       //D!
-runBot("XRP","BTC","PINGPONG",ticker,"poloniex");  //D!
-function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, indicator){  //baseCurrency, quoteCurrecy, strategy
+runBot("ETH","BTC","RSI",ticker,"poloniex");  //D!
+function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName){  //baseCurrency, quoteCurrecy, strategy
         //init setup fake attributes later to come from GUI
 
     //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
     var symbol = mergeSymbol( baseCurrency, quoteCurrency);
     var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
-    var indicator = "RSI";
-    var bougthPrice = 0.00000001;    //default:0 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
+    var bougthPrice = 0;    //default:0 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
     var portion = 0.51;        //!!! 0.51 || 0.99 !       part of balance to trade 
-    var stopLossP = 1;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
+    var stopLossP = 30;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
     var minProfitP = 0.3;        //holding addition
     var timeTicker = minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
     var timeStart = msToMin(26 * timeTicker);    // default:10080min = 7d, 1440min = 1d
@@ -35,15 +34,14 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
         apiKey: keys.bittrex.apiKey,
         secret: keys.bittrex.secret,
       });
-      break;
-      case "bitfinex":
+      break;case "bitfinex":
       exchange = new ccxt.bitfinex ({
         apiKey: keys.bitfinex.apiKey,
         secret: keys.bitfinex.secret,
       });
       break;
     }
-    var tradingFeeP = 0.5;      //default
+    var tradingFeeP = 0.01;
     tradingFeeP = exchange.fees.trading.taker*100;
 
     //functions CLI
@@ -156,28 +154,26 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
                     return quoteCurrency+" quote of pair";
             }}
 
-
+    function profitP(){
+            profitAbs = sellPrice - bougthPrice;
+            profitP = procent(profitAbs,bougthPrice);
+            return ;
+    }
 
     //functions API
     function fetchTicker() {        //loads ticker of a symbol a currency pair
             exchange.fetchTicker(symbol).then((results) => { 
                     var r = results;    //market simbols BTC/USDT
                     var r1 = JSON.stringify(r);
-                    baseVolume = r.baseVolume;
-                    quoteVolume = r.quoteVolume;
-                    change24h = r.change;
-                    isNaN(change24h)?change24h = 0:"";
-                    change24hP = change24h*100;
-                    isNaN(change24hP)?change24hP = 0:"";
-                    //isNaN(change24h)?console.log("NO change data available"):console.log("change data available");
-                    //console.log(r);
+                    change = r.change;
+                    //console.log("Ticker:"+r1);
+                    //console.log("24h change: "+(change*100).toFixed(2)+" %");
                 return r;
             }).catch((error) => {
                     console.error(error);
             })
     }
-    var change24h;
-    var change24hP;
+    var change;
     var baseVolume;
     var quoteVolume;
     var tickerInfo = fetchTicker(symbol);
@@ -288,7 +284,7 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
             counter++;
             console.log(history);
     }
-    function boolToInitial(bool){	//returns initial of string and bool
+    function boolToInitial(bool){	//returns 
             var bool;
             var a = bool.toString();
             var b = a.charAt(0);
@@ -332,10 +328,7 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
         }
 
     function runStrategy(strategy){
-        switch(strategy){    
-                case "PINGPONG":        
-                PINGPONG();
-                break;
+        switch(strategy){      
             case "MACD":    
             MACD();
             break;
@@ -373,7 +366,6 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
                         orderType = "sold";
                         //sellPrice = r.price;
                         //sellPrice = price;
-                        console.log("sold");
                         setTimeout(function(){cancelOrder(orderId)}, timeTicker*0.9); 
                         return r;
                 }).catch((error) => {
@@ -391,7 +383,6 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
                         //bougthPrice = r.price;            //safety
                         bougthPrice = price;
                         //setTimeout(function(){bougthPrice = r.price}, timeTicker*0.85); 
-                        console.log("bougth");
                         setTimeout(function(){cancelOrder(orderId)}, timeTicker*0.9);      
                         return r;
                 }).catch((error) => {
@@ -416,7 +407,7 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
     var logRSI = new Array();      //must be global!
     var price;
     var stor = new Array();     //storage for direction
-    function MACD(){
+    function RSI(){
         price = bid2;
 
         //price loging
@@ -429,7 +420,7 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
           counter++;
 	  return array;}
 	loger(price,34,logMACD);
-	loger(price,250,logRSI);
+	loger(price,14,logRSI);
 
         function safetySale(tradingFeeP, bougthPrice){  //no sale with loss
                 var tradingFeeAbs;
@@ -493,7 +484,6 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
                         trendRSI = -1;  //sell coz falling
                 }else{
                         trendRSI = 0;   //hold or park coz stationary
-                        lastRSI = 0;
                 };
                 //console.log("trend:"+trendRSI+" RSI:"+lastRSI);
                 return lastRSI;}
@@ -544,165 +534,6 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
         var macdHistogram;      //>1,<1
         var trendMACD;  //-1,0,1
         TI_MACD(logMACD);
-        
-        function makeAsk(ask,ask2){     //makerify prices for orders
-                var shiftP = 50;       //percentage of makerPrice shift
-                var askSubSpread = ask2-ask;    //spread between first and second order of asks
-                return buyPrice = ask+part(shiftP,askSubSpread);}
-        var buyPrice = makeAsk(ask,ask2);
-
-        function makeBid(bid,bid2){     //makerify prices for orders
-                var shiftP = 50;       //percentage of makerPrice shift
-                var bidSubSpread = bid-bid2;    //spread between first and second order of bids
-                return salePrice = bid-part(shiftP,bidSubSpread);}
-        var salePrice = makeBid(bid,bid2);
-
-        makeOrder();
-        var buyAmount = quoteToBase(quoteBalance) * portion;
-        var sellAmount = baseBalance; // * portion;
-        var trend; //trend of bids
-        var trend2; //trend of asks
-        var orderType = "none";
-        function makeOrder(){ //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                trend = macdHistogram;  //trendRSI
-                //orderType ;
-                if( purchase && ( trend > 0 )){        
-                        enableOrders ? order( "buy", symbol, buyAmount, buyPrice) : console.log('orders disabled');
-                        orderType = "bougth";
-                        bougthPrice = buyPrice;               //sim
-                        enableOrders?"":console.log("boughted");          //sim
-                }else if( sale && !hold && !stopLoss && ( trend < 0 )){       
-                        enableOrders ? order( "sell", symbol, sellAmount, salePrice) : console.log('orders disabled');
-                        orderType = "sold";
-                        enableOrders?"":console.log("solded");          //sim
-                }else if( sale && hold && stopLoss ){   //stopLoss sell
-                        enableOrders ? order( "sell", symbol, sellAmount, salePrice) : console.log('orders disabled');
-                        orderType = "lossed";
-                        enableOrders?"":console.log("lossed");          //sim
-                }else if( sale && hold && !stopLoss ){
-                        orderType = "holding";
-                }else if( sale && !hold && !stopLoss ){
-                        orderType = "holding good";
-                }else if( purchase ){           // && noBuy
-                        orderType = "parked"; 
-                }
-                return print();}
-        function print(){
-                var profit = price - sellPrice;
-                var absProfit = profit * baseBalance;
-                var relProfit = percent(absProfit, sellPrice);
-                var baseBalanceInQuote = baseToQuote(baseBalance);
-                var quoteBalanceInBase = quoteToBase(quoteBalance);
-                var balance = baseBalanceInQuote+quoteBalance;
-                var balanceB = quoteBalanceInBase+baseBalance;
-                msg =   //info msg on ticker time
-                getTime()+"|"+
-                exchangeName+"|"+
-                "B2:"+bid2+" "+symbol+"|"+
-                "t:"+ticker+"m"+"|"+
-                "aP:"+absProfit.toFixed(8)+" "+quoteCurrency+"|"+
-                "rP:"+relProfit.toFixed(2)+" %|"+
-                "BP:"+bougthPrice.toFixed(8)+"|"+
-                "SP:"+sellPrice.toFixed(8)+"|"+
-                boolToInitial(baseCurrency)+"in"+boolToInitial(quoteCurrency)+":"+baseBalanceInQuote.toFixed(8)+"|"+
-                quoteCurrency+":"+quoteBalance.toFixed(8)+"|"+
-                "T:"+balance.toFixed(8)+"|"+
-                //"TB:"+balanceB.toFixed(8)+"|"+
-                "O:"+orderType+"|"+
-                "P:"+boolToInitial(purchase)+"|"+
-                "S:"+boolToInitial(sale)+"|"+
-                "H:"+boolToInitial(hold)+"|"+
-                "SL:"+boolToInitial(stopLoss)+"|"+
-                "UD:"+trendSign+"|"+
-                "RSI"+logRSI.length+":"+trendRSI+"|"+
-                "MAC"+logMACD.length+":"+trend.toFixed(0);
-        
-                //logToLog(msg);        // store to log
-                console.log(msg);}
-    }
-    function RSI(){
-        price = bid2;
-
-        //price loging
-        function loger(value,length,array){        //log FILO to array
-          var counter;        
-          while ( array.length >= length ){  
-            array.pop();
-          }
-          array.unshift(value);
-          counter++;
-	  return array;}
-	loger(price,34,logMACD);
-	loger(price,250,logRSI);
-
-        function safetySale(tradingFeeP, bougthPrice){  //no sale with loss
-                var tradingFeeAbs;
-                tradingFeeP = tradingFeeP * 2;
-                tradingFeeAbs = part( tradingFeeP, bougthPrice );  
-                minProfitAbs = part( minProfitP, bougthPrice );
-                //console.log("Fee: "+tradingFeeP+"% "+tradingFeeAbs+" $");
-                sellPrice = bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
-                //return hold = false;     //uncoment to disable
-                if ( sellPrice > price ){      //if bougthPrice is not high enough
-                        return hold = true;    	//dont allow sell force holding
-                }else{                                                 
-                        return hold = false;           //allow sale of holding to parked
-                }}       
-        var sellPrice;
-        var hold = safetySale(tradingFeeP, bougthPrice);        //returns boolean
-
-        function safetyStopLoss(price,stopLossP,sellPrice){      //force sale  price, bougthPrice, lossP
-                absStopLoss = part(stopLossP, sellPrice);
-                loss = sellPrice - price;     //default: loss = sellPrice - price;
-                //return stopLoss = false;        //uncoment to disable
-                if( loss > absStopLoss){
-                        return stopLoss = true;         //sell ASAP!!!
-                }else{
-                        return stopLoss = false;
-                }}       
-        var stopLoss = safetyStopLoss(price,stopLossP,sellPrice);       //returns boolean
-
-        function upDown (value){     //trendUD between curent and last value
-                if ( stor[1] == undefined ){
-                        stor[1] = value;
-                        stor[0] = value;
-                };
-                stor[1] = stor[0];
-                stor[0] = value;
-                var direction = stor[0] - stor[1];
-                if (direction >= 0){
-                        trendUD = 1;   //buy coz rising
-                        trendSign = "+";
-                }else{
-                        trendUD = -1;   //hold or park coz stationary
-                        trendSign = "-";
-                }}
-        var trendSign;
-        var trendUD; 
-        upDown(price);
-
-        function TI_RSI( values ){
-                var RSI = TI.RSI;
-                var inputRSI = {
-                  values : values,
-                  period : 14   //9
-                };
-                var r = RSI.calculate(inputRSI);
-                var n = r.length-1;
-                var lastRSI = r[n]; //last JSON
-                //console.log("RSI:"+lastRSI);
-                if (lastRSI > 70){
-                        trendRSI = 1;   //buy coz rising
-                }else if(lastRSI < 30){
-                        trendRSI = -1;  //sell coz falling
-                }else{
-                        trendRSI = 0;   //hold or park coz stationary
-                        lastRSI = 0;
-                };
-                //console.log("trend:"+trendRSI+" RSI:"+lastRSI);
-                return lastRSI;}
-        var trendRSI;
-        var vRSI = TI_RSI(logRSI);
         
         function makeAsk(ask,ask2){     //makerify prices for orders
                 var shiftP = 50;       //percentage of makerPrice shift
@@ -773,210 +604,8 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
                 "H:"+boolToInitial(hold)+"|"+
                 "SL:"+boolToInitial(stopLoss)+"|"+
                 "UD:"+trendSign+"|"+
-                "RSI"+logRSI.length+":"+trendRSI;
-        
-                //logToLog(msg);        // store to log
-                console.log(msg);}
-    }
-
-    function PINGPONG(){
-        price = bid2;
-
-        //price loging
-        function loger(value,length,array){        //log FILO to array
-          var counter;        
-          while ( array.length >= length ){  
-            array.pop();
-          }
-          array.unshift(value);
-          counter++;
-	  return array;}
-	loger(price,34,logMACD);
-	loger(price,15,logRSI);
-
-        function safetySale(tradingFeeP, bougthPrice){  //no sale with loss
-                var tradingFeeAbs;
-                tradingFeeP = tradingFeeP * 2;
-                tradingFeeAbs = part( tradingFeeP, bougthPrice );  
-                minProfitAbs = part( minProfitP, bougthPrice );
-                //console.log("Fee: "+tradingFeeP+"% "+tradingFeeAbs+" $");
-                sellPrice = bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
-                //return hold = false;     //uncoment to disable
-                if ( sellPrice > price ){      //if bougthPrice is not high enough
-                        return hold = true;    	//dont allow sell force holding
-                }else{                                                 
-                        return hold = false;           //allow sale of holding to parked
-                }}       
-        var sellPrice;
-        var hold = safetySale(tradingFeeP, bougthPrice);        //returns boolean
-
-        function safetyStopLoss(price,stopLossP,sellPrice){      //force sale  price, bougthPrice, lossP
-                absStopLoss = part(stopLossP, sellPrice);
-                loss = sellPrice - price;     //default: loss = sellPrice - price;
-                //return stopLoss = false;        //uncoment to disable
-                if( loss > absStopLoss){
-                        return stopLoss = true;         //sell ASAP!!!
-                }else{
-                        return stopLoss = false;
-                }}       
-        var stopLoss = safetyStopLoss(price,stopLossP,sellPrice);       //returns boolean
-
-        function upDown (value){     //trendUD between curent and last value
-                if ( stor[1] == undefined ){
-                        stor[1] = value;
-                        stor[0] = value;
-                };
-                stor[1] = stor[0];
-                stor[0] = value;
-                var direction = stor[0] - stor[1];
-                if (direction > 0){
-                        trendUD = 1;   //buy coz rising
-                        trendSign = "+";
-                }else{
-                        trendUD = -1;   //hold or park coz stationary
-                        trendSign = "-";
-                }}
-        var trendSign;
-        var trendUD; 
-        upDown(price);
-
-        function TI_RSI( values ){
-                var RSI = TI.RSI;
-                var inputRSI = {
-                  values : values,
-                  period : 14   //9
-                };
-                var r = RSI.calculate(inputRSI);
-                var n = r.length-1;
-                var lastRSI = r[n]; //last JSON
-                //console.log("RSI:"+lastRSI);
-                if (lastRSI > 70){
-                        trendRSI = 1;   //buy coz rising
-                }else if(lastRSI < 30){
-                        trendRSI = -1;  //sell coz falling
-                }else{
-                        trendRSI = 0;   //hold or park coz stationary
-                        lastRSI = 0;
-                };
-                //console.log("trend:"+trendRSI+" RSI:"+lastRSI);
-                return lastRSI;}
-        var trendRSI;
-        var vRSI = TI_RSI(logRSI);
-
-        function TI_MACD( values ){     //should be bigger the better starts working when value = slowPeriod + signalPeriod
-                var MACD = TI.MACD;
-                var macdInput = {
-                  values            : values,   //34,70,140n of inputs - slowPeriod = n of outputs 
-                  fastPeriod        : 12,       //12,24,48
-                  slowPeriod        : 26,       //26,52,104      when this is full it putout
-                  signalPeriod      : 9,        //9,18,36
-                  SimpleMAOscillator: false,
-                  SimpleMASignal    : false
-                };
-                var r = MACD.calculate(macdInput);      //array with JSONs
-                //console.log("data length: "+values.length);
-                var lastMACD;
-                !r?lastMACD = r[r.length-1]:lastMACD = undefined; //last JSON
-                //console.log("Last: "+JSON.stringify(lastMACD));
-                macdHistogram = 0;
-                if (lastMACD){
-                        macdLine = lastMACD.MACD;
-                        signalLine = lastMACD.signal;
-                        macdHistogram = lastMACD.histogram; 
-                        //console.log("MLine: "+macdLine);
-                        //console.log("SLine: "+signalLine);
-                        //console.log("MHist: "+macdHistogram);    
-                        if ( !isNaN(macdHistogram) && x == 0){     //isNumber
-                                sendMail( "Started", msg );
-                                x++;
-                        };
-                        if (macdHistogram > 1){
-                                trendMACD = 1;   //buy coz rising
-                        }else if(macdHistogram < -1){
-                                trendMACD = -1;  //sell coz falling
-                        }else{
-                                trendMACD = 0;   //hold or park coz stationary
-                        };
-                }else{
-                        macdHistogram = trendUD;
-                }
-                //console.log(r);
-        }
-        var macdLine;
-        var signalLine;
-        var macdHistogram;      //>1,<1
-        var trendMACD;  //-1,0,1
-        TI_MACD(logMACD);
-        
-        function makeAsk(ask,ask2){     //makerify prices for orders
-                var shiftP = 50;       //percentage of makerPrice shift
-                var askSubSpread = ask2-ask;    //spread between first and second order of asks
-                return buyPrice = ask+part(shiftP,askSubSpread);}
-        var buyPrice = makeAsk(ask,ask2);
-
-        function makeBid(bid,bid2){     //makerify prices for orders
-                var shiftP = 50;       //percentage of makerPrice shift
-                var bidSubSpread = bid-bid2;    //spread between first and second order of bids
-                return salePrice = bid-part(shiftP,bidSubSpread);}
-        var salePrice = makeBid(bid,bid2);
-
-        function makeOrder(){ //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                trend = trendUD;  //trendRSI
-                //orderType ;
-                if( purchase && ( trend > 0 ) && ( change24h > 0 )){    //buy
-                        orderType = "bougth";     
-                        enableOrders ? order( "buy", symbol, buyAmount, buyPrice) : console.log('bougth orders disabled');
-                        bougthPrice = buyPrice;               //sim
-                }else if( sale && !hold && !stopLoss && ( trend < 0 )){    //sell good
-                        orderType = "sold";   
-                        enableOrders ? order( "sell", symbol, sellAmount, salePrice) : console.log('sold orders disabled');
-                }else if( sale && hold && stopLoss && ( change24h <= 0 )){   //stopLoss sell bad
-                        orderType = "lossed";
-                        enableOrders ? order( "sell", symbol, sellAmount, salePrice) : console.log('loss orders disabled');
-                }else if( sale && hold && !stopLoss ){  //holding fee NOT covered
-                        orderType = "holding";
-                }else if( sale && !hold && !stopLoss ){ //holding fee covered
-                        orderType = "holding good";
-                }else if( purchase && ( change24h <= 0 )){      // ( change24h > 0 )
-                        orderType = "parked"; 
-                }
-                return print();}
-        var buyAmount = quoteToBase(quoteBalance) * portion;
-        var sellAmount = baseBalance; // * portion;
-        var trend; //trend of bids
-        var trend2; //trend of asks
-        var orderType = "none";
-        makeOrder();
-        function print(){
-                var profit = price - sellPrice;
-                var absProfit = profit * baseBalance;
-                var relProfit = percent(absProfit, sellPrice);
-                var baseBalanceInQuote = baseToQuote(baseBalance);
-                var quoteBalanceInBase = quoteToBase(quoteBalance);
-                var balance = baseBalanceInQuote+quoteBalance;
-                var balanceB = quoteBalanceInBase+baseBalance;
-                msg =   //info msg on ticker time
-                getTime()+"|"+
-                exchangeName+"|"+
-                "C24h:"+change24hP.toFixed(2)+" %|"+
-                "B1:"+bid+" "+symbol+"|"+
-                "B2:"+bid2+" "+symbol+"|"+
-                "t:"+ticker+"m"+"|"+
-                "aP:"+absProfit.toFixed(8)+" "+quoteCurrency+"|"+
-                "rP:"+relProfit.toFixed(2)+" %|"+
-                "BP:"+bougthPrice.toFixed(8)+"|"+
-                "SP:"+sellPrice.toFixed(8)+"|"+
-                boolToInitial(baseCurrency)+"in"+boolToInitial(quoteCurrency)+":"+baseBalanceInQuote.toFixed(8)+"|"+
-                quoteCurrency+":"+quoteBalance.toFixed(8)+"|"+
-                "T:"+balance.toFixed(8)+"|"+
-                //"TB:"+balanceB.toFixed(8)+"|"+
-                "O:"+orderType+"|"+
-                "P:"+boolToInitial(purchase)+"|"+
-                "S:"+boolToInitial(sale)+"|"+
-                "H:"+boolToInitial(hold)+"|"+
-                "SL:"+boolToInitial(stopLoss)+"|"+
-                "UD:"+trendSign+"|"+
                 "RSI"+logRSI.length+":"+trendRSI+"|"+
+                "vRSI"+logRSI.length+":"+vRSI+"|"+
                 "MAC"+logMACD.length+":"+trend.toFixed(0);
         
                 //logToLog(msg);        // store to log
@@ -1010,16 +639,13 @@ function runBot( baseCurrency, quoteCurrency, strategy, ticker, exchangeName, in
             baseBalance+" "+baseCurrency+"\n"+
             quoteBalance+" "+quoteCurrency)           },count());
             setTimeout(function(){console.log("Selected market: "+baseCurrency+" | "+quoteCurrency)},count());
-            setTimeout(function(){console.log("24h change: "+change24hP.toFixed(2)+" %")},count());
-            setTimeout(function(){console.log("BaseVolume: "+baseVolume+" "+baseCurrency)},count());
-            setTimeout(function(){console.log("QuoteVolume: "+quoteVolume+" "+quoteCurrency)},count());
+            setTimeout(function(){console.log("24h change: "+(change*100).toFixed(2)+" %")},count());
             setTimeout(function(){console.log("Currency to sell: "+selectCurrency())},count());
             
             //loop fetches
             setTimeout(function(){setInterval(function(){loopFetches()      },timeTicker)},count());
             function loopFetches(){
                     setTimeout(function(){fetchBalances()           },count());
-                    setTimeout(function(){fetchTicker()           },count());
                     setTimeout(function(){fetchAsksBids(symbol)     },count());
                     //loop logic 
                     setTimeout(function(){loopLogic()        },count());
