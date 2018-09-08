@@ -3,7 +3,7 @@ let ccxt = require ('ccxt');
 
 //init setup
 var quoteFiat = "USDT"; //USDT,EUR
-var lossFiat = 99;      //sell if crypto quote goes down 1%,10%,100%
+var lossFiat = 88;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
 var quote1 = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
 var quote2 = "EOS";     //"ETH";     
