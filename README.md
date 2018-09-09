@@ -1,6 +1,7 @@
 # README #
 
-
+This is a node.js app made to run in console, it has no intereface yet.
+pull it from https://github.com/Randomizer333/ParkSide
 
 To run you need:
 - NodeJS runing 24/7 
