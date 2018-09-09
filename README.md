@@ -9,16 +9,14 @@ Pull it from https://github.com/Randomizer333/ParkSide
 - ccxt suporting 90 crypto exchanges
 - technicalIndicators supporting 20 trading indicators
 
-To run you need:
-- NodeJS runing 24/7 
-- PC, mac, server with runing NodeJS,...
-- cryptocurrency exhange account
-
 ### How do I get set up? ###
 
-enironment:
-- node.js
-- npm (for installing packages)
+To run you need:
+- NodeJS runing 24/7 
+- PC, mac, server with runing:
+  - node.js
+  - npm (for installing packages)
+- cryptocurrency exhange account
 
 additional Node packages:
 - ccxt
