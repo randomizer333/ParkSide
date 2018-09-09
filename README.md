@@ -20,32 +20,34 @@ enironment:
 - npm (for installing packages)
 
 additional Node packages:
-- ccxt  
+- ccxt
+- technicalIndicators  
 - nodeMailer
-- technicalIndicators
 
 ### Contribution guidelines ###
 
 - code style: lean and clean
-- letter case: drinking camel
-- spacing: often
-- use suffix insted of prefix
 - comment: every object and function
+- letter case: drinking camel
+- formating same as in VSCode
+- use suffix insted of prefix
 - 4 space TAB
 
 ### Trading slang
 
 - exhange
-- market
-- product
+- currency
+- market/product
+- balance
 - symbol
 - pair
 - base
 - quote
-- analitic signal
+- signal
 - order
 - ticker
 - ask
 - bid
 - spread
-- volumegit init
+- volume
+- order book

@@ -11,7 +11,11 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 setup
                 loop
         */
-        //      git push -u origin master
+        /*
+        git add .
+        git commit -m "comment"
+        git push
+        */
         //init setup hardcode attributes later to come from GUI
 
         var round = 0;              //init number of sell orders til stop
@@ -551,6 +555,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         return stall;
                 }
                 var stall = stalling(logUD,price,0.001);
+
+                function xhChange();
 
                 function safetySale(tradingFeeP, bougthPrice) {  //no sale with loss
                         var tradingFeeAbs;
