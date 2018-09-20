@@ -557,7 +557,12 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 }
                 var stall = stalling(logUD,price,0.001);
 
-                function xhChange();
+                function xChange();
+
+                function bounce(array){
+                        getMaxOfArray(logMACD) > price;
+                }
+                var down = bounce(logMACD)
 
                 function safetySale(tradingFeeP, bougthPrice) {  //no sale with loss
                         var tradingFeeAbs;
