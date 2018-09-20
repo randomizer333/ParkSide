@@ -158,7 +158,7 @@ function runExchange(exchange){ //exchange, baseCurrencies[], quoteCurrencies[]
   }
 }
 
-setTimeout(function(){runBot("BTC",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
+setTimeout(function(){runBot("XRP",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
 //setTimeout(function(){runBot("XRP",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
 //setTimeout(function(){runBot("IOTA",quoteFiat,"PINGPONG",ticker,"binance",30)},counter());
 //setTimeout(function(){runBot("EOS",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
