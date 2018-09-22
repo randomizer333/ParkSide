@@ -532,8 +532,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
                 var duration = 360;       //duration in minutes 6h=360min
                 function timeToTicker(duration){
-
-
                         numOfTickers = duration / ticker
                         return numOfTickers;
                 }
