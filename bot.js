@@ -20,7 +20,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         //init setup hardcode attributes later to come from GUI
 
         var round = 0;              //init number of sell orders til stop
-        var roundMax = 10;       //disable buying after this count
+        var roundMax = 3;       //disable buying after this count
 
         //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
@@ -708,7 +708,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         trend = trendUD;  //short term trend
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
-                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0)) {                //buy
+                        if (purchase && (trend > 0) && (trend2 > 0) && (trend3 >= 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 if (round >= roundMax) {
                                         enableOrders = false;
