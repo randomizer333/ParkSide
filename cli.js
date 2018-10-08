@@ -1,6 +1,7 @@
 //var runBot = require ('bot');
 let ccxt = require ('ccxt');
 
+
 //init setup
 var quoteFiat = "USDT"; //USDT,EUR
 var lossFiat = 88;      //sell if crypto quote goes down 1%,10%,100%
@@ -158,14 +159,13 @@ function runExchange(exchange){ //exchange, baseCurrencies[], quoteCurrencies[]
   }
 }
 
-setTimeout(function(){runBot("XRP",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
+
+setTimeout(function(){runBot("EOS",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
 //setTimeout(function(){runBot("XRP",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
 //setTimeout(function(){runBot("IOTA",quoteFiat,"PINGPONG",ticker,"binance",30)},counter());
 //setTimeout(function(){runBot("EOS",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
 //setTimeout(function(){runBot("BCH",quoteFiat,"PINGPONG",ticker,"binance",30)},counter());
 //setTimeout(function(){runBot("BNB",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
-
-
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP) {
         /*Architecture:
@@ -176,10 +176,16 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 setup
                 loop
         */
+        /*
+        git add .
+        git commit -m "comment"
+        git push origin master
+        git pull
+        */
         //init setup hardcode attributes later to come from GUI
 
         var round = 0;              //init number of sell orders til stop
-        var roundMax = 10;       //disable buying after this count
+        var roundMax = 5;       //disable buying after this count
 
         //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
@@ -189,7 +195,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
         var indicator = "MACD";
         var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
-        var portion = 0.55;        //!!! 0.51 || 0.99 !       part of balance to trade 
+        var portion = 0.70;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //var stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         var minProfitP = 0.1;        //holding addition
         var timeTicker = minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
@@ -689,6 +695,36 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 loger(price, 77, logMACD);
                 loger(price, 15, logRSI);
 
+                var duration = 360;       //duration in minutes 6h=360min
+                function timeToTicker(duration){
+                        numOfTickers = duration / ticker
+                        return numOfTickers;
+                }
+                var numOfTickers = 0;
+
+                //stalling 
+
+                function stalling(longTimePrice,price,div){
+                        
+                        var ma = getAvgOfArray(longTimePrice);
+                        if( ma + (part(div,ma) > price )          ){
+                                stall = true;
+                        }else if(ma - (part(div,ma) < price )     ){
+                                stall = true;
+                        }else{
+                                stall = false;
+                        }
+                        //console.log("MA5: "+ma);
+                        //console.log("Stall status: "+stall);
+                        return stall;
+                }
+                //var stall = stalling(logUD,price,0.001);
+
+                function bounce(array){
+                        getMaxOfArray(logMACD) > price;
+                }
+                var down = bounce(logMACD)
+
                 function safetySale(tradingFeeP, bougthPrice) {  //no sale with loss
                         var tradingFeeAbs;
                         tradingFeeP = tradingFeeP * 2;
@@ -834,16 +870,17 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         trend = trendUD;  //short term trend
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
-                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0)) {                //buy
+                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
+                                round += 1;     //dev
                                 if (round >= roundMax) {
                                         enableOrders = false;
                                         console.log("Stopped BUY");
                                 }
+                                console.log("No of purchases done: " + round + " of: " + roundMax);
                                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
                                 //bougthPrice = buyPrice;               //sim
                         } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
-                                round += 1;     //dev
                                 if (round >= roundMax) {
                                         enableOrders = false;
                                         console.log("Stopped BUYING");
