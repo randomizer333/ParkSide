@@ -705,7 +705,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         trend = trendUD;  //short term trend
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
-                        if (purchase && (trend > 0) && (trend2 > 0) && (trend3 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
+                        trend4 = change24h;     //24h change % 
+                        if (purchase && (trend > 0) && (trend2 > 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
                                 if (round >= roundMax) {
