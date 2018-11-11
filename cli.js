@@ -1,97 +1,100 @@
 //var runBot = require ('bot');
-let ccxt = require ('ccxt');
+let ccxt = require('ccxt');
 
 
 //init setup
 var quoteFiat = "USDT"; //USDT,EUR
-var lossFiat = 88;      //sell if crypto quote goes down 1%,10%,100%
+var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
 var quote1 = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
-var quote2 = "EOS";     //"ETH";     
-var numOfBots = 1 ;
+var quote2 = "ETH";     //"ETH";     
+var numOfBots = 1;
 var ticker = 5;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
 var portionPerBot;
 
 //main void
-console.log("Software version: "+ccxt.version);
-console.log("Available exchanges: "+ccxt.exchanges);
-sendMail("Startup","The bot was run from start at: "+getTime());
+console.log("Software version: " + ccxt.version);
+console.log("Available exchanges: " + ccxt.exchanges);
+sendMail("Startup", "The bot was run from start at: " + getTime());
 //selector();
-function selector(){    //dev
+function selector() {    //dev
         //check wallets
-        function fetchBalance(){    //fetches balance of a currency
+        function fetchBalance() {    //fetches balance of a currency
                 exchange.fetchBalance().then((results) => {
-                var r = results.total;  //options: free used total
-                curs = Object.keys(r);
-                vals = Object.values(r);
-                var a = 0;
-                for( i=0; i <= curs.length; i++){
-                if ( vals[i] > 0){
-                currenciesOwned[a] = curs[i];
-                values[a] = vals[i];
-                a++;
-                }
-                }
-                //console.log(JSON.stringify(currenciesOwned));
-                //console.log(JSON.stringify(values));
-                //currenciesToBuy(currenciesOwned);
-                return r;
+                        var r = results.total;  //options: free used total
+                        curs = Object.keys(r);
+                        vals = Object.values(r);
+                        var a = 0;
+                        for (i = 0; i <= curs.length; i++) {
+                                if (vals[i] > 0) {
+                                        currenciesOwned[a] = curs[i];
+                                        values[a] = vals[i];
+                                        a++;
+                                }
+                        }
+                        //console.log(JSON.stringify(currenciesOwned));
+                        //console.log(JSON.stringify(values));
+                        //currenciesToBuy(currenciesOwned);
+                        return r;
                 }).catch((error) => {
-                console.error(error);
-                })}
+                        console.error(error);
+                })
+        }
         var currenciesOwned = new Array();
         var values = new Array();
         //fetchBalance();
 
         //select best currencies to trade on this exhange  
         //currenciesToBuy();
-        function currenciesToBuy(currenciesOwned){
+        function currenciesToBuy(currenciesOwned) {
                 var a = 0;
-                for( i=0; i <= currenciesOwned.length; i++){
-                        if ( currenciesOwned[i] !== quoteCurrency && currenciesOwned[i] !== undefined){
-                        currenciesOwnedToBuy[a] = currenciesOwned[i];
-                        a++;
+                for (i = 0; i <= currenciesOwned.length; i++) {
+                        if (currenciesOwned[i] !== quoteCurrency && currenciesOwned[i] !== undefined) {
+                                currenciesOwnedToBuy[a] = currenciesOwned[i];
+                                a++;
                         }
                 }
-        console.log(currenciesOwned);
-        console.log(currenciesOwnedToBuy);
-        return currenciesOwnedToBuy;
+                console.log(currenciesOwned);
+                console.log(currenciesOwnedToBuy);
+                return currenciesOwnedToBuy;
         }
         var currenciesOwnedToBuy = new Array();
-        function runStack(currenciesOwnedToBuy){
+        function runStack(currenciesOwnedToBuy) {
                 var cur = currenciesOwnedToBuy;
-                for(i=0; i<cur.length; i++){
-                setTimeout(function(){runBot(cur[i],quoteCurrency,"MACD",ticker,exchangeName)},counter());
-                console.log(cur[i]);
+                for (i = 0; i < cur.length; i++) {
+                        setTimeout(function () { runBot(cur[i], quoteCurrency, "MACD", ticker, exchangeName) }, counter());
+                        console.log(cur[i]);
                 }
         }
         //runStack(currenciesOwnedToBuy);
 }
-function counter(){       //defines next time delay
+function counter() {       //defines next time delay
         //var delay = 5000 //miliseconds
         //a = 0;
-        var r = a*delay;
+        var r = a * delay;
         a++;
-        return r;}
-var delay = ( ticker / numOfBots ) * 60000;
+        return r;
+}
+var delay = (ticker / numOfBots) * 60000;
 var a = 0;  //counter
 //runExchange("poloniex");      
-function sendMail(subject, message, to){
+function sendMail(subject, message, to) {
         // email account data
         var nodemailer = require('nodemailer');
         var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                user: 'mrbitja@gmail.com',
-                pass: 'mrbitne7777777'
-        }});
+                        user: 'mrbitja@gmail.com',
+                        pass: 'mrbitne7777777'
+                }
+        });
 
         // mail body
         var subject;
         var message;
-        to;     
+        to;
         var mailOptions = {
                 from: 'bb@gmail.com',   //NOT WORK
                 to: 'markosmid333@gmail.com',//to, 
@@ -100,72 +103,75 @@ function sendMail(subject, message, to){
         };
 
         // response
-        transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-        console.log(error);
-        } else {
-        //console.log('Email sent: ' + info.response);
-        console.log("Email sent at: "+getTime()+" to: "+mailOptions.to);
-        }});}
-
-function getTime() {
-            var timestamp = Date.now();     // Get current time in UNIX EPOC format
-            var d = new Date(timestamp),	// Convert the passed timestamp to milliseconds
-                        yyyy = d.getFullYear(),
-                        mm = ('0' + (d.getMonth() + 1)).slice(-2),	// Months are zero based. Add leading 0.
-                        dd = ('0' + d.getDate()).slice(-2),			// Add leading 0.
-                        hh = d.getHours(),
-                        h = hh,
-                        min = ('0' + d.getMinutes()).slice(-2),		// Add leading 0.
-                        ampm = 'AM',
-                        time;  
-                /*if (hh > 12) {
-                        h = hh - 12;
-                        ampm = 'PM';
-                } else if (hh === 12) {
-                        h = 12;
-                        ampm = 'PM';
-                } else if (hh == 0) {
-                        h = 12;
-                }*/
-                // ie: 2013-02-18, 8:35 AM	
-                //time = yyyy h + ':' + min + ampm + '-' + mm + '-' + dd + '. ' +  ' ' +;
-                time = h+ ':' +min+ ' ' +dd+ '.' +mm+ '.' +yyyy;
-            return time;
-            }
-
-function runExchange(exchange){ //exchange, baseCurrencies[], quoteCurrencies[]
-  var quoteCurrency = "USDT";
-  let ccxt;
-  var exchange;
-  switch(exchangeName){
-    case "poloniex":
-    exchange = new ccxt.poloniex ({
-      apiKey: keys.poloniex.apiKey,
-      secret: keys.poloniex.secret,
-    });
-    break;
-    case "bittrex":
-    exchange = new ccxt.bittrex ({
-      apiKey: keys.bittrex.apiKey,
-      secret: keys.bittrex.secret,
-    });
-    break;case "bitfinex":
-    exchange = new ccxt.bitfinex ({
-      apiKey: keys.bitfinex.apiKey,
-      secret: keys.bitfinex.secret,
-    });
-    break;
-  }
+        transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                        console.log(error);
+                } else {
+                        //console.log('Email sent: ' + info.response);
+                        console.log("Email sent at: " + getTime() + " to: " + mailOptions.to);
+                }
+        });
 }
 
+function getTime() {
+        var timestamp = Date.now();     // Get current time in UNIX EPOC format
+        var d = new Date(timestamp),	// Convert the passed timestamp to milliseconds
+                yyyy = d.getFullYear(),
+                mm = ('0' + (d.getMonth() + 1)).slice(-2),	// Months are zero based. Add leading 0.
+                dd = ('0' + d.getDate()).slice(-2),			// Add leading 0.
+                hh = d.getHours(),
+                h = hh,
+                min = ('0' + d.getMinutes()).slice(-2),		// Add leading 0.
+                ampm = 'AM',
+                time;
+        /*if (hh > 12) {
+                h = hh - 12;
+                ampm = 'PM';
+        } else if (hh === 12) {
+                h = 12;
+                ampm = 'PM';
+        } else if (hh == 0) {
+                h = 12;
+        }*/
+        // ie: 2013-02-18, 8:35 AM	
+        //time = yyyy h + ':' + min + ampm + '-' + mm + '-' + dd + '. ' +  ' ' +;
+        time = h + ':' + min + ' ' + dd + '.' + mm + '.' + yyyy;
+        return time;
+}
 
-setTimeout(function(){runBot("EOS",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
+function runExchange(exchange) { //exchange, baseCurrencies[], quoteCurrencies[]
+        var quoteCurrency = "USDT";
+        let ccxt;
+        var exchange;
+        switch (exchangeName) {
+                case "poloniex":
+                        exchange = new ccxt.poloniex({
+                                apiKey: keys.poloniex.apiKey,
+                                secret: keys.poloniex.secret,
+                        });
+                        break;
+                case "bittrex":
+                        exchange = new ccxt.bittrex({
+                                apiKey: keys.bittrex.apiKey,
+                                secret: keys.bittrex.secret,
+                        });
+                        break; case "bitfinex":
+                        exchange = new ccxt.bitfinex({
+                                apiKey: keys.bitfinex.apiKey,
+                                secret: keys.bitfinex.secret,
+                        });
+                        break;
+        }
+}
+
+setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
+setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
+setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
+setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
+setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
+//setTimeout(function () { runBot("EOS", quoteFiat, "PINGPONG", ticker, "binance", lossFiat) }, counter());
 //setTimeout(function(){runBot("XRP",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
 //setTimeout(function(){runBot("IOTA",quoteFiat,"PINGPONG",ticker,"binance",30)},counter());
-//setTimeout(function(){runBot("EOS",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
-//setTimeout(function(){runBot("BCH",quoteFiat,"PINGPONG",ticker,"binance",30)},counter());
-//setTimeout(function(){runBot("BNB",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP) {
         /*Architecture:
@@ -637,14 +643,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 orderStatus = r.status;
                                 console.log(orderId);
                                 console.log("Order: " + JSON.stringify(r));
-                                sendMail("Bougth",msg+"\n"+JSON.stringify(r));  //dev
+                                sendMail("Bougth", msg + "\n" + JSON.stringify(r));  //dev
                                 orderType = "bougth";
                                 //bougthPrice = r.price;            //safety
                                 bougthPrice = price;
-                                
+
                                 //bougthPrice = buyPrice;    
 
-                                setTimeout(function(){bougthPrice = price}, timeTicker*0.85); 
+                                setTimeout(function () { bougthPrice = price }, timeTicker * 0.85);
                                 console.log("bougth");
                                 setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
                                 return r;
@@ -696,7 +702,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 loger(price, 15, logRSI);
 
                 var duration = 360;       //duration in minutes 6h=360min
-                function timeToTicker(duration){
+                function timeToTicker(duration) {
                         numOfTickers = duration / ticker
                         return numOfTickers;
                 }
@@ -704,14 +710,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
                 //stalling 
 
-                function stalling(longTimePrice,price,div){
-                        
+                function stalling(longTimePrice, price, div) {
+
                         var ma = getAvgOfArray(longTimePrice);
-                        if( ma + (part(div,ma) > price )          ){
+                        if (ma + (part(div, ma) > price)) {
                                 stall = true;
-                        }else if(ma - (part(div,ma) < price )     ){
+                        } else if (ma - (part(div, ma) < price)) {
                                 stall = true;
-                        }else{
+                        } else {
                                 stall = false;
                         }
                         //console.log("MA5: "+ma);
@@ -720,7 +726,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 }
                 //var stall = stalling(logUD,price,0.001);
 
-                function bounce(array){
+                function bounce(array) {
                         getMaxOfArray(logMACD) > price;
                 }
                 var down = bounce(logMACD)

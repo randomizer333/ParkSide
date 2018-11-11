@@ -1,7 +1,7 @@
 var ticker = 0.1;                                                       //D!
 var enableOrders = false;                                               //D!
 var stopLossP = 3;                                                      //D!
-runBot("BTC", "USDT", "PINGPONG", ticker, "binance", stopLossP);        //D!
+runBot("XRP", "BTC", "PINGPONG", ticker, "binance", stopLossP);        //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP) {
         /*Architecture:
                 init
@@ -20,13 +20,13 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         //init setup hardcode attributes later to come from GUI
 
         var round = 0;              //init number of sell orders til stop
-        var roundMax = 5;       //disable buying after this count
+        var roundMax = 2;       //disable buying after this count
 
         //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
         var fiatCurrency = "USDT";//"USDT"EUR
         exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
-        var fiatSymbol = baseCurrency + "/" + fiatCurrency;
+        var fiatSymbol = quoteCurrency + "/" + fiatCurrency;
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
         var indicator = "MACD";
         var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
@@ -307,7 +307,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         }
         var fiatPrice;
         function fetchFiatPrice(fiatSymbol) {        //fetch ticker second order
-                exchange.fetchOrderBook(symbol).then((results) => {
+                exchange.fetchOrderBook(fiatSymbol).then((results) => {
                         fiatPrice = results.bids[0][0];
                         //console.log("fiatPrice: "+fiatPrice);
                 }).catch((error) => {
@@ -705,8 +705,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         trend = trendUD;  //short term trend
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
-                        trend4 = change24h;     //24h change % 
-                        if (purchase && (trend > 0) && (trend2 > 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
+                        trend4 = change24h;     //24h change % 4
+                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
                                 if (round >= roundMax) {
@@ -773,9 +773,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 "SP:" + sellPrice.toFixed(8) + "|" +
                                 baseCurrency + ":" + baseBalance.toFixed(8) + "|" +
                                 boolToInitial(baseCurrency) + "in" + boolToInitial(quoteCurrency) + ":" + baseBalanceInQuote.toFixed(8) + "|" +
-                                quoteCurrency + ":" + quoteBalance.toFixed(2) + "|" +
-                                "T:" + balance.toFixed(2) + "|" +
-                                //"TF:" + fiatValue.toFixed(2) + " " + fiatCurrency + "|" +
+                                quoteCurrency + ":" + quoteBalance.toFixed(8) + "|" +
+                                "T:" + balance.toFixed(8) + "|" +
+                                "TF:" + fiatValue.toFixed(2) + " " + fiatCurrency + "|" +
+                                //"FiatPrice:" + fiatPrice.toFixed(8) + " " + fiatSymbol + "|" +
                                 "O:" + orderType + "|" +
                                 "P:" + boolToInitial(purchase) + "|" +
                                 "S:" + boolToInitial(sale) + "|" +
