@@ -20,7 +20,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         //init setup hardcode attributes later to come from GUI
 
         var round = 0;              //init number of sell orders til stop
-        var roundMax = 2;       //disable buying after this count
+        var roundMax = 5;       //disable buying after this count
 
         //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
