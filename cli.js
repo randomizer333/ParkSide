@@ -8,8 +8,8 @@ var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
 var quote1 = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
 var quote2 = "ETH";     //"ETH";     
-var numOfBots = 4;
-var ticker = 5;   //ticker time in minutes
+var numOfBots = 5;
+var ticker = 10;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
 var portionPerBot;
@@ -170,11 +170,13 @@ function runExchange(exchange) { //exchange, baseCurrencies[], quoteCurrencies[]
 setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
 setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
 setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
+setTimeout(function () { runBot("XMR", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
 setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
 //setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
 //setTimeout(function () { runBot("EOS", quoteFiat, "PINGPONG", ticker, "binance", lossFiat) }, counter());
 //setTimeout(function(){runBot("XRP",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
 //setTimeout(function(){runBot("IOTA",quoteFiat,"PINGPONG",ticker,"binance",30)},counter());
+
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP) {
         /*Architecture:
@@ -925,7 +927,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         var profit = price - sellPrice;
                         var relProfit = percent(profit, sellPrice);
                         var absProfit = part(relProfit, baseBalanceInQuote);
-                        var fiatAbsProfit = absProfit * fiatPrice;
+                        var absProfitFiat = absProfit * fiatPrice;
                         var rounds = roundMax - round;
                         //var absProfit = profit * baseBalance;
                         //var relProfit = percent(absProfit, sellPrice);
@@ -933,7 +935,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         msg =   //info msg on ticker time
                                 getTime() + "|" +
                                 "P:" + price.toFixed(8) + " " + symbol + "|" +
-                                "aP:" + absProfit.toFixed(2) + " " + quoteCurrency + "|" +
+                                "aP:" + absProfit.toFixed(8) + " " + quoteCurrency + "|" +
+                                "aPF:" + absProfitFiat.toFixed(2) + " " + fiatCurrency + "|" +
                                 "SH:" + rounds + "|" +
                                 "rP:" + (relProfit + minProfitP).toFixed(2) + " %|" +
                                 stopLossP + " %" + "|" +
