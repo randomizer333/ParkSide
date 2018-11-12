@@ -751,7 +751,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         var profit = price - sellPrice;
                         var relProfit = percent(profit, sellPrice);
                         var absProfit = part(relProfit, baseBalanceInQuote);
-                        var fiatAbsProfit = absProfit * fiatPrice;
+                        var absProfitFiat = absProfit * fiatPrice;
                         var rounds = roundMax - round;
                         //var absProfit = profit * baseBalance;
                         //var relProfit = percent(absProfit, sellPrice);
@@ -759,7 +759,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         msg =   //info msg on ticker time
                                 getTime() + "|" +
                                 "P:" + price.toFixed(8) + " " + symbol + "|" +
-                                "aP:" + absProfit.toFixed(2) + " " + quoteCurrency + "|" +
+                                "aP:" + absProfit.toFixed(8) + " " + quoteCurrency + "|" +
+                                "aPF:" + absProfitFiat.toFixed(2) + " " + fiatCurrency + "|" +
                                 "SH:" + rounds + "|" +
                                 "rP:" + (relProfit + minProfitP).toFixed(2) + " %|" +
                                 stopLossP + " %" + "|" +
