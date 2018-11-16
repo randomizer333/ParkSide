@@ -206,7 +206,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
         var indicator = "MACD";
         var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
-        var portion = 0.70;        //!!! 0.51 || 0.99 !       part of balance to trade 
+        var portion = 0.51;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //var stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         var minProfitP = 0.1;        //holding addition
         var timeTicker = minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
@@ -382,7 +382,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var purchase = false;
         function selectCurrency() {        // check currency from pair that has more funds
                 var baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
-                if (baseBalanceInQuote >= quoteBalance) {
+                if (baseBalanceInQuote > 0) {   //quoteBalance
                         sale = true;
                         purchase = false;
                         //price = makeBid(bid, bid2);
@@ -893,10 +893,12 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
                                 //bougthPrice = buyPrice;               //sim
                         } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
+                                /*
                                 if (round >= roundMax) {
                                         enableOrders = false;
                                         console.log("Stopped BUYING");
                                 }
+                                */
                                 console.log("No of sales done: " + round + " of: " + roundMax);
                                 orderType = "sold";
                                 enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
