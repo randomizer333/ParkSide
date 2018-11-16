@@ -206,7 +206,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var purchase = false;
         function selectCurrency() {        // check currency from pair that has more funds
                 var baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
-                if (baseBalanceInQuote >= quoteBalance) {
+                if (baseBalanceInQuote > 0) {   //quoteBalance
                         sale = true;
                         purchase = false;
                         //price = makeBid(bid, bid2);
