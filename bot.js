@@ -1,8 +1,9 @@
 var ticker = 0.1;                                                       //D!
 var enableOrders = false;                                               //D!
 var stopLossP = 3;                                                      //D!
-runBot("XRP", "BTC", "PINGPONG", ticker, "binance", stopLossP);        //D!
-function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP) {
+var bougthPrice = 0.00000001;                                           //D!
+runBot("XRP", "BTC", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);        //D!
+function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
                 functions
@@ -29,7 +30,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var fiatSymbol = quoteCurrency + "/" + fiatCurrency;
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
         var indicator = "MACD";
-        var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
+        //var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
         var portion = 0.51;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //var stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         var minProfitP = 0.1;        //holding addition
@@ -206,7 +207,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var purchase = false;
         function selectCurrency() {        // check currency from pair that has more funds
                 var baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
-                if (baseBalanceInQuote > 0) {   //quoteBalance
+                if (baseBalanceInQuote > quoteBalance) {   //quoteBalance
                         sale = true;
                         purchase = false;
                         //price = makeBid(bid, bid2);

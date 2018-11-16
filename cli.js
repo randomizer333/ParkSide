@@ -4,6 +4,7 @@ let ccxt = require('ccxt');
 
 //init setup
 var quoteFiat = "USDT"; //USDT,EUR
+var bougthPrice = 0.00000001;  //set bouht price
 var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
 var quote1 = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
@@ -167,18 +168,13 @@ function runExchange(exchange) { //exchange, baseCurrencies[], quoteCurrencies[]
 
 //let bot = require("./bot.js");
 
-setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
-setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
-setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
-setTimeout(function () { runBot("XMR", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
-setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
-//setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1) }, counter());
-//setTimeout(function () { runBot("EOS", quoteFiat, "PINGPONG", ticker, "binance", lossFiat) }, counter());
-//setTimeout(function(){runBot("XRP",quoteFiat,"PINGPONG",ticker,"binance",lossFiat)},counter());
-//setTimeout(function(){runBot("IOTA",quoteFiat,"PINGPONG",ticker,"binance",30)},counter());
+setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XMR", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 
-
-function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP) {
+function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
                 functions
@@ -205,7 +201,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var fiatSymbol = quoteCurrency + "/" + fiatCurrency;
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
         var indicator = "MACD";
-        var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
+        //var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
         var portion = 0.51;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //var stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         var minProfitP = 0.1;        //holding addition
@@ -382,7 +378,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var purchase = false;
         function selectCurrency() {        // check currency from pair that has more funds
                 var baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
-                if (baseBalanceInQuote > 0) {   //quoteBalance
+                if (baseBalanceInQuote >= quoteBalance) {   //quoteBalance
                         sale = true;
                         purchase = false;
                         //price = makeBid(bid, bid2);
