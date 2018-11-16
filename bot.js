@@ -717,10 +717,12 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
                                 //bougthPrice = buyPrice;               //sim
                         } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
+                                /*
                                 if (round >= roundMax) {
                                         enableOrders = false;
                                         console.log("Stopped BUYING");
                                 }
+                                */
                                 console.log("No of sales done: " + round + " of: " + roundMax);
                                 orderType = "sold";
                                 enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
