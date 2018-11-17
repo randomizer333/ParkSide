@@ -2,7 +2,7 @@ var ticker = 0.1;                                                       //D!
 var enableOrders = false;                                               //D!
 var stopLossP = 3;                                                      //D!
 var bougthPrice = 0.00000001;                                           //D!
-runBot("XRP", "BTC", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);        //D!
+runBot("ADA", "BTC", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);        //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
@@ -207,7 +207,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var purchase = false;
         function selectCurrency() {        // check currency from pair that has more funds
                 var baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
-                if (baseBalanceInQuote > quoteBalance) {   //quoteBalance
+                if (baseBalanceInQuote > 0.0001) {   //quoteBalance 0.00000001 0.001 = 5 EUR
                         sale = true;
                         purchase = false;
                         //price = makeBid(bid, bid2);
