@@ -1,8 +1,8 @@
-var ticker = 0.1;                                                       //D!
+var ticker = 0.5;                                                       //D!
 var enableOrders = false;                                               //D!
 var stopLossP = 3;                                                      //D!
 var bougthPrice = 0.00000001;                                           //D!
-runBot("ADA", "BTC", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);        //D!
+runBot("ETH", "BTC", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);        //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
@@ -27,7 +27,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
         var fiatCurrency = "USDT";//"USDT"EUR
         exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
-        var fiatSymbol = quoteCurrency + "/" + fiatCurrency;
+        var fiatSymbol = mergeSymbol(baseCurrency, fiatCurrency);
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
         var indicator = "MACD";
         //var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
@@ -186,8 +186,13 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 return (percent / 100) * whole;
         }
 
-        function mergeSymbol(baseCurrency, quoteCurrency) {
-                return symbol = baseCurrency + "/" + quoteCurrency;
+        function mergeSymbol(base, quote) {
+                /*
+                if (base == quote){
+                        base = baseCurrency;
+                }*/
+                return symbol = base + "/" + quote;
+                
         }
         function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second        base | quote
                 var char = symbol.search("/");
