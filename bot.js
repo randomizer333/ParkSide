@@ -715,10 +715,12 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
+                                /*
                                 if (round >= roundMax) {
                                         enableOrders = false;
                                         console.log("Stopped BUY");
                                 }
+                                */
                                 console.log("No of purchases done: " + round + " of: " + roundMax);
                                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
                                 //bougthPrice = buyPrice;               //sim

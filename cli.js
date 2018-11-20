@@ -10,7 +10,7 @@ var loss1 = 99;
 var quote1 = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
 var quote2 = "ETH";     //"ETH";     
 var numOfBots = 7;
-var ticker = 7;   //ticker time in minutes
+var ticker = 10;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
 var portionPerBot;
@@ -170,11 +170,11 @@ function runExchange(exchange) { //exchange, baseCurrencies[], quoteCurrencies[]
 
 
 //setTimeout(function () { runBot("BTC", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1, 0.00009212) }, counter());
 setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1, 0.00001194) }, counter());
-setTimeout(function () { runBot("XMR", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1, 0.00001182) }, counter());
+setTimeout(function () { runBot("XMR", quote1, "PINGPONG", ticker, "binance", loss1, 0.01636500) }, counter());
+setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1, 0.00000338) }, counter());
 setTimeout(function () { runBot("BNB", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 
