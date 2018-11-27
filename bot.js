@@ -1,8 +1,8 @@
-var ticker = 0.5;                                                       //D!
+var ticker = 0.1;                                                       //D!
 var enableOrders = false;                                               //D!
 var stopLossP = 3;                                                      //D!
 var bougthPrice = 0.00000001;                                           //D!
-runBot("ETH", "BTC", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);        //D!
+runBot("XRP", "EUR", "PINGPONG", ticker, "bitstamp", stopLossP, bougthPrice);        //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
