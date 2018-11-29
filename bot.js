@@ -716,10 +716,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 orderType = "bougth";
                                 round += 1;     //dev
                                 /*
-                                if (round >= roundMax) {
-                                        enableOrders = false;
-                                        console.log("Stopped BUY");
-                                }
+                                //if (round >= roundMax) {
+                                  //      enableOrders = false;
+                                    //    console.log("Stopped BUY");
+                                //}
                                 */
                                 console.log("No of purchases done: " + round + " of: " + roundMax);
                                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
