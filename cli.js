@@ -9,7 +9,7 @@ var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
 var quote1 = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
 var quote2 = "ETH";     //"ETH";     
-var numOfBots = 8;
+var numOfBots = 9;
 var ticker = 10;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
@@ -178,6 +178,7 @@ setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", lo
 setTimeout(function () { runBot("BNB", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("BCHSV", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
@@ -367,7 +368,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 if (base == quote){
                         base = baseCurrency;
                 }*/
-                return symbol = base + "/" + quote;
+                return mergedSymbol = base + "/" + quote;
                 
         }
         function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second        base | quote

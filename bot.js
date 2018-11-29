@@ -2,7 +2,7 @@ var ticker = 0.1;                                                       //D!
 var enableOrders = false;                                               //D!
 var stopLossP = 3;                                                      //D!
 var bougthPrice = 0.00000001;                                           //D!
-runBot("BCHSV", "USDT", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);        //D!
+runBot("BCHSV", "BTC", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);        //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
@@ -191,7 +191,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 if (base == quote){
                         base = baseCurrency;
                 }*/
-                return symbol = base + "/" + quote;
+                return mergedSymbol = base + "/" + quote;
                 
         }
         function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second        base | quote
