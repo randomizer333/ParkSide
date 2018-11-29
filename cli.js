@@ -170,13 +170,13 @@ function runExchange(exchange) { //exchange, baseCurrencies[], quoteCurrencies[]
 
 
 //setTimeout(function () { runBot("BTC", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1, 0.00009212) }, counter());
-setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1, 0.00009840) }, counter());
+setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1, 0.00004467) }, counter());
 setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1, 0.00001182) }, counter());
 setTimeout(function () { runBot("XMR", quote1, "PINGPONG", ticker, "binance", loss1, 0.01636500) }, counter());
 setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1, 0.00000338) }, counter());
-setTimeout(function () { runBot("BNB", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("BNB", quote1, "PINGPONG", ticker, "binance", loss1, 0.00134250) }, counter());
+setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1, 0.00083445) }, counter());
 
 
 
@@ -204,7 +204,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
         var fiatCurrency = "USDT";//"USDT"EUR
         exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
-        var fiatSymbol = quoteCurrency + "/" + fiatCurrency;
+        var fiatSymbol = mergeSymbol(baseCurrency, fiatCurrency);
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
         var indicator = "MACD";
         //var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
@@ -363,8 +363,13 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 return (percent / 100) * whole;
         }
 
-        function mergeSymbol(baseCurrency, quoteCurrency) {
-                return symbol = baseCurrency + "/" + quoteCurrency;
+        function mergeSymbol(base, quote) {
+                /*
+                if (base == quote){
+                        base = baseCurrency;
+                }*/
+                return symbol = base + "/" + quote;
+                
         }
         function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second        base | quote
                 var char = symbol.search("/");
@@ -884,13 +889,15 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
                         trend4 = change24h;     //24h change % 4
-                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
+                        if (purchase && (trend >= 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
+                                /*
                                 if (round >= roundMax) {
                                         enableOrders = false;
                                         console.log("Stopped BUY");
                                 }
+                                */
                                 console.log("No of purchases done: " + round + " of: " + roundMax);
                                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
                                 //bougthPrice = buyPrice;               //sim
