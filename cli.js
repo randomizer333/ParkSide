@@ -9,7 +9,7 @@ var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
 var quote1 = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
 var quote2 = "ETH";     //"ETH";     
-var numOfBots = 7;
+var numOfBots = 8;
 var ticker = 10;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
@@ -169,16 +169,15 @@ function runExchange(exchange) { //exchange, baseCurrencies[], quoteCurrencies[]
 //let bot = require("./bot.js");
 
 
-//setTimeout(function () { runBot("BTC", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1, 0.00009840) }, counter());
-setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1, 0.00004467) }, counter());
-setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1, 0.00001182) }, counter());
+setTimeout(function () { runBot( quote1, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) },counter());
+setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("XMR", quote1, "PINGPONG", ticker, "binance", loss1, 0.01636500) }, counter());
-setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1, 0.00000338) }, counter());
-setTimeout(function () { runBot("BNB", quote1, "PINGPONG", ticker, "binance", loss1, 0.00134250) }, counter());
-setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1, 0.00083445) }, counter());
-
-
+setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("BNB", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("BCHSV", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
@@ -889,14 +888,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
                         trend4 = change24h;     //24h change % 4
-                        if (purchase && (trend >= 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
+                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
                                 /*
-                                if (round >= roundMax) {
-                                        enableOrders = false;
-                                        console.log("Stopped BUY");
-                                }
+                                //if (round >= roundMax) {
+                                  //      enableOrders = false;
+                                    //    console.log("Stopped BUY");
+                                //}
                                 */
                                 console.log("No of purchases done: " + round + " of: " + roundMax);
                                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
@@ -904,8 +903,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
                                 /*
                                 //if (round >= roundMax) {
-                                //        enableOrders = false;
-                                //        console.log("Stopped BUYING");
+                                 //       enableOrders = false;
+                                 //       console.log("Stopped BUYING");
                                 //}
                                 */
                                 console.log("No of sales done: " + round + " of: " + roundMax);

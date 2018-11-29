@@ -2,7 +2,7 @@ var ticker = 0.1;                                                       //D!
 var enableOrders = false;                                               //D!
 var stopLossP = 3;                                                      //D!
 var bougthPrice = 0.00000001;                                           //D!
-runBot("XRP", "EUR", "PINGPONG", ticker, "bitstamp", stopLossP, bougthPrice);        //D!
+runBot("BCHSV", "USDT", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);        //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
@@ -712,7 +712,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
                         trend4 = change24h;     //24h change % 4
-                        if (purchase && (trend >= 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
+                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
                                 /*
@@ -726,10 +726,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 //bougthPrice = buyPrice;               //sim
                         } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
                                 /*
-                                if (round >= roundMax) {
-                                        enableOrders = false;
-                                        console.log("Stopped BUYING");
-                                }
+                                //if (round >= roundMax) {
+                                 //       enableOrders = false;
+                                 //       console.log("Stopped BUYING");
+                                //}
                                 */
                                 console.log("No of sales done: " + round + " of: " + roundMax);
                                 orderType = "sold";
