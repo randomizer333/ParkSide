@@ -7,9 +7,8 @@ var quoteFiat = "USDT"; //USDT,EUR
 var bougthPrice = 0.00000001;  //set bouht price
 var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
-var quote1 = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
-var quote2 = "ETH";     //"ETH";     
-var numOfBots = 9;
+var quoteCrypto = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
+var numOfBots = 8;
 var ticker = 10;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
@@ -169,15 +168,15 @@ function runExchange(exchange) { //exchange, baseCurrencies[], quoteCurrencies[]
 //let bot = require("./bot.js");
 
 
-setTimeout(function () { runBot( quote1, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) },counter());
-setTimeout(function () { runBot("XRP", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("XLM", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("ADA", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("XMR", quote1, "PINGPONG", ticker, "binance", loss1, 0.01636500) }, counter());
-setTimeout(function () { runBot("TRX", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("BNB", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("EOS", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("BCHSV", quote1, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+//setTimeout(function () { runBot( quoteCrypto, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) },counter());     //pullout of crypto
+setTimeout(function () { runBot("XRP", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XLM", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("ADA", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XMR", quoteCrypto, "PINGPONG", ticker, "binance", loss1, 0.01636500) }, counter());
+setTimeout(function () { runBot("TRX", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("BNB", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("EOS", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("BCHSV", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
@@ -204,7 +203,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
         var fiatCurrency = "USDT";//"USDT"EUR
         exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
-        var fiatSymbol = mergeSymbol(baseCurrency, fiatCurrency);
+        var fiatSymbol = mergeSymbol(quoteCrypto, fiatCurrency);
+        //console.log("fiatSymbol" + fiatSymbol);
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
         var indicator = "MACD";
         //var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
@@ -492,7 +492,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         function fetchFiatPrice(fiatSymbol) {        //fetch ticker second order
                 exchange.fetchOrderBook(fiatSymbol).then((results) => {
                         fiatPrice = results.bids[0][0];
-                        //console.log("fiatPrice: "+fiatPrice);
                 }).catch((error) => {
                         console.error(error);
                 })
@@ -933,12 +932,18 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         var baseBalanceInQuote = baseToQuote(baseBalance);
                         var quoteBalanceInBase = quoteToBase(quoteBalance);
                         var balance = baseBalanceInQuote + quoteBalance;
-                        var fiatValue = balance * fiatPrice;
+                        var fiatValue = balance * fiatPrice;/*
+                        console.log("fiatValue " + fiatValue);
+                        console.log("balance " + balance);*/
                         var balanceB = quoteBalanceInBase + baseBalance;
                         var profit = price - sellPrice;
                         var relProfit = percent(profit, sellPrice);
                         var absProfit = part(relProfit, baseBalanceInQuote);
-                        var absProfitFiat = absProfit * fiatPrice;
+                        var absProfitFiat = absProfit * fiatPrice;/*
+                        console.log("absProfitFiat " + absProfitFiat);
+                        console.log("absProfit " + absProfit);
+                        console.log("fiatPrice " + fiatPrice);*/
+
                         var rounds = roundMax - round;
                         //var absProfit = profit * baseBalance;
                         //var relProfit = percent(absProfit, sellPrice);
@@ -1018,12 +1023,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 function loopFetches() {
                         setTimeout(function () { fetchBalances() }, count());
                         setTimeout(function () { fetchTicker() }, count());
-                        if (quoteCurrency == fiatCurrency) {
-                                setTimeout(function () { fetchAsksBids(symbol) }, count());
-                        } else {
-                                setTimeout(function () { fetchFiatPrice(fiatSymbol) }, count());
-                                setTimeout(function () { fetchAsksBids(symbol) }, count());
-                        }
+                        setTimeout(function () { fetchFiatPrice(fiatSymbol) }, count());
+                        setTimeout(function () { fetchAsksBids(symbol) }, count());
                         //loop logic 
                         setTimeout(function () { loopLogic() }, count());
                         function loopLogic() {
