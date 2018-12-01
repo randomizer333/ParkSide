@@ -17,7 +17,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         git add .
         git commit -m "comment"
         git push origin master
-        git pull
+        git pull origin master
         */
         //init setup hardcode attributes later to come from GUI
 

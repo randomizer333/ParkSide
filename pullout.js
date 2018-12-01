@@ -1,4 +1,10 @@
-
+/*START pulout procedure*/
+//find crypto currencies with balance larger than 0
+//sell all crypto currencies to XRP on trading exchange (binance)
+//transfer to banking exchange (bitstamp)
+//exchange XRP to EUR
+//withdraw to bank account
+/*END pulout procedure*/
 
 var currency;   //currency to sell to
 pullout("binance", "BTC");       //D!
