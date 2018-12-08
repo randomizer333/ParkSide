@@ -7,7 +7,7 @@ var quoteFiat = "USDT"; //USDT,EUR
 var bougthPrice = 0.00000001;  //set bouht price
 var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
-var quoteCrypto = "BTC";     //"USDT", "BTC", "ETH", "XMR" for Poloniex    currency to pay with
+var quoteCrypto = "BTC";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
 var numOfBots = 8;
 var ticker = 10;   //ticker time in minutes
 var enableOrders = true;
@@ -18,58 +18,7 @@ var portionPerBot;
 console.log("Software version: " + ccxt.version);
 console.log("Available exchanges: " + ccxt.exchanges);
 sendMail("Startup", "The bot was run from start at: " + getTime());
-//selector();
-function selector() {    //dev
-        //check wallets
-        function fetchBalance() {    //fetches balance of a currency
-                exchange.fetchBalance().then((results) => {
-                        var r = results.total;  //options: free used total
-                        curs = Object.keys(r);
-                        vals = Object.values(r);
-                        var a = 0;
-                        for (i = 0; i <= curs.length; i++) {
-                                if (vals[i] > 0) {
-                                        currenciesOwned[a] = curs[i];
-                                        values[a] = vals[i];
-                                        a++;
-                                }
-                        }
-                        //console.log(JSON.stringify(currenciesOwned));
-                        //console.log(JSON.stringify(values));
-                        //currenciesToBuy(currenciesOwned);
-                        return r;
-                }).catch((error) => {
-                        console.error(error);
-                })
-        }
-        var currenciesOwned = new Array();
-        var values = new Array();
-        //fetchBalance();
 
-        //select best currencies to trade on this exhange  
-        //currenciesToBuy();
-        function currenciesToBuy(currenciesOwned) {
-                var a = 0;
-                for (i = 0; i <= currenciesOwned.length; i++) {
-                        if (currenciesOwned[i] !== quoteCurrency && currenciesOwned[i] !== undefined) {
-                                currenciesOwnedToBuy[a] = currenciesOwned[i];
-                                a++;
-                        }
-                }
-                console.log(currenciesOwned);
-                console.log(currenciesOwnedToBuy);
-                return currenciesOwnedToBuy;
-        }
-        var currenciesOwnedToBuy = new Array();
-        function runStack(currenciesOwnedToBuy) {
-                var cur = currenciesOwnedToBuy;
-                for (i = 0; i < cur.length; i++) {
-                        setTimeout(function () { runBot(cur[i], quoteCurrency, "MACD", ticker, exchangeName) }, counter());
-                        console.log(cur[i]);
-                }
-        }
-        //runStack(currenciesOwnedToBuy);
-}
 function counter() {       //defines next time delay
         //var delay = 5000 //miliseconds
         //a = 0;
