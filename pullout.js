@@ -67,26 +67,22 @@ function pullout(exchangeName, currency) {
 
                         portfolio();
                         function portfolio() {
-                                //var port = { currency:"BTC"  ,balance:"0.00005" };
-                                var portArr = [["sdg","dfsg"]];
-                                //let portArr = new Array(vals.length);
                                 var j = 0;
-                                cs(portArr);
                                 for (i = 0; i < vals.length; i++) {
                                         if (vals[i] > 0) {
                                                 portf[j] = curs[i+1];
                                                 bals[j] = vals[i];
-                                                portArr[j][0] = curs[i+1];
-                                                portArr[j][1] = vals[i];
                                                 j++;
                                         }
                                 }
-                                cs(portArr);
-                                cs(portf);
-                                cs(bals);
-                                return portf;
+                                cs("Currency("+ portf.length+")  Balance");
+                                for(i = 0; i<portf.length; i++){
+                                        cs(portf[i]+"           "+bals[i]);
+                                }
+                                //cs(portf);
+                                //cs(bals);
+                                return portf, bals;
                         }
-
                         return r;
                 }).catch((error) => {
                         console.error(error);
