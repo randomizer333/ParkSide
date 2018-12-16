@@ -133,10 +133,10 @@ setTimeout(function () { runBot("BCHSV", quoteCrypto, "PINGPONG", ticker, "binan
 setTimeout(function () { runBot("XRP", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("XLM", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("ADA", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("XMR", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+//setTimeout(function () { runBot("XMR", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("TRX", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("EOS", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot("BCHSV", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+//setTimeout(function () { runBot("BCHSV", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
