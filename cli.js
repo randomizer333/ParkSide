@@ -10,7 +10,7 @@ var loss1 = 99;
 var quoteCrypto = "BTC";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
 var quoteCrypto2 = "BNB";
 var quoteCrypto3 = "ETH";
-var numOfBots = 19;
+var numOfBots = 17;
 var ticker = 10;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
@@ -133,10 +133,8 @@ setTimeout(function () { runBot("BCHSV", quoteCrypto, "PINGPONG", ticker, "binan
 setTimeout(function () { runBot("XRP", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("XLM", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("ADA", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-//setTimeout(function () { runBot("XMR", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("TRX", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("EOS", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-//setTimeout(function () { runBot("BCHSV", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
