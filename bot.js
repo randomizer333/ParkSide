@@ -1,8 +1,8 @@
 var ticker = 0.1;                                                               //D!
 var enableOrders = false;                                                       //D!
 var stopLossP = 3;                                                              //D!
-var bougthPrice = 0.00000001;                                                   //D!
-var quoteCrypto = "BTC";                                                        //D!
+var bougthPrice = 0.00000001;                                              //D!
+var quoteCrypto = "BTC";                                                   //D!
 runBot("TRX", "BNB", "PINGPONG", ticker, "binance", stopLossP, 0.0028);    //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
