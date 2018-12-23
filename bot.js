@@ -3,7 +3,7 @@ var enableOrders = false;                                                       
 var stopLossP = 3;                                                              //D!
 var bougthPrice = 0.00000001;                                              //D!
 var quoteCrypto = "BTC";                                                   //D!
-runBot("BCH", "BNB", "PINGPONG", ticker, "binance", stopLossP, 0.0028);    //D!
+runBot("XMR", "BNB", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);    //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
@@ -194,7 +194,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         base = baseCurrency;
                 }*/
                 return mergedSymbol = base + "/" + quote;
-                
+
         }
         function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second        base | quote
                 var char = symbol.search("/");
@@ -212,8 +212,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
         var sale = false;
         var purchase = false;
+        let more;
+        var baseBalanceInQuote;
         function selectCurrency() {        // check currency from pair that has more funds
-                var baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
+                baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
                 if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                         sale = true;
                         purchase = false;
@@ -223,6 +225,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         purchase = true;
                         sale = false;
                         //price = makeAsk(ask, ask2);
+                        more = false;
+                        //console.log("more je " + more);
                         return quoteCurrency + " quote of pair";
                 }
         }
@@ -479,14 +483,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 orderStatus = r.status;
                                 console.log(orderId);
                                 console.log("Order: " + JSON.stringify(r));
-                                sendMail("Bougth",msg+"\n"+JSON.stringify(r));  //dev
+                                sendMail("Bougth", msg + "\n" + JSON.stringify(r));  //dev
                                 orderType = "bougth";
                                 //bougthPrice = r.price;            //safety
                                 bougthPrice = price;
-                                
+
                                 //bougthPrice = buyPrice;    
 
-                                setTimeout(function(){bougthPrice = price}, timeTicker*0.85); 
+                                setTimeout(function () { bougthPrice = price }, timeTicker * 0.85);
                                 console.log("bougth");
                                 setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
                                 return r;
@@ -523,6 +527,17 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 //price = bid2;  
                 bougthPrice == 0.00000001 ? bougthPrice = price : "";   //init
 
+                function balanceChanged(){
+                        if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
+                                if (!more) {
+                                        bougthPrice = price;
+                                        more = true;
+                                        console.log("BouhtgPrice updated: " + more);
+                                }
+                        }
+                }
+                balanceChanged();
+
                 //price loging:
                 function loger(value, length, array) {        //log FILO to array
                         var counter;         //d   
@@ -538,7 +553,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 loger(price, 15, logRSI);
 
                 var duration = 360;       //duration in minutes 6h=360min
-                function timeToTicker(duration){
+                function timeToTicker(duration) {
                         numOfTickers = duration / ticker
                         return numOfTickers;
                 }
@@ -546,14 +561,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
                 //stalling 
 
-                function stalling(longTimePrice,price,div){
-                        
+                function stalling(longTimePrice, price, div) {
+
                         var ma = getAvgOfArray(longTimePrice);
-                        if( ma + (part(div,ma) > price )          ){
+                        if (ma + (part(div, ma) > price)) {
                                 stall = true;
-                        }else if(ma - (part(div,ma) < price )     ){
+                        } else if (ma - (part(div, ma) < price)) {
                                 stall = true;
-                        }else{
+                        } else {
                                 stall = false;
                         }
                         //console.log("MA5: "+ma);
@@ -562,7 +577,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 }
                 //var stall = stalling(logUD,price,0.001);
 
-                function bounce(array){
+                function bounce(array) {
                         getMaxOfArray(logMACD) > price;
                 }
                 var down = bounce(logMACD)
@@ -713,7 +728,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
                         trend4 = change24h;     //24h change % 4
-                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
+                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
                                 /*

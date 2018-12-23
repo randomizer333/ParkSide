@@ -10,8 +10,8 @@ var loss1 = 99;
 var quoteCrypto = "BNB";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
 var quoteCrypto2 = "BTC";
 var quoteCrypto3 = "ETH";
-var numOfBots = 24;
-var ticker = 10;   //ticker time in minutes
+var numOfBots = 31;
+var ticker = 15;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
 var portionPerBot;
@@ -121,6 +121,12 @@ function runExchange(exchange) { //exchange, baseCurrencies[], quoteCurrencies[]
 setTimeout(function () { runBot(quoteCrypto, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto2, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto3, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("EOS", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("IOTA", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("LTC", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("TRX", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XLM", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XRP", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto, quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto3, quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto, quoteCrypto3, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
@@ -136,6 +142,7 @@ setTimeout(function () { runBot("LTC", quoteCrypto2, "PINGPONG", ticker, "binanc
 setTimeout(function () { runBot("TRX", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("XLM", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("XRP", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("XMR", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("EOS", quoteCrypto3, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("IOTA", quoteCrypto3, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("LTC", quoteCrypto3, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
@@ -334,7 +341,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         base = baseCurrency;
                 }*/
                 return mergedSymbol = base + "/" + quote;
-                
+
         }
         function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second        base | quote
                 var char = symbol.search("/");
@@ -352,8 +359,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
         var sale = false;
         var purchase = false;
+        let more;
+        var baseBalanceInQuote;
         function selectCurrency() {        // check currency from pair that has more funds
-                var baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
+                baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
                 if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                         sale = true;
                         purchase = false;
@@ -363,6 +372,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         purchase = true;
                         sale = false;
                         //price = makeAsk(ask, ask2);
+                        more = false;
+                        //console.log("more je " + more);
                         return quoteCurrency + " quote of pair";
                 }
         }
@@ -619,14 +630,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 orderStatus = r.status;
                                 console.log(orderId);
                                 console.log("Order: " + JSON.stringify(r));
-                                sendMail("Bougth",msg+"\n"+JSON.stringify(r));  //dev
+                                sendMail("Bougth", msg + "\n" + JSON.stringify(r));  //dev
                                 orderType = "bougth";
                                 //bougthPrice = r.price;            //safety
                                 bougthPrice = price;
-                                
+
                                 //bougthPrice = buyPrice;    
 
-                                setTimeout(function(){bougthPrice = price}, timeTicker*0.85); 
+                                setTimeout(function () { bougthPrice = price }, timeTicker * 0.85);
                                 console.log("bougth");
                                 setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
                                 return r;
@@ -663,6 +674,17 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 //price = bid2;  
                 bougthPrice == 0.00000001 ? bougthPrice = price : "";   //init
 
+                function balanceChanged(){
+                        if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
+                                if (!more) {
+                                        bougthPrice = price;
+                                        more = true;
+                                        console.log("BouhtgPrice updated: " + more);
+                                }
+                        }
+                }
+                balanceChanged();
+
                 //price loging:
                 function loger(value, length, array) {        //log FILO to array
                         var counter;         //d   
@@ -678,7 +700,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 loger(price, 15, logRSI);
 
                 var duration = 360;       //duration in minutes 6h=360min
-                function timeToTicker(duration){
+                function timeToTicker(duration) {
                         numOfTickers = duration / ticker
                         return numOfTickers;
                 }
@@ -686,14 +708,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
                 //stalling 
 
-                function stalling(longTimePrice,price,div){
-                        
+                function stalling(longTimePrice, price, div) {
+
                         var ma = getAvgOfArray(longTimePrice);
-                        if( ma + (part(div,ma) > price )          ){
+                        if (ma + (part(div, ma) > price)) {
                                 stall = true;
-                        }else if(ma - (part(div,ma) < price )     ){
+                        } else if (ma - (part(div, ma) < price)) {
                                 stall = true;
-                        }else{
+                        } else {
                                 stall = false;
                         }
                         //console.log("MA5: "+ma);
@@ -702,7 +724,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 }
                 //var stall = stalling(logUD,price,0.001);
 
-                function bounce(array){
+                function bounce(array) {
                         getMaxOfArray(logMACD) > price;
                 }
                 var down = bounce(logMACD)
@@ -853,7 +875,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
                         trend4 = change24h;     //24h change % 4
-                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 > 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
+                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
                                 /*
