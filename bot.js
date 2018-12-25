@@ -3,7 +3,7 @@ var enableOrders = false;                                                       
 var stopLossP = 3;                                                              //D!
 var bougthPrice = 0.00000001;                                              //D!
 var quoteCrypto = "BTC";                                                   //D!
-runBot("BSV", "ETH", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);    //D!
+runBot("BCH", "ETH", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);    //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
