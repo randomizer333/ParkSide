@@ -3,7 +3,7 @@ var enableOrders = false;                                                       
 var stopLossP = 3;                                                              //D!
 var bougthPrice = 0.00000001;                                              //D!
 var quoteCrypto = "BTC";                                                   //D!
-runBot("XMR", "BNB", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);    //D!
+runBot("BSV", "ETH", "PINGPONG", ticker, "binance", stopLossP, bougthPrice);    //D!
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
@@ -532,7 +532,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 if (!more) {
                                         bougthPrice = price;
                                         more = true;
-                                        console.log("BouhtgPrice updated: " + more);
+                                        console.log("Bougth price updated: " + more);
                                 }
                         }
                 }

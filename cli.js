@@ -10,7 +10,7 @@ var loss1 = 99;
 var quoteCrypto = "BNB";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
 var quoteCrypto2 = "BTC";
 var quoteCrypto3 = "ETH";
-var numOfBots = 31;
+var numOfBots = 33;
 var ticker = 15;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
@@ -127,6 +127,7 @@ setTimeout(function () { runBot("LTC", quoteFiat, "PINGPONG", ticker, "binance",
 setTimeout(function () { runBot("TRX", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("XLM", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("XRP", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("BSV", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto, quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto3, quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto, quoteCrypto3, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
@@ -143,6 +144,7 @@ setTimeout(function () { runBot("TRX", quoteCrypto2, "PINGPONG", ticker, "binanc
 setTimeout(function () { runBot("XLM", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("XRP", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("XMR", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("BSV", quoteCrypto2, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("EOS", quoteCrypto3, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("IOTA", quoteCrypto3, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("LTC", quoteCrypto3, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
