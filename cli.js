@@ -10,7 +10,7 @@ var loss1 = 99;
 var quoteCrypto = "BNB";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
 var quoteCrypto2 = "BTC";
 var quoteCrypto3 = "ETH";
-var numOfBots = 39;
+var numOfBots = 42;
 var ticker = 15;   //ticker time in minutes
 var enableOrders = true;
 //var portion = 1 / numOfBots;  //portion of total to buy
@@ -121,6 +121,9 @@ function runExchange(exchange) { //exchange, baseCurrencies[], quoteCurrencies[]
 setTimeout(function () { runBot(quoteCrypto, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto2, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot(quoteCrypto3, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("TUSD", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("USDC", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+setTimeout(function () { runBot("PAX", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("ADA", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("BCH", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("BSV", quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
@@ -188,7 +191,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
         var indicator = "MACD";
         //var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
-        var portion = 0.99;        //!!! 0.51 || 0.99 !       part of balance to trade 
+        var portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //var stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         var minProfitP = 0.1;        //holding addition
         var timeTicker = minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
