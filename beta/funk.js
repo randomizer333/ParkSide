@@ -11,5 +11,10 @@ function hToMs(timeInHours) {
     return r;
 }
 
-let t = functions(hToMs(10));
-console.log(t)
+module.exports.f = 
+
+function sestej (a,b){
+    r = a + b;    
+    return r;
+}
+
