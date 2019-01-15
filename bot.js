@@ -239,7 +239,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         baseVolume = r.baseVolume;
                         quoteVolume = r.quoteVolume;
                         change24h = r.change;
-                        //console.log("raw changw is:"+change24h);
+                        console.log("raw result:"+r1);
                         isNaN(change24h) ? change24h = 0 : "";
                         /*if (change24h < -1 || change24h > 1){     //percentage corection
                             change24hP = change24h;
