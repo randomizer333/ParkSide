@@ -11,6 +11,7 @@ pullout("binance", "BTC");       //D!
 function cs(object) {    //console log with stringify
         console.log(JSON.stringify(object));
 }
+
 function pullout(exchangeName, currency) {
         let ccxt = require('ccxt');
         var keys = require("./keys.json");  //keys file location
@@ -53,7 +54,7 @@ function pullout(exchangeName, currency) {
                         });
                         break;
         }
-        function fetchBalance() {        //loads ticker of a symbol a currency pair
+        function fetchBalances() {        //loads ticker of a symbol a currency pair
                 exchange.fetchBalance().then((results) => {
                         r = results;
                         //cs(r);
@@ -91,7 +92,92 @@ function pullout(exchangeName, currency) {
         var curs = [];
         var vals = [];
         var bals = [];
-        fetchBalance();
+        fetchBalances();
+
+        
+        function fetch24hs(){
+                function loadMarks() {  //loads all available markets
+                        exchange.loadMarkets().then((results) => {
+                                var r = exchange.symbols;    //market simbols BTC/USDT
+                                //cs(results);
+                                var r1 = JSON.stringify(r);
+                                syms = r;
+                                cs(syms.length);
+                                return r;
+                        }).catch((error) => {
+                                console.error(error);
+                        })
+                }
+                let syms = new Array();
+                loadMarks();
+
+                let chs = new Array();
+                let stev = 0;
+                function getMaxOfArray(numArray) {		//in: numericArray out: maxValue
+                        return Math.max.apply(null, numArray);
+                }
+                var bestBuy;
+                let maxChange;
+                function runFetchTicker(){
+                        var bestBuy;
+                        for (let i=1; i<syms.length; i++) {
+                                setTimeout( function timer(){
+                                        symbol = syms[i];
+                                        //cs(chs)
+                                        //cs(symbol);
+                                        fetchTickers();
+                                }, i*300 );
+                        }    
+                        function fetchTickers() {       //loads ticker of a symbol a currency pair
+                                exchange.fetchTicker(symbol).then((results) => {
+                                        var r = results;    //market simbols BTC/USDT
+                                        var r1 = JSON.stringify(r);
+                                        /*if(symbol == "DLT/ETH"){
+                                                cs(r);
+                                        }*/
+                                        baseVolume = r.baseVolume;
+                                        quoteVolume = r.quoteVolume;
+                                        change24h = r.percentage;
+                                        //console.log("raw result:"+r1);
+                                        //cs(change24h);
+                                        isNaN(change24h) ? change24h = 0 : "";
+                                        chs[stev] = change24h;
+                                        //cs(chs);
+                                        maxChange = getMaxOfArray(chs);
+                                        //cs(maxChange);
+                                        if( maxChange == chs[stev]){
+                                                bestBuy = syms[stev];
+                                                cs("Nova BESTBUY valuta: "+bestBuy+" z vrednostjo "+maxChange);
+                                        }
+                                        cs(syms[stev]+" "+stev+" "+chs[stev]);
+                                        stev++;
+                                        /*if (change24h < -1 || change24h > 1){     //percentage corection
+                                            change24hP = change24h;
+                                        }else{
+                                            change24hP = change24h*100;
+                                        }*/
+                                        /*change24h < -1 || change24h > 1 ?
+                                                change24hP = change24h :
+                                                change24hP = change24h * 100;*/
+                                        return r;
+                                }).catch((error) => {
+                                        console.error(error);
+                                })
+                        }
+                        var change24h = 0;
+                        var change24hP = 0;
+                        var baseVolume;
+                        var quoteVolume;
+                        //fetchTickers(symbol);
+                        cs("tickers");
+                }
+                setTimeout(function () {runFetchTicker()}, 2000);
+                cs("BESTBUY valuta: "+bestBuy+" z vrednostjo "+maxChange);
+
+                
+        }
+        let tickers = new Array();
+        fetch24hs(exchange);
 
         var portf = [];         //array of currencies owned
         //portfolio();
@@ -330,7 +416,7 @@ function getTime() {
         return time;
 }
 
-
+/*
 //setTimeout(function () { runBot("BTC", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) },counter());     //pullout of crypto to best crypto
 setTimeout(function () { runBot(transferCurrency, quoteCrypto, "PINGPONG", ticker, "binance", -3000, bougthPrice) }, counter());
 setTimeout(function () { runBot("XLM", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
@@ -340,7 +426,7 @@ setTimeout(function () { runBot("TRX", quoteCrypto, "PINGPONG", ticker, "binance
 setTimeout(function () { runBot("BNB", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("EOS", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
 setTimeout(function () { runBot("BCHSV", quoteCrypto, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-
+*/
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
