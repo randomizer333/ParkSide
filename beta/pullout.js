@@ -145,11 +145,11 @@ function pullout(exchangeName, currency) {
                                         //cs(chs);
                                         maxChange = getMaxOfArray(chs);
                                         //cs(maxChange);
-                                        if( maxChange == chs[stev]){
+                                        if( maxChange == chs[stev] && chs[stev] < 200 ){
                                                 bestBuy = syms[stev];
                                                 cs("Nova BESTBUY valuta: "+bestBuy+" z vrednostjo "+maxChange);
                                         }
-                                        cs(syms[stev]+" "+stev+" "+chs[stev]);
+                                        cs(syms[stev]+" "+stev+" "+chs[stev]+" "+bestBuy);
                                         stev++;
                                         /*if (change24h < -1 || change24h > 1){     //percentage corection
                                             change24hP = change24h;
