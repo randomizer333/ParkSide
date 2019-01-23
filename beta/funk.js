@@ -43,22 +43,22 @@ exports.msToMin = function (timeInMiliseconds) {
     var r = (timeInMiliseconds / 1000) / 60;
     return r;
 }
-exports.whole = function (part, percent) {//whole is part divided by percentage
+exports.whole = function (part, percent) {  //whole is part divided by percentage
     return part / (percent / 100);
 }
-exports.percent = function (part, whole) {//percent is part divided by whole
+exports.percent = function (part, whole) {  //percent is part divided by whole
     return (part / whole) * 100;
 }
-exports.part = function (percent, whole) {//part is percent multiplied by whole
+exports.part = function (percent, whole) {  //part is percent multiplied by whole
     return (percent / 100) * whole;
 }
-exports.getMinOfArray = function (numArray) {		//in: numericArray out: minValue
+exports.getMinOfArray = function (numArray) {	//in: numericArray out: minValue
     return Math.min.apply(null, numArray);
 }
-exports.getMaxOfArray = function (numArray) {		//in: numericArray out: maxValue
+exports.getMaxOfArray = function (numArray) {	//in: numericArray out: maxValue
     return Math.max.apply(null, numArray);
 }
-exports.getAvgOfArray = function (numArray) {		//in: numericArray out: avgValue
+exports.getAvgOfArray = function (numArray) {	//in: numericArray out: avgValue
     var numArray;
     var n = numArray.length;
     var sum = 0;

@@ -149,7 +149,7 @@ function pullout(exchangeName, currency) {
                                                 bestBuy = syms[stev];
                                                 cs("Nova BESTBUY valuta: "+bestBuy+" z vrednostjo "+maxChange);
                                         }
-                                        cs(syms[stev]+" "+stev+" "+chs[stev]+" "+bestBuy);
+                                        //cs(syms[stev]+" "+stev+" "+chs[stev]+" "+bestBuy);
                                         stev++;
                                         /*if (change24h < -1 || change24h > 1){     //percentage corection
                                             change24hP = change24h;

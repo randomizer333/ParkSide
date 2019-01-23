@@ -3,23 +3,20 @@ let f = require('./funk.js');   //connect to module functions
 
 
 //init setup
-var quoteFiat = "USDT"; //USDT,EUR
+var fiat = "USDT"; //USDT,EUR
 var bougthPrice = 0.00000001;  //set bouht price
 var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
-var quoteCrypto = "BNB";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
-var quoteCrypto2 = "BTC";
-var quoteCrypto3 = "ETH";
-var numOfBots = 3;
-var ticker = 1;   //ticker time in minutes
+var numOfBots = 2;
+var ticker = 0.2;   //ticker time in minutes
 var enableOrders = false;
-//var portion = 1 / numOfBots;  //portion of total to buy
-var portionPerBot;
+var stopLossP = 1;
+var alt = "BNB";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
+let quote = "BTC";
 
 //main void
 console.log("Module CCXT version: " + ccxt.version);
 console.log("Available exchanges: " + ccxt.exchanges);
-//sendMail("Startup", "The bot was run from start at: " + getTime());
 
 function counter() {       //defines next time delay
         //var delay = 5000 //miliseconds
@@ -31,70 +28,11 @@ function counter() {       //defines next time delay
 let delay = (ticker / numOfBots) * 60000;
 let a = 0;  //counter
 
-function sendMail(subject, message, to) {
-        // email account data
-        var nodemailer = require('nodemailer');
-        var transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                        user: 'mrbitja@gmail.com',
-                        pass: 'mrbitne7777777'
-                }
-        });
-
-        // mail body
-        var subject;
-        var message;
-        to;
-        var mailOptions = {
-                from: 'bb@gmail.com',   //NOT WORK
-                to: 'markosmid333@gmail.com',//to, 
-                subject: subject, //'You have got mail',
-                text: message
-        };
-
-        // response
-        transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                        console.log(error);
-                } else {
-                        //console.log('Email sent: ' + info.response);
-                        console.log("Email sent at: " + f.getTime() + " to: " + mailOptions.to);
-                }
-        });
+function runBots(alt,quote){
+        setTimeout(function () { runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+        setTimeout(function () { runBot(quote, "USDT", "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
 }
-
-function getTime() {
-        var timestamp = Date.now();     // Get current time in UNIX EPOC format
-        var d = new Date(timestamp),	// Convert the passed timestamp to milliseconds
-                yyyy = d.getFullYear(),
-                mm = ('0' + (d.getMonth() + 1)).slice(-2),	// Months are zero based. Add leading 0.
-                dd = ('0' + d.getDate()).slice(-2),			// Add leading 0.
-                hh = d.getHours(),
-                h = hh,
-                min = ('0' + d.getMinutes()).slice(-2),		// Add leading 0.
-                ampm = 'AM',
-                time;
-        /*if (hh > 12) {
-                h = hh - 12;
-                ampm = 'PM';
-        } else if (hh === 12) {
-                h = 12;
-                ampm = 'PM';
-        } else if (hh == 0) {
-                h = 12;
-        }*/
-        // ie: 2013-02-18, 8:35 AM	
-        //time = yyyy h + ':' + min + ampm + '-' + mm + '-' + dd + '. ' +  ' ' +;
-        time = h + ':' + min + ' ' + dd + '.' + mm + '.' + yyyy;
-        return time;
-}
-
-
-//setTimeout(function () { runBot( quoteCrypto, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) },counter());     //pullout of crypto
-setTimeout(function () { runBot(quoteCrypto, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot(quoteCrypto2, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
-setTimeout(function () { runBot(quoteCrypto3, quoteFiat, "PINGPONG", ticker, "binance", loss1, bougthPrice) }, counter());
+runBots(alt,quote);
 
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
@@ -121,6 +59,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
         var fiatCurrency = "USDT";//"USDT"EUR
         exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
+        let quoteCrypto = "BTC"
         var fiatSymbol = mergeSymbol(quoteCrypto, fiatCurrency);
         //console.log("fiatSymbol" + fiatSymbol);
         var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
@@ -129,8 +68,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //var stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         var minProfitP = 0.1;        //holding addition
-        var timeTicker = minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
-        var timeStart = msToMin(26 * timeTicker);    // default:10080min = 7d, 1440min = 1d
+        var timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
+        var timeStart = f.msToMin(26 * timeTicker);    // default:10080min = 7d, 1440min = 1d
         var msg;
         var exchangeName;// = "poloniex";      
         var x = 0; //counter for starting mail
@@ -197,32 +136,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 return a * delay;
         }
 
-        function getTime() {
-                var timestamp = Date.now();     // Get current time in UNIX EPOC format
-                var d = new Date(timestamp),	// Convert the passed timestamp to milliseconds
-                        yyyy = d.getFullYear(),
-                        mm = ('0' + (d.getMonth() + 1)).slice(-2),	// Months are zero based. Add leading 0.
-                        dd = ('0' + d.getDate()).slice(-2),			// Add leading 0.
-                        hh = d.getHours(),
-                        h = hh,
-                        min = ('0' + d.getMinutes()).slice(-2),		// Add leading 0.
-                        ampm = 'AM',
-                        time;
-                /*if (hh > 12) {
-                        h = hh - 12;
-                        ampm = 'PM';
-                } else if (hh === 12) {
-                        h = 12;
-                        ampm = 'PM';
-                } else if (hh == 0) {
-                        h = 12;
-                }*/
-                // ie: 2013-02-18, 8:35 AM	
-                //time = yyyy h + ':' + min + ampm + '-' + mm + '-' + dd + '. ' +  ' ' +;
-                time = h + ':' + min + ' ' + dd + '.' + mm + '.' + yyyy;
-                return time;
-        }
-
         function sendMail(subject, message, to) {
                 // email account data
                 var nodemailer = require('nodemailer');
@@ -251,35 +164,11 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                                 console.log(error);
                         } else {
                                 //console.log('Email sent: ' + info.response);
-                                console.log("Email sent at: " + getTime() + " To: " + mailOptions.to + " Subject: " + subject);
+                                console.log("Email sent at: " + f.getTime() + " To: " + mailOptions.to + " Subject: " + subject);
                         }
                 });
         }
-        //sendMail("Run!","Started at:"+getTime());
-
-        function minToMs(timeInMinutes) {
-                var r = timeInMinutes * 60000;
-                return r;
-        }
-
-        function hToMs(timeInHours) {
-                var r = timeInHours * 3600000;
-                return r;
-        }
-
-        function msToMin(timeInMiliseconds) {
-                var r = (timeInMiliseconds / 1000) / 60;
-                return r;
-        }
-        function whole(part, percent) {//whole is part divided by percentage
-                return part / (percent / 100);
-        }
-        function percent(part, whole) {//percent is part divided by whole
-                return (part / whole) * 100;
-        }
-        function part(percent, whole) {//part is percent multiplied by whole
-                return (percent / 100) * whole;
-        }
+        //sendMail("Run!","Started at:"+f.getTime());
 
         function mergeSymbol(base, quote) {
                 /*
@@ -490,23 +379,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 var amountQuote = amountBase * bid;
                 return amountQuote;
         }
-        function getMinOfArray(numArray) {		//in: numericArray out: minValue
-                return Math.min.apply(null, numArray);
-        }
-        function getMaxOfArray(numArray) {		//in: numericArray out: maxValue
-                return Math.max.apply(null, numArray);
-        }
-        function getAvgOfArray(numArray) {		//in: numericArray out: avgValue
-                var numArray;
-                var n = numArray.length;
-                var sum = 0;
-                var avg;
-                for (i = 0; i < n; i++) {
-                        sum += numArray[i];
-                        avg = sum / n;
-                }
-                return avg;
-        }
         function getAvgOfArrayJump(numArray, jump) {     //in: numericArray out: avgValueOfPart
                 var numArray;
                 var jump;
@@ -656,10 +528,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
                 function stalling(longTimePrice, price, div) {
 
-                        var ma = getAvgOfArray(longTimePrice);
-                        if (ma + (part(div, ma) > price)) {
+                        var ma = f.getAvgOfArray(longTimePrice);
+                        if (ma + (f.part(div, ma) > price)) {
                                 stall = true;
-                        } else if (ma - (part(div, ma) < price)) {
+                        } else if (ma - (f.part(div, ma) < price)) {
                                 stall = true;
                         } else {
                                 stall = false;
@@ -671,15 +543,15 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 //var stall = stalling(logUD,price,0.001);
 
                 function bounce(array) {
-                        getMaxOfArray(logMACD) > price;
+                        f.getMaxOfArray(logMACD) > price;
                 }
                 var down = bounce(logMACD)
 
                 function safetySale(tradingFeeP, bougthPrice) {  //no sale with loss
                         var tradingFeeAbs;
                         tradingFeeP = tradingFeeP * 2;
-                        tradingFeeAbs = part(tradingFeeP, bougthPrice);
-                        minProfitAbs = part(minProfitP, bougthPrice);
+                        tradingFeeAbs = f.part(tradingFeeP, bougthPrice);
+                        minProfitAbs = f.part(minProfitP, bougthPrice);
                         //console.log("Fee: "+tradingFeeP+"% "+tradingFeeAbs+" $");
                         sellPrice = bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
                         //return hold = false;     //uncoment to disable
@@ -693,7 +565,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 var hold = safetySale(tradingFeeP, bougthPrice);        //returns bool
 
                 function safetyStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
-                        absStopLoss = part(stopLossP, sellPrice);
+                        absStopLoss = f.part(stopLossP, sellPrice);
                         loss = sellPrice - price;     //default: loss = sellPrice - price;
                         //return stopLoss = false;        //uncoment to disable
                         if (loss > absStopLoss) {
@@ -707,7 +579,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 //get trends,signals,startegy
 
                 function upDown(value) {     //trendUD between curent and last value
-                        var ma = getAvgOfArray(logUD);
+                        var ma = f.getAvgOfArray(logUD);
                         //console.log("ma5:"+ma5);
                         if (stor[1] == undefined) {
                                 stor[1] = value;
@@ -805,14 +677,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 function makeAsk(ask, ask2) {     //makerify prices for orders
                         var shiftP = 50;       //percentage of makerPrice shift
                         var askSubSpread = ask2 - ask;    //spread between first and second order of asks
-                        return buyPrice = ask + part(shiftP, askSubSpread);
+                        return buyPrice = ask + f.part(shiftP, askSubSpread);
                 }
                 var buyPrice = price;//makeAsk(ask,ask2);
 
                 function makeBid(bid, bid2) {     //makerify prices for orders
                         var shiftP = 50;       //percentage of makerPrice shift
                         var bidSubSpread = bid - bid2;    //spread between first and second order of bids
-                        return salePrice = bid - part(shiftP, bidSubSpread);
+                        return salePrice = bid - f.part(shiftP, bidSubSpread);
                 }
                 var salePrice = price;//makeBid(bid,bid2);
 
@@ -870,8 +742,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                         console.log("balance " + balance);*/
                         var balanceB = quoteBalanceInBase + baseBalance;
                         var profit = price - sellPrice;
-                        var relProfit = percent(profit, sellPrice);
-                        var absProfit = part(relProfit, baseBalanceInQuote);
+                        var relProfit = f.percent(profit, sellPrice);
+                        var absProfit = f.part(relProfit, baseBalanceInQuote);
                         var absProfitFiat = absProfit * fiatPrice;/*
                         console.log("absProfitFiat " + absProfitFiat);
                         console.log("absProfit " + absProfit);
@@ -879,7 +751,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
                         var rounds = roundMax - round;
                         //var absProfit = profit * baseBalance;
-                        //var relProfit = percent(absProfit, sellPrice);
+                        //var relProfit = f.percent(absProfit, sellPrice);
                         var separator = "|";
                         msg =   //info msg on ticker time
                                 f.getTime() + "|" +
