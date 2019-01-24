@@ -14,7 +14,7 @@ function cs(object) {    //console log with stringify
 
 function pullout(exchangeName, currency) {
         let ccxt = require('ccxt');
-        var keys = require("./keys.json");  //keys file location
+        let keys = require("../keys.json");  //keys file location
         function mergeSymbol(baseCurrency, quoteCurrency) {
                 return symbol = baseCurrency + "/" + quoteCurrency;
         }

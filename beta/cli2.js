@@ -1,6 +1,6 @@
 let ccxt = require('ccxt');     //connect to ccxt node.js module
 let f = require('./funk.js');   //connect to module functions
-
+let keys = require("../keys.json");      //keys file location
 
 //init setup
 var fiat = "USDT"; //USDT,EUR
@@ -10,9 +10,10 @@ var loss1 = 99;
 var numOfBots = 2;
 var ticker = 0.2;   //ticker time in minutes
 var enableOrders = false;
-var stopLossP = 1;
-var alt = "BNB";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
-let quote = "BTC";
+var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
+let quote = ["BTC","ETH","BNB"];
+//var alt = "BNB";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
+//let quote = "BTC";
 
 //main void
 console.log("Module CCXT version: " + ccxt.version);
@@ -28,12 +29,127 @@ function counter() {       //defines next time delay
 let delay = (ticker / numOfBots) * 60000;
 let a = 0;  //counter
 
-function runBots(alt,quote){
-        setTimeout(function () { runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
-        setTimeout(function () { runBot(quote, "USDT", "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+let exchange;
+let exchangeName = "binance";
+switch (exchangeName) {
+        case "bitstamp":
+                exchange = new ccxt.bitstamp({
+                        apiKey: keys.bitstamp.apiKey,
+                        secret: keys.bitstamp.secret,
+                        uid: keys.bitstamp.uid
+                });
+                break;
+        case "poloniex":
+                exchange = new ccxt.poloniex({
+                        apiKey: keys.poloniex.apiKey,
+                        secret: keys.poloniex.secret,
+                });
+                break;
+        case "bittrex":
+                exchange = new ccxt.bittrex({
+                        apiKey: keys.bittrex.apiKey,
+                        secret: keys.bittrex.secret,
+                });
+                break;
+        case "coinbase":
+                exchange = new ccxt.coinbase({
+                        apiKey: keys.coinbase.apiKey,
+                        secret: keys.coinbase.secret,
+                });
+                break;
+        case "binance":
+                exchange = new ccxt.binance({
+                        apiKey: keys.binance.apiKey,
+                        secret: keys.binance.secret,
+                });
+                break;
+        case "hitbtc":
+                exchange = new ccxt.hitbtc({
+                        apiKey: keys.hitbtc.apiKey,
+                        secret: keys.hitbtc.secret,
+                });
+                break;
+        case "bitmex":
+                exchange = new ccxt.bitmex({
+                        apiKey: keys.bitmex.apiKey,
+                        secret: keys.bitmex.secret
+                })
+                break;
 }
-runBots(alt,quote);
 
+function fetch24hs() {
+        function loadMarks() {  //loads all available markets
+                exchange.loadMarkets().then((results) => {
+                        let r = exchange.symbols;    //market simbols BTC/USDT
+                        syms = r;
+                        return r;
+                }).catch((error) => {
+                        console.error(error);
+                })
+        }
+        let syms = loadMarks();
+
+        let chs = new Array();
+        let stev = 0;
+        let maxChange;
+        function runFetchTicker() {
+                for (let i = 1; i < syms.length; i++) {
+                        setTimeout(function timer() {
+                                symbol = syms[i];
+                                fetchTickers();
+                        }, i * 300);
+                }
+                function fetchTickers() {       //loads ticker of a symbol a currency pair
+                        exchange.fetchTicker(symbol).then((results) => {
+                                var r = results;    //market simbols BTC/USDT
+                                var r1 = JSON.stringify(r);
+                                baseVolume = r.baseVolume;
+                                quoteVolume = r.quoteVolume;
+                                change24h = r.percentage;
+                                isNaN(change24h) ? change24h = 0 : "";
+                                chs[stev] = change24h;
+                                //cs(chs);
+                                maxChange = f.getMaxOfArray(chs);
+                                //cs(maxChange);
+                                if (maxChange == chs[stev] && chs[stev] < 200) {
+                                        bestBuy = syms[stev];
+                                        f.cs("Nova BESTBUY valuta: " + bestBuy + " z vrednostjo " + maxChange);
+                                }
+                                //cs(syms[stev]+" "+stev+" "+chs[stev]+" "+bestBuy);
+                                stev++;
+                                return r;
+                        }).catch((error) => {
+                                console.error(error);
+                        })
+                }
+                var change24h = 0;
+                var change24hP = 0;
+                var baseVolume;
+                var quoteVolume;
+                //fetchTickers(symbol);
+        }
+        setTimeout(function () { runFetchTicker() }, 1000);
+        //f.cs("BESTBUY valuta: " + bestBuy + " z vrednostjo " + maxChange);
+        return bestBuy;
+}
+let bestBuy;
+let tickers = new Array();
+fetch24hs();
+
+function setBots(symbol) {
+        let sym = symbol;
+        let alt = f.splitSymbol(sym, "first");
+        //let quote = f.splitSymbol(sym, "second");
+        f.cs("A: " + alt + " Q: " + quote + " F: " + fiat);
+}
+
+function runBots(alt) {
+        setTimeout(function () { runBot(alt, quote[0], "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+        setTimeout(function () { runBot(alt, quote[1], "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+        setTimeout(function () { runBot(alt, quote[2], "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+        setTimeout(function () { runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+}
+//runBots(alt);
 
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
@@ -492,7 +608,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 //price = bid2;  
                 bougthPrice == 0.00000001 ? bougthPrice = price : "";   //init
 
-                function balanceChanged(){
+                function balanceChanged() {
                         if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                                 if (!more) {
                                         bougthPrice = price;

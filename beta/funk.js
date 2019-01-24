@@ -69,3 +69,24 @@ exports.getAvgOfArray = function (numArray) {	//in: numericArray out: avgValue
     }
     return avg;
 }
+exports.mergeSymbol = function (base, quote) {
+    /*
+    if (base == quote){
+            base = baseCurrency;
+    }*/
+    return mergedSymbol = base + "/" + quote;
+
+}
+exports.splitSymbol = function (symbol, selectReturn) {   // BTC/USDT   ,   first | second    base | quote
+    var char = symbol.search("/");
+    first = symbol.slice(0, char);
+    second = symbol.slice(char + 1, symbol.length);
+    switch (selectReturn) {
+            case "first":
+                    return first;
+                    break;
+            case "second":
+                    return second;
+                    break;
+    }
+}
