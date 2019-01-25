@@ -77,6 +77,14 @@ switch (exchangeName) {
                 break;
 }
 
+function myStopFunction(fu) {
+        clearInterval(fu);
+        f.cs("stopped");
+        q = 0;
+}
+var q = 0;
+//var myVar = setInterval(fetch24hs(), 1000);
+
 function fetch24hs() {
         function loadMarks() {  //loads all available markets
                 exchange.loadMarkets().then((results) => {
@@ -130,10 +138,8 @@ function fetch24hs() {
         }
         setTimeout(function () { runFetchTicker() }, 1000);
         //f.cs("BESTBUY valuta: " + bestBuy + " z vrednostjo " + maxChange);
-        return bestBuy;
 }
 let bestBuy;
-let tickers = new Array();
 fetch24hs();
 
 function setBots(symbol) {
@@ -142,6 +148,7 @@ function setBots(symbol) {
         //let quote = f.splitSymbol(sym, "second");
         f.cs("A: " + alt + " Q: " + quote + " F: " + fiat);
 }
+//setBots(bestBuy);
 
 function runBots(alt) {
         setTimeout(function () { runBot(alt, quote[0], "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
@@ -151,6 +158,7 @@ function runBots(alt) {
 }
 //runBots(alt);
 
+//runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossP, bougthPrice)
 function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
         /*Architecture:
                 init
@@ -187,12 +195,12 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         var timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
         var timeStart = f.msToMin(26 * timeTicker);    // default:10080min = 7d, 1440min = 1d
         var msg;
-        var exchangeName;// = "poloniex";      
+        //var exchangeName;// = "poloniex";      
         var x = 0; //counter for starting mail
 
         var TI = require("technicalindicators");
         //ccxt API
-        var keys = require("./keys.json");  //keys file location
+        //var keys = require("./keys.json");  //keys file location
         let ccxt = require('ccxt');
         var exchange;
         switch (exchangeName) {

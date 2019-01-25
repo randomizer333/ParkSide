@@ -19,59 +19,58 @@
 let f = require('./funk.js');           //connect to module functions
 let ccxt = require('ccxt');             //connect to ccxt node.js module
 let keys = require("../keys.json");      //keys file location
-var TI = require("technicalindicators");//technical indicators library
+let TI = require("technicalindicators");//technical indicators library
 
 function myStopFunction(fu) {
     clearInterval(fu);
     f.cs("stopped");
-    q = 0;
+    q = 1;
 }
 
-var myVar = setInterval(myTimer, 1000);
-var q = 0;
-function myTimer() {
+var q = 1;
+var ff1 = setInterval(f1, 1000);
+var ff2;
+var ff3;
+//let ff = [setInterval(f1, 500),setInterval(f2, 500),setInterval(f3, 500)]
+function f1() {
     var d = new Date();
     var t = d.toLocaleTimeString();
-    f.cs(t);
-    q++;
-    f.cs(q);
+    f.cs("čas: "+t+" stevec: "+q+" loop f1");
     if (q == 3) {
-        myVar2 = setInterval(myTimer2, 1000);
-    }
-    q == 3 ? myStopFunction(myVar) : "";
+        ff2 = setInterval(f2, 1000);
+        myStopFunction(ff1);
+    }else{
+        q++;
+    };
 }
 
-var myVar2
-//var myVar2 = setInterval(myTimer2, 1000);
-var q = 0;
-function myTimer2() {
+function f2() {
     var d = new Date();
     var t = d.toLocaleTimeString();
-    f.cs("druga: " + t);
-    q++;
-    f.cs(q);
-    q == 5 ? myStopFunction(myVar2) : "";
-}
-
-
-function tester(max) {
-    f.cs("runing function 1 tester");
-    stevc++;
-    console.log(stevc);
-    if (stevc >= max) {
-        stop(tester);
-        run1();
-        //let run = setInterval(function () { runner(stevc) }, 1000);
+    f.cs("čas: "+t+" stevec: "+q+" loop f2");
+    if (q == 3) {
+        ff3 = setInterval(f3, 1000);
+        myStopFunction(ff2);
+    }else{
+        q++;
     }
+    //q == 3 ? myStopFunction(ff1) : "";
 }
 
-function runner(valuta) {
-    f.cs("runing function 2 runner with " + valuta);
-    stevc++
-    if (stevc > 5) {
-        stop(run);
+function f3() {
+    var d = new Date();
+    var t = d.toLocaleTimeString();
+    f.cs("čas: "+t+" stevec: "+q+" loop f3");
+    if (q == 3) {
+        ff1 = setInterval(f1, 1000);
+        myStopFunction(ff3);
+    }else{
+        q++;
     }
+    //q == 3 ? myStopFunction(ff1) : "";
 }
+
+
 
 
 
