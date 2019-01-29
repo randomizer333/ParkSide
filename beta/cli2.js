@@ -1,6 +1,7 @@
 let ccxt = require('ccxt');     //connect to ccxt node.js module
 let f = require('./funk.js');   //connect to module functions
 let keys = require("../keys.json");      //keys file location
+let b = require("./bot2.js");
 
 //init setup
 var fiat = "USDT"; //USDT,EUR
@@ -12,8 +13,6 @@ var ticker = 0.2;   //ticker time in minutes
 var enableOrders = false;
 var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
 let quote = ["BTC","ETH","BNB"];
-//var alt = "BNB";     //"USDT", "BTC", "ETH", "XRP" currency to pay with
-//let quote = "BTC";
 
 //main void
 console.log("Module CCXT version: " + ccxt.version);
@@ -83,7 +82,7 @@ function myStopFunction(fu) {
         q = 0;
 }
 var q = 0;
-//var myVar = setInterval(fetch24hs(), 1000);
+var myVar = setInterval(fetch24hs(), 1000);
 
 function fetch24hs() {
         function loadMarks() {  //loads all available markets
@@ -140,7 +139,7 @@ function fetch24hs() {
         //f.cs("BESTBUY valuta: " + bestBuy + " z vrednostjo " + maxChange);
 }
 let bestBuy;
-fetch24hs();
+//fetch24hs();
 
 function setBots(symbol) {
         let sym = symbol;

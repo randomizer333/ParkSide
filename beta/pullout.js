@@ -71,14 +71,14 @@ function pullout(exchangeName, currency) {
                                 var j = 0;
                                 for (i = 0; i < vals.length; i++) {
                                         if (vals[i] > 0) {
-                                                portf[j] = curs[i+1];
+                                                portf[j] = curs[i + 1];
                                                 bals[j] = vals[i];
                                                 j++;
                                         }
                                 }
-                                cs("Currency("+ portf.length+")  Balance");
-                                for(i = 0; i<portf.length; i++){
-                                        cs(portf[i]+"           "+bals[i]);
+                                cs("Currency(" + portf.length + ")  Balance");
+                                for (i = 0; i < portf.length; i++) {
+                                        cs(portf[i] + "           " + bals[i]);
                                 }
                                 //cs(portf);
                                 //cs(bals);
@@ -94,8 +94,7 @@ function pullout(exchangeName, currency) {
         var bals = [];
         fetchBalances();
 
-        
-        function fetch24hs(){
+        function fetch24hs() {
                 function loadMarks() {  //loads all available markets
                         exchange.loadMarkets().then((results) => {
                                 var r = exchange.symbols;    //market simbols BTC/USDT
@@ -118,16 +117,17 @@ function pullout(exchangeName, currency) {
                 }
                 var bestBuy;
                 let maxChange;
-                function runFetchTicker(){
+                function runFetchTicker() {
                         var bestBuy;
-                        for (let i=1; i<syms.length; i++) {
-                                setTimeout( function timer(){
+                        for (let i = 1; i < syms.length; i++) {
+                                setTimeout(function timer() {
                                         symbol = syms[i];
                                         //cs(chs)
                                         //cs(symbol);
                                         fetchTickers();
-                                }, i*300 );
-                        }    
+                                }, i * 100);
+                        }
+                        let w = 0;
                         function fetchTickers() {       //loads ticker of a symbol a currency pair
                                 exchange.fetchTicker(symbol).then((results) => {
                                         var r = results;    //market simbols BTC/USDT
@@ -145,20 +145,22 @@ function pullout(exchangeName, currency) {
                                         //cs(chs);
                                         maxChange = getMaxOfArray(chs);
                                         //cs(maxChange);
-                                        if( maxChange == chs[stev] && chs[stev] < 200 ){
+                                        w++;
+                                        if (w == syms.length - 1) {
+                                                cs("stoping" + " BestBuy: " + bestBuy);
+                                                cs(w);
+                                        } else {
+                                                cs(w);
+                                        }
+                                        if (maxChange == chs[stev] && chs[stev] < 200) {
                                                 bestBuy = syms[stev];
-                                                cs("Nova BESTBUY valuta: "+bestBuy+" z vrednostjo "+maxChange);
+                                                cs("Nova BESTBUY valuta: " + bestBuy + " z vrednostjo " + maxChange);
+                                                var d = new Date();
+                                                var t = d.toLocaleTimeString();
+                                                cs(t);
                                         }
                                         //cs(syms[stev]+" "+stev+" "+chs[stev]+" "+bestBuy);
                                         stev++;
-                                        /*if (change24h < -1 || change24h > 1){     //percentage corection
-                                            change24hP = change24h;
-                                        }else{
-                                            change24hP = change24h*100;
-                                        }*/
-                                        /*change24h < -1 || change24h > 1 ?
-                                                change24hP = change24h :
-                                                change24hP = change24h * 100;*/
                                         return r;
                                 }).catch((error) => {
                                         console.error(error);
@@ -171,10 +173,10 @@ function pullout(exchangeName, currency) {
                         //fetchTickers(symbol);
                         cs("tickers");
                 }
-                setTimeout(function () {runFetchTicker()}, 2000);
-                cs("BESTBUY valuta: "+bestBuy+" z vrednostjo "+maxChange);
+                setTimeout(function () { runFetchTicker() }, 2000);
+                cs("BESTBUY valuta: " + bestBuy + " z vrednostjo " + maxChange);
 
-                
+
         }
         let tickers = new Array();
         fetch24hs(exchange);
