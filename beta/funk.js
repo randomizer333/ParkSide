@@ -93,3 +93,9 @@ exports.splitSymbol = function (symbol, selectReturn) {   // BTC/USDT   ,   firs
                         break;
         }
 }
+exports.boolToInitial = function (bool) {	//returns initial of string|bool
+        var bool;
+        var a = bool.toString();
+        var b = a.charAt(0);
+        return b;
+}

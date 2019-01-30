@@ -24,12 +24,12 @@ let TI = require("technicalindicators");//technical indicators library
 
 //init setup
 var fiat = "USDT"; //USDT,EUR
-var bougthPrice = 0.00000001;  //set bouht price
+var bougthPrice = 0.00000001;  //set bougth price
 var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
 var numOfBots = 2;
 var ticker = 0.2;   //ticker time in minutes
-var enableOrders = false;
+let enableOrders = false;
 var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
 let quote = ["BTC", "ETH", "BNB"];
 
@@ -95,7 +95,6 @@ switch (exchangeName) {
         break;
 }
 
-
 function stopLoop(fu) { //stops a setInterval function
     clearInterval(fu);
     f.cs("loop stopped");
@@ -106,6 +105,7 @@ var q = 1;
 var ff1 = f1();// = setInterval(f1, 1000);
 var ff2 = f2;
 var ff3;
+let bestBuy;
 //let ff = [setInterval(f1, 500),setInterval(f2, 500),setInterval(f3, 500)]
 function f1() {
     function fetch24hs() {
@@ -126,10 +126,9 @@ function f1() {
         let chs = new Array();
         let stev = 0;
         let maxChange;
-        let bestBuy;
         function runFetchTicker() {
             //var bestBuy;
-            for (let i = 1; i < syms.length; i++) {
+            for (let i = 0; i < syms.length; i++) {
                 setTimeout(function timer() {
                     symbol = syms[i];
                     //f.cs(chs)
@@ -145,6 +144,7 @@ function f1() {
                     baseVolume = r.baseVolume;
                     quoteVolume = r.quoteVolume;
                     change24h = r.percentage;
+                    priceChange = r.change;
                     isNaN(change24h) ? change24h = 0 : "";
                     !change24h ? change24h = 0 : "";
                     chs[stev] = change24h;
@@ -153,15 +153,37 @@ function f1() {
                         bestBuy = syms[stev];
                         function loger(value, length, array) {        //log FILO to array
                             while (array.length >= length) {
-                                    array.pop();
+                                array.pop();
                             }
                             array.unshift(value);
                             return array;
                         }
                         loger(bestBuy, 3, logChs);
-                        f.cs("Nova BESTBUY valuta: " + bestBuy + " z vrednostjo " + maxChange+" "+logChs);
+                        f.cs("BESTBUY: " + stev + " " + maxChange + " % " + logChs);
                     }
-                    //f.cs(syms[stev]+" "+stev+" "+chs[stev]+" "+bestBuy);
+                    if (stev == syms.length - 2) { //exit condition
+                        f.cs("BestBuy: " + bestBuy)
+                        function setBots(sym) {
+                            let exS = false;
+                            let alt = f.splitSymbol(sym, "first");
+                            let quote = f.splitSymbol(sym, "second");
+                            f.cs("A: " + alt + " Q: " + quote + " F: " + fiat);
+                            let fSym = f.mergeSymbol(quote,fiat)
+                            for (i = 0; i <= syms.length; i++) {
+                                if (fSym == syms[i]) {
+                                    exS = true;
+                                    f.cs("Fiat symbol "+fSym+" exist: "+exS);
+                                }
+                            }
+                            if (exS) {
+                                setTimeout(function () { b.runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+                            }
+                            setTimeout(function () { b.runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+                        }
+                        //bestBuy = "BTC/USDT"; //dev
+                        setBots(bestBuy);   //set and run bots
+                    }
+                    //f.cs(stev+" "+syms[stev]+" "+chs[stev]+" "+bestBuy);
                     stev++;
                     return r;
                 }).catch((error) => {
@@ -172,10 +194,11 @@ function f1() {
             var change24hP = 0;
             var baseVolume;
             var quoteVolume;
+            let priceChange;
             //fetchTickers(symbol);
         }
-        setTimeout(function () { runFetchTicker() }, 2000);
-        f.cs("BESTBUY valuta: " + bestBuy + " z vrednostjo " + maxChange);
+        setTimeout(function () { runFetchTicker() }, 1000);
+        return;
     }
     let tickers = new Array();
     fetch24hs(exchange);
@@ -186,16 +209,8 @@ function f1() {
     } else {
         q++;
     };
+    return;
 }
-
-function setBots(symbol) {
-    let sym = symbol;
-    let alt = f.splitSymbol(sym, "first");
-    //let quote = f.splitSymbol(sym, "second");
-    f.cs("A: " + alt + " Q: " + quote + " F: " + fiat);
-}
-//setBots(bestBuy);
-
 
 function f2() {
     var d = new Date();

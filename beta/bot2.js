@@ -72,6 +72,8 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
         var roundMax = 5;       //disable buying after this count
 
         //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
+
+        let enableOrders = false;
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
         var fiatCurrency = "USDT";//"USDT"EUR
         exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
@@ -180,20 +182,16 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
         function fetchTicker() {        //loads ticker of a symbol a currency pair
                 exchange.fetchTicker(symbol).then((results) => {
                         var r = results;    //market simbols BTC/USDT
-                        var r1 = JSON.stringify(r);
                         baseVolume = r.baseVolume;
                         quoteVolume = r.quoteVolume;
-                        change24h = r.change;
-                        //console.log("raw changw is:"+change24h);
+                        change24h = r.percentage;
+                        change24hP = change24h;
                         isNaN(change24h) ? change24h = 0 : "";
-                        /*if (change24h < -1 || change24h > 1){     //percentage corection
-                            change24hP = change24h;
-                        }else{
-                            change24hP = change24h*100;
-                        }*/
+                        /*
                         change24h < -1 || change24h > 1 ?
                                 change24hP = change24h :
                                 change24hP = change24h * 100;
+                        */
                         return r;
                 }).catch((error) => {
                         console.error(error);
@@ -490,7 +488,6 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                 //stalling 
 
                 function stalling(longTimePrice, price, div) {
-
                         var ma = f.getAvgOfArray(longTimePrice);
                         if (ma + (f.part(div, ma) > price)) {
                                 stall = true;
@@ -656,7 +653,7 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                         trend2 = trendRSI;     //long term trend
                         trend3 = trendMACD;     //technical indicator
                         trend4 = change24h;     //24h change % 4
-                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0) && (trend4 > 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
+                        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0) && (trend4 >= 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
                                 /*
@@ -725,7 +722,7 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 "rP:" + (relProfit + minProfitP).toFixed(2) + " %|" +
                                 stopLossP + " %" + "|" +
                                 //"aPF:" + fiatAbsProfit.toFixed(2) + " " + fiatCurrency + "|" +
-                                "C24h:" + change24hP.toFixed(2) + " %|" +
+                                "C24h:" + change24hP + " |" +
                                 //exchangeName + "|" +
                                 //"B1:"+bid+" "+symbol+"|"+
                                 //"B2:"+bid2+" "+symbol+"|"+
