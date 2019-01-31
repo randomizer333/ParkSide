@@ -29,8 +29,8 @@ var bougthPrice = 0.00000001;  //set bougth price
 var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
 var loss1 = 99;
 var numOfBots = 2;
-var ticker = 0.2;   //ticker time in minutes
-let enableOrders = false;
+var ticker = 5;   //ticker time in minutes
+let enableOrders = true;//false;
 var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
 let quote = ["BTC", "ETH", "BNB"];
 var portf = [];         //array of currencies owned
@@ -172,7 +172,7 @@ function f1() {
                     //f.cs(chs)
                     //f.cs(symbol);
                     fetchTickers();
-                }, i * 100);    //delay
+                }, i * 1000);    //delay
             }
             let w = 0;
             let logChs = new Array();
