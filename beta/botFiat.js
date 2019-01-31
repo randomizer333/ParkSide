@@ -14,10 +14,11 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
         git pull origin master
         */
 
+        let m = require("./main.js")
         let f = require("./funk.js");
         var TI = require("technicalindicators");
-        var keys = require("../keys.json");  //keys file location
         let ccxt = require('ccxt');
+        var keys = require("../keys.json");  //keys file location
         var exchange;
         switch (exchangeName) {
                 case "bitstamp":
@@ -73,6 +74,7 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
 
         //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
 
+        let loop;
         let enableOrders = false;
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
         var fiatCurrency = "USDT";//"USDT"EUR
@@ -99,6 +101,13 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                 var delay = 1200 //miliseconds
                 a++;
                 return a * delay;
+        }
+
+        function stopLoop(fu) { //stops a setInterval function
+                clearInterval(fu);
+                f.cs("loop stopped");
+                q = 1;
+
         }
 
         function sendMail(subject, message, to) {
@@ -397,6 +406,8 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 //sellPrice = price;
                                 console.log("sold");
                                 setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
+                                m.main();
+                                stopLoop(loop);
                                 return r;
                         }).catch((error) => {
                                 console.error(error);
@@ -413,9 +424,6 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 orderType = "bougth";
                                 //bougthPrice = r.price;            //safety
                                 bougthPrice = price;
-
-                                //bougthPrice = buyPrice;    
-
                                 setTimeout(function () { bougthPrice = price }, timeTicker * 0.85);
                                 console.log("bougth");
                                 setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
@@ -684,6 +692,8 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 orderType = "holding good";
                         } else if (purchase) {      // ( change24h > 0 )
                                 orderType = "parked";
+                                //m.main();               //dev
+                                //stopLoop(loop);         //dev
                         }
                         return print();
                 }
@@ -784,7 +794,7 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                 setTimeout(function () { console.log("Currency to sell: " + selectCurrency()) }, count());
 
                 //loop fetches
-                setTimeout(function () { setInterval(function () { loopFetches() }, timeTicker) }, count());
+                setTimeout(function () { loop = setInterval(function () { loopFetches() }, timeTicker) }, count());
                 function loopFetches() {
                         setTimeout(function () { fetchBalances() }, count());
                         setTimeout(function () { fetchTicker() }, count());
