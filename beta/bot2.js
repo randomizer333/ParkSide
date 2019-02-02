@@ -445,7 +445,8 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
                                 return r;
                         }).catch((error) => {
-                                f.cs(error)
+
+                                f.cs("invalid order: "+error)
                         })
                 }
                 switch (orderType) {
