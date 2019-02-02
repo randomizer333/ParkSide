@@ -17,22 +17,20 @@
 //restart
 
 let f = require('./funk.js');           //connect to module functions
-let bA = require("./botAlt.js");
-let bF = require("./botFiat.js");
+let b = require("./bot2.js");
 let ccxt = require('ccxt');             //connect to ccxt node.js module
 let keys = require("../keys.json");      //keys file location
-let TI = require("technicalindicators");//technical indicators library
 
 //init setup
 var fiat = "USDT"; //USDT,EUR
 var bougthPrice = 0.00000001;  //set bougth price
-var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
-var loss1 = 99;
-var numOfBots = 2;
-var ticker = 5;   //ticker time in minutes
-let enableOrders = true;//false;
 var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
-let quote = ["BTC", "ETH", "BNB"];
+var stopLossF = 0.5;      //sell if crypto quote goes down 1%,10%,100%
+var numOfBots = 2;
+let fetchTime = 1000;//minimum 100
+var ticker = 5;   //ticker time in minutes
+//let enableOrders = true;//false;
+let quote;// = ["BTC", "ETH", "BNB"];
 var portf = [];         //array of currencies owned
 
 //main void
@@ -169,10 +167,8 @@ function f1() {
             for (let i = 0; i < syms.length; i++) {
                 setTimeout(function timer() {
                     symbol = syms[i];
-                    //f.cs(chs)
-                    //f.cs(symbol);
                     fetchTickers();
-                }, i * 1000);    //delay
+                }, i * fetchTime);    //delay
             }
             let w = 0;
             let logChs = new Array();
@@ -196,8 +192,8 @@ function f1() {
                             array.unshift(value);
                             return array;
                         }
-                        loger(bestBuy, 3, logChs);
-                        f.cs("BESTBUY: " + stev + " " + logChs + " " + maxChange + " % ");
+                        loger(bestBuy, 5, logChs);
+                        f.cs("BESTBUY: " + stev + " " + logChs + " " + maxChange + " %");
                     }
                     if (stev == syms.length - 2) { //exit condition
                         f.cs("BestBuy: " + bestBuy)
@@ -214,12 +210,13 @@ function f1() {
                                 }
                             }
                             if (exS) {
-                                let b1 = setTimeout(function () { bF.runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+                                setTimeout(function () { b.runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossF, bougthPrice) }, counter());
                             }
-                            let b2 = setTimeout(function () { bA.runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+                            setTimeout(function () { b.runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
                         }
                         //bestBuy = "BTC/USDT"; //dev
                         setBots(bestBuy);   //set and run bots
+                        //setBots(logChs[1]);   //set and run 2nd best bots
                     }
                     //f.cs(stev+" "+syms[stev]+" "+chs[stev]+" "+bestBuy);
                     stev++;
@@ -262,36 +259,36 @@ exports.main = function () {
                     setup
                     loop
     */
-
+    
     //select best currency
     //set two bots
     //run two bots
     //stop bots
     //restart
-
+    
     let f = require('./funk.js');           //connect to module functions
     let bA = require("./botAlt.js");
-    let bF = require("./botFiat.js");
+    let bF = require("./bot2.js");
     let ccxt = require('ccxt');             //connect to ccxt node.js module
     let keys = require("../keys.json");      //keys file location
     let TI = require("technicalindicators");//technical indicators library
-
+    
     //init setup
     var fiat = "USDT"; //USDT,EUR
     var bougthPrice = 0.00000001;  //set bougth price
-    var lossFiat = 1.5333;      //sell if crypto quote goes down 1%,10%,100%
-    var loss1 = 99;
+    var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
+    var stopLossF = 0.1;      //sell if crypto quote goes down 1%,10%,100%
     var numOfBots = 2;
     var ticker = 0.2;   //ticker time in minutes
-    let enableOrders = false;
-    var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
-    let quote = ["BTC", "ETH", "BNB"];
+    let fetchTime = 200;//minimum 100
+    //let enableOrders = true;//false;
+    let quote;// = ["BTC", "ETH", "BNB"];
     var portf = [];         //array of currencies owned
-
+    
     //main void
     console.log("Module CCXT version: " + ccxt.version);
     console.log("Available exchanges: " + ccxt.exchanges);
-
+    
     function counter() {       //defines next time delay
         //var delay = 5000 //miliseconds
         //a = 0;
@@ -301,7 +298,7 @@ exports.main = function () {
     }
     let delay = (ticker / numOfBots) * 60000;
     let a = 0;  //counter
-
+    
     let exchange;
     let exchangeName = "binance";
     switch (exchangeName) {
@@ -349,7 +346,7 @@ exports.main = function () {
             })
             break;
     }
-
+    
     function fetchBalances() {        //loads ticker of a symbol a currency pair
         exchange.fetchBalance().then((results) => {
             r = results;
@@ -358,10 +355,10 @@ exports.main = function () {
             //cs(curs);
             //curs = Object.keys(r.info);     //array of all currencies
             //bals = Object.values(r.LTC);
-
+    
             vals = Object.values(r.total);
             //cs(vals);
-
+    
             portfolio();
             function portfolio() {
                 var j = 0;
@@ -387,13 +384,13 @@ exports.main = function () {
     var vals = [];
     var bals = [];
     fetchBalances();
-
+    
     function stopLoop(fu) { //stops a setInterval function
         clearInterval(fu);
         f.cs("loop stopped");
         q = 1;
     }
-
+    
     var q = 1;
     var ff1 = f1();// = setInterval(f1, 1000);
     let bestBuy;
@@ -413,7 +410,7 @@ exports.main = function () {
             }
             let syms = new Array();
             loadMarks();
-
+    
             let chs = new Array();
             let stev = 0;
             let maxChange;
@@ -422,10 +419,8 @@ exports.main = function () {
                 for (let i = 0; i < syms.length; i++) {
                     setTimeout(function timer() {
                         symbol = syms[i];
-                        //f.cs(chs)
-                        //f.cs(symbol);
                         fetchTickers();
-                    }, i * 100);    //delay
+                    }, i * fetchTime);    //delay
                 }
                 let w = 0;
                 let logChs = new Array();
@@ -449,8 +444,8 @@ exports.main = function () {
                                 array.unshift(value);
                                 return array;
                             }
-                            loger(bestBuy, 3, logChs);
-                            f.cs("BESTBUY: " + stev + " " + logChs + " " + maxChange + " % ");
+                            loger(bestBuy, 5, logChs);
+                            f.cs("BESTBUY: " + stev + " " + logChs + " " + maxChange + " %");
                         }
                         if (stev == syms.length - 2) { //exit condition
                             f.cs("BestBuy: " + bestBuy)
@@ -467,7 +462,7 @@ exports.main = function () {
                                     }
                                 }
                                 if (exS) {
-                                    let b1 = setTimeout(function () { bF.runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+                                    let b1 = setTimeout(function () { bF.runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossF, bougthPrice) }, counter());
                                 }
                                 let b2 = setTimeout(function () { bA.runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
                             }

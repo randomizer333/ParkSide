@@ -75,7 +75,7 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
         //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
 
         let loop;
-        let enableOrders = false;
+        let enableOrders = true;//false;//true;//m.enableOrders;
         var symbol = mergeSymbol(baseCurrency, quoteCurrency);
         var fiatCurrency = "USDT";//"USDT"EUR
         exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
@@ -103,12 +103,6 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                 return a * delay;
         }
 
-        function stopLoop(fu) { //stops a setInterval function
-                clearInterval(fu);
-                f.cs("loop stopped");
-                q = 1;
-
-        }
 
         function sendMail(subject, message, to) {
                 // email account data
@@ -378,6 +372,29 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 break;
                 }
         }
+
+        let once = false;
+        function selfStop(quote, fiat, loopName) {
+                if (quote == fiat) {      //for Fiat bot
+                        f.cs("we are fiat");
+                        clearInterval(loopName);
+                        if (once == false) {
+                                f.cs("stopping fiat "+once);
+                                setTimeout(function () { m.main() }, count() * 2);
+                                once = true;
+                        }
+                } else {  	        //for Alt bot
+                        f.cs("we ar NOT Fiat");
+                        if (once == false) {
+                                f.cs("stopping alt "+once);
+                                clearInterval(loopName);
+                                once = true;
+                        }
+                }
+        }
+        //selfStop(quoteCurrency,fiatCurrency,loop);
+
+        f.cs("Q: " + m.quote + " F: " + m.fiat);
         function order(orderType, symbol, amount, price) {
                 var orderId;
                 function cancelOrder(id) {
@@ -405,12 +422,11 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 //sellPrice = r.price;
                                 //sellPrice = price;
                                 console.log("sold");
-                                setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
-                                m.main();
-                                stopLoop(loop);
+                                setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9); selfStop(quoteCurrency, fiatCurrency, loop);
                                 return r;
                         }).catch((error) => {
                                 console.error(error);
+                                //selfStop(quoteCurrency, fiatCurrency, loop);
                         })
                 }
                 function createLimitBuyOrder(symbol, amount, price) {        // symbol, amount, bid 
@@ -418,10 +434,10 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 var r = results;
                                 orderId = r.id;
                                 orderStatus = r.status;
-                                console.log(orderId);
+                                //console.log(orderId);
                                 console.log("Order: " + JSON.stringify(r));
                                 sendMail("Bougth", msg + "\n" + JSON.stringify(r));  //dev
-                                orderType = "bougth";
+                                //orderType = "bougth";
                                 //bougthPrice = r.price;            //safety
                                 bougthPrice = price;
                                 setTimeout(function () { bougthPrice = price }, timeTicker * 0.85);
@@ -429,7 +445,7 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
                                 return r;
                         }).catch((error) => {
-                                console.error(error);
+                                f.cs(error)
                         })
                 }
                 switch (orderType) {
@@ -545,7 +561,6 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                 var stopLoss = safetyStopLoss(price, stopLossP, sellPrice);       //returns boolean
 
                 //get trends,signals,startegy
-
                 function upDown(value) {     //trendUD between curent and last value
                         var ma = f.getAvgOfArray(logUD);
                         //console.log("ma5:"+ma5);
@@ -664,22 +679,13 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                         if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0) && (trend4 >= 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)
                                 orderType = "bougth";
                                 round += 1;     //dev
-                                /*
-                                //if (round >= roundMax) {
-                                  //      enableOrders = false;
-                                    //    console.log("Stopped BUY");
-                                //}
-                                */
                                 console.log("No of purchases done: " + round + " of: " + roundMax);
                                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
                                 //bougthPrice = buyPrice;               //sim
+                                //selfStop(quoteCurrency, fiatCurrency, loop);
                         } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
-                                /*
-                                //if (round >= roundMax) {
-                                 //       enableOrders = false;
-                                 //       console.log("Stopped BUYING");
-                                //}
-                                */
+
+                                //selfStop(quoteCurrency, fiatCurrency, loop);
                                 console.log("No of sales done: " + round + " of: " + roundMax);
                                 orderType = "sold";
                                 enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
@@ -692,8 +698,6 @@ exports.runBot = function (baseCurrency, quoteCurrency, strategy, ticker, exchan
                                 orderType = "holding good";
                         } else if (purchase) {      // ( change24h > 0 )
                                 orderType = "parked";
-                                //m.main();               //dev
-                                //stopLoop(loop);         //dev
                         }
                         return print();
                 }
