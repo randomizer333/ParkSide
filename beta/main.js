@@ -336,7 +336,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
     var indicator = "MACD"; //"RSI","CGI"
     //var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
-    var portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
+    var portion = 0.999;        //!!! 0.51 || 0.99 !       part of balance to trade 
     //var stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
     var minProfitP = 0.1;        //holding addition
     var timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
