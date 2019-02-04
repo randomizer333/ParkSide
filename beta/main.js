@@ -28,8 +28,8 @@ var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
 var stopLossF = 1;      //sell if crypto quote goes down 1%,10%,100%
 var numOfBots = 1;
 let fetchTime = 500;//minimum 100
-var ticker = 5;   //ticker time in minutes  //DEV
-//let enableOrders = true;//false;
+var ticker = 1;   //ticker time in minutes  //DEV
+let enableOrders = true;//false;
 let quote;// = ["BTC", "ETH", "BNB"];
 var portf = [];         //array of currencies owned
 
@@ -327,7 +327,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
 
     let loop;
-    let enableOrders = false;//false;//true;//m.enableOrders;        //DEV
+    //let enableOrders = false;//false;//true;//m.enableOrders;        //DEV
     var symbol = mergeSymbol(baseCurrency, quoteCurrency);
     var fiatCurrency = "USDT";//"USDT"EUR
     exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
