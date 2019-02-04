@@ -25,7 +25,7 @@ let keys = require("../keys.json");      //keys file location
 var fiat = "USDT"; //USDT,EUR
 var bougthPrice = 0.00000001;  //set bougth price
 var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
-var stopLossF = 1;      //sell if crypto quote goes down 1%,10%,100%
+var stopLossF = 0.5;      //sell if crypto quote goes down 1%,10%,100%
 var numOfBots = 1;
 let fetchTime = 500;//minimum 100
 var ticker = 1;   //ticker time in minutes  //DEV
@@ -336,7 +336,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
     var indicator = "MACD"; //"RSI","CGI"
     //var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
-    var portion = 0.99;        //!!! 0.51 || 0.99 !       part of balance to trade 
+    var portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
     //var stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
     var minProfitP = 0.1;        //holding addition
     var timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
@@ -625,7 +625,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     }
 
     let once = false;
-    function selfStop(quote, fiat, loopName) {
+    function selfStop(loopName) {
         if (exS) {      //for Fiat bot
             f.cs("we are fiat");
             clearInterval(loopName);
@@ -711,7 +711,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
                 return r;
             }).catch((error) => {
-                cs("invalid order: " + error)
+                f.cs("invalid order: " + error)
             })
         }
         switch (orderType) {
