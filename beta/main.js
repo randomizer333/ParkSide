@@ -33,6 +33,8 @@ let enableOrders = true;//false;
 let quote;// = ["BTC", "ETH", "BNB"];
 var portf = [];         //array of currencies owned
 let exS = false;    //existence of fiat symbol
+let alt;
+let quote;
 
 //main void
 console.log("Module CCXT version: " + ccxt.version);
@@ -200,8 +202,8 @@ function f1() {
                         f.cs("BestBuy: " + bestBuy)
                         function setBots(sym) {
                             exS = false;
-                            let alt = f.splitSymbol(sym, "first");
-                            let quote = f.splitSymbol(sym, "second");
+                            alt = f.splitSymbol(sym, "first");
+                            quote = f.splitSymbol(sym, "second");
                             f.cs("A: " + alt + " Q: " + quote + " F: " + fiat);
                             let fSym = f.mergeSymbol(quote, fiat)
                             for (i = 0; i <= syms.length; i++) {    //checks for symbol existence
