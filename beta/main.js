@@ -30,11 +30,10 @@ var numOfBots = 1;
 let fetchTime = 500;//minimum 100
 var ticker = 1;   //ticker time in minutes  //DEV
 let enableOrders = true;//false;
-let quote;// = ["BTC", "ETH", "BNB"];
 var portf = [];         //array of currencies owned
+let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
 let alt;
-let quote;
 
 //main void
 console.log("Module CCXT version: " + ccxt.version);
