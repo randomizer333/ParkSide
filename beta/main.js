@@ -32,6 +32,7 @@ var ticker = 1;   //ticker time in minutes  //DEV
 let enableOrders = true;//false;
 let quote;// = ["BTC", "ETH", "BNB"];
 var portf = [];         //array of currencies owned
+let exS = false;    //existence of fiat symbol
 
 //main void
 console.log("Module CCXT version: " + ccxt.version);
@@ -198,7 +199,7 @@ function f1() {
                     if (stev == syms.length - 2) { //exit condition
                         f.cs("BestBuy: " + bestBuy)
                         function setBots(sym) {
-                            let exS = false;
+                            exS = false;
                             let alt = f.splitSymbol(sym, "first");
                             let quote = f.splitSymbol(sym, "second");
                             f.cs("A: " + alt + " Q: " + quote + " F: " + fiat);
