@@ -22,15 +22,15 @@ let ccxt = require('ccxt');             //connect to ccxt node.js module
 let keys = require("../keys.json");      //keys file location
 
 //init setup
-var fiat = "USDT"; //USDT,EUR
-var bougthPrice = 0.00000001;  //set bougth price
-var stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
-var stopLossF = 0.5;      //sell if crypto quote goes down 1%,10%,100%
-var numOfBots = 1;
+let fiat = "USDT"; //USDT,EUR
+let bougthPrice = 0.00000001;  //set bougth price
+let stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
+let stopLossF = 0.5;      //sell if crypto quote goes down 1%,10%,100%
+let numOfBots = 1;
 let fetchTime = 500;//minimum 100
-var ticker = 1;   //ticker time in minutes  //DEV
+let ticker = 1;   //ticker time in minutes  //DEV
 let enableOrders = true;//false;
-var portf = [];         //array of currencies owned
+let portf = [];         //array of currencies owned
 let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
 let alt;
@@ -40,9 +40,9 @@ console.log("Module CCXT version: " + ccxt.version);
 console.log("Available exchanges: " + ccxt.exchanges);
 
 function counter() {       //defines next time delay
-    //var delay = 5000 //miliseconds
+    //let delay = 5000 //miliseconds
     //a = 0;
-    var r = a * delay;
+    let r = a * delay;
     a++;
     return r;
 }
@@ -111,7 +111,7 @@ function fetchBalances() {        //loads ticker of a symbol a currency pair
 
         portfolio();
         function portfolio() {
-            var j = 0;
+            let j = 0;
             for (i = 0; i < vals.length; i++) {
                 if (vals[i] > 0) {
                     portf[j] = curs[i + 1];
@@ -130,9 +130,9 @@ function fetchBalances() {        //loads ticker of a symbol a currency pair
         console.error(error);
     })
 }
-var curs = [];
-var vals = [];
-var bals = [];
+let curs = [];
+let vals = [];
+let bals = [];
 fetchBalances();
 
 function stopLoop(fu) { //stops a setInterval function
@@ -141,18 +141,18 @@ function stopLoop(fu) { //stops a setInterval function
     q = 1;
 }
 
-var q = 1;
-var ff1 = f1();// = setInterval(f1, 1000);
+let q = 1;
+let ff1 = f1();// = setInterval(f1, 1000);
 let bestBuy;
 //let ff = [setInterval(f1, 500),setInterval(f2, 500),setInterval(f3, 500)]
 function f1() {
     function fetch24hs() {
         function loadMarks() {  //loads all available markets
             exchange.loadMarkets().then((results) => {
-                var r = exchange.symbols;    //market simbols BTC/USDT
+                let r = exchange.symbols;    //market simbols BTC/USDT
                 //f.cs(results);
                 syms = r;
-                f.cs(syms.length);
+                f.cs("No of available markets: "+syms.length);
                 return r;
             }).catch((error) => {
                 console.error(error);
@@ -165,18 +165,16 @@ function f1() {
         let stev = 0;
         let maxChange;
         function runFetchTicker() {
-            //var bestBuy;
             for (let i = 0; i < syms.length; i++) {
-                setTimeout(function timer() {
+                setTimeout(function () {
                     symbol = syms[i];
                     fetchTickers();
                 }, i * fetchTime);    //delay
             }
-            let w = 0;
             let logChs = new Array();
             function fetchTickers() {       //loads ticker of a symbol a currency pair
                 exchange.fetchTicker(symbol).then((results) => {
-                    var r = results;    //market simbols BTC/USDT
+                    let r = results;    //market simbols BTC/USDT
                     baseVolume = r.baseVolume;
                     quoteVolume = r.quoteVolume;
                     change24h = r.percentage;
@@ -212,14 +210,15 @@ function f1() {
                                 }
                             }
                             if (exS) {
+                                f.cs("actualy runnning FIAT boter");
                                 runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossF, bougthPrice);
                             } else {
+                                f.cs("actualy runnning ALTer boter");
                                 runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice)
                                 //setTimeout(function () { runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
                             }
 
                         }
-                        //bestBuy = "BTC/USDT"; //dev
                         setBots(bestBuy);   //set and run bots
                         //setBots(logChs[1]);   //set and run 2nd best bots
                     }
@@ -230,10 +229,10 @@ function f1() {
                     console.error(error);
                 })
             }
-            var change24h = 0;
-            var change24hP = 0;
-            var baseVolume;
-            var quoteVolume;
+            let change24h = 0;
+            let change24hP = 0;
+            let baseVolume;
+            let quoteVolume;
             let priceChange;
             //fetchTickers(symbol);
         }
@@ -270,10 +269,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     */
 
     let f = require("./funk.js");
-    var TI = require("technicalindicators");
+    let TI = require("technicalindicators");
     let ccxt = require('ccxt');
-    var keys = require("../keys.json");  //keys file location
-    var exchange;
+    let keys = require("../keys.json");  //keys file location
+    let exchange;
     switch (exchangeName) {
         case "bitstamp":
             exchange = new ccxt.bitstamp({
@@ -319,48 +318,47 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             })
             break;
     }
-    var tradingFeeP;// = 0.5;      //default
+    let tradingFeeP;// = 0.5;      //default
     exchange.fees.trading.taker ? tradingFeeP = exchange.fees.trading.taker * 100 : tradingFeeP = 0.5;
     //init setup hardcode attributes later to come from GUI
 
-    var round = 0;              //init number of sell orders til stop
-    var roundMax = 5;       //disable buying after this count
+    let round = 0;              //init number of sell orders til stop
+    let roundMax = 5;       //disable buying after this count
 
-    //var symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
+    //let symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
 
     let loop;
     //let enableOrders = false;//false;//true;//m.enableOrders;        //DEV
-    var symbol = mergeSymbol(baseCurrency, quoteCurrency);
-    var fiatCurrency = "USDT";//"USDT"EUR
+    let symbol = mergeSymbol(baseCurrency, quoteCurrency);
+    let fiatCurrency = "USDT";//"USDT"EUR
     exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
     let quoteCrypto = "BTC"
-    var fiatSymbol = mergeSymbol(quoteCrypto, fiatCurrency);
-    var strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
-    var indicator = "MACD"; //"RSI","CGI"
-    //var bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
-    var portion = 0.999;        //!!! 0.51 || 0.99 !       part of balance to trade 
-    //var stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
-    var minProfitP = 0.1;        //holding addition
-    var timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
-    var timeStart = f.msToMin(26 * timeTicker);    // default:10080min = 7d, 1440min = 1d
-    var msg;
-    //var exchangeName;// = "poloniex";      
-    var x = 0; //counter for starting mail
+    let fiatSymbol = mergeSymbol(quoteCrypto, fiatCurrency);
+    let strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
+    let indicator = "MACD"; //"RSI","CGI"
+    //let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
+    let portion = 0.999;        //!!! 0.51 || 0.99 !       part of balance to trade 
+    //let stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
+    let minProfitP = 0.1;        //holding addition
+    let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
+    let timeStart = f.msToMin(26 * timeTicker);    // default:10080min = 7d, 1440min = 1d
+    let msg;
+    //let exchangeName;// = "poloniex";      
+    let x = 0; //counter for starting mail
 
 
     //functions CLI
-    var a = 0;
+    let a = 0;
     function count() {       //defines next time delay
-        var delay = 1200 //miliseconds
+        let delay = 1200 //miliseconds
         a++;
         return a * delay;
     }
 
-
     function sendMail(subject, message, to) {
         // email account data
-        var nodemailer = require('nodemailer');
-        var transporter = nodemailer.createTransport({
+        let nodemailer = require('nodemailer');
+        let transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
                 user: 'mrbitja@gmail.com',
@@ -369,10 +367,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         });
 
         // mail body
-        var subject;
-        var message;
-        var to;
-        var mailOptions = {
+        let subject;
+        let message;
+        let to;
+        let mailOptions = {
             from: 'bb@gmail.com',   //NOT WORK
             to: 'markosmid333@gmail.com',//to, 
             subject: subject, //'You have got mail',
@@ -400,7 +398,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
     }
     function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second        base | quote
-        var char = symbol.search("/");
+        let char = symbol.search("/");
         base = symbol.slice(0, char);
         quote = symbol.slice(char + 1, symbol.length);
         switch (selectReturn) {
@@ -413,10 +411,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         }
     }
 
-    var sale = false;
-    var purchase = false;
+    let sale = false;
+    let purchase = false;
     let more;
-    var baseBalanceInQuote;
+    let baseBalanceInQuote;
     function selectCurrency() {        // check currency from pair that has more funds
         baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
         if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
@@ -437,7 +435,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     //functions API
     function fetchTicker() {        //loads ticker of a symbol a currency pair
         exchange.fetchTicker(symbol).then((results) => {
-            var r = results;    //market simbols BTC/USDT
+            let r = results;    //market simbols BTC/USDT
             baseVolume = r.baseVolume;
             quoteVolume = r.quoteVolume;
             change24h = r.percentage;
@@ -453,31 +451,31 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             console.error(error);
         })
     }
-    var change24h = 0;
-    var change24hP = 0;
-    var baseVolume;
-    var quoteVolume;
-    var tickerInfo = fetchTicker(symbol);
+    let change24h = 0;
+    let change24hP = 0;
+    let baseVolume;
+    let quoteVolume;
+    let tickerInfo = fetchTicker(symbol);
 
     function fetchCurrencies() {        //loads all available symbols of currency pairs/markets
         exchange.loadMarkets().then((results) => {
-            var r = exchange.currencies;    //market simbols BTC/USDT
-            var r1 = JSON.stringify(r);
+            let r = exchange.currencies;    //market simbols BTC/USDT
+            let r1 = JSON.stringify(r);
             //console.log(r1);
-            var currencies = Object.keys(r);
+            let currencies = Object.keys(r);
             //console.log(JSON.stringify(currencies));
             return r;
         }).catch((error) => {
             console.error(error);
         })
     }
-    var curencies;  //all currencies array 
+    let curencies;  //all currencies array 
     //fetchCurrencies();
 
     function loadMarkets() {        //loads all available symbols of currency pairs/markets
         exchange.loadMarkets().then((results) => {
-            var r = exchange.symbols;    //market simbols BTC/USDT
-            var r1 = JSON.stringify(r);
+            let r = exchange.symbols;    //market simbols BTC/USDT
+            let r1 = JSON.stringify(r);
             console.log(r1);
             return r;
         }).catch((error) => {
@@ -487,7 +485,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
     function fetchBalances() {    //fetches balance of a currency
         exchange.fetchBalance().then((results) => {
-            var r = results;
+            let r = results;
             baseBalance = r[baseCurrency].total;     //options: free used total
             quoteBalance = r[quoteCurrency].total;     //options: free used total
             isNaN(baseBalance || undefined) ? baseBalance = 0 : "";
@@ -498,14 +496,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             console.error(error);
         })
     }
-    var quoteBalance = 0;
-    var baseBalance = 0;
+    let quoteBalance = 0;
+    let baseBalance = 0;
     fetchBalances();
 
-    var bid;
-    var ask;
-    var bid2;
-    var ask2;
+    let bid;
+    let ask;
+    let bid2;
+    let ask2;
     function fetchAsksBids(symbol) {        //fetch ticker second order
         exchange.fetchOrderBook(symbol).then((results) => {
             bid = results.bids[0][0];            //options: bids asks
@@ -516,7 +514,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             console.error(error);
         })
     }
-    var fiatPrice;
+    let fiatPrice;
     function fetchFiatPrice(fiatSymbol) {        //fetch ticker second order
         exchange.fetchOrderBook(fiatSymbol).then((results) => {
             fiatPrice = results.bids[0][0];
@@ -525,43 +523,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         })
     }
 
-    var orderId;
-    function createLimitSellOrder(symbol, amount, price) {        // symbol, amount, ask 
-        exchange.createLimitSellOrder(symbol, amount, price).then((results) => {
-            var r = results;
-            orderId = r.id;
-            orderStatus = r.status;
-            //sellPrice = r.price;
-            console.log(orderId);
-            console.log("Order: " + JSON.stringify(r));
-            sendMail("Sold", msg + "\n" + JSON.stringify(r));
-            orderType = "sold";
-            setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
-            return r;
-        }).catch((error) => {
-            console.error(error);
-        })
-    }
-    function createLimitBuyOrder(symbol, amount, price) {        // symbol, amount, bid 
-        exchange.createLimitBuyOrder(symbol, amount, price).then((results) => {
-            var r = results;
-            orderId = r.id;
-            orderStatus = r.status;
-            console.log(orderId);
-            console.log("Order: " + JSON.stringify(r));
-            sendMail("Bougth", msg + "\n" + JSON.stringify(r));
-            orderType = "bougth";
-            bougthPrice = r.price;            //safety
-            setTimeout(function () { bougthPrice = r.price }, timeTicker * 0.85);
-            setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
-            return r;
-        }).catch((error) => {
-            console.error(error);
-        })
-    }
+    let orderId;
     function cancelOrder(id) {
         exchange.cancelOrder(id).then((results) => {
-            var r = results;
+            let r = results;
             console.log("CANCELED ORDER: " + id + " " + r);
             return JSON.stringify(r);
         }).catch((error) => {
@@ -570,9 +535,9 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     }
 
     //logic funk and math junk
-    //var history = new Array();
+    //let history = new Array();
     function logHistory(value, size) {        //log FILO
-        var counter;
+        let counter;
         while (history.length >= size) {
             history.pop();
         }
@@ -581,27 +546,27 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         console.log(history);
     }
     function boolToInitial(bool) {	//returns initial of string|bool
-        var bool;
-        var a = bool.toString();
-        var b = a.charAt(0);
+        let bool;
+        let a = bool.toString();
+        let b = a.charAt(0);
         return b;
     }
     function quoteToBase(amountQuote) {
-        var amountQuote;
-        var amountBase = amountQuote / bid;
+        let amountQuote;
+        let amountBase = amountQuote / bid;
         return amountBase;
     }
     function baseToQuote(amountBase) {
-        var amountBase;
-        var amountQuote = amountBase * bid;
+        let amountBase;
+        let amountQuote = amountBase * bid;
         return amountQuote;
     }
     function getAvgOfArrayJump(numArray, jump) {     //in: numericArray out: avgValueOfPart
-        var numArray;
-        var jump;
-        var n = numArray.length / jump;
-        var sum = 0;
-        var avg;
+        let numArray;
+        let jump;
+        let n = numArray.length / jump;
+        let sum = 0;
+        let avg;
         for (i = 0; i < numArray.length; i += jump) {
             sum += numArray[i];
             avg = sum / n;
@@ -632,450 +597,449 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             f.cs("we are fiat");
             clearInterval(loopName);
             if (once == false) {
-                f.cs("stopping fiat " + once);
                 setTimeout(function () { main() }, count() * 2);
                 once = true;
+                f.cs("stopping fiat " + once);
             }
         } else {  	        //for Alt bot
             f.cs("we ar NOT Fiat");
             if (once == false) {
-                f.cs("stopping alt " + once);
                 clearInterval(loopName);
                 once = true;
+                f.cs("stopping alt " + once);
             }
         }
     }
+
     let twice = false;
-    //selfStop(quoteCurrency,fiatCurrency,loop);
     function selfRun() {
-        f.cs("bougth quote runing alt " + twice);
-        runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice)
         twice = true;
+        runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice);
+        f.cs("bougth quote runing alt " + twice);
     }
-}
 
 
 
-function order(orderType, symbol, amount, price) {
-    var orderId;
-    function cancelOrder(id) {
-        exchange.cancelOrder(id).then((results) => {
-            var r = results;
-            console.log("CANCELED ORDER: " + JSON.stringify(r));
-            return JSON.stringify(r);
-        }).catch((error) => {
-            if (id == undefined) {
-                console.log("NO SUCH ORDER!!!")
-            } else {
-                console.error(JSON.stringify(error));
-            }
-        })
-    }
-    function createLimitSellOrder(symbol, amount, price) {        // symbol, amount, ask 
-        exchange.createLimitSellOrder(symbol, amount, price).then((results) => {
-            var r = results;
-            orderId = r.id;
-            orderStatus = r.status;
-            console.log(orderId);
-            console.log("Order: " + JSON.stringify(r));
-            sendMail("Sold", msg + "\n" + JSON.stringify(r));
-            orderType = "sold";
-            //sellPrice = r.price;
-            //sellPrice = price;
-            console.log("sold");
-            setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
-            selfStop(loop);
-            return r;
-        }).catch((error) => {
-            console.error(error);
-            //selfStop(quoteCurrency, fiatCurrency, loop);
-        })
-    }
-    function createLimitBuyOrder(symbol, amount, price) {        // symbol, amount, bid 
-        exchange.createLimitBuyOrder(symbol, amount, price).then((results) => {
-            var r = results;
-            orderId = r.id;
-            orderStatus = r.status;
-            //console.log(orderId);
-            console.log("Order: " + JSON.stringify(r));
-            sendMail("Bougth", msg + "\n" + JSON.stringify(r));  //dev
-            //orderType = "bougth";
-            //bougthPrice = r.price;            //safety
-            bougthPrice = price;
-            setTimeout(function () { bougthPrice = price }, timeTicker * 0.85);
-            console.log("bougth");
-            selfRun();
-            setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
-            return r;
-        }).catch((error) => {
-            f.cs("invalid order: " + error)
-        })
-    }
-    switch (orderType) {
-        case "buy":
-            createLimitBuyOrder(symbol, amount, price);
-            console.log("made buy order");
-            break;
-        case "sell":
-            createLimitSellOrder(symbol, amount, price);
-            console.log("made sell order");
-            break;
-        default:
-            console.log("Invalid order type!!!");
-            break;
-    }
-}
 
-var logMACD = new Array();      //must be global!
-var logRSI = new Array();      //must be global!
-var logUD = new Array();
-var price;
-var stor = new Array();     //storage for direction
-function PINGPONG() {
-    function makePrice(high, low) {
-        spread = high - low;
-        return price = high - (spread / 2);
-    }
-    price = makePrice(ask, bid);
-    //price = bid2;  
-    bougthPrice == 0.00000001 ? bougthPrice = price : "";   //init
-
-    function balanceChanged() {
-        if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
-            if (!more) {
+    function order(orderType, symbol, amount, price) {
+        let orderId;
+        function cancelOrder(id) {
+            exchange.cancelOrder(id).then((results) => {
+                let r = results;
+                console.log("CANCELED ORDER: " + JSON.stringify(r));
+                return JSON.stringify(r);
+            }).catch((error) => {
+                if (id == undefined) {
+                    console.log("NO SUCH ORDER!!!")
+                } else {
+                    console.error(JSON.stringify(error));
+                }
+            })
+        }
+        function createLimitSellOrder(symbol, amount, price) {        // symbol, amount, ask 
+            exchange.createLimitSellOrder(symbol, amount, price).then((results) => {
+                let r = results;
+                orderId = r.id;
+                orderStatus = r.status;
+                console.log(orderId);
+                console.log("Order: " + JSON.stringify(r));
+                sendMail("Sold", msg + "\n" + JSON.stringify(r));
+                orderType = "sold";
+                //sellPrice = r.price;
+                //sellPrice = price;
+                console.log("sold");
+                setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
+                selfStop(loop);
+                return r;
+            }).catch((error) => {
+                console.error(error);
+                //selfStop(quoteCurrency, fiatCurrency, loop);
+            })
+        }
+        function createLimitBuyOrder(symbol, amount, price) {        // symbol, amount, bid 
+            exchange.createLimitBuyOrder(symbol, amount, price).then((results) => {
+                let r = results;
+                orderId = r.id;
+                orderStatus = r.status;
+                //console.log(orderId);
+                console.log("Order: " + JSON.stringify(r));
+                sendMail("Bougth", msg + "\n" + JSON.stringify(r));  //dev
+                //orderType = "bougth";
+                //bougthPrice = r.price;            //safety
                 bougthPrice = price;
-                more = true;
-                console.log("Bougth price updated: " + more);
+                setTimeout(function () { bougthPrice = price }, timeTicker * 0.85);
+                console.log("bougth");
+                selfRun();
+                setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
+                return r;
+            }).catch((error) => {
+                f.cs("invalid order: " + error)
+            })
+        }
+        switch (orderType) {
+            case "buy":
+                createLimitBuyOrder(symbol, amount, price);
+                console.log("made buy order");
+                break;
+            case "sell":
+                createLimitSellOrder(symbol, amount, price);
+                console.log("made sell order");
+                break;
+            default:
+                console.log("Invalid order type!!!");
+                break;
+        }
+    }
+
+    let logMACD = new Array();      //must be global!
+    let logRSI = new Array();      //must be global!
+    let logUD = new Array();
+    let price;
+    let stor = new Array();     //storage for direction
+    function PINGPONG() {
+        function makePrice(high, low) {
+            spread = high - low;
+            return price = high - (spread / 2);
+        }
+        price = makePrice(ask, bid);
+        //price = bid2;  
+        bougthPrice == 0.00000001 ? bougthPrice = price : "";   //init
+
+        function balanceChanged() {
+            if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
+                if (!more) {
+                    bougthPrice = price;
+                    more = true;
+                    console.log("Bougth price updated: " + more);
+                }
             }
         }
-    }
-    balanceChanged();
+        balanceChanged();
 
-    //price loging:
-    function loger(value, length, array) {        //log FILO to array
-        var counter;         //d   
-        while (array.length >= length) {
-            array.pop();
+        //price loging:
+        function loger(value, length, array) {        //log FILO to array
+            let counter;         //d   
+            while (array.length >= length) {
+                array.pop();
+            }
+            array.unshift(value);
+            counter++;    //d
+            return array;
         }
-        array.unshift(value);
-        counter++;    //d
-        return array;
-    }
-    loger(price, 5, logUD);
-    loger(price, 77, logMACD);
-    loger(price, 15, logRSI);
+        loger(price, 5, logUD);
+        loger(price, 77, logMACD);
+        loger(price, 15, logRSI);
 
-    var duration = 360;       //duration in minutes 6h=360min
-    function timeToTicker(duration) {
-        numOfTickers = duration / ticker
-        return numOfTickers;
-    }
-    var numOfTickers = 0;
-
-    //stalling 
-
-    function stalling(longTimePrice, price, div) {
-        var ma = f.getAvgOfArray(longTimePrice);
-        if (ma + (f.part(div, ma) > price)) {
-            stall = true;
-        } else if (ma - (f.part(div, ma) < price)) {
-            stall = true;
-        } else {
-            stall = false;
+        let duration = 360;       //duration in minutes 6h=360min
+        function timeToTicker(duration) {
+            numOfTickers = duration / ticker
+            return numOfTickers;
         }
-        //console.log("MA5: "+ma);
-        //console.log("Stall status: "+stall);
-        return stall;
-    }
-    //var stall = stalling(logUD,price,0.001);
+        let numOfTickers = 0;
 
-    function bounce(array) {
-        f.getMaxOfArray(logMACD) > price;
-    }
-    var down = bounce(logMACD)
+        //stalling 
 
-    function safetySale(tradingFeeP, bougthPrice) {  //no sale with loss
-        var tradingFeeAbs;
-        tradingFeeP = tradingFeeP * 2;
-        tradingFeeAbs = f.part(tradingFeeP, bougthPrice);
-        minProfitAbs = f.part(minProfitP, bougthPrice);
-        //console.log("Fee: "+tradingFeeP+"% "+tradingFeeAbs+" $");
-        sellPrice = bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
-        //return hold = false;     //uncoment to disable
-        if (sellPrice > price) {      //if bougthPrice is not high enough
-            return hold = true;    	//dont allow sell force holding
-        } else {
-            return hold = false;           //allow sale of holding to parked
-        }
-    }
-    var sellPrice;
-    var hold = safetySale(tradingFeeP, bougthPrice);        //returns bool
-
-    function safetyStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
-        absStopLoss = f.part(stopLossP, sellPrice);
-        loss = sellPrice - price;     //default: loss = sellPrice - price;
-        //return stopLoss = false;        //uncoment to disable
-        if (loss > absStopLoss) {
-            return stopLoss = true;         //sell ASAP!!!
-        } else {
-            return stopLoss = false;
-        }
-    }
-    var stopLoss = safetyStopLoss(price, stopLossP, sellPrice);       //returns boolean
-
-    //get trends,signals,startegy
-    function upDown(value) {     //trendUD between curent and last value
-        var ma = f.getAvgOfArray(logUD);
-        //console.log("ma5:"+ma5);
-        if (stor[1] == undefined) {
-            stor[1] = value;
-            stor[0] = value;
-        };
-        stor[1] = stor[0];
-        stor[0] = value;
-        //var direction = stor[0] - stor[1];
-        var direction = stor[0] - ma;
-        //console.log("direction:"+direction);
-        if (direction > 0) {
-            trendUD = 1;   //buy coz rising
-            trendSign = "+";
-        } else {
-            trendUD = -1;   //hold or park coz stationary
-            trendSign = "-";
-        }
-    }
-    var trendSign;
-    var trendUD;
-    upDown(price);
-
-    function TI_RSI(values) {
-        var RSI = TI.RSI;
-        var inputRSI = {
-            values: values,
-            period: 14   //9
-        };
-        var r = RSI.calculate(inputRSI);
-        var n = r.length - 1;
-        var lastRSI = r[n]; //last JSON
-        //console.log("RSI:"+lastRSI);
-        if (lastRSI > 70) {
-            trendRSI = 1;   //buy coz rising
-        } else if (lastRSI < 30) {
-            trendRSI = -1;  //sell coz falling
-        } else {
-            trendRSI = 0;   //hold or park coz stationary
-            //lastRSI = 0;
-        };
-        //console.log("trend:"+trendRSI+" RSI:"+lastRSI);
-        return trendRSI;
-    }
-    var trendRSI;
-    trendRSI = TI_RSI(logRSI);
-
-    function TI_MACD(values) {     //should be bigger the better starts working when value = slowPeriod + signalPeriod
-        var MACD = TI.MACD;
-        var macdInput = {
-            values: values,   //34,70,140n of inputs - slowPeriod = n of outputs 
-            fastPeriod: 24,       //12,24,48
-            slowPeriod: 52,       //26,52,104      when this is full it putout
-            signalPeriod: 18,        //9,18,36
-            SimpleMAOscillator: false,
-            SimpleMASignal: false
-        };
-        var r = MACD.calculate(macdInput);      //array with JSONs
-        //console.log(r);
-        //console.log("data length: "+values.length);
-        var lastMACD;
-        r ? lastMACD = r[r.length - 1] : lastMACD = 0; //last JSON
-        //lastMACD = r[r.length-1];
-        //console.log("Last: "+JSON.stringify(lastMACD));
-        macdHistogram = 0;
-        if (lastMACD) {
-            macdLine = lastMACD.MACD;
-            signalLine = lastMACD.signal;
-            macdHistogram = lastMACD.histogram;
-            //console.log("MLine: "+macdLine);
-            //console.log("SLine: "+signalLine);
-            //console.log("MHist: "+macdHistogram);    
-            if (!isNaN(macdHistogram) && x == 0) {     //isNumber
-                sendMail("Started MACD", msg);
-                x++;
-            };
-            if (macdHistogram > 0) {
-                trendMACD = 1;   //buy coz rising
-            } else if (macdHistogram < 0) {
-                trendMACD = -1;  //sell coz falling
+        function stalling(longTimePrice, price, div) {
+            let ma = f.getAvgOfArray(longTimePrice);
+            if (ma + (f.part(div, ma) > price)) {
+                stall = true;
+            } else if (ma - (f.part(div, ma) < price)) {
+                stall = true;
             } else {
-                trendMACD = 0;   //hold or park coz stationary
+                stall = false;
+            }
+            //console.log("MA5: "+ma);
+            //console.log("Stall status: "+stall);
+            return stall;
+        }
+        //let stall = stalling(logUD,price,0.001);
+
+        function bounce(array) {
+            f.getMaxOfArray(logMACD) > price;
+        }
+        let down = bounce(logMACD)
+
+        function safetySale(tradingFeeP, bougthPrice) {  //no sale with loss
+            let tradingFeeAbs;
+            tradingFeeP = tradingFeeP * 2;
+            tradingFeeAbs = f.part(tradingFeeP, bougthPrice);
+            minProfitAbs = f.part(minProfitP, bougthPrice);
+            //console.log("Fee: "+tradingFeeP+"% "+tradingFeeAbs+" $");
+            sellPrice = bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
+            //return hold = false;     //uncoment to disable
+            if (sellPrice > price) {      //if bougthPrice is not high enough
+                return hold = true;    	//dont allow sell force holding
+            } else {
+                return hold = false;           //allow sale of holding to parked
+            }
+        }
+        let sellPrice;
+        let hold = safetySale(tradingFeeP, bougthPrice);        //returns bool
+
+        function safetyStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
+            absStopLoss = f.part(stopLossP, sellPrice);
+            loss = sellPrice - price;     //default: loss = sellPrice - price;
+            //return stopLoss = false;        //uncoment to disable
+            if (loss > absStopLoss) {
+                return stopLoss = true;         //sell ASAP!!!
+            } else {
+                return stopLoss = false;
+            }
+        }
+        let stopLoss = safetyStopLoss(price, stopLossP, sellPrice);       //returns boolean
+
+        //get trends,signals,startegy
+        function upDown(value) {     //trendUD between curent and last value
+            let ma = f.getAvgOfArray(logUD);
+            //console.log("ma5:"+ma5);
+            if (stor[1] == undefined) {
+                stor[1] = value;
+                stor[0] = value;
             };
-        } else {
-            macdHistogram = trendUD;
-            trendMACD = 0;
+            stor[1] = stor[0];
+            stor[0] = value;
+            //let direction = stor[0] - stor[1];
+            let direction = stor[0] - ma;
+            //console.log("direction:"+direction);
+            if (direction > 0) {
+                trendUD = 1;   //buy coz rising
+                trendSign = "+";
+            } else {
+                trendUD = -1;   //hold or park coz stationary
+                trendSign = "-";
+            }
         }
-        //console.log(r);
-    }
-    var macdLine;
-    var signalLine;
-    var macdHistogram;      //>1,<1
-    var trendMACD;  //-1,0,1
-    TI_MACD(logMACD);
+        let trendSign;
+        let trendUD;
+        upDown(price);
 
-    function makeAsk(ask, ask2) {     //makerify prices for orders
-        var shiftP = 50;       //percentage of makerPrice shift
-        var askSubSpread = ask2 - ask;    //spread between first and second order of asks
-        return buyPrice = ask + f.part(shiftP, askSubSpread);
-    }
-    var buyPrice = price;//makeAsk(ask,ask2);
-
-    function makeBid(bid, bid2) {     //makerify prices for orders
-        var shiftP = 50;       //percentage of makerPrice shift
-        var bidSubSpread = bid - bid2;    //spread between first and second order of bids
-        return salePrice = bid - f.part(shiftP, bidSubSpread);
-    }
-    var salePrice = price;//makeBid(bid,bid2);
-
-    function makeOrder() { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-        trend = trendUD;  //short term trend
-        trend2 = trendRSI;     //long term trend
-        trend3 = trendMACD;     //technical indicator
-        trend4 = change24h;     //24h change % 4
-        if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)&& (trend4 >= 0)
-            orderType = "bougth";
-            round += 1;     //dev
-            console.log("No of purchases done: " + round + " of: " + roundMax);
-            enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
-            //bougthPrice = buyPrice;               //sim
-            //selfStop(quoteCurrency, fiatCurrency, loop);
-        } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
-
-            //selfStop(quoteCurrency, fiatCurrency, loop);
-            console.log("No of sales done: " + round + " of: " + roundMax);
-            orderType = "sold";
-            enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
-        } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {                          //stopLoss sell bad
-            orderType = "lossed";
-            enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('loss sell orders disabled');
-        } else if (sale && hold && !stopLoss) {                                  //holding fee NOT covered
-            orderType = "holding";
-        } else if (sale && !hold && !stopLoss) {                                 //holding fee covered
-            orderType = "holding good";
-        } else if (purchase) {      // ( change24h > 0 )
-            orderType = "parked";
+        function TI_RSI(values) {
+            let RSI = TI.RSI;
+            let inputRSI = {
+                values: values,
+                period: 14   //9
+            };
+            let r = RSI.calculate(inputRSI);
+            let n = r.length - 1;
+            let lastRSI = r[n]; //last JSON
+            //console.log("RSI:"+lastRSI);
+            if (lastRSI > 70) {
+                trendRSI = 1;   //buy coz rising
+            } else if (lastRSI < 30) {
+                trendRSI = -1;  //sell coz falling
+            } else {
+                trendRSI = 0;   //hold or park coz stationary
+                //lastRSI = 0;
+            };
+            //console.log("trend:"+trendRSI+" RSI:"+lastRSI);
+            return trendRSI;
         }
-        return print();
-    }
-    var buyAmount = quoteToBase(quoteBalance) * portion;
-    var sellAmount = baseBalance; // * portion;
-    var trend; //trend of bids
-    var trend2; //trend of asks
-    var orderType = "none";
-    makeOrder();
-    function print() {
-        var baseBalanceInQuote = baseToQuote(baseBalance);
-        var quoteBalanceInBase = quoteToBase(quoteBalance);
-        var balance = baseBalanceInQuote + quoteBalance;
-        var fiatValue = balance * fiatPrice;/*
+        let trendRSI;
+        trendRSI = TI_RSI(logRSI);
+
+        function TI_MACD(values) {     //should be bigger the better starts working when value = slowPeriod + signalPeriod
+            let MACD = TI.MACD;
+            let macdInput = {
+                values: values,   //34,70,140n of inputs - slowPeriod = n of outputs 
+                fastPeriod: 24,       //12,24,48
+                slowPeriod: 52,       //26,52,104      when this is full it putout
+                signalPeriod: 18,        //9,18,36
+                SimpleMAOscillator: false,
+                SimpleMASignal: false
+            };
+            let r = MACD.calculate(macdInput);      //array with JSONs
+            //console.log(r);
+            //console.log("data length: "+values.length);
+            let lastMACD;
+            r ? lastMACD = r[r.length - 1] : lastMACD = 0; //last JSON
+            //lastMACD = r[r.length-1];
+            //console.log("Last: "+JSON.stringify(lastMACD));
+            macdHistogram = 0;
+            if (lastMACD) {
+                macdLine = lastMACD.MACD;
+                signalLine = lastMACD.signal;
+                macdHistogram = lastMACD.histogram;
+                //console.log("MLine: "+macdLine);
+                //console.log("SLine: "+signalLine);
+                //console.log("MHist: "+macdHistogram);    
+                if (!isNaN(macdHistogram) && x == 0) {     //isNumber
+                    sendMail("Started MACD", msg);
+                    x++;
+                };
+                if (macdHistogram > 0) {
+                    trendMACD = 1;   //buy coz rising
+                } else if (macdHistogram < 0) {
+                    trendMACD = -1;  //sell coz falling
+                } else {
+                    trendMACD = 0;   //hold or park coz stationary
+                };
+            } else {
+                macdHistogram = trendUD;
+                trendMACD = 0;
+            }
+            //console.log(r);
+        }
+        let macdLine;
+        let signalLine;
+        let macdHistogram;      //>1,<1
+        let trendMACD;  //-1,0,1
+        TI_MACD(logMACD);
+
+        function makeAsk(ask, ask2) {     //makerify prices for orders
+            let shiftP = 50;       //percentage of makerPrice shift
+            let askSubSpread = ask2 - ask;    //spread between first and second order of asks
+            return buyPrice = ask + f.part(shiftP, askSubSpread);
+        }
+        let buyPrice = price;//makeAsk(ask,ask2);
+
+        function makeBid(bid, bid2) {     //makerify prices for orders
+            let shiftP = 50;       //percentage of makerPrice shift
+            let bidSubSpread = bid - bid2;    //spread between first and second order of bids
+            return salePrice = bid - f.part(shiftP, bidSubSpread);
+        }
+        let salePrice = price;//makeBid(bid,bid2);
+
+        function makeOrder() { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+            trend = trendUD;  //short term trend
+            trend2 = trendRSI;     //long term trend
+            trend3 = trendMACD;     //technical indicator
+            trend4 = change24h;     //24h change % 4
+            if (purchase && (trend > 0) && (trend2 >= 0) && (trend3 >= 0)) {                //buy // buy with RSI and MACD (trend2 > 0) | (trend2 >= 0)&& (trend4 >= 0)
+                orderType = "bougth";
+                round += 1;     //dev
+                console.log("No of purchases done: " + round + " of: " + roundMax);
+                enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
+                //bougthPrice = buyPrice;               //sim
+                //selfStop(quoteCurrency, fiatCurrency, loop);
+            } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
+
+                //selfStop(quoteCurrency, fiatCurrency, loop);
+                console.log("No of sales done: " + round + " of: " + roundMax);
+                orderType = "sold";
+                enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
+            } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {                          //stopLoss sell bad
+                orderType = "lossed";
+                enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('loss sell orders disabled');
+            } else if (sale && hold && !stopLoss) {                                  //holding fee NOT covered
+                orderType = "holding";
+            } else if (sale && !hold && !stopLoss) {                                 //holding fee covered
+                orderType = "holding good";
+            } else if (purchase) {      // ( change24h > 0 )
+                orderType = "parked";
+            }
+            return print();
+        }
+        let buyAmount = quoteToBase(quoteBalance) * portion;
+        let sellAmount = baseBalance; // * portion;
+        let trend; //trend of bids
+        let trend2; //trend of asks
+        let orderType = "none";
+        makeOrder();
+        function print() {
+            let baseBalanceInQuote = baseToQuote(baseBalance);
+            let quoteBalanceInBase = quoteToBase(quoteBalance);
+            let balance = baseBalanceInQuote + quoteBalance;
+            let fiatValue = balance * fiatPrice;/*
                 console.log("fiatValue " + fiatValue);
                 console.log("balance " + balance);*/
-        var balanceB = quoteBalanceInBase + baseBalance;
-        var profit = price - sellPrice;
-        var relProfit = f.percent(profit, sellPrice);
-        var absProfit = f.part(relProfit, baseBalanceInQuote);
-        var absProfitFiat = absProfit * fiatPrice;/*
+            let balanceB = quoteBalanceInBase + baseBalance;
+            let profit = price - sellPrice;
+            let relProfit = f.percent(profit, sellPrice);
+            let absProfit = f.part(relProfit, baseBalanceInQuote);
+            let absProfitFiat = absProfit * fiatPrice;/*
                 console.log("absProfitFiat " + absProfitFiat);
                 console.log("absProfit " + absProfit);
                 console.log("fiatPrice " + fiatPrice);*/
 
-        var rounds = roundMax - round;
-        //var absProfit = profit * baseBalance;
-        //var relProfit = f.percent(absProfit, sellPrice);
-        var separator = "|";
-        msg =   //info msg on ticker time
-            f.getTime() + "|" +
-            "P:" + price.toFixed(8) + " " + symbol + "|" +
-            "aP:" + absProfit.toFixed(8) + " " + quoteCurrency + "|" +
-            "aPF:" + absProfitFiat.toFixed(2) + " " + fiatCurrency + "|" +
-            "SH:" + rounds + "|" +
-            "rP:" + (relProfit + minProfitP).toFixed(2) + " %|" +
-            stopLossP + " %" + "|" +
-            //"aPF:" + fiatAbsProfit.toFixed(2) + " " + fiatCurrency + "|" +
-            "C24h:" + change24hP + " |" +
-            //exchangeName + "|" +
-            //"B1:"+bid+" "+symbol+"|"+
-            //"B2:"+bid2+" "+symbol+"|"+
-            "t:" + ticker + "m" + "|" +
-            "BP:" + bougthPrice.toFixed(8) + "|" +
-            "SP:" + sellPrice.toFixed(8) + "|" +
-            baseCurrency + ":" + baseBalance.toFixed(8) + "|" +
-            boolToInitial(baseCurrency) + "in" + boolToInitial(quoteCurrency) + ":" + baseBalanceInQuote.toFixed(8) + "|" +
-            quoteCurrency + ":" + quoteBalance.toFixed(8) + "|" +
-            "T:" + balance.toFixed(8) + "|" +
-            "TF:" + fiatValue.toFixed(2) + " " + fiatCurrency + "|" +
-            //"FiatPrice:" + fiatPrice.toFixed(8) + " " + fiatSymbol + "|" +
-            "O:" + orderType + "|" +
-            "P:" + boolToInitial(purchase) + "|" +
-            "S:" + boolToInitial(sale) + "|" +
-            "H:" + boolToInitial(hold) + "|" +
-            "SL:" + boolToInitial(stopLoss) + "|" +
-            "UD:" + trendSign + "|" +
-            "RSI" + logRSI.length + ":" + trendRSI + "|" +
-            "MACD" + logMACD.length + ":" + trendMACD.toFixed(0);
+            let rounds = roundMax - round;
+            //let absProfit = profit * baseBalance;
+            //let relProfit = f.percent(absProfit, sellPrice);
+            let separator = "|";
+            msg =   //info msg on ticker time
+                f.getTime() + "|" +
+                "P:" + price.toFixed(8) + " " + symbol + "|" +
+                "aP:" + absProfit.toFixed(8) + " " + quoteCurrency + "|" +
+                "aPF:" + absProfitFiat.toFixed(2) + " " + fiatCurrency + "|" +
+                "SH:" + rounds + "|" +
+                "rP:" + (relProfit + minProfitP).toFixed(2) + " %|" +
+                stopLossP + " %" + "|" +
+                //"aPF:" + fiatAbsProfit.toFixed(2) + " " + fiatCurrency + "|" +
+                "C24h:" + change24hP + " |" +
+                //exchangeName + "|" +
+                //"B1:"+bid+" "+symbol+"|"+
+                //"B2:"+bid2+" "+symbol+"|"+
+                "t:" + ticker + "m" + "|" +
+                "BP:" + bougthPrice.toFixed(8) + "|" +
+                "SP:" + sellPrice.toFixed(8) + "|" +
+                baseCurrency + ":" + baseBalance.toFixed(8) + "|" +
+                boolToInitial(baseCurrency) + "in" + boolToInitial(quoteCurrency) + ":" + baseBalanceInQuote.toFixed(8) + "|" +
+                quoteCurrency + ":" + quoteBalance.toFixed(8) + "|" +
+                "T:" + balance.toFixed(8) + "|" +
+                "TF:" + fiatValue.toFixed(2) + " " + fiatCurrency + "|" +
+                //"FiatPrice:" + fiatPrice.toFixed(8) + " " + fiatSymbol + "|" +
+                "O:" + orderType + "|" +
+                "P:" + boolToInitial(purchase) + "|" +
+                "S:" + boolToInitial(sale) + "|" +
+                "H:" + boolToInitial(hold) + "|" +
+                "SL:" + boolToInitial(stopLoss) + "|" +
+                "UD:" + trendSign + "|" +
+                "RSI" + logRSI.length + ":" + trendRSI + "|" +
+                "MACD" + logMACD.length + ":" + trendMACD.toFixed(0);
 
-        //logToLog(msg);        // store to log
-        console.log(msg);
+            //logToLog(msg);        // store to log
+            console.log(msg);
+        }
     }
-}
 
-var log = "LOG: ";       //prefix
-function logToLog(input) {
-    log += input;
-    log += "\n";    //new line
-    //console.log(log);
-}
+    let log = "LOG: ";       //prefix
+    function logToLog(input) {
+        log += input;
+        log += "\n";    //new line
+        //console.log(log);
+    }
 
-//setup main
-set();
-function set() {
-    console.log("Selected exchange: " + exchange.name + " (" + exchange.countries + ")");
-    console.log("Maker fee: " + exchange.fees.trading.maker * 100 + " %");
-    console.log("Taker fee: " + tradingFeeP + " %");
-}
+    //setup main
+    set();
+    function set() {
+        console.log("Selected exchange: " + exchange.name + " (" + exchange.countries + ")");
+        console.log("Maker fee: " + exchange.fees.trading.maker * 100 + " %");
+        console.log("Taker fee: " + tradingFeeP + " %");
+    }
 
-//setup main cascade
-setTimeout(function () { setup() }, count());
-function setup() {
-    //setTimeout(function(){fetchCurrencies() },count());
-    setTimeout(function () { loadMarkets() }, count());
-    setTimeout(function () { fetchAsksBids(symbol) }, count());
-    setTimeout(function () { fetchBalances() }, count());
-
-    setTimeout(function () {
-        console.log("Wallet:" + "\n" +
-            baseBalance + " " + baseCurrency + "\n" +
-            quoteBalance + " " + quoteCurrency)
-    }, count());
-    setTimeout(function () { console.log("Selected market: " + baseCurrency + " / " + quoteCurrency) }, count());
-    setTimeout(function () { console.log("24h change: " + change24hP.toFixed(2) + " %") }, count());
-    setTimeout(function () { console.log("BaseVolume: " + baseVolume + " " + baseCurrency) }, count());
-    setTimeout(function () { console.log("QuoteVolume: " + quoteVolume + " " + quoteCurrency) }, count());
-    setTimeout(function () { console.log("Currency to sell: " + selectCurrency()) }, count());
-
-    //loop fetches
-    setTimeout(function () { loop = setInterval(function () { loopFetches() }, timeTicker) }, count());
-    function loopFetches() {
-        setTimeout(function () { fetchBalances() }, count());
-        setTimeout(function () { fetchTicker() }, count());
-        setTimeout(function () { fetchFiatPrice(fiatSymbol) }, count());
+    //setup main cascade
+    setTimeout(function () { setup() }, count());
+    function setup() {
+        //setTimeout(function(){fetchCurrencies() },count());
+        setTimeout(function () { loadMarkets() }, count());
         setTimeout(function () { fetchAsksBids(symbol) }, count());
-        //loop logic 
-        setTimeout(function () { loopLogic() }, count());
-        function loopLogic() {
-            selectCurrency();
-            runStrategy(strategy);
+        setTimeout(function () { fetchBalances() }, count());
+
+        setTimeout(function () {
+            console.log("Wallet:" + "\n" +
+                baseBalance + " " + baseCurrency + "\n" +
+                quoteBalance + " " + quoteCurrency)
+        }, count());
+        setTimeout(function () { console.log("Selected market: " + baseCurrency + " / " + quoteCurrency) }, count());
+        setTimeout(function () { console.log("24h change: " + change24hP.toFixed(2) + " %") }, count());
+        setTimeout(function () { console.log("BaseVolume: " + baseVolume + " " + baseCurrency) }, count());
+        setTimeout(function () { console.log("QuoteVolume: " + quoteVolume + " " + quoteCurrency) }, count());
+        setTimeout(function () { console.log("Currency to sell: " + selectCurrency()) }, count());
+
+        //loop fetches
+        setTimeout(function () { loop = setInterval(function () { loopFetches() }, timeTicker) }, count());
+        function loopFetches() {
+            setTimeout(function () { fetchBalances() }, count());
+            setTimeout(function () { fetchTicker() }, count());
+            setTimeout(function () { fetchFiatPrice(fiatSymbol) }, count());
+            setTimeout(function () { fetchAsksBids(symbol) }, count());
+            //loop logic 
+            setTimeout(function () { loopLogic() }, count());
+            function loopLogic() {
+                selectCurrency();
+                runStrategy(strategy);
+            }
         }
     }
 }
-}
-
 
 
