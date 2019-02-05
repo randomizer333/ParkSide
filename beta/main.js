@@ -34,6 +34,7 @@ let portf = [];         //array of currencies owned
 let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
 let alt;
+let strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
 
 //main void
 console.log("Module CCXT version: " + ccxt.version);
@@ -334,7 +335,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
     let quoteCrypto = "BTC"
     let fiatSymbol = mergeSymbol(quoteCrypto, fiatCurrency);
-    let strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
     let indicator = "MACD"; //"RSI","CGI"
     //let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
     let portion = 0.999;        //!!! 0.51 || 0.99 !       part of balance to trade 
