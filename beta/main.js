@@ -27,7 +27,7 @@ let bougthPrice = 0.00000001;  //set bougth price
 let stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
 let stopLossF = 0.5;      //sell if crypto quote goes down 1%,10%,100%
 let numOfBots = 1;
-let fetchTime = 500;//minimum 100
+let fetchTime = 200;//minimum 100
 let ticker = 1;   //ticker time in minutes  //DEV
 let enableOrders = true;//false;
 let portf = [];         //array of currencies owned
@@ -153,7 +153,7 @@ function f1() {
                 let r = exchange.symbols;    //market simbols BTC/USDT
                 //f.cs(results);
                 syms = r;
-                f.cs("No of available markets: "+syms.length);
+                f.cs("No of available markets: " + syms.length);
                 return r;
             }).catch((error) => {
                 console.error(error);
@@ -208,16 +208,20 @@ function f1() {
                                 if (fSym == syms[i]) {
                                     exS = true;
                                     f.cs("Fiat symbol " + fSym + " exist: " + exS);
+                                    determineFiatSymbolExistence(exS);
                                 }
                             }
-                            if (exS) {
-                                f.cs("actualy runnning FIAT boter");
-                                runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossF, bougthPrice);
-                            } else {
-                                f.cs("actualy runnning ALTer boter");
-                                runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice)
-                                //setTimeout(function () { runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+                            function determineFiatSymbolExistence(symbol) {
+                                if (exS) {
+                                    f.cs("actualy runnning FIAT boter");
+                                    runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossF, bougthPrice);
+                                } else {
+                                    f.cs("actualy runnning ALTer boter");
+                                    runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice)
+                                    //setTimeout(function () { runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
+                                }
                             }
+
 
                         }
                         setBots(bestBuy);   //set and run bots
@@ -342,19 +346,21 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     let minProfitP = 0.1;        //holding addition
     let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
     let timeStart = f.msToMin(26 * timeTicker);    // default:10080min = 7d, 1440min = 1d
-    let msg;
-    //let exchangeName;// = "poloniex";      
+    let msg;  
     let x = 0; //counter for starting mail
 
 
     //functions CLI
-    let a = 0;
+    //let a = 0;
     function count() {       //defines next time delay
         let delay = 1200 //miliseconds
         a++;
         return a * delay;
     }
 
+    let subject;
+    let message;
+    let to;
     function sendMail(subject, message, to) {
         // email account data
         let nodemailer = require('nodemailer');
@@ -367,9 +373,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         });
 
         // mail body
-        let subject;
-        let message;
-        let to;
         let mailOptions = {
             from: 'bb@gmail.com',   //NOT WORK
             to: 'markosmid333@gmail.com',//to, 
@@ -545,20 +548,25 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         counter++;
         console.log(history);
     }
+
+        var bool;
+        var a;
+        var b;
     function boolToInitial(bool) {	//returns initial of string|bool
-        let bool;
-        let a = bool.toString();
-        let b = a.charAt(0);
+        bool;
+        a = bool.toString();
+        b = a.charAt(0);
         return b;
     }
-    function quoteToBase(amountQuote) {
         let amountQuote;
-        let amountBase = amountQuote / bid;
+        let amountBase;
+    function quoteToBase(amountQuote) {
+        amountQuote;
+         amountBase = amountQuote / bid;
         return amountBase;
     }
     function baseToQuote(amountBase) {
-        let amountBase;
-        let amountQuote = amountBase * bid;
+        amountQuote = amountBase * bid;
         return amountQuote;
     }
     function getAvgOfArrayJump(numArray, jump) {     //in: numericArray out: avgValueOfPart
@@ -759,6 +767,9 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         }
         let down = bounce(logMACD)
 
+        let sellPrice;
+        let hold;
+        hold = safetySale(tradingFeeP, bougthPrice);        //returns bool
         function safetySale(tradingFeeP, bougthPrice) {  //no sale with loss
             let tradingFeeAbs;
             tradingFeeP = tradingFeeP * 2;
@@ -773,9 +784,9 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 return hold = false;           //allow sale of holding to parked
             }
         }
-        let sellPrice;
-        let hold = safetySale(tradingFeeP, bougthPrice);        //returns bool
 
+        let stopLoss;
+        stopLoss = safetyStopLoss(price, stopLossP, sellPrice);       //returns boolean
         function safetyStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
             absStopLoss = f.part(stopLossP, sellPrice);
             loss = sellPrice - price;     //default: loss = sellPrice - price;
@@ -786,9 +797,11 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 return stopLoss = false;
             }
         }
-        let stopLoss = safetyStopLoss(price, stopLossP, sellPrice);       //returns boolean
 
         //get trends,signals,startegy
+        let trendSign;
+        let trendUD;
+        upDown(price);
         function upDown(value) {     //trendUD between curent and last value
             let ma = f.getAvgOfArray(logUD);
             //console.log("ma5:"+ma5);
@@ -809,10 +822,9 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 trendSign = "-";
             }
         }
-        let trendSign;
-        let trendUD;
-        upDown(price);
 
+        let trendRSI;
+        trendRSI = TI_RSI(logRSI);
         function TI_RSI(values) {
             let RSI = TI.RSI;
             let inputRSI = {
@@ -834,9 +846,12 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             //console.log("trend:"+trendRSI+" RSI:"+lastRSI);
             return trendRSI;
         }
-        let trendRSI;
-        trendRSI = TI_RSI(logRSI);
 
+        let macdLine;
+        let signalLine;
+        let macdHistogram;      //>1,<1
+        let trendMACD;  //-1,0,1
+        TI_MACD(logMACD);
         function TI_MACD(values) {     //should be bigger the better starts working when value = slowPeriod + signalPeriod
             let MACD = TI.MACD;
             let macdInput = {
@@ -879,26 +894,30 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             }
             //console.log(r);
         }
-        let macdLine;
-        let signalLine;
-        let macdHistogram;      //>1,<1
-        let trendMACD;  //-1,0,1
-        TI_MACD(logMACD);
 
+        let buyPrice;
+        buyPrice = price;//makeAsk(ask,ask2);
         function makeAsk(ask, ask2) {     //makerify prices for orders
             let shiftP = 50;       //percentage of makerPrice shift
             let askSubSpread = ask2 - ask;    //spread between first and second order of asks
             return buyPrice = ask + f.part(shiftP, askSubSpread);
         }
-        let buyPrice = price;//makeAsk(ask,ask2);
 
+        let salePrice;
+        salePrice = price;//makeBid(bid,bid2);
         function makeBid(bid, bid2) {     //makerify prices for orders
             let shiftP = 50;       //percentage of makerPrice shift
             let bidSubSpread = bid - bid2;    //spread between first and second order of bids
             return salePrice = bid - f.part(shiftP, bidSubSpread);
         }
-        let salePrice = price;//makeBid(bid,bid2);
-
+        
+        let sellAmount = baseBalance; // * portion;
+        let trend; //trend of bids
+        let trend2; //trend of asks
+        let orderType = "none";
+        let buyAmount;
+        buyAmount = quoteToBase(quoteBalance) * portion;
+        makeOrder();
         function makeOrder() { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
             trend = trendUD;  //short term trend
             trend2 = trendRSI;     //long term trend
@@ -929,12 +948,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             }
             return print();
         }
-        let buyAmount = quoteToBase(quoteBalance) * portion;
-        let sellAmount = baseBalance; // * portion;
-        let trend; //trend of bids
-        let trend2; //trend of asks
-        let orderType = "none";
-        makeOrder();
+        
         function print() {
             let baseBalanceInQuote = baseToQuote(baseBalance);
             let quoteBalanceInBase = quoteToBase(quoteBalance);
