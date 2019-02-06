@@ -18,9 +18,9 @@ let keys = require("../keys.json");      //keys file location
 //init setup
 let fiat = "USDT"; //USDT,EUR
 let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
-let stopLossP = 1;      ////sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
-let stopLossF = 0.5;      //sell if crypto quote goes down 1%,10%,100%
-let numOfBots = 1;
+let stopLossP = 100;      ////sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
+let stopLossF = 100;      //sell if crypto quote goes down 1%,10%,100%
+let numOfBots = 2;
 let fetchTime = 200;//minimum 100
 let ticker = 1;   //ticker time in minutes  //DEV
 let enableOrders = true;//false;
