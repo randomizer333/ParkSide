@@ -10,21 +10,15 @@
                 loop
 */
 
-//select best currency
-//set two bots
-//run two bots
-//stop bots
-//restart
-
 let f = require('./funk.js');           //connect to module functions
-//let b = require("./bot2.js");
 let ccxt = require('ccxt');             //connect to ccxt node.js module
+let TI = require("technicalindicators");
 let keys = require("../keys.json");      //keys file location
 
 //init setup
 let fiat = "USDT"; //USDT,EUR
-let bougthPrice = 0.00000001;  //set bougth price
-let stopLossP = 1;      //if it drops for stopLossP percentage sell ASAP
+let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
+let stopLossP = 1;      ////sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
 let stopLossF = 0.5;      //sell if crypto quote goes down 1%,10%,100%
 let numOfBots = 1;
 let fetchTime = 200;//minimum 100
@@ -40,10 +34,11 @@ let strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
 console.log("Module CCXT version: " + ccxt.version);
 console.log("Available exchanges: " + ccxt.exchanges);
 
+let r
 function counter() {       //defines next time delay
     //let delay = 5000 //miliseconds
     //a = 0;
-    let r = a * delay;
+    r = a * delay;
     a++;
     return r;
 }
@@ -136,16 +131,15 @@ let vals = [];
 let bals = [];
 fetchBalances();
 
+let q = 1;
 function stopLoop(fu) { //stops a setInterval function
     clearInterval(fu);
     f.cs("loop stopped");
     q = 1;
 }
 
-let q = 1;
-let ff1 = f1();// = setInterval(f1, 1000);
 let bestBuy;
-//let ff = [setInterval(f1, 500),setInterval(f2, 500),setInterval(f3, 500)]
+let ff1 = f1();// = setInterval(f1, 1000);
 function f1() {
     function fetch24hs() {
         function loadMarks() {  //loads all available markets
@@ -173,6 +167,8 @@ function f1() {
                 }, i * fetchTime);    //delay
             }
             let logChs = new Array();
+            let change24h = 0;
+            //fetchTickers(symbol);
             function fetchTickers() {       //loads ticker of a symbol a currency pair
                 exchange.fetchTicker(symbol).then((results) => {
                     let r = results;    //market simbols BTC/USDT
@@ -198,6 +194,8 @@ function f1() {
                     }
                     if (stev == syms.length - 2) { //exit condition
                         f.cs("BestBuy: " + bestBuy)
+                        setBots(bestBuy);   //set and run bots
+                        //setBots(logChs[1]);   //set and run 2nd best bots
                         function setBots(sym) {
                             exS = false;
                             alt = f.splitSymbol(sym, "first");
@@ -208,10 +206,10 @@ function f1() {
                                 if (fSym == syms[i]) {
                                     exS = true;
                                     f.cs("Fiat symbol " + fSym + " exist: " + exS);
-                                    determineFiatSymbolExistence(exS);
+                                    runBots(exS);
                                 }
                             }
-                            function determineFiatSymbolExistence(symbol) {
+                            function runBots(symbol) {
                                 if (exS) {
                                     f.cs("actualy runnning FIAT boter");
                                     runBot(quote, fiat, "PINGPONG", ticker, "binance", stopLossF, bougthPrice);
@@ -221,11 +219,19 @@ function f1() {
                                     //setTimeout(function () { runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
                                 }
                             }
-
-
+                            let mode;
+                            let modeFiat = true;
+                            tradeMode()
+                            function tradeMode(){
+                                if (quote == fiat){
+                                    mode = "fiat";
+                                    modeFiat = true;
+                                }else{
+                                    mode = "alt";
+                                    modeFiat = false;
+                                }
+                            }
                         }
-                        setBots(bestBuy);   //set and run bots
-                        //setBots(logChs[1]);   //set and run 2nd best bots
                     }
                     //f.cs(stev+" "+syms[stev]+" "+chs[stev]+" "+bestBuy);
                     stev++;
@@ -234,25 +240,11 @@ function f1() {
                     console.error(error);
                 })
             }
-            let change24h = 0;
-            let change24hP = 0;
-            let baseVolume;
-            let quoteVolume;
-            let priceChange;
-            //fetchTickers(symbol);
         }
         setTimeout(function () { runFetchTicker() }, 1000);
         return;
     }
-    let tickers = new Array();
     fetch24hs(exchange);
-    if (q == 1) {   //stop after some time
-        //ff2 = setInterval(f2, 1000);
-        //setTimeout(function () { stopLoop(ff1) }, f.minToMs(2));
-        //stopLoop(ff1);
-    } else {
-        q++;
-    };
     return;
 }
 
@@ -273,56 +265,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     git pull origin master
     */
 
-    let f = require("./funk.js");
-    let TI = require("technicalindicators");
-    let ccxt = require('ccxt');
-    let keys = require("../keys.json");  //keys file location
-    let exchange;
-    switch (exchangeName) {
-        case "bitstamp":
-            exchange = new ccxt.bitstamp({
-                apiKey: keys.bitstamp.apiKey,
-                secret: keys.bitstamp.secret,
-                uid: keys.bitstamp.uid
-            });
-            break;
-        case "poloniex":
-            exchange = new ccxt.poloniex({
-                apiKey: keys.poloniex.apiKey,
-                secret: keys.poloniex.secret,
-            });
-            break;
-        case "bittrex":
-            exchange = new ccxt.bittrex({
-                apiKey: keys.bittrex.apiKey,
-                secret: keys.bittrex.secret,
-            });
-            break;
-        case "coinbase":
-            exchange = new ccxt.coinbase({
-                apiKey: keys.coinbase.apiKey,
-                secret: keys.coinbase.secret,
-            });
-            break;
-        case "binance":
-            exchange = new ccxt.binance({
-                apiKey: keys.binance.apiKey,
-                secret: keys.binance.secret,
-            });
-            break;
-        case "hitbtc":
-            exchange = new ccxt.hitbtc({
-                apiKey: keys.hitbtc.apiKey,
-                secret: keys.hitbtc.secret,
-            });
-            break;
-        case "bitmex":
-            exchange = new ccxt.bitmex({
-                apiKey: keys.bitmex.apiKey,
-                secret: keys.bitmex.secret
-            })
-            break;
-    }
     let tradingFeeP;// = 0.5;      //default
     exchange.fees.trading.taker ? tradingFeeP = exchange.fees.trading.taker * 100 : tradingFeeP = 0.5;
     //init setup hardcode attributes later to come from GUI
@@ -330,25 +272,20 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     let round = 0;              //init number of sell orders til stop
     let roundMax = 5;       //disable buying after this count
 
-    //let symbol = "BTC/USDT";        // "BTC/ETH", "ETH/USDT", ...
-
     let loop;
     //let enableOrders = false;//false;//true;//m.enableOrders;        //DEV
-    let symbol = mergeSymbol(baseCurrency, quoteCurrency);
+    let symbol = f.mergeSymbol(baseCurrency, quoteCurrency);
     let fiatCurrency = "USDT";//"USDT"EUR
     exchangeName == "bitstamp" ? fiatCurrency = "EUR" : "";
     let quoteCrypto = "BTC"
-    let fiatSymbol = mergeSymbol(quoteCrypto, fiatCurrency);
+    let fiatSymbol = f.mergeSymbol(quoteCrypto, fiatCurrency);
     let indicator = "MACD"; //"RSI","CGI"
-    //let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
     let portion = 0.999;        //!!! 0.51 || 0.99 !       part of balance to trade 
     //let stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
     let minProfitP = 0.1;        //holding addition
     let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
-    let timeStart = f.msToMin(26 * timeTicker);    // default:10080min = 7d, 1440min = 1d
-    let msg;  
+    let msg;
     let x = 0; //counter for starting mail
-
 
     //functions CLI
     //let a = 0;
@@ -390,29 +327,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             }
         });
     }
-    //sendMail("Run!","Started at:"+f.getTime());
+    sendMail("Run!","Started at:"+f.getTime());
 
-    function mergeSymbol(base, quote) {
-        /*
-        if (base == quote){
-                base = baseCurrency;
-        }*/
-        return mergedSymbol = base + "/" + quote;
-
-    }
-    function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second        base | quote
-        let char = symbol.search("/");
-        base = symbol.slice(0, char);
-        quote = symbol.slice(char + 1, symbol.length);
-        switch (selectReturn) {
-            case "base":
-                return base;
-                break;
-            case "quote":
-                return quote;
-                break;
-        }
-    }
 
     let sale = false;
     let purchase = false;
@@ -454,32 +370,15 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             console.error(error);
         })
     }
-    let change24h = 0;
     let change24hP = 0;
     let baseVolume;
     let quoteVolume;
-    let tickerInfo = fetchTicker(symbol);
-
-    function fetchCurrencies() {        //loads all available symbols of currency pairs/markets
-        exchange.loadMarkets().then((results) => {
-            let r = exchange.currencies;    //market simbols BTC/USDT
-            let r1 = JSON.stringify(r);
-            //console.log(r1);
-            let currencies = Object.keys(r);
-            //console.log(JSON.stringify(currencies));
-            return r;
-        }).catch((error) => {
-            console.error(error);
-        })
-    }
-    let curencies;  //all currencies array 
-    //fetchCurrencies();
+    fetchTicker(symbol);
 
     function loadMarkets() {        //loads all available symbols of currency pairs/markets
         exchange.loadMarkets().then((results) => {
             let r = exchange.symbols;    //market simbols BTC/USDT
-            let r1 = JSON.stringify(r);
-            console.log(r1);
+            f.cs(r);
             return r;
         }).catch((error) => {
             console.error(error);
@@ -526,60 +425,25 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         })
     }
 
-    let orderId;
-    function cancelOrder(id) {
-        exchange.cancelOrder(id).then((results) => {
-            let r = results;
-            console.log("CANCELED ORDER: " + id + " " + r);
-            return JSON.stringify(r);
-        }).catch((error) => {
-            console.error(JSON.stringify(error));
-        })
-    }
-
     //logic funk and math junk
-    //let history = new Array();
-    function logHistory(value, size) {        //log FILO
-        let counter;
-        while (history.length >= size) {
-            history.pop();
-        }
-        history.unshift(value);
-        counter++;
-        console.log(history);
-    }
 
-        var bool;
-        var a;
-        var b;
+    let a;
+    let b;
     function boolToInitial(bool) {	//returns initial of string|bool
         bool;
         a = bool.toString();
         b = a.charAt(0);
         return b;
     }
-        let amountQuote;
-        let amountBase;
+    let amountQuote;
+    let amountBase;
     function quoteToBase(amountQuote) {
-        amountQuote;
-         amountBase = amountQuote / bid;
+        amountBase = amountQuote / bid;
         return amountBase;
     }
     function baseToQuote(amountBase) {
         amountQuote = amountBase * bid;
         return amountQuote;
-    }
-    function getAvgOfArrayJump(numArray, jump) {     //in: numericArray out: avgValueOfPart
-        let numArray;
-        let jump;
-        let n = numArray.length / jump;
-        let sum = 0;
-        let avg;
-        for (i = 0; i < numArray.length; i += jump) {
-            sum += numArray[i];
-            avg = sum / n;
-        }
-        return avg;
     }
 
     function runStrategy(strategy) {
@@ -601,7 +465,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
     let once = false;
     function selfStop(loopName) {
-        if (exS) {      //for Fiat bot
+        if (modeFiat) {      //for Fiat bot
             f.cs("we are fiat");
             clearInterval(loopName);
             if (once == false) {
@@ -625,9 +489,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice);
         f.cs("bougth quote runing alt " + twice);
     }
-
-
-
 
     function order(orderType, symbol, amount, price) {
         let orderId;
@@ -705,14 +566,15 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     let price;
     let stor = new Array();     //storage for direction
     function PINGPONG() {
+        price = makePrice(ask, bid);
         function makePrice(high, low) {
             spread = high - low;
             return price = high - (spread / 2);
         }
-        price = makePrice(ask, bid);
-        //price = bid2;  
+
         bougthPrice == 0.00000001 ? bougthPrice = price : "";   //init
 
+        balanceChanged();
         function balanceChanged() {
             if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
@@ -722,9 +584,11 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 }
             }
         }
-        balanceChanged();
 
         //price loging:
+        loger(price, 5, logUD);
+        loger(price, 77, logMACD);
+        loger(price, 15, logRSI);
         function loger(value, length, array) {        //log FILO to array
             let counter;         //d   
             while (array.length >= length) {
@@ -734,19 +598,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             counter++;    //d
             return array;
         }
-        loger(price, 5, logUD);
-        loger(price, 77, logMACD);
-        loger(price, 15, logRSI);
 
-        let duration = 360;       //duration in minutes 6h=360min
-        function timeToTicker(duration) {
-            numOfTickers = duration / ticker
-            return numOfTickers;
-        }
-        let numOfTickers = 0;
-
-        //stalling 
-
+        //let stall = stalling(logUD,price,0.001);
         function stalling(longTimePrice, price, div) {
             let ma = f.getAvgOfArray(longTimePrice);
             if (ma + (f.part(div, ma) > price)) {
@@ -760,14 +613,9 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             //console.log("Stall status: "+stall);
             return stall;
         }
-        //let stall = stalling(logUD,price,0.001);
-
-        function bounce(array) {
-            f.getMaxOfArray(logMACD) > price;
-        }
-        let down = bounce(logMACD)
 
         let sellPrice;
+        sellPrice = 0;
         let hold;
         hold = safetySale(tradingFeeP, bougthPrice);        //returns bool
         function safetySale(tradingFeeP, bougthPrice) {  //no sale with loss
@@ -910,7 +758,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             let bidSubSpread = bid - bid2;    //spread between first and second order of bids
             return salePrice = bid - f.part(shiftP, bidSubSpread);
         }
-        
+
         let sellAmount = baseBalance; // * portion;
         let trend; //trend of bids
         let trend2; //trend of asks
@@ -928,10 +776,8 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 round += 1;     //dev
                 console.log("No of purchases done: " + round + " of: " + roundMax);
                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
-                //bougthPrice = buyPrice;               //sim
                 //selfStop(quoteCurrency, fiatCurrency, loop);
             } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
-
                 //selfStop(quoteCurrency, fiatCurrency, loop);
                 console.log("No of sales done: " + round + " of: " + roundMax);
                 orderType = "sold";
@@ -948,7 +794,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             }
             return print();
         }
-        
+
         function print() {
             let baseBalanceInQuote = baseToQuote(baseBalance);
             let quoteBalanceInBase = quoteToBase(quoteBalance);
@@ -979,7 +825,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 stopLossP + " %" + "|" +
                 //"aPF:" + fiatAbsProfit.toFixed(2) + " " + fiatCurrency + "|" +
                 "C24h:" + change24hP + " |" +
-                //exchangeName + "|" +
                 //"B1:"+bid+" "+symbol+"|"+
                 //"B2:"+bid2+" "+symbol+"|"+
                 "t:" + ticker + "m" + "|" +
@@ -1023,13 +868,14 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     //setup main cascade
     setTimeout(function () { setup() }, count());
     function setup() {
-        //setTimeout(function(){fetchCurrencies() },count());
         setTimeout(function () { loadMarkets() }, count());
         setTimeout(function () { fetchAsksBids(symbol) }, count());
         setTimeout(function () { fetchBalances() }, count());
+        setTimeout(function () { fetchTicker() }, count());
 
         setTimeout(function () {
-            console.log("Wallet:" + "\n" +
+            console.log(
+                "Wallet:" + "\n" +
                 baseBalance + " " + baseCurrency + "\n" +
                 quoteBalance + " " + quoteCurrency)
         }, count());
