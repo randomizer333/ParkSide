@@ -29,6 +29,7 @@ let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
 let alt;
 let strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
+let modeFiat;
 
 //main void
 console.log("Module CCXT version: " + ccxt.version);
@@ -220,7 +221,7 @@ function f1() {
                                 }
                             }
                             let mode;
-                            let modeFiat = true;
+                            modeFiat = true;
                             tradeMode()
                             function tradeMode(){
                                 if (quote == fiat){
@@ -280,7 +281,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
     let quoteCrypto = "BTC"
     let fiatSymbol = f.mergeSymbol(quoteCrypto, fiatCurrency);
     let indicator = "MACD"; //"RSI","CGI"
-    let portion = 0.999;        //!!! 0.51 || 0.99 !       part of balance to trade 
+    let portion = 0.99;        //!!! 0.51 || 0.99 !       part of balance to trade 
     //let stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
     let minProfitP = 0.1;        //holding addition
     let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
