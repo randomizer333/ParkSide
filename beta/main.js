@@ -18,12 +18,12 @@ let keys = require("../keys.json");      //keys file location
 //init setup
 let fiat = "USDT"; //USDT,EUR
 let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
-let stopLossP = 1;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
 let stopLossF = 1;      //sell if fiat goes down 1%,10%,100%
+let stopLossP = 100;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
 let numOfBots = 2;
-let fetchTime = 500;//minimum 100
-let ticker = 1;   //ticker time in minutes  //DEV
-let enableOrders = true;//true;//false;
+let fetchTime = 500;//Dev minimum 100, default: 500
+let ticker = 1;   //ticker time in minutes  default: 1,5,10
+let enableOrders = false;//true;//false;    default: true
 let portf = [];         //array of currencies owned
 let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
@@ -467,27 +467,27 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
 
     function selfStop(loopName) {
         if (modeFiat) {      //for Fiat bot
-            f.cs("we are fiat");
-            clearInterval(loopName);
             if (once == false) {
+                clearInterval(loopName);
                 setTimeout(function () { main() }, count() * 2);
                 once = true;
-                f.cs("stopping fiat " + once);
+                f.cs("Stop: FIAT Start: Main" + once);
             }
         } else {  	        //for Alt bot
-            f.cs("we ar NOT Fiat");
             if (once == false) {
                 clearInterval(loopName);
                 once = true;
-                f.cs("stopping alt " + once);
+                f.cs("Stop: ALT" + once);
             }
         }
     }
 
     function selfRun() {
-        !twice ? runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) : "";
-        twice = true;
-        f.cs("bougth quote runing alt " + twice);
+        if (!twice) {
+            runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice);
+            twice = true;
+            f.cs("bougth quote runing alt " + twice);
+        }
     }
 
     function order(orderType, symbol, amount, price) {
@@ -776,9 +776,10 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 round += 1;     //dev
                 console.log("No of purchases done: " + round + " of: " + roundMax);
                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
-                selfRun();
+                //selfStop(loop); //Dev
+                //selfRun();  //Dev
             } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
-                selfStop(loop);
+                
                 console.log("No of sales done: " + round + " of: " + roundMax);
                 orderType = "sold";
                 enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
