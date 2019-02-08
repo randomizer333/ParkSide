@@ -18,18 +18,20 @@ let keys = require("../keys.json");      //keys file location
 //init setup
 let fiat = "USDT"; //USDT,EUR
 let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
-let stopLossP = 100;      ////sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
-let stopLossF = 100;      //sell if crypto quote goes down 1%,10%,100%
+let stopLossP = 1;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
+let stopLossF = 1;      //sell if fiat goes down 1%,10%,100%
 let numOfBots = 2;
-let fetchTime = 200;//minimum 100
+let fetchTime = 500;//minimum 100
 let ticker = 1;   //ticker time in minutes  //DEV
-let enableOrders = true;//false;
+let enableOrders = true;//true;//false;
 let portf = [];         //array of currencies owned
 let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
 let alt;
 let strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
 let modeFiat;
+let twice = false;
+let once = false;
 
 //main void
 console.log("Module CCXT version: " + ccxt.version);
@@ -220,16 +222,15 @@ function f1() {
                                     //setTimeout(function () { runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
                                 }
                             }
-                            let mode;
                             modeFiat = true;
                             tradeMode()
-                            function tradeMode(){
-                                if (quote == fiat){
-                                    mode = "fiat";
+                            function tradeMode() {
+                                if (quote == fiat) {
                                     modeFiat = true;
-                                }else{
-                                    mode = "alt";
+                                    f.cs("FIAT Mode: " + modeFiat);
+                                } else {
                                     modeFiat = false;
+                                    f.cs("ALT Mode: " + !modeFiat);
                                 }
                             }
                         }
@@ -328,7 +329,7 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             }
         });
     }
-    sendMail("Run!","Started at:"+f.getTime());
+    sendMail("Run!", "Started at:" + f.getTime());
 
 
     let sale = false;
@@ -464,7 +465,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         }
     }
 
-    let once = false;
     function selfStop(loopName) {
         if (modeFiat) {      //for Fiat bot
             f.cs("we are fiat");
@@ -484,10 +484,9 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
         }
     }
 
-    let twice = false;
     function selfRun() {
+        !twice ? runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) : "";
         twice = true;
-        runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice);
         f.cs("bougth quote runing alt " + twice);
     }
 
@@ -777,9 +776,9 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
                 round += 1;     //dev
                 console.log("No of purchases done: " + round + " of: " + roundMax);
                 enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
-                //selfStop(quoteCurrency, fiatCurrency, loop);
+                selfRun();
             } else if (sale && !hold && !stopLoss && (trend < 0) && (trend3 <= 0)) {         //sell good
-                //selfStop(quoteCurrency, fiatCurrency, loop);
+                selfStop(loop);
                 console.log("No of sales done: " + round + " of: " + roundMax);
                 orderType = "sold";
                 enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
@@ -795,7 +794,6 @@ function runBot(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, sto
             }
             return print();
         }
-
         function print() {
             let baseBalanceInQuote = baseToQuote(baseBalance);
             let quoteBalanceInBase = quoteToBase(quoteBalance);
