@@ -32,6 +32,7 @@ function main() {
     let alt;
     let strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
     let modeFiat;
+    let tradeAlt = false;
     let twice = false;
     let once = false;
 
@@ -492,6 +493,7 @@ function main() {
                 runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossA, bougthPrice);
                 twice = true;
                 f.cs("bougth quote runing alt " + twice);
+                tradeAlt = true;
             }
         }
 
@@ -553,11 +555,11 @@ function main() {
             switch (orderType) {
                 case "buy":
                     createLimitBuyOrder(symbol, amount, price);
-                    console.log("made buy order");
+                    console.log("made buy order with Symbol: "+symbol+" Amount: "+amount+" Price: "+price);
                     break;
                 case "sell":
                     createLimitSellOrder(symbol, amount, price);
-                    console.log("made sell order");
+                    console.log("made sell order with Symbol: "+symbol+" Amount: "+amount+" Price: "+price);
                     break;
                 default:
                     console.log("Invalid order type!!!");
@@ -775,7 +777,7 @@ function main() {
                 ud = trendUD;  //short term trend
                 rsi = trendRSI;     //long term trend
                 c24h = change24h;     //24h change % 4
-                if (modeFiat && (trendMACD >= 0)) {
+                if (!tradeAlt && (trendMACD >= 0)) {
                     macd = 1;
                     c24h = 1;
                     //rsi = 1;
@@ -787,12 +789,12 @@ function main() {
                 if (purchase && (ud > 0) && (rsi >= 0) && (macd > 0) && (c24h > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     round += 1;     //dev
-                    console.log("No of purchases done: " + round + " of: " + roundMax);
+                    //console.log("No of purchases done: " + round + " of: " + roundMax);
                     enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
                     //selfStop(loop); //Dev
                     //selfRun();  //Dev
                 } else if (sale && !hold && !stopLoss && (ud < 0) && (macd <= 0)) {         //sell good
-                    console.log("No of sales done: " + round + " of: " + roundMax);
+                    //console.log("No of sales done: " + round + " of: " + roundMax);
                     orderType = "sold";
                     enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
                 } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {                          //stopLoss sell bad
