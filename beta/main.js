@@ -244,8 +244,9 @@ function main() {
                         console.error(error);
                     })
                 }
-            }
-            setTimeout(function () { runFetchTicker() }, 1000);
+            };
+            //runFetchTicker();
+            setTimeout(function () { runFetchTicker() }, 2000);
             return;
         }
         fetch24hs(exchange);
@@ -473,7 +474,7 @@ function main() {
                 if (once == false) {
                     clearInterval(loopName);
                     clearInterval(loopAlt);
-                    setTimeout(function () { f1() }, count() * 2);
+                    setTimeout(function () { f1() }, 1000);
                     once = true;
                     f.cs("Stop: FIAT Start: Main" + once);
                 }
