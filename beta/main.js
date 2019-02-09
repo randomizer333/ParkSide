@@ -286,7 +286,7 @@ function main() {
         let quoteCrypto = "BTC"
         let fiatSymbol = f.mergeSymbol(quoteCrypto, fiatCurrency);
         let indicator = "MACD"; //"RSI","CGI"
-        let portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
+        let portion = 0.99;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //let stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         let minProfitP = 0.1;        //holding addition
         let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
