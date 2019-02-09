@@ -1,7 +1,6 @@
 //var runBot = require ('bot');
 let ccxt = require('ccxt');
 
-
 //init setup
 var quoteFiat = "USDT"; //USDT,EUR
 var bougthPrice = 0.00000001;  //set bouht price

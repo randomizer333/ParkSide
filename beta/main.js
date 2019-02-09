@@ -235,7 +235,6 @@ function main() {
                                         //setTimeout(function () { runBot(alt, quote, "PINGPONG", ticker, "binance", stopLossP, bougthPrice) }, counter());
                                     }
                                 }
-
                             }
                         }
                         //f.cs(stev+" "+syms[stev]+" "+chs[stev]+" "+bestBuy);
@@ -286,7 +285,7 @@ function main() {
         let quoteCrypto = "BTC"
         let fiatSymbol = f.mergeSymbol(quoteCrypto, fiatCurrency);
         let indicator = "MACD"; //"RSI","CGI"
-        let portion = 0.99;        //!!! 0.51 || 0.99 !       part of balance to trade 
+        let portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //let stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         let minProfitP = 0.1;        //holding addition
         let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
@@ -784,7 +783,7 @@ function main() {
                     rsi = trendRSI;
                 }
                 //macd = trendMACD;     //technical indicator
-                if (purchase && (ud > 0) && (rsi >= 0) && (macd >= 0) && (c24h > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                if (purchase && (ud > 0) && (rsi >= 0) && (macd > 0) && (c24h > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     round += 1;     //dev
                     console.log("No of purchases done: " + round + " of: " + roundMax);
