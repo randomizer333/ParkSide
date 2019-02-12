@@ -456,11 +456,13 @@ function main() {
 
         function selfStop() {
             if (!once) {
-                clearInterval(loopFiat);
-                clearInterval(loopAlt);
-                setTimeout(function () { f1() }, 10000);    //restart bots
+                //clearInterval(loopFiat);
+                //clearInterval(loopAlt);
+                setTimeout(function () { clearInterval(loopFiat) }, counter());
+                setTimeout(function () { clearInterval(loopAlt) }, counter());
+                setTimeout(function () { f1() }, counter());    //restart bots
                 once = true;
-                f.cs("Stop: FIAT Start: Main" + once);
+                f.cs("Stop: FIAT Start: Main " + once);
             }
         }
 
