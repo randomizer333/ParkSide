@@ -21,7 +21,7 @@ function main() {
     let fiat = "USDT"; //USDT,EUR
     let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
     let stopLossF = 1;      //sell if fiat goes down 1%,10%,100%
-    let stopLossA = 99;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
+    let stopLossA = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
     let numOfBots = 2;
     let fetchTime = 500;//Dev minimum 100, default: 500
     let ticker = 1;   //ticker time in minutes  default: 1,5,10
@@ -32,7 +32,6 @@ function main() {
     let alt;
     let strategy; // = "smaX";          //"emaX", "MMDiff", "upDown", "smaX", "macD"
     let modeFiat;
-    let tradeAlt = false;
     let twice = false;
     let once = false;
     let loopFiat, loopAlt;
@@ -42,6 +41,8 @@ function main() {
     //console.log("Available exchanges: " + ccxt.exchanges);
 
     let r;
+    let delay = (ticker / numOfBots) * 60000;
+    let a = 0;  //counter
     function counter() {       //defines next time delay
         //let delay = 5000 //miliseconds
         //a = 0;
@@ -49,8 +50,6 @@ function main() {
         a++;
         return r;
     }
-    let delay = (ticker / numOfBots) * 60000;
-    let a = 0;  //counter
 
     let exchange;
     let exchangeName = "binance";
@@ -138,23 +137,18 @@ function main() {
     let bals = [];
     fetchBalances();
 
-    let q = 1;
-    function stopLoop(fu) { //stops a setInterval function
-        clearInterval(fu);
-        f.cs("loop stopped");
-        q = 1;
-    }
-
     let bestBuy;
     let ff1 = f1();// = setInterval(f1, 1000);
+    let mins = new Array();
+    let marketInfo;
     function f1() {
         function fetch24hs() {
             function loadMarks() {  //loads all available markets
                 exchange.loadMarkets().then((results) => {
-                    let r = exchange.symbols;    //market simbols BTC/USDT
-                    syms = r;
-                    //minNot = r[2].limits.amount.min;
-                    //f.cs(results);
+                    let r = results;
+                    marketInfo = results;
+                    //f.cs(marketInfo["KMD/ETH"].limits.amount.min);
+                    syms = exchange.symbols;    //market simbols BTC/USDT
                     f.cs("No of available markets: " + syms.length);
                     return r;
                 }).catch((error) => {
@@ -184,6 +178,8 @@ function main() {
                         quoteVolume = r.quoteVolume;
                         change24h = r.percentage;
                         priceChange = r.change;
+                        mins[stev] = marketInfo[symbol].limits.amount.min;
+                        //f.cs(mins);
                         isNaN(change24h) ? change24h = 0 : "";
                         !change24h ? change24h = 0 : "";
                         chs[stev] = change24h;
@@ -343,12 +339,13 @@ function main() {
             if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 sale = true;
                 purchase = false;
-                //price = makeBid(bid, bid2);
                 return baseCurrency + " base of pair";
+            } else if (quoteBalance < minAmount) {
+                purchase = false;
+                sale = false;
             } else {
                 purchase = true;
                 sale = false;
-                //price = makeAsk(ask, ask2);
                 more = false;
                 //console.log("more je " + more);
                 return quoteCurrency + " quote of pair";
@@ -360,20 +357,17 @@ function main() {
         let change24hP = 0;
         let baseVolume;
         let quoteVolume;
+        let minAmount;
         fetchTicker(symbol);
         function fetchTicker() {        //loads ticker of a symbol a currency pair
             exchange.fetchTicker(symbol).then((results) => {
                 let r = results;    //market simbols BTC/USDT
+                minAmount = marketInfo[symbol].limits.amount.min;
                 baseVolume = r.baseVolume;
                 quoteVolume = r.quoteVolume;
                 change24h = r.percentage;
                 change24hP = change24h;
                 isNaN(change24h) ? change24h = 0 : "";
-                /*
-                change24h < -1 || change24h > 1 ?
-                        change24hP = change24h :
-                        change24hP = change24h * 100;
-                */
                 return r;
             }).catch((error) => {
                 console.error(error);
@@ -472,10 +466,9 @@ function main() {
 
         function selfRun() {
             if (!modeFiat && !twice) {
-                runBotAlt(alt, quote, "PINGPONG", ticker, "binance", stopLossA, bougthPrice);
+                setTimeout(function () { runBotAlt(alt, quote, "PINGPONG", ticker, "binance", stopLossA, bougthPrice) }, 10000);
                 twice = true;
                 f.cs("bougth quote runing alt " + twice);
-                tradeAlt = true;
             }
         }
 
@@ -735,7 +728,7 @@ function main() {
 
             let sellAmount = baseBalance; // * portion;
             let orderType = "none";
-            let buyAmount, ud, rsi, c24h, macd;
+            let buyAmount;
             buyAmount = quoteToBase(quoteBalance) * portion;
             makeOrder();
             function makeOrder() { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
@@ -746,7 +739,7 @@ function main() {
                     enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
                     //selfStop(loop); //Dev
                     //selfRun();  //Dev
-                } else if (sale && !hold && !stopLoss && (ud < 0) && (macd <= 0)) {         //sell good
+                } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                     //console.log("No of sales done: " + round + " of: " + roundMax);
                     orderType = "sold";
                     enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
@@ -1345,19 +1338,17 @@ function main() {
             }
 
             let sellAmount = baseBalance; // * portion;
-            let trend; //trend of bids
-            let trend2; //trend of asks
             let orderType = "none";
             let buyAmount;
             buyAmount = quoteToBase(quoteBalance) * portion;
             makeOrder();
             function makeOrder() { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && (trendUD > 0) && (trendRSI >= 0) && (trendMACD >= 0) && (change24h > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                if (purchase && (trendUD > 0) && (trendRSI >= 0) && (trendMACD > 0) && (change24h > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     round += 1;     //dev
                     //console.log("No of purchases done: " + round + " of: " + roundMax);
                     enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
-                } else if (sale && !hold && !stopLoss && (ud < 0) && (macd <= 0)) {         //sell good
+                } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                     //console.log("No of sales done: " + round + " of: " + roundMax);
                     orderType = "sold";
                     enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
