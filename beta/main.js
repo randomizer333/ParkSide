@@ -18,12 +18,11 @@ function main() {
     let keys = require("../keys.json");      //keys file location
 
     //init setup
-    let fiat = "USDT"; //USDT,EUR
-    let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will couse to sellASAP and then buyASAP 
+    let fiat = "USDT"; //USDT,EURcouse to sellASAP and then buyASAP 
     let stopLossF = 1;      //sell if fiat goes down 1%,10%,100%
-    let stopLossA = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
+    let stopLossA = 99;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
     let numOfBots = 2;
-    let fetchTime = 500;//Dev minimum 100, default: 500
+    let fetchTime = 100;//Dev minimum 100, default: 500
     let ticker = 1;   //ticker time in minutes  default: 1,5,10
     let enableOrders = true;//true;//false;    default: true
     let portf = [];         //array of currencies owned
@@ -34,11 +33,9 @@ function main() {
     let modeFiat;
     let twice = false;
     let once = false;
-    let loopFiat, loopAlt;
-
-    //main void
-    console.log("Module CCXT version: " + ccxt.version);
-    //console.log("Available exchanges: " + ccxt.exchanges);
+    let loopFiat;
+    let loopAlt;
+    let c = 0;
 
     let r;
     let delay = (ticker / numOfBots) * 60000;
@@ -99,18 +96,16 @@ function main() {
             break;
     }
 
+    //main void
+    console.log("Module CCXT version: " + ccxt.version);
+    console.log("Available exchanges: " + ccxt.exchanges);
+    console.log("Selected exchange: " + exchangeName);
+
     function fetchBalances() {        //loads ticker of a symbol a currency pair
         exchange.fetchBalance().then((results) => {
             r = results;
-            //cs(r);
             curs = Object.keys(r);
-            //cs(curs);
-            //curs = Object.keys(r.info);     //array of all currencies
-            //bals = Object.values(r.LTC);
-
             vals = Object.values(r.total);
-            //cs(vals);
-
             portfolio();
             function portfolio() {
                 let j = 0;
@@ -143,6 +138,8 @@ function main() {
     let marketInfo;
     function f1() {
         function fetch24hs() {
+            let syms = new Array();
+            loadMarks();
             function loadMarks() {  //loads all available markets
                 exchange.loadMarkets().then((results) => {
                     let r = results;
@@ -155,8 +152,6 @@ function main() {
                     console.error(error);
                 })
             }
-            let syms = new Array();
-            loadMarks();
 
             let chs = new Array();
             let stev = 0;
@@ -225,9 +220,12 @@ function main() {
                                     }
                                 }
                                 function runBots(symbol) {
-                                    if (exS) {
+                                    if (exS && !modeFiat) {
                                         f.cs("runnning FIAT boter");
-                                        runBotFiat(quote, fiat, "PINGPONG", ticker, "binance", stopLossF, bougthPrice);
+                                        setTimeout(function () { runBotFiat(quote, fiat, "PINGPONG", ticker, "binance", stopLossF) }, counter());
+                                        setTimeout(function () { runBotFiat(alt, quote, "PINGPONG", ticker, "binance", stopLossF) }, counter());
+                                    }else if(exS && modeFiat){
+                                        setTimeout(function () { runBotFiat(quote, fiat, "PINGPONG", ticker, "binance", stopLossF) }, counter());
                                     }
                                 }
                             }
@@ -241,14 +239,14 @@ function main() {
                 }
             };
             //runFetchTicker();
-            setTimeout(function () { runFetchTicker() }, 2000);
+            setTimeout(function () { runFetchTicker() }, 1000);
             return;
         }
         fetch24hs(exchange);
         return;
     }
 
-    function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
+    function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP) {
         /*Architecture:
                 init
                 functions
@@ -268,11 +266,12 @@ function main() {
         exchange.fees.trading.taker ? tradingFeeP = exchange.fees.trading.taker * 100 : tradingFeeP = 0.5;
         //init setup hardcode attributes later to come from GUI
 
+
+        let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will 
+
         let round = 0;              //init number of sell orders til stop
         let roundMax = 5;       //disable buying after this count
 
-        let loop;
-        let loopAlt;
         //let enableOrders = false;//false;//true;//m.enableOrders;        //DEV
         let symbol = f.mergeSymbol(baseCurrency, quoteCurrency);
         let fiatCurrency = "USDT";//"USDT"EUR
@@ -280,7 +279,7 @@ function main() {
         let quoteCrypto = "BTC"
         let fiatSymbol = f.mergeSymbol(quoteCrypto, fiatCurrency);
         let indicator = "MACD"; //"RSI","CGI"
-        let portion = 0.99;        //!!! 0.51 || 0.99 !       part of balance to trade 
+        let portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //let stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         let minProfitP = 0.1;        //holding addition
         let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
@@ -336,19 +335,19 @@ function main() {
         let baseBalanceInQuote;
         function selectCurrency() {        // check currency from pair that has more funds
             baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
-            if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
+            if (baseBalanceInQuote > quoteBalance) {   //can sell
                 sale = true;
                 purchase = false;
-                return baseCurrency + " base of pair";
-            } else if (quoteBalance < minAmount) {
+                baseCurrency + " base of pair";
+            } else if ((minAmount > quoteBalance)) {   //cant buy
+                //f.cs("minimal order amount " + minAmount);
                 purchase = false;
                 sale = false;
-            } else {
+            } else {    //can buy
                 purchase = true;
                 sale = false;
                 more = false;
-                //console.log("more je " + more);
-                return quoteCurrency + " quote of pair";
+                quoteCurrency + " quote of pair";
             }
         }
 
@@ -456,19 +455,17 @@ function main() {
 
         function selfStop() {
             if (!once) {
-                //clearInterval(loopFiat);
-                //clearInterval(loopAlt);
-                setTimeout(function () { clearInterval(loopFiat) }, counter());
-                setTimeout(function () { clearInterval(loopAlt) }, counter());
-                setTimeout(function () { f1() }, counter());    //restart bots
+                clearInterval(loopAlt);
+                clearInterval(loopFiat);
+                f1();//restart bots
                 once = true;
-                f.cs("Stop: FIAT Start: Main " + once);
+                f.cs("Stop: FIAT and ALT, Start: Main " + once);
             }
         }
 
         function selfRun() {
             if (!modeFiat && !twice) {
-                setTimeout(function () { runBotAlt(alt, quote, "PINGPONG", ticker, "binance", stopLossA, bougthPrice) }, 10000);
+                setTimeout(function () { runBotAlt(alt, quote, "PINGPONG", ticker, "binance", stopLossA) }, counter());
                 twice = true;
                 f.cs("bougth quote runing alt " + twice);
             }
@@ -732,20 +729,30 @@ function main() {
             let orderType = "none";
             let buyAmount;
             buyAmount = quoteToBase(quoteBalance) * portion;
+
+            function sim(){
+                c++;
+                f.cs("C:"+c);
+                if(c == 7){
+                    f.cs("Stoppping!!!!!!!!!!!!!!")
+                    selfStop();
+                }
+            }
+            //sim();
+
             makeOrder();
             function makeOrder() { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && (trendUD > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     round += 1;     //dev
-                    //console.log("No of purchases done: " + round + " of: " + roundMax);
                     enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
-                    //selfStop(loop); //Dev
                     //selfRun();  //Dev
                 } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
-                    //console.log("No of sales done: " + round + " of: " + roundMax);
+                    //selfStop(); //Dev
                     orderType = "sold";
                     enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
                 } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {                          //stopLoss sell bad
+                    selfStop(); //Dev
                     orderType = "lossed";
                     enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('loss sell orders disabled');
                 } else if (sale && hold && !stopLoss) {                                  //holding fee NOT covered
@@ -863,7 +870,7 @@ function main() {
         }
     }
 
-    function runBotAlt(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP, bougthPrice) {
+    function runBotAlt(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP) {
         /*Architecture:
                 init
                 functions
@@ -883,6 +890,8 @@ function main() {
         exchange.fees.trading.taker ? tradingFeeP = exchange.fees.trading.taker * 100 : tradingFeeP = 0.5;
         //init setup hardcode attributes later to come from GUI
 
+
+        let bougthPrice = 0.00000001;    //default:0.00000001 low starting price,reset bot with 0 will 
         let round = 0;              //init number of sell orders til stop
         let roundMax = 5;       //disable buying after this count
 
@@ -893,7 +902,7 @@ function main() {
         let quoteCrypto = "BTC"
         let fiatSymbol = f.mergeSymbol(quoteCrypto, fiatCurrency);
         let indicator = "MACD"; //"RSI","CGI"
-        let portion = 0.99;        //!!! 0.51 || 0.99 !       part of balance to trade 
+        let portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
         //let stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
         let minProfitP = 0.1;        //holding addition
         let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
@@ -940,7 +949,7 @@ function main() {
                 }
             });
         }
-        sendMail("Run!", "Started at:" + f.getTime());
+        sendMail("Run!", "Started at:" + f.getTime() + " Ran bot: " + baseCurrency + "/" + quoteCurrency);
 
 
         let sale = false;
@@ -1179,21 +1188,6 @@ function main() {
                 return array;
             }
 
-            //let stall = stalling(logUD,price,0.001);
-            function stalling(longTimePrice, price, div) {
-                let ma = f.getAvgOfArray(longTimePrice);
-                if (ma + (f.part(div, ma) > price)) {
-                    stall = true;
-                } else if (ma - (f.part(div, ma) < price)) {
-                    stall = true;
-                } else {
-                    stall = false;
-                }
-                //console.log("MA5: "+ma);
-                //console.log("Stall status: "+stall);
-                return stall;
-            }
-
             let sellPrice;
             sellPrice = 0;
             let hold;
@@ -1345,21 +1339,20 @@ function main() {
             buyAmount = quoteToBase(quoteBalance) * portion;
             makeOrder();
             function makeOrder() { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && (trendUD > 0) && (trendRSI >= 0) && (trendMACD > 0) && (change24h > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                if (purchase && (trendUD > 0) && (trendRSI >= 0) && (trendMACD > 0) && (change24h > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd > 0) && (c24h > 0)
                     orderType = "bougth";
                     round += 1;     //dev
-                    //console.log("No of purchases done: " + round + " of: " + roundMax);
                     enableOrders ? order("buy", symbol, buyAmount, buyPrice) : console.log('buy orders disabled');
                 } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
-                    //console.log("No of sales done: " + round + " of: " + roundMax);
+                    //selfStop();     //dev
                     orderType = "sold";
                     enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('sell orders disabled');
                 } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {                          //stopLoss sell bad
                     orderType = "lossed";
                     enableOrders ? order("sell", symbol, sellAmount, salePrice) : console.log('loss sell orders disabled');
-                } else if (sale && hold && !stopLoss) {                                  //holding fee NOT covered
+                } else if (sale && hold && !stopLoss) {//holding fee NOT covered
                     orderType = "holding";
-                } else if (sale && !hold && !stopLoss) {                                 //holding fee covered
+                } else if (sale && !hold && !stopLoss) {//holding fee covered
                     orderType = "holding good";
                 } else if (purchase) {      // ( change24h > 0 )
                     orderType = "parked";

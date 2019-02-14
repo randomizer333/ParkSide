@@ -16,6 +16,7 @@ exports.getTime = function () {     //returns time in EU format
                 hh = d.getHours(),
                 h = hh,
                 min = ('0' + d.getMinutes()).slice(-2),		// Add leading 0.
+                ss = ('0' + d.getSeconds()).slice(-2),
                 ampm = 'AM',
                 time;
         /*if (hh > 12) {
@@ -31,7 +32,7 @@ exports.getTime = function () {     //returns time in EU format
         //var t = d.toLocaleTimeString();
         // ie: 2013-02-18, 8:35 AM	
         //time = yyyy h + ':' + min + ampm + '-' + mm + '-' + dd + '. ' +  ' ' +;
-        time = h + ':' + min + ' ' + dd + '.' + mm + '.' + yyyy;
+        time = h + ':' + min +':' + ss + ' ' + dd + '.' + mm + '.' + yyyy;
         return time;
 }
 exports.hToMs = function (timeInHours) {    //return time in ms if inputed in h
