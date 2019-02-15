@@ -244,9 +244,8 @@ function f1() {
                             }
                         }
                     }
-                    f.cs(stev + " " + syms[stev] + " " + chs[stev] + " " + bestBuy);
+                    f.cs(stev + " " + syms[stev] + " " + chs[stev] + " " + bestBuy +":"+ maxChange);
                     stev++;
-                    return r;
                 }).catch((error) => {
                     console.error(error);
                 })
