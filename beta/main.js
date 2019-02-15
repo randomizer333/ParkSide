@@ -288,7 +288,7 @@ function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName,
     let quoteCrypto = "BTC"
     let fiatSymbol = f.mergeSymbol(quoteCrypto, fiatCurrency);
     let indicator = "MACD"; //"RSI","CGI"
-    let portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
+    let portion = 0.99;        //!!! 0.51 || 0.99 !       part of balance to trade 
     //let stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
     let minProfitP = 0.1;        //holding addition
     let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
@@ -786,9 +786,9 @@ function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName,
                 f.getTime() + "|" +
                 "P:" + price.toFixed(8) + " " + symbol + "|" +
                 "aP:" + absProfit.toFixed(8) + " " + quoteCurrency + "|" +
-                "aPF:" + absProfitFiat.toFixed(2) + " " + fiatCurrency + "|" +
-                "SH:" + rounds + "|" +
                 "rP:" + (relProfit + minProfitP).toFixed(2) + " %|" +
+                "aPF:" + absProfitFiat.toFixed(2) + " " + fiatCurrency + "|" +
+                //"SH:" + rounds + "|" +
                 stopLossP + " %" + "|" +
                 //"aPF:" + fiatAbsProfit.toFixed(2) + " " + fiatCurrency + "|" +
                 "C24h:" + change24hP + " |" +
@@ -901,7 +901,7 @@ function runBotAlt(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, 
     let quoteCrypto = "BTC"
     let fiatSymbol = f.mergeSymbol(quoteCrypto, fiatCurrency);
     let indicator = "MACD"; //"RSI","CGI"
-    let portion = 1;        //!!! 0.51 || 0.99 !       part of balance to trade 
+    let portion = 0.99;        //!!! 0.51 || 0.99 !       part of balance to trade 
     //let stopLossP = 88;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
     let minProfitP = 0.1;        //holding addition
     let timeTicker = f.minToMs(ticker); //!!! 4,8 || 1 !       minutes to milliseconds default: 1 *60000ms = 1min
@@ -1386,9 +1386,8 @@ function runBotAlt(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, 
                 f.getTime() + "|" +
                 "P:" + price.toFixed(8) + " " + symbol + "|" +
                 "aP:" + absProfit.toFixed(8) + " " + quoteCurrency + "|" +
-                "aPF:" + absProfitFiat.toFixed(2) + " " + fiatCurrency + "|" +
-                "SH:" + rounds + "|" +
                 "rP:" + (relProfit + minProfitP).toFixed(2) + " %|" +
+                "aPF:" + absProfitFiat.toFixed(2) + " " + fiatCurrency + "|" +
                 stopLossP + " %" + "|" +
                 //"aPF:" + fiatAbsProfit.toFixed(2) + " " + fiatCurrency + "|" +
                 "C24h:" + change24hP + " |" +
