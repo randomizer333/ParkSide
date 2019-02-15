@@ -181,7 +181,7 @@ function f1() {
                     !change24h ? change24h = 0 : "";
                     chs[stev] = change24h;
                     maxChange = f.getMaxOfArray(chs);
-                    if (maxChange == chs[stev]) {
+                    if (maxChange == chs[stev] && maxChange < 200) {
                         bestBuy = syms[stev];
                         function loger(value, length, array) {        //log FILO to array
                             while (array.length >= length) {
