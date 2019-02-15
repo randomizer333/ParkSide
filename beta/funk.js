@@ -32,7 +32,7 @@ exports.getTime = function () {     //returns time in EU format
         //var t = d.toLocaleTimeString();
         // ie: 2013-02-18, 8:35 AM	
         //time = yyyy h + ':' + min + ampm + '-' + mm + '-' + dd + '. ' +  ' ' +;
-        time = h + ':' + min +':' + ss + ' ' + dd + '.' + mm + '.' + yyyy;
+        time = h + ':' + min + ':' + ss + ' ' + dd + '.' + mm + '.' + yyyy;
         return time;
 }
 exports.hToMs = function (timeInHours) {    //return time in ms if inputed in h
@@ -99,4 +99,9 @@ exports.boolToInitial = function (bool) {	//returns initial of string|bool
         var a = bool.toString();
         var b = a.charAt(0);
         return b;
+}
+function sort(numArray) {
+        var numArray = new Array();
+        numArray.sort(function (a, b) { return a - b });  //descending
+        return numArray;
 }
