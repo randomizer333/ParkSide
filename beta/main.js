@@ -21,9 +21,9 @@ let fiat = "USDT"; //USDT,EURcouse to sellASAP and then buyASAP
 let stopLossF = 1;      //sell if fiat goes down 1%,10%,100%
 let stopLossA = 99;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
 let numOfBots = 2;
-let fetchTime = 500;//Dev minimum 100, default: 500
+let fetchTime = 100;//Dev minimum 100, default: 500
 let ticker = 1;   //ticker time in minutes  default: 1,5,10
-let enableOrders = true;//true;//false;    default: true
+let enableOrders = false;//true;//false;    default: true
 let portf = [];         //array of currencies owned
 let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
@@ -137,6 +137,12 @@ function f1() {
     fetch24hs(exchange);
     function fetch24hs() {
 
+        let marks = {
+            id: 1,
+            symbol: "ADA/BNB",
+            percentage: 0.05
+        }
+
         let syms = new Array();
         loadMarks();
         function loadMarks() {  //loads all available markets
@@ -181,7 +187,7 @@ function f1() {
                     !change24h ? change24h = 0 : "";
                     chs[stev] = change24h;
                     maxChange = f.getMaxOfArray(chs);
-                    if (maxChange == chs[stev] && maxChange < 200) {
+                    if (maxChange == chs[stev]) {
                         bestBuy = syms[stev];
                         function loger(value, length, array) {        //log FILO to array
                             while (array.length >= length) {
@@ -244,7 +250,7 @@ function f1() {
                             }
                         }
                     }
-                    f.cs(stev + " " + syms[stev] + " " + chs[stev] + " " + bestBuy +":"+ maxChange);
+                    f.cs(stev + " " + syms[stev] + " " + chs[stev] + " " + bestBuy + ":" + maxChange);
                     stev++;
                 }).catch((error) => {
                     console.error(error);
@@ -342,19 +348,15 @@ function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName,
     let baseBalanceInQuote;
     function selectCurrency() {        // check currency from pair that has more funds
         baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
-        if (baseBalanceInQuote > quoteBalance) {   //can sell
+        if ((baseBalanceInQuote > quoteBalance) && (baseBalanceInQuote > minAmount)) {   //can sell
             sale = true;
             purchase = false;
-            baseCurrency + " base of pair";
-        } else if ((minAmount > quoteBalance)) {   //cant buy
-            //f.cs("minimal order amount " + minAmount);
-            purchase = false;
-            sale = false;
-        } else {    //can buy
+        } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalance > minAmount)) {    //can buy
             purchase = true;
             sale = false;
             more = false;
-            quoteCurrency + " quote of pair";
+        } else {
+            f.cs("Too low!");
         }
     }
 
@@ -369,6 +371,7 @@ function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName,
         exchange.fetchTicker(symbol).then((results) => {
             let r = results;    //market simbols BTC/USDT
             minAmount = marketInfo[symbol].limits.amount.min;
+            //f.cs("minAmount: "+minAmount+ "for: "+ baseCurrency+"/"+quoteCurrency)
             baseVolume = r.baseVolume;
             quoteVolume = r.quoteVolume;
             change24h = r.percentage;
@@ -790,10 +793,11 @@ function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName,
                 //"SH:" + rounds + "|" +
                 stopLossP + " %" + "|" +
                 //"aPF:" + fiatAbsProfit.toFixed(2) + " " + fiatCurrency + "|" +
-                "C24h:" + change24hP + " |" +
+                "C24h:" + change24hP + "|" +
+                "Min:" + minAmount + "|" +
                 //"B1:"+bid+" "+symbol+"|"+
                 //"B2:"+bid2+" "+symbol+"|"+
-                "t:" + ticker + "m" + "|" +
+                //"t:" + ticker + "m" + "|" +
                 "BP:" + bougthPrice.toFixed(8) + "|" +
                 "SP:" + sellPrice.toFixed(8) + "|" +
                 baseCurrency + ":" + baseBalance.toFixed(8) + "|" +
@@ -955,19 +959,15 @@ function runBotAlt(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, 
     let baseBalanceInQuote;
     function selectCurrency() {        // check currency from pair that has more funds
         baseBalanceInQuote = baseToQuote(baseBalance);      //convert to base
-        if (baseBalanceInQuote > quoteBalance) {   //can sell
+        if ((baseBalanceInQuote > quoteBalance) && (baseBalanceInQuote > minAmount)) {   //can sell
             sale = true;
             purchase = false;
-            baseCurrency + " base of pair";
-        } else if ((minAmount > quoteBalance)) {   //cant buy
-            //f.cs("minimal order amount " + minAmount);
-            purchase = false;
-            sale = false;
-        } else {    //can buy
+        } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalance > minAmount)) {    //can buy
             purchase = true;
             sale = false;
             more = false;
-            quoteCurrency + " quote of pair";
+        } else {
+            f.cs("Too low!");
         }
     }
 
@@ -982,6 +982,7 @@ function runBotAlt(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, 
         exchange.fetchTicker(symbol).then((results) => {
             let r = results;    //market simbols BTC/USDT
             minAmount = marketInfo[symbol].limits.amount.min;
+            //f.cs("minAmount: "+minAmount+ "for: "+ baseCurrency+"/"+quoteCurrency)
             baseVolume = r.baseVolume;
             quoteVolume = r.quoteVolume;
             change24h = r.percentage;
@@ -1389,7 +1390,8 @@ function runBotAlt(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, 
                 "aPF:" + absProfitFiat.toFixed(2) + " " + fiatCurrency + "|" +
                 stopLossP + " %" + "|" +
                 //"aPF:" + fiatAbsProfit.toFixed(2) + " " + fiatCurrency + "|" +
-                "C24h:" + change24hP + " |" +
+                "C24h:" + change24hP + "|" +
+                "Min:" + minAmount + "|" +
                 //"B1:"+bid+" "+symbol+"|"+
                 //"B2:"+bid2+" "+symbol+"|"+
                 "t:" + ticker + "m" + "|" +
