@@ -21,9 +21,9 @@ let fiat = "USDT"; //USDT,EURcouse to sellASAP and then buyASAP
 let stopLossF = 1;      //sell if fiat goes down 1%,10%,100%
 let stopLossA = 99;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
 let numOfBots = 2;
-let fetchTime = 100;//Dev minimum 100, default: 500
+let fetchTime = 500;//Dev minimum 100, default: 500
 let ticker = 1;   //ticker time in minutes  default: 1,5,10
-let enableOrders = false;//true;//false;    default: true
+let enableOrders = true;//true;//false;    default: true
 let portf = [];         //array of currencies owned
 let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
@@ -1398,7 +1398,7 @@ function runBotAlt(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, 
                 "Min:" + minAmount + "|" +
                 //"B1:"+bid+" "+symbol+"|"+
                 //"B2:"+bid2+" "+symbol+"|"+
-                "t:" + ticker + "m" + "|" +
+                //"t:" + ticker + "m" + "|" +
                 "BP:" + bougthPrice.toFixed(8) + "|" +
                 "SP:" + sellPrice.toFixed(8) + "|" +
                 baseCurrency + ":" + baseBalance.toFixed(8) + "|" +
