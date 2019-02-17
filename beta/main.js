@@ -21,9 +21,9 @@ let fiat = "USDT"; //USDT,EURcouse to sellASAP and then buyASAP
 let stopLossF = 1;      //sell if fiat goes down 1%,10%,100%
 let stopLossA = 99;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
 let numOfBots = 2;
-let fetchTime = 500;//Dev minimum 100, default: 500
+let fetchTime = 100;//Dev minimum 100, default: 500
 let ticker = 1;   //ticker time in minutes  default: 1,5,10
-let enableOrders = true;//true;//false;    default: true
+let enableOrders = false;//true;//false;    default: true
 let portf = [];         //array of currencies owned
 let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
@@ -136,13 +136,6 @@ let marketInfo;
 function f1() {
     fetch24hs(exchange);
     function fetch24hs() {
-
-        let marks = {
-            id: 1,
-            symbol: "ADA/BNB",
-            percentage: 0.05
-        }
-
         let syms = new Array();
         loadMarks();
         function loadMarks() {  //loads all available markets
@@ -171,6 +164,14 @@ function f1() {
                 }, i * fetchTime);    //delay
             }
 
+            let marks = new Array();
+            populate(marks);
+            function populate(arr) {
+                for (i = 0; i < syms.length - 1; i++) {
+                    arr[i] = { market: "v", percentage: "v", minAmount: "v" };
+                }
+            }
+
             let logChs = new Array();
             let change24h = 0;
             //fetchTickers(symbol);
@@ -181,8 +182,12 @@ function f1() {
                     quoteVolume = r.quoteVolume;
                     change24h = r.percentage;
                     priceChange = r.change;
+
+                    marks[stev].minAmount = marketInfo[symbol].limits.amount.min;
+                    marks[stev].market = symbol;
+                    marks[stev].percentage = change24h;
+
                     mins[stev] = marketInfo[symbol].limits.amount.min;
-                    //f.cs(mins);
                     isNaN(change24h) ? change24h = 0 : "";
                     !change24h ? change24h = 0 : "";
                     chs[stev] = change24h;
@@ -209,9 +214,9 @@ function f1() {
                         return numArray;
                     }
 
+
                     if (stev == syms.length - 2) { //exit condition
                         f.cs("BestBuy: " + bestBuy)
-
                         setBots(bestBuy);   //set and run bots
                         //setBots(logChs[1]);   //set and run 2nd best bots
                         function setBots(sym) {
@@ -219,7 +224,6 @@ function f1() {
                             alt = f.splitSymbol(sym, "first");
                             quote = f.splitSymbol(sym, "second");
                             f.cs("A: " + alt + " Q: " + quote + " F: " + fiat);
-
                             modeFiat = true;
                             tradeMode(quote, fiat)
                             function tradeMode(quote, fiat) {
