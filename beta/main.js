@@ -19,7 +19,7 @@ let keys = require("../keys.json");      //keys file location
 //init setup
 let fiat = "USDT"; //USDT,EURcouse to sellASAP and then buyASAP 
 let stopLossF = 1;      //sell if fiat goes down 1%,10%,100%
-let stopLossA = 99;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
+let stopLossA = 2;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
 let numOfBots = 2;
 let fetchTime = 500;//Dev minimum 100, default: 500
 let ticker = 1;   //ticker time in minutes  default: 1,5,10
@@ -130,9 +130,9 @@ let bals = [];
 fetchBalances();
 
 let bestBuy;
-let ff1 = f1();// = setInterval(f1, 1000);
 let mins = new Array();
 let marketInfo;
+f1();
 function f1() {
     fetch24hs(exchange);
     function fetch24hs() {
@@ -165,11 +165,12 @@ function f1() {
             }
 
             let marks = new Array();
-            populate(marks);
-            function populate(arr) {
-                for (i = 0; i < syms.length - 1; i++) {
-                    arr[i] = { market: "v", percentage: "v", minAmount: "v" };
+            populate(marks,syms.length);
+            function populate(arr,length) {
+                for (i = 0; i < length - 1; i++) {
+                    arr[i] = { market: "", percentage: "", minAmount: "" };
                 }
+                //f.cs(marks);
             }
 
             let logChs = new Array();
@@ -192,28 +193,32 @@ function f1() {
                     !change24h ? change24h = 0 : "";
                     chs[stev] = change24h;
                     maxChange = f.getMaxOfArray(chs);
-                    if (maxChange == chs[stev]) {
-                        bestBuy = syms[stev];
-                        function loger(value, length, array) {        //log FILO to array
-                            while (array.length >= length) {
-                                array.pop();
+                    getMaxOfCHS()
+                    function getMaxOfCHS() {
+                        if (maxChange == chs[stev]) {
+                            bestBuy = syms[stev];
+                            function loger(value, length, array) {        //log FILO to array
+                                while (array.length >= length) {
+                                    array.pop();
+                                }
+                                array.unshift(value);
+                                return array;
                             }
-                            array.unshift(value);
-                            return array;
+                            loger(bestBuy, 5, logChs);
+                            //f.cs("BESTBUY: " + stev + " " + logChs + " " + maxChange + " %");
                         }
-                        loger(bestBuy, 5, logChs);
-                        //f.cs("BESTBUY: " + stev + " " + logChs + " " + maxChange + " %");
                     }
 
-                    chs, syms;
-                    let sortedChs;
-                    //sortedChs = sort(chs);
-                    function sort(numArray) {
-                        var numArray = new Array();
-                        numArray.sort(function (a, b) { return a - b });  //descending
-                        return numArray;
+                    let sortedMarks = new Array();
+                    populate(sortedMarks,5);
+                    let j = 0;
+                    sortedMarks = sort(marks);
+                    function sort() {
+                        for(i=0;i<sortedMarks.length;i++){
+                            sortedMarks[i] = marks[i];
+                        }
+                        //f.cs(sortedMarks);
                     }
-
 
                     if (stev == syms.length - 2) { //exit condition
                         f.cs("BestBuy: " + bestBuy)
