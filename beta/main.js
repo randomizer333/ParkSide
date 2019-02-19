@@ -19,11 +19,11 @@ let keys = require("../keys.json");      //keys file location
 //init setup
 let fiat = "USDT"; //USDT,EURcouse to sellASAP and then buyASAP 
 let stopLossF = 1;      //sell if fiat goes down 1%,10%,100%
-let stopLossA = 2;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
+let stopLossA = 1;      //sell at loss 1,5,10% from bougthprice, 0% for disable, 100% never sell
 let numOfBots = 2;
 let fetchTime = 500;//Dev minimum 100, default: 500
 let ticker = 1;   //ticker time in minutes  default: 1,5,10
-let enableOrders = true;//true;//false;    default: true
+let enableOrders = false;//true;//false;    default: true
 let portf = [];         //array of currencies owned
 let quote;// = ["BTC", "ETH", "BNB"];
 let exS = false;    //existence of fiat symbol
@@ -165,15 +165,20 @@ function f1() {
             }
 
             let marks = new Array();
-            populate(marks,syms.length);
-            function populate(arr,length) {
+            populate(marks, syms.length);
+            function populate(arr, length) {
                 for (i = 0; i < length - 1; i++) {
-                    arr[i] = { market: "", percentage: "", minAmount: "" };
+                    arr[i] = {
+                        market: "",
+                        percentage: "",
+                        minAmount: "",
+                        base: "",
+                        quote: ""
+                    };
                 }
                 //f.cs(marks);
             }
 
-            let logChs = new Array();
             let change24h = 0;
             //fetchTickers(symbol);
             function fetchTickers() {       //loads ticker of a symbol a currency pair
@@ -187,43 +192,38 @@ function f1() {
                     marks[stev].minAmount = marketInfo[symbol].limits.amount.min;
                     marks[stev].market = symbol;
                     marks[stev].percentage = change24h;
+                    marks[stev].base = f.splitSymbol(symbol,"first");
+                    marks[stev].quote = f.splitSymbol(symbol,"second");
 
                     mins[stev] = marketInfo[symbol].limits.amount.min;
                     isNaN(change24h) ? change24h = 0 : "";
                     !change24h ? change24h = 0 : "";
+
                     chs[stev] = change24h;
+
                     maxChange = f.getMaxOfArray(chs);
                     getMaxOfCHS()
                     function getMaxOfCHS() {
                         if (maxChange == chs[stev]) {
                             bestBuy = syms[stev];
-                            function loger(value, length, array) {        //log FILO to array
-                                while (array.length >= length) {
-                                    array.pop();
-                                }
-                                array.unshift(value);
-                                return array;
-                            }
-                            loger(bestBuy, 5, logChs);
                             //f.cs("BESTBUY: " + stev + " " + logChs + " " + maxChange + " %");
                         }
                     }
 
                     let sortedMarks = new Array();
-                    populate(sortedMarks,5);
-                    let j = 0;
-                    sortedMarks = sort(marks);
-                    function sort() {
-                        for(i=0;i<sortedMarks.length;i++){
-                            sortedMarks[i] = marks[i];
-                        }
-                        //f.cs(sortedMarks);
+                    populate(sortedMarks, marks.length);
+                    sortedMarks = marks.sort(SortByAtribute);
+                    function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
+                        return ((x.percentage == y.percentage) ? 0 : ((x.percentage > y.percentage) ? -1 : 1));
+                    }
+                    for (i = 0; i <= 5; i++) {  //display top 5
+                        f.cs(sortedMarks[i]);
                     }
 
                     if (stev == syms.length - 2) { //exit condition
                         f.cs("BestBuy: " + bestBuy)
-                        setBots(bestBuy);   //set and run bots
-                        //setBots(logChs[1]);   //set and run 2nd best bots
+                        //setBots(bestBuy);   //set and run bots
+                        setBots(sortedMarks[0].market);   //set and run bots
                         function setBots(sym) {
                             exS = false;
                             alt = f.splitSymbol(sym, "first");
@@ -240,14 +240,19 @@ function f1() {
                                     f.cs("ALT Mode");
                                 }
                             }
-                            let fSym = f.mergeSymbol(quote, fiat)
-                            for (i = 0; i <= syms.length; i++) {    //checks for symbol existence
-                                if (fSym == syms[i]) {
-                                    exS = true;
-                                    f.cs("Fiat symbol " + fSym + " exist: " + exS);
-                                    runBots();
+
+                            let fSym = f.mergeSymbol(quote, fiat);
+                            checkFiatSymbolExistence();
+                            function checkFiatSymbolExistence() {
+                                for (i = 0; i <= syms.length; i++) {    //checks for symbol existence
+                                    if (fSym == syms[i]) {
+                                        exS = true;
+                                        f.cs("Fiat symbol " + fSym + " exist: " + exS);
+                                        runBots();
+                                    }
                                 }
                             }
+
                             function runBots(symbol) {
                                 if (exS && !modeFiat) {
                                     f.cs("runnning FIAT boter");
@@ -745,7 +750,7 @@ function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName,
         function sim() {
             c++;
             f.cs("C:" + c);
-            if (c >= 2) {
+            if (c >= 5) {
                 f.cs("Stoppping!!!!!!!!!!!!!!")
                 selfStop();
             }

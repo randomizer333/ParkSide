@@ -7,15 +7,9 @@ function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName,
             setup
             loop
     */
-    /*
-    git add .
-    git commit -m "comment"
-    git push origin master
-    git pull origin master
-    */
 
-    let tradingFeeP;// = 0.5;      //default
-    exchange.fees.trading.taker ? tradingFeeP = exchange.fees.trading.taker * 100 : tradingFeeP = 0.5;
+    let tradingFeeP;// = 0.5;      
+    exchange.fees.trading.taker ? tradingFeeP = exchange.fees.trading.taker * 100 : tradingFeeP = 0.5;  //default
     //init setup hardcode attributes later to come from GUI
 
 
