@@ -3,11 +3,10 @@ funk.js
 is a js module for generic comonly used simple functions that should be aplicable to any data 
 */
 
-
-exports.cs = function (object) {    //console logs with json.stringify for console wraping
+function cs(object) {    //console logs with json.stringify for console wraping
         console.log(JSON.stringify(object));
 }
-exports.getTime = function () {     //returns time in EU format
+function getTime() {     //returns time in EU format
         let timestamp = Date.now();     // Get current time in UNIX EPOC format
         let d = new Date(timestamp),	// Convert the passed timestamp to milliseconds
                 yyyy = d.getFullYear(),
@@ -35,34 +34,34 @@ exports.getTime = function () {     //returns time in EU format
         time = h + ':' + min + ':' + ss + ' ' + dd + '.' + mm + '.' + yyyy;
         return time;
 }
-exports.hToMs = function (timeInHours) {    //return time in ms if inputed in h
+function hToMs(timeInHours) {    //return time in ms if inputed in h
         let r = timeInHours * 3600000;
         return r;
 }
-exports.minToMs = function (timeInMinutes) {
+function minToMs(timeInMinutes) {
         let r = timeInMinutes * 60000;
         return r;
 }
-exports.msToMin = function (timeInMiliseconds) {
+function msToMin(timeInMiliseconds) {
         var r = (timeInMiliseconds / 1000) / 60;
         return r;
 }
-exports.whole = function (part, percent) {  //whole is part divided by percentage
+function whole(part, percent) {  //whole is part divided by percentage
         return part / (percent / 100);
 }
-exports.percent = function (part, whole) {  //percent is part divided by whole
+function percent(part, whole) {  //percent is part divided by whole
         return (part / whole) * 100;
 }
-exports.part = function (percent, whole) {  //part is percent multiplied by whole
+function part(percent, whole) {  //part is percent multiplied by whole
         return (percent / 100) * whole;
 }
-exports.getMinOfArray = function (numArray) {	//in: numericArray out: minValue
+function getMinOfArray(numArray) {	//in: numericArray out: minValue
         return Math.min.apply(null, numArray);
 }
-exports.getMaxOfArray = function (numArray) {	//in: numericArray out: maxValue
+function getMaxOfArray(numArray) {	//in: numericArray out: maxValue
         return Math.max.apply(null, numArray);
 }
-exports.getAvgOfArray = function (numArray) {	//in: numericArray out: avgValue
+function getAvgOfArray(numArray) {	//in: numericArray out: avgValue
         var numArray;
         var n = numArray.length;
         var sum = 0;
@@ -73,15 +72,11 @@ exports.getAvgOfArray = function (numArray) {	//in: numericArray out: avgValue
         }
         return avg;
 }
-exports.mergeSymbol = function (base, quote) {
-        /*
-        if (base == quote){
-                base = baseCurrency;
-        }*/
+function mergeSymbol(base, quote) {
         return mergedSymbol = base + "/" + quote;
 
 }
-exports.splitSymbol = function (symbol, selectReturn) {   // BTC/USDT   ,   first | second    base | quote
+function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second    base | quote
         var char = symbol.search("/");
         first = symbol.slice(0, char);
         second = symbol.slice(char + 1, symbol.length);
@@ -94,7 +89,7 @@ exports.splitSymbol = function (symbol, selectReturn) {   // BTC/USDT   ,   firs
                         break;
         }
 }
-exports.boolToInitial = function (bool) {	//returns initial of string|bool
+function boolToInitial(bool) {	//returns initial of string|bool
         var bool;
         var a = bool.toString();
         var b = a.charAt(0);
@@ -105,3 +100,18 @@ function sort(numArray) {
         numArray.sort(function (a, b) { return a - b });  //descending
         return numArray;
 }
+
+exports.cs = cs;
+exports.getTime = getTime;
+exports.hToMs = hToMs;
+exports.minToMs = minToMs
+exports.msToMin = msToMin;
+exports.whole = whole;
+exports.percent = percent;
+exports.part = part;
+exports.getMinOfArray = getMinOfArray;
+exports.getMaxOfArray = getMaxOfArray;
+exports.getAvgOfArray = getAvgOfArray;
+exports.mergeSymbol = mergeSymbol;
+exports.splitSymbol = splitSymbol;
+exports.boolToInitial = boolToInitial;

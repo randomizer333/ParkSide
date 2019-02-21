@@ -3,12 +3,19 @@
 
 //Architecture of application
 /*Architecture:
-                init
-                functions
-                API functions
-                runtime
-                setup
-                loop
+
+    api init
+        exchange specific:
+            init variables
+            functions
+            API functions
+        market specific:
+            init variables
+            functions
+            API functions
+            setup
+            loop
+                    
 */
 
 let f = require('./funk.js');           //connect to module functions
@@ -135,7 +142,7 @@ fetchBalances();
 let bestBuy;
 let mins = new Array();
 let marketInfo;
-f1();
+//f1();
 function f1() {
     fetch24hs(exchange);
     function fetch24hs() {
@@ -177,7 +184,7 @@ function f1() {
                         minAmount: "",
                         base: "",
                         quote: ""
-                    }
+                    };
                 }
                 //f.cs(marks);
             }
@@ -224,6 +231,7 @@ function f1() {
                     }
 
                     if (stev == syms.length - 2) { //exit condition
+                        runBots();
                         f.cs("BestBuy: " + bestBuy)
                         //setBots(bestBuy);   //set and run bots
                         setBots(sortedMarks[0].market);   //set and run bots
@@ -233,7 +241,7 @@ function f1() {
                             quote = f.splitSymbol(sym, "second");
                             f.cs("A: " + alt + " Q: " + quote + " F: " + fiat);
                             modeFiat = true;
-                            tradeMode(quote, fiat)
+                            //tradeMode(quote, fiat)
                             function tradeMode(quote, fiat) {
                                 if (quote == fiat) {
                                     modeFiat = true;
@@ -245,7 +253,7 @@ function f1() {
                             }
 
                             let fSym = f.mergeSymbol(quote, fiat);
-                            checkFiatSymbolExistence(marks[0].market);
+                            //checkFiatSymbolExistence(marks[0].market);
                             function checkFiatSymbolExistence(s) {
                                 for (i = 0; i <= syms.length; i++) {    //checks for symbol existence
                                     if (s == syms[i]) {
@@ -277,6 +285,26 @@ function f1() {
     }
 }
 
+f.cs(quotes[3]);
+for (i = 0; i < quotes.length; i++) {
+    setTimeout(function () { runBotFiat(quotes[i], fiat, strategy, ticker, "binance", stopLossF) }, counter());
+}
+
+function runAltBots(marks, quotes) {
+    /*
+        for (i = 0; i < quotes.length; i++) {
+            setTimeout(function () { runBotFiat(quotes[i], fiat, strategy, ticker, "binance", stopLossF) }, counter());
+        }*/
+
+    setTimeout(function () { runBotFiat(quotes[2], quotes[0], strategy, ticker, "binance", stopLossF) }, counter());
+    setTimeout(function () { runBotFiat(quotes[1], quotes[0], strategy, ticker, "binance", stopLossF) }, counter());
+
+    setTimeout(function () { runBotFiat(quotes[2], quotes[1], strategy, ticker, "binance", stopLossF) }, counter());
+
+    for (i = 0; i < marks.length; i++) {
+        setTimeout(function () { runBotAlt(marks[i].base, marks[i].quote, strategy, ticker, "binance", stopLossA) }, counter());
+    }
+}
 
 function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName, stopLossP) {
     /*Architecture:
@@ -391,7 +419,7 @@ function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName,
         exchange.fetchTicker(symbol).then((results) => {
             let r = results;    //market simbols BTC/USDT
             minAmount = marketInfo[symbol].limits.amount.min;
-            f.cs("minAmount: "+minAmount+ "for: "+ symbol)
+            f.cs("minAmount: " + minAmount + "for: " + symbol)
             //baseVolume = r.baseVolume;
             //quoteVolume = r.quoteVolume;
             change24h = r.percentage;
@@ -490,7 +518,7 @@ function runBotFiat(baseCurrency, quoteCurrency, strategy, ticker, exchangeName,
         once = true;
         f.cs("Stop: FIAT and ALT, Start: Main " + once);
     }
-    
+
     function selfRun() {
         if (!modeFiat && !twice) {
             setTimeout(function () { runBotAlt(alt, quote, "PINGPONG", ticker, "binance", stopLossA) }, counter());

@@ -1,12 +1,14 @@
 /*
-this file should contain all the api callbacks to module ccxt
+This file should contain all the api callbacks to module ccxt
 */
+
+//Init
 
 let f = require("./funk.js");
 let keys = require("../keys.json");  //keys file location
 let ccxt = require('ccxt');
-let exchange;
 let exchangeName = "binance";
+let exchange;
 
 switch (exchangeName) {
     case "bitstamp":
@@ -53,10 +55,28 @@ switch (exchangeName) {
         })
         break;
 }
-let tradingFeeP;// = 0.5;      //default
-exchange.fees.trading.taker ? tradingFeeP = exchange.fees.trading.taker * 100 : tradingFeeP = 0.5;
 
-console.log("Software version: " + ccxt.version);
-console.log("Available exchanges: " + ccxt.exchanges);
+/*
+f.cs("Software version: " + ccxt.version);
+f.cs("Available exchanges: " + ccxt.exchanges);
+f.cs(exchange.name);
+f.cs(exchange.urls.www);
+f.cs("Referral link: "+exchange.urls.referral);
+f.cs("Fees: "+exchange.fees.trading.maker);
+*/
+
+//Call functions of CCXT--------
+
+async function change(symbol) {
+    result = await exchange.fetchTicker(symbol);
+    return result.percentage;
+}
+
+//Exports of this module--------
+
+exports.change = change;
+
+
+
 
 
