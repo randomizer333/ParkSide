@@ -57,6 +57,8 @@ switch (exchange) {     //Select exchange
         break;
 }
 
+//  Call functions of CCXT
+
 function exInfo() {     //returns JSON of exchange info
     return {
         version: ccxt.version,
@@ -65,24 +67,22 @@ function exInfo() {     //returns JSON of exchange info
         referral: exchange.urls.referral,
         feeMaker: exchange.fees.trading.maker,
         feeTaker: exchange.fees.trading.taker,
-        exchanges: ccxt.exchanges
+        exchanges: ccxt.exchanges,
+        markets: exchange.symbols
     }
 }
-
-//  Call functions of CCXT
 
 async function change(symbol) {             //returns Variable change percentage of a market
     r = await exchange.fetchTicker(symbol);
     return r.percentage;
 }
-async function minAmount(symbol) {          //returns Variable change percentage of a market
+async function minAmount(symbol) {          //returns minimum amount of base allowed to buy
     r = await exchange.loadMarkets();
     re = r[symbol].limits.amount.min;
     return re;
 }
 async function wallet() {                   //returns Array of Objects balances of an account
     r = await exchange.fetchBalance();
-    //f.cs(r);
     curs = Object.keys(r);
     vals = Object.values(r.total);
     let balances = [];
@@ -110,6 +110,13 @@ async function ask(symbol) {                //reurns Array of Objects bid,ask
     r = await exchange.fetchOrderBook(symbol);
     return ask = r.asks[0][0];
 }
+async function price(symbol) {                //reurns Array of Objects bid,ask
+    r = await exchange.fetchOrderBook(symbol);
+    high = r.asks[0][0];
+    low = r.bids[0][0];
+    spread = high - low;
+    return price = high - (spread / 2);
+}
 async function cancel(id) {                 //cancels order with id
     r = await exchange.cancelOrder(id);
     return "Canceled order" + JSON.stringify(r);
@@ -130,12 +137,15 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
     bougthPrice = price;
     setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
 }
+async function markets() {                   //load all available markets on exchange
+    r = await exchange.loadMarkets();
+    return exchange.symbols;
+}
 
 
 //  Exports of this module
 
 exports.exInfo = exInfo;
-
 exports.balance = balance;
 exports.bid = bid;
 exports.ask = ask;
@@ -145,7 +155,8 @@ exports.minAmount = minAmount;
 exports.cancel = cancel;
 exports.sell = sell;
 exports.buy = buy;
-
+exports.price = price;
+exports.markets = markets;
 
 
 
