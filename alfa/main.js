@@ -269,7 +269,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logMACD = await m.loger(price, 77, logMACD);
         trendMACD = await TI.macd(logMACD);
 
-        orderType = await m.makeOrder(trendMACD, trendRSI, trendUD, trend24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+        orderType = await m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
 
         //await runStrategy(strategy);
 
