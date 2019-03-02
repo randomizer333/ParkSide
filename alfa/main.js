@@ -317,6 +317,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         let marketInfo = {
+            No: b,
             time: f.getTime(),
             baseCurrency: baseCurrency,
             quoteCurrency: quoteCurrency,
