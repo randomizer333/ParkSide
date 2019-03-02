@@ -26,10 +26,10 @@ let bestBuy = new Array();
 let exInfo;
 setup();
 async function setup() {
-    exInfo = await a.exInfos();
+    exInfo = a.exInfos();
     tradingFeeP = exInfo.feeMaker;
     f.cs(exInfo);
-    f.sendMail("Restart", "RUN! at "+f.getTime())
+    f.sendMail("Restart", "RUN! at " + f.getTime())
     bestBuy = await a.bestbuy();
     //f.csL(bestBuy, 10);
     await setBots(bestBuy);
@@ -191,7 +191,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             if (purchase && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
                 bougthPrice = price;    //dev
-                enableOrders ? a.buy(symbol, baseToQuote(baseBalance) * portion, price) : console.log('buy orders disabled');
+                enableOrders ? a.buy(symbol, m.quoteToBase(quoteBalance) * portion, price) : console.log('buy orders disabled');
             } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                 orderType = "sold";
                 enableOrders ? a.sell(symbol, baseBalance * portion, price) : console.log('sell orders disabled');
@@ -213,7 +213,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             if (purchase && (trendUD > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
                 bougthPrice = price;    //dev
-                enableOrders ? a.buy(symbol, baseToQuote(baseBalance) * portion, price) : console.log('buy orders disabled');
+                enableOrders ? a.buy(symbol, m.quoteToBase(quoteBalance) * portion, price) : console.log('buy orders disabled');
             } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                 orderType = "sold";
                 enableOrders ? a.sell(symbol, baseBalance * portion, price) : console.log('sell orders disabled');
@@ -243,7 +243,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             balanceChanged: balanceChanged,
         };
     }
-    let m = modul();
+    const m = modul();
 
     function runStrategy(strategy) {
         switch (strategy) {
@@ -283,12 +283,26 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         trendRSI = await TI.rsi(logRSI);
         logMACD = await m.loger(price, 77, logMACD);
         trendMACD = await TI.macd(logMACD);
+/*
+        switch (strategy) {
+            case "fiat":
+                orderType = await m.makeOrderFiat(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+                break;
+            case "pingPong":
+                orderType = await m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+                break;
+        }*/
 
-
-        if (strategy = "fiat") {
-            orderType = await m.makeOrderFiat(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
-        } else {
-            orderType = await m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+        orderType = await strategySelect(strategy);
+        async function strategySelect(strategy){
+            switch (strategy) {
+                case "fiat":
+                    orderType = await m.makeOrderFiat(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+                    break;
+                case "pingPong":
+                    orderType = await m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+                    break;
+            }
         }
 
         //await sim();
@@ -303,7 +317,6 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         let marketInfo = {
-            No: b,
             time: f.getTime(),
             baseCurrency: baseCurrency,
             quoteCurrency: quoteCurrency,

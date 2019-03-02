@@ -132,6 +132,7 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 }
 async function cancel(id, symbol) {                 //cancels order with id
     r = await exchange.cancelOrder(id, symbol);
+    f.sendMail("Canceled", JSON.stringify(r));
     return "Canceled order" + JSON.stringify(r);
 }
 async function sell(symbol, amount, price) {// symbol, amount, ask 
@@ -149,7 +150,6 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
     orderStatus = r.status;
     f.sendMail("Bougth", JSON.stringify(r));  //dev
     setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
-    f.cs(orderId+"---"+symbol+"---"+ticker);
     return price;
 }
 async function markets() {                   //load all available markets on exchange
@@ -197,9 +197,6 @@ async function bestbuy() {
 
     return await sortedMarks;
 }
-
-buy("ETH/USDT",0.1,100);
-
 
 //  Exports of this module
 
