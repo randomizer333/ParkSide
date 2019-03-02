@@ -125,26 +125,69 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
     r = await exchange.createLimitSellOrder(symbol, amount, price)
     orderId = r.id;
     orderStatus = r.status;
-    sendMail("Sold", msg + "\n" + JSON.stringify(r));
+    f.sendMail("Sold", JSON.stringify(r));
     orderType = "sold";
+    clear();
     setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
 }
 async function buy(symbol, amount, price) { // symbol, amount, bid 
-    r = exchange.createLimitBuyOrder(symbol, amount, price)
+    r = await exchange.createLimitBuyOrder(symbol, amount, price)
     orderId = r.id;
     orderStatus = r.status;
-    sendMail("Bougth", msg + "\n" + JSON.stringify(r));  //dev
-    bougthPrice = price;
+    f.sendMail("Bougth", JSON.stringify(r));  //dev
     setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
+    return price;
 }
 async function markets() {                   //load all available markets on exchange
     r = await exchange.loadMarkets();
     return exchange.symbols;
 }
+async function bestbuy() {
+    
+    let symbols = await markets();
+
+    let bestbuy = new Array();
+    bestbuy = await populate(symbols.length);
+    function populate(length) {
+        let arr = new Array();
+        for (i = 0; i < length - 1; i++) {
+            arr[i] = {
+                market: "",
+                change: "",
+                base: "",
+                quote: ""
+            };
+        }
+        return arr;
+    }
+
+    bestbuy = await parseChanges(symbols.length);
+    async function parseChanges(length) {
+        for (i = 0; i < length - 1; i++) {
+            r = await change(symbols[i]);
+            bestbuy[i].market = symbols[i];
+            bestbuy[i].change = r;
+            bestbuy[i].base = f.splitSymbol(symbols[i], "first");
+            bestbuy[i].quote = f.splitSymbol(symbols[i], "second");
+            f.cs(length - i);
+        }
+        return await bestbuy;
+    };
+
+    let sortedMarks = new Array();
+    sortedMarks = await populate(bestbuy);
+    sortedMarks = await bestbuy.sort(SortByAtribute);
+    function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
+        return ((x.change == y.change) ? 0 : ((x.change > y.change) ? -1 : 1));
+    }
+
+    return await sortedMarks;
+}
 
 
 //  Exports of this module
 
+exports.bestbuy = bestbuy;
 exports.exInfo = exInfo;
 exports.balance = balance;
 exports.bid = bid;

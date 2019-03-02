@@ -3,8 +3,43 @@ funk.js
 is a js module for generic comonly used simple functions that should be aplicable to any data 
 */
 
+function sendMail(subject, message, to) {
+        // email account data
+        let nodemailer = require('nodemailer');
+        let transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                        user: 'mrbitja@gmail.com',
+                        pass: 'mrbitne7777777'
+                }
+        });
+
+        // mail body
+        let mailOptions = {
+                from: 'bb@gmail.com',   //NOT WORK
+                to: 'markosmid333@gmail.com',//to, 
+                subject: subject, //'You have got mail',
+                text: message
+        };
+
+        // response
+        transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                        console.log(error);
+                } else {
+                        //console.log('Email sent: ' + info.response);
+                        console.log("Email sent at: " + getTime() + " To: " + mailOptions.to + " Subject: " + subject);
+                }
+        });
+}
+
 function cs(object) {    //console logs with json.stringify for console wraping
         console.log(JSON.stringify(object));
+}
+function csL(object, length) {
+        for (i = 0; i <= length; i++) {  //display top 5
+                cs(object[i]);
+        }
 }
 function getTime() {     //returns time in EU format
         let timestamp = Date.now();     // Get current time in UNIX EPOC format
@@ -77,7 +112,7 @@ function mergeSymbol(base, quote) {
 
 }
 function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second    base | quote
-        var char = symbol.search("/");
+        let char = symbol.search("/");
         first = symbol.slice(0, char);
         second = symbol.slice(char + 1, symbol.length);
         switch (selectReturn) {
@@ -95,12 +130,9 @@ function boolToInitial(bool) {	//returns initial of string|bool
         var b = a.charAt(0);
         return b;
 }
-function sort(numArray) {
-        var numArray = new Array();
-        numArray.sort(function (a, b) { return a - b });  //descending
-        return numArray;
-}
 
+exports.sendMail = sendMail;
+exports.csL = csL;
 exports.cs = cs;
 exports.getTime = getTime;
 exports.hToMs = hToMs;
