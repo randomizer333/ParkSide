@@ -6,7 +6,9 @@ let TI = require("./ti.js");
 
 // init
 
-const ticker = 1;
+
+const tickerMinutes = 1;
+const ticker = f.minToMs(tickerMinutes);
 const stopLossP = 2;
 const stopLossF = 1;
 const altBots = 8;
@@ -24,10 +26,10 @@ let bestBuy = new Array();
 let exInfo;
 setup();
 async function setup() {
-    exInfo = a.exInfo();
+    exInfo = await a.exInfos();
     tradingFeeP = exInfo.feeMaker;
     f.cs(exInfo);
-    f.sendMail("Restarting at: " + f.getTime(), "RUN!")
+    f.sendMail("Restart", "RUN! at "+f.getTime())
     bestBuy = await a.bestbuy();
     //f.csL(bestBuy, 10);
     await setBots(bestBuy);
@@ -258,7 +260,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     }
 
     loop(symbol, ticker, strategy);
-    botNo[b] = setInterval(function () { loop(symbol, ticker, strategy) }, f.minToMs(ticker));
+    botNo[b] = setInterval(function () { loop(symbol, ticker, strategy) }, ticker);
     async function loop(symbol, strategy) {
         minAmount = await a.minAmount(symbol);
         baseCurrency = await f.splitSymbol(symbol, "first");
@@ -326,3 +328,4 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     }
 }
 
+exports.ticker = ticker;

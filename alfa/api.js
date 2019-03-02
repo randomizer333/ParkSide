@@ -4,9 +4,11 @@ This file should contain all the api callbacks to module ccxt
 
 //  Reqiurements
 
-let f = require("./funk.js");           //common functions
-let keys = require("../keys.json");     //keys file location
-let ccxt = require('ccxt');             //api module
+const f = require("./funk.js");           //common functions
+const keys = require("../keys.json");     //keys file location
+const ccxt = require('ccxt');             //api module
+const m = require("./main.js");
+const ticker = m.ticker; 
 
 //  Init
 
@@ -59,7 +61,7 @@ switch (exchange) {     //Select exchange
 
 //  Call functions of CCXT
 
-function exInfo() {     //returns JSON of exchange info
+function exInfos() {     //returns JSON of exchange info
     return {
         version: ccxt.version,
         exchange: exchange.name,
@@ -71,6 +73,17 @@ function exInfo() {     //returns JSON of exchange info
         markets: exchange.symbols
     }
 }
+/*
+let exInfos = {
+        version: ccxt.version,
+        exchange: exchange.name,
+        url: exchange.urls.www,
+        referral: exchange.urls.referral,
+        feeMaker: exchange.fees.trading.maker,
+        feeTaker: exchange.fees.trading.taker,
+        exchanges: ccxt.exchanges,
+        markets: exchange.symbols
+    };*/
 
 async function change(symbol) {             //returns Variable change percentage of a market
     r = await exchange.fetchTicker(symbol);
@@ -117,8 +130,8 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
     spread = high - low;
     return price = high - (spread / 2);
 }
-async function cancel(id) {                 //cancels order with id
-    r = await exchange.cancelOrder(id);
+async function cancel(id, symbol) {                 //cancels order with id
+    r = await exchange.cancelOrder(id, symbol);
     return "Canceled order" + JSON.stringify(r);
 }
 async function sell(symbol, amount, price) {// symbol, amount, ask 
@@ -128,14 +141,15 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
     f.sendMail("Sold", JSON.stringify(r));
     orderType = "sold";
     clear();
-    setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
+    setTimeout(function () { cancel(orderId, symbol) }, ticker  * 0.9);
 }
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     r = await exchange.createLimitBuyOrder(symbol, amount, price)
     orderId = r.id;
     orderStatus = r.status;
     f.sendMail("Bougth", JSON.stringify(r));  //dev
-    setTimeout(function () { cancelOrder(orderId) }, timeTicker * 0.9);
+    setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
+    f.cs(orderId+"---"+symbol+"---"+ticker);
     return price;
 }
 async function markets() {                   //load all available markets on exchange
@@ -184,11 +198,13 @@ async function bestbuy() {
     return await sortedMarks;
 }
 
+buy("ETH/USDT",0.1,100);
+
 
 //  Exports of this module
 
 exports.bestbuy = bestbuy;
-exports.exInfo = exInfo;
+exports.exInfos = exInfos;
 exports.balance = balance;
 exports.bid = bid;
 exports.ask = ask;
