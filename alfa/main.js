@@ -26,7 +26,7 @@ async function setup() {
     exInfo = a.exInfo();
     tradingFeeP = exInfo.feeMaker;
     f.cs(exInfo);
-    f.sendMail("Restarting at: "+f.getTime(),"RUN!")
+    f.sendMail("Restarting at: " + f.getTime(), "RUN!")
     bestBuy = await a.bestbuy();
     //f.csL(bestBuy, 10);
     await setBots(bestBuy);
@@ -78,7 +78,7 @@ function setBots(arr) {
         f.cs("fiating " + x2);
         setTimeout(function () { bot(quotes[cunt2()], ticker, "pingPong", stopLossP, cunt3()) }, count());
     }
-    
+
     for (i = 0; i < altBots; i++) {     //run ALT bots
         f.cs("alting " + x);
         setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossP, quotes.length + cunt1()) }, count());
@@ -194,7 +194,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
             return stopLoss;
         }
-        function makeOrder(trendMACD, trendRSI, trendUD, trend24hP, purchase, sale, stopLoss, hold, symbol, baseBalance,quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+        function makeOrder(trendMACD, trendRSI, trendUD, trend24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
             if (purchase && (trendUD > 0) && (trend24hP)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
                 bougthPrice = price;    //dev
@@ -269,7 +269,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logMACD = await m.loger(price, 77, logMACD);
         trendMACD = await TI.macd(logMACD);
 
-        orderType = await m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, quoteBalance, price, );
+        orderType = await m.makeOrder(trendMACD, trendRSI, trendUD, trend24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
 
         //await runStrategy(strategy);
 
