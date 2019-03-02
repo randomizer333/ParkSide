@@ -273,7 +273,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         //await runStrategy(strategy);
 
-        await sim();
+        //await sim();
         function sim() {
             c++;
             //f.cs("C:" + c);
