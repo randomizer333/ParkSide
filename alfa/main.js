@@ -7,17 +7,17 @@ let TI = require("./ti.js");
 // init
 
 
-const tickerMinutes = 1;
+const tickerMinutes = 5;
 const ticker = f.minToMs(tickerMinutes);
-const stopLossP = 2;
+const stopLossA = 2;
 const stopLossF = 1;
 const altBots = 8;
 const portion = 0.99;
 const quotes = ["BTC/USDT", "BNB/USDT", "ETH/USDT", "BNB/BTC", "ETH/BTC", "BNB/ETH"];
+const enableOrders = true;
 
 const numOfBots = altBots + quotes.length;
-const delay = (ticker / numOfBots) * 60000;
-const enableOrders = true;
+const delay = (ticker / numOfBots);
 
 let botNo = new Array();
 let bestBuy = new Array();
@@ -37,7 +37,7 @@ async function setup() {
 
 // set bots
 let b;
-function setBots(arr) {
+async function setBots(arr) {
     f.csL(arr, altBots);
     cleared = false;
 
@@ -52,11 +52,6 @@ function setBots(arr) {
         x++;
         return x;
     }
-    let x1 = 0;
-    function cunt1() {
-        x1++;
-        return x1;
-    }
     let x2 = -1;
     function cunt2() {
         x2++;
@@ -68,16 +63,30 @@ function setBots(arr) {
         return x3;
     }
 
-    for (i = 0; i < quotes.length; i++) {     //run Fiat bots
-        //f.cs("fiating " + x2);
+    //old set
+    /*
+    setTimeout(function () { bot(quotes[0], ticker, "ud", stopLossF, 1) }, count());
+    setTimeout(function () { bot(quotes[1], ticker, "ud", stopLossF, 2) }, count());
+    setTimeout(function () { bot(quotes[2], ticker, "ud", stopLossF, 3) }, count());
+    setTimeout(function () { bot(quotes[3], ticker, "ud", stopLossF, 4) }, count());
+    setTimeout(function () { bot(quotes[4], ticker, "ud", stopLossF, 5) }, count());
+    setTimeout(function () { bot(quotes[5], ticker, "ud", stopLossF, 6) }, count());
+
+    setTimeout(function () { bot(arr[0].market, ticker, "pingPong", stopLossP, 7) }, count());
+    setTimeout(function () { bot(arr[1].market, ticker, "pingPong", stopLossP, 8) }, count());
+    setTimeout(function () { bot(arr[2].market, ticker, "pingPong", stopLossP, 9) }, count());
+    setTimeout(function () { bot(arr[3].market, ticker, "pingPong", stopLossP, 10) }, count());
+    setTimeout(function () { bot(arr[4].market, ticker, "pingPong", stopLossP, 11) }, count());
+*/
+
+    for (i = 0; i < quotes.length; i++) {     //run FIAT bots
         setTimeout(function () { bot(quotes[cunt2()], ticker, "ud", stopLossF, cunt3()) }, count());
     }
-
     for (i = 0; i < altBots; i++) {     //run ALT bots
-        //f.cs("alting " + x);
-        setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossP, quotes.length + cunt1()) }, count());
+        setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
     }
 }
+
 
 // clear bots
 let cleared = false;
@@ -98,6 +107,8 @@ function clear() {
 // main loop
 
 function bot(symbol, ticker, strategy, stopLossP, botNumber) {
+
+    //let strategy;
 
     let minProfitP = 0.1;        //holding addition //setting
 
@@ -209,7 +220,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
             return orderType;
         }
-        function makeOrderFiat(trendMACD, trendRSI, trendUD, trend24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+        function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLossP, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
             if (purchase && (trendUD > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
                 bougthPrice = price;    //dev
@@ -259,8 +270,8 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
     }
 
-    loop(symbol, ticker, strategy);
-    botNo[b] = setInterval(function () { loop(symbol, ticker, strategy) }, ticker);
+    loop(symbol, strategy);
+    botNo[b] = setInterval(function () { loop(symbol, strategy) }, ticker);
     async function loop(symbol, strategy) {
         minAmount = await a.minAmount(symbol);
         baseCurrency = await f.splitSymbol(symbol, "first");
@@ -283,26 +294,11 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         trendRSI = await TI.rsi(logRSI);
         logMACD = await m.loger(price, 77, logMACD);
         trendMACD = await TI.macd(logMACD);
-/*
-        switch (strategy) {
-            case "fiat":
-                orderType = await m.makeOrderFiat(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
-                break;
-            case "pingPong":
-                orderType = await m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
-                break;
-        }*/
 
-        orderType = await strategySelect(strategy);
-        async function strategySelect(strategy){
-            switch (strategy) {
-                case "fiat":
-                    orderType = await m.makeOrderFiat(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
-                    break;
-                case "pingPong":
-                    orderType = await m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
-                    break;
-            }
+        if (strategy == "ud") {
+            m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+        } else if (strategy == "pingPong") {
+            m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
         }
 
         //await sim();
@@ -332,6 +328,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             more: f.boolToInitial(more),
             hold: f.boolToInitial(hold),
             stopLoss: f.boolToInitial(stopLoss),
+            stopLossP: stopLossP,
             minAmount: minAmount,
             trendUD: trendUD,
             trendRSI: trendRSI,
