@@ -7,11 +7,11 @@ let TI = require("./ti.js");
 // init
 
 
-const tickerMinutes = 2;
+const tickerMinutes = 5;
 const ticker = f.minToMs(tickerMinutes);
 const stopLossF = 1;
 const stopLossA = 1.99;
-const altBots = 6;
+const altBots = 8;
 const portion = 0.99;
 const quotes = ["BTC/USDT", "BNB/USDT", "ETH/USDT", "BNB/BTC", "ETH/BTC", "BNB/ETH"];
 const enableOrders = true;
@@ -23,6 +23,8 @@ let botNo = new Array();
 let bestBuy = new Array();
 
 //  main setup
+let marketInfo;
+
 let exInfo;
 setup();
 async function setup() {
@@ -325,7 +327,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
-        let marketInfo = {
+        marketInfo = {
             No: b,
             time: f.getTime(),
             baseCurrency: baseCurrency,
@@ -357,3 +359,4 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
 exports.ticker = ticker;
 exports.enableOrders = enableOrders;
+exports.marketInfo = marketInfo;
