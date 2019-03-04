@@ -7,10 +7,10 @@ let TI = require("./ti.js");
 // init
 
 
-const tickerMinutes = 5;
+const tickerMinutes = 1;
 const ticker = f.minToMs(tickerMinutes);
-const stopLossF = 1;
-const stopLossA = 1.99;
+const stopLossF = 88;
+const stopLossA = 1;
 const altBots = 8;
 const portion = 0.99;
 const quotes = ["BTC/USDT", "BNB/USDT", "ETH/USDT", "BNB/BTC", "ETH/BTC", "BNB/ETH"];
@@ -94,7 +94,7 @@ async function setBots(arr) {
 let cleared = false;
 function clear() {
     if (!cleared) {
-        f.cs("HALT!!!" + b);
+        f.cs("HALT!!!");
         clearInterval(botNo[b]);
         for (i = 0; i < altBots + quotes.length; i++) {
             f.cs("Clearing:" + i);
@@ -176,7 +176,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 if (!more) {
                     bougthPrice = price;
                     more = true;
-                    //console.log("Bougth price updated: " + more);
+                    console.log("Bougth price updated: "+symbol);
                 }
             }
             return bougthPrice;
@@ -357,6 +357,11 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     }
 }
 
+//constants and variables
 exports.ticker = ticker;
 exports.enableOrders = enableOrders;
 exports.marketInfo = marketInfo;
+exports.cleared = cleared;
+
+//functions
+exports.clear = clear;

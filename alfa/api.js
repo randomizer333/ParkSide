@@ -7,6 +7,7 @@ This file should contain all the api callbacks to module ccxt
 const f = require("./funk.js");           //common functions
 const keys = require("../keys.json");     //keys file location
 const ccxt = require('ccxt');             //api module
+const main = require("./main.js");             //api module
 
 let m;
 let ticker;
@@ -82,18 +83,6 @@ function exInfos() {     //returns JSON of exchange info
         markets: exchange.symbols
     }
 }
-/*
-let exInfos = {
-        version: ccxt.version,
-        exchange: exchange.name,
-        url: exchange.urls.www,
-        referral: exchange.urls.referral,
-        feeMaker: exchange.fees.trading.maker,
-        feeTaker: exchange.fees.trading.taker,
-        exchanges: ccxt.exchanges,
-        markets: exchange.symbols
-    };*/
-
 async function change(symbol) {             //returns Variable change percentage of a market
     try {
         r = await exchange.fetchTicker(symbol);
@@ -180,9 +169,9 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
     }
     orderId = r.id;
     orderStatus = r.status;
-    f.sendMail("Sold", JSON.stringify(r));
     orderType = "sold";
-    clear();
+    main.clear();
+    f.sendMail(orderType, JSON.stringify(r));
     setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
 }
 async function buy(symbol, amount, price) { // symbol, amount, bid 
@@ -193,7 +182,8 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
     }
     orderId = r.id;
     orderStatus = r.status;
-    f.sendMail("Bougth", JSON.stringify(r));  //dev
+    orderType = "bougth";
+    f.sendMail(orderType, JSON.stringify(r));  //dev
     setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
     return price;
 }
@@ -205,7 +195,6 @@ async function markets() {                   //load all available markets on exc
     }
     return exchange.symbols;
 }
-
 
 async function bestbuy() {
     let symbols = await markets();
