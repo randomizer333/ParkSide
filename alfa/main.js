@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 
-const tickerMinutes = 1;
+const tickerMinutes = 5;
 const ticker = f.minToMs(tickerMinutes);
 const stopLossF = 88;
 const stopLossA = 1;
@@ -138,7 +138,27 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let c = 0;  //sim
     b = botNumber;  //clearInterval(botNo[b])
 
+    let headers;
+    let rows;
     function modul() {
+        async function clTable(obj) {
+            headers = Object.keys(obj);
+            rows = Object.values(obj);
+
+            for (i = 0; i < headers.length; i++) {
+                hl = headers[i].length;
+                rl = rows[i].length;
+                if (hl > rl) {
+                    rows[i] += "  ";
+                } else if (hl < rl) {
+                    headers[i] += "____";
+                }
+            }
+            await f.cs(headers);
+            await f.cs(rows);
+            return;
+        }
+
         function baseToQuote(amountBase, price) {
             amountQuote = amountBase * price;
             return amountQuote;
@@ -176,7 +196,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 if (!more) {
                     bougthPrice = price;
                     more = true;
-                    console.log("Bougth price updated: "+symbol);
+                    console.log("Bougth price updated: " + symbol);
                 }
             }
             return bougthPrice;
@@ -248,6 +268,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return orderType;
         }
         return {
+            clTable: clTable,
             makeOrderFiat: makeOrderFiat,
             makeOrder: makeOrder,
             checkStopLoss: checkStopLoss,
@@ -301,20 +322,20 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         function runStrategy(strategy) {
             switch (strategy) {
                 case "ud":
-                m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+                    m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
                     break;
                 case "pingPong":
-                m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+                    m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
                     break;
             }
         }
-        
+
         if (strategy == "ud") {
             m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
         } else if (strategy == "pingPong") {
             m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
         }
-        
+
 
         //await sim();
         function sim() {    //sim
@@ -328,10 +349,10 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         marketInfo = {
-            No: b,
-            time: f.getTime(),
-            baseCurrency: baseCurrency,
-            quoteCurrency: quoteCurrency,
+            No: b + " ",
+            ________time_______: f.getTime(),
+            baseCurrency: "    " + baseCurrency + "     ",
+            quoteCurrency: "   " + quoteCurrency + "    ",
             baseBalance: baseBalance,
             quoteBalance: quoteBalance,
             price: price.toFixed(8),
@@ -352,7 +373,8 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             trendMACD: trendMACD,
             orderType: orderType,
         }
-        await f.cs(marketInfo);
+        await m.clTable(marketInfo);
+        //await f.cs(marketInfo);
         return marketInfo;
     }
 }

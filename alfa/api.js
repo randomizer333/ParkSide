@@ -154,12 +154,12 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 }
 async function cancel(orderId, symbol) {                 //cancels order with id
     try {
-        r = await exchange.cancelOrder(orderId, symbol);
+        c = await exchange.cancelOrder(orderId, symbol);
     } catch (error) {
         console.log("EEE: ", error.message);
     }
-    f.sendMail("Canceled", JSON.stringify(r));
-    return "Canceled order" + JSON.stringify(r);
+    f.sendMail("Canceled", JSON.stringify(c));
+    return "Canceled order" + JSON.stringify(c);
 }
 async function sell(symbol, amount, price) {// symbol, amount, ask 
     try {
