@@ -7,11 +7,11 @@ let TI = require("./ti.js");
 // init
 
 
-const tickerMinutes = 5;
+const tickerMinutes = 2;
 const ticker = f.minToMs(tickerMinutes);
-const stopLossA = 2;
 const stopLossF = 1;
-const altBots = 8;
+const stopLossA = 1.99;
+const altBots = 6;
 const portion = 0.99;
 const quotes = ["BTC/USDT", "BNB/USDT", "ETH/USDT", "BNB/BTC", "ETH/BTC", "BNB/ETH"];
 const enableOrders = true;
@@ -26,7 +26,7 @@ let bestBuy = new Array();
 let exInfo;
 setup();
 async function setup() {
-    exInfo = a.exInfos();
+    exInfo = await a.exInfos();
     tradingFeeP = exInfo.feeMaker;
     f.cs(exInfo);
     f.sendMail("Restart", "RUN! at " + f.getTime())
@@ -116,8 +116,9 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let amountBase;     //amountQuote
 
     let sale = false;       //selectCurrency
-    let purchase = false;  //selectCurrency
+    let purchase = false;   //selectCurrency
     let baseBalanceInQuote; //selectCurrency
+    let quoteBalanceInBase; //selectCurrency
     let more = false;       //selectCurrency
 
     let logUD = new Array();    //loger
@@ -148,7 +149,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
                 sale = true;
                 return purchase = false;
-            } else if ((baseBalanceInQuote < quoteBalance) && (baseBalance > minAmount)) {    //can buy
+            } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalanceInBase > minAmount)) {    //can buy
                 sale = false;
                 more = false;
                 return purchase = true;
@@ -166,6 +167,9 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return array;
         }
         function balanceChanged(baseBalanceInQuote, quoteBalance, price) {
+            if (bougthPrice == 0) {
+                bougthPrice = price;
+            }
             if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
                     bougthPrice = price;
@@ -174,7 +178,6 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 }
             }
             return bougthPrice;
-
         }
         function safeSale(tradingFeeP, bougthPrice, price) {  //returns holding status
             feeDouble = tradingFeeP * 2;
@@ -198,11 +201,11 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
             return stopLoss;
         }
-        function makeOrder(trendMACD, trendRSI, trendUD, trend24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-            if (purchase && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+        function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLossP, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+            if (purchase && (trendUD > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
                 bougthPrice = price;    //dev
-                enableOrders ? a.buy(symbol, m.quoteToBase(quoteBalance) * portion, price) : console.log('buy orders disabled');
+                enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
             } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                 orderType = "sold";
                 enableOrders ? a.sell(symbol, baseBalance * portion, price) : console.log('sell orders disabled');
@@ -220,11 +223,11 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
             return orderType;
         }
-        function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLossP, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-            if (purchase && (trendUD > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+        function makeOrder(trendMACD, trendRSI, trendUD, trend24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+            if (purchase && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
                 bougthPrice = price;    //dev
-                enableOrders ? a.buy(symbol, m.quoteToBase(quoteBalance) * portion, price) : console.log('buy orders disabled');
+                enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
             } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                 orderType = "sold";
                 enableOrders ? a.sell(symbol, baseBalance * portion, price) : console.log('sell orders disabled');
@@ -252,21 +255,17 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             selectCurrency: selectCurrency,
             loger: loger,
             balanceChanged: balanceChanged,
-        };
+        }
     }
     const m = modul();
 
-    function runStrategy(strategy) {
-        switch (strategy) {
-            case "pingPong":
-                pingPong();
-                break;
-            case "macdRsi":
-                macdRsi();
-                break;
-            case "macd":
-                macd();
-                break;
+    //test();
+    async function test() {
+        try {
+            await loop(symbol, strategy);
+            botNo[b] = setInterval(function () { loop(symbol, strategy) }, ticker);
+        } catch (error) {
+            console.log('caught', error.message);
         }
     }
 
@@ -282,6 +281,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         price = await a.price(symbol);
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
+        quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
         bougthPrice = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
         purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
 
@@ -295,11 +295,24 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logMACD = await m.loger(price, 77, logMACD);
         trendMACD = await TI.macd(logMACD);
 
+        //orderType = runStrategy(strategy);
+        function runStrategy(strategy) {
+            switch (strategy) {
+                case "ud":
+                m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+                    break;
+                case "pingPong":
+                m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+                    break;
+            }
+        }
+        
         if (strategy == "ud") {
             m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
         } else if (strategy == "pingPong") {
             m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
         }
+        
 
         //await sim();
         function sim() {    //sim
@@ -322,7 +335,9 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             price: price.toFixed(8),
             change24hP: change24hP,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8),
-            bougthPrice: bougthPrice,
+            quoteBalanceInBase: quoteBalanceInBase.toFixed(8),
+            bougthPrice: bougthPrice.toFixed(8),
+            sellPrice: sellPrice.toFixed(8),
             sale: f.boolToInitial(sale),
             purchase: f.boolToInitial(purchase),
             more: f.boolToInitial(more),
@@ -335,8 +350,10 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             trendMACD: trendMACD,
             orderType: orderType,
         }
-        return f.cs(marketInfo);
+        await f.cs(marketInfo);
+        return marketInfo;
     }
 }
 
 exports.ticker = ticker;
+exports.enableOrders = enableOrders;

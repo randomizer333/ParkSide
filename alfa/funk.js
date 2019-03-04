@@ -41,6 +41,12 @@ function csL(object, length) {
                 cs(object[i]);
         }
 }
+function cTable(object) {
+
+
+
+        return table;
+}
 function getTime() {     //returns time in EU format
         let timestamp = Date.now();     // Get current time in UNIX EPOC format
         let d = new Date(timestamp),	// Convert the passed timestamp to milliseconds

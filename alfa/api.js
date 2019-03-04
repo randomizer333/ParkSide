@@ -7,11 +7,19 @@ This file should contain all the api callbacks to module ccxt
 const f = require("./funk.js");           //common functions
 const keys = require("../keys.json");     //keys file location
 const ccxt = require('ccxt');             //api module
-const m = require("./main.js");
-const ticker = m.ticker; 
+
+let m;
+let ticker;
+req();
+async function req() {
+    m = await require("./main.js");
+    ticker = m.ticker;
+    f.cs("Ticker time: " + ticker);
+}
 
 //  Init
 
+let orderId = 0;
 let exchange = "binance";
 switch (exchange) {     //Select exchange
     case "bitstamp":
@@ -41,6 +49,7 @@ switch (exchange) {     //Select exchange
         break;
     case "binance":
         exchange = new ccxt.binance({
+            //verbose: true,
             apiKey: keys.binance.apiKey,
             secret: keys.binance.secret,
         });
@@ -86,13 +95,21 @@ let exInfos = {
     };*/
 
 async function change(symbol) {             //returns Variable change percentage of a market
-    r = await exchange.fetchTicker(symbol);
-    return r.percentage;
+    try {
+        r = await exchange.fetchTicker(symbol);
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
+    return await r.percentage;
 }
 async function minAmount(symbol) {          //returns minimum amount of base allowed to buy
-    r = await exchange.loadMarkets();
-    re = r[symbol].limits.amount.min;
-    return re;
+    try {
+        r = await exchange.loadMarkets();
+        re = r[symbol].limits.amount.min;
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
+    return await re;
 }
 async function wallet() {                   //returns Array of Objects balances of an account
     r = await exchange.fetchBalance();
@@ -112,40 +129,68 @@ async function wallet() {                   //returns Array of Objects balances 
     return await balances;
 }
 async function balance(currency) {          //returns Array of Objects balances of an account
-    r = await exchange.fetchBalance();
+    try {
+        r = await exchange.fetchBalance();
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
     return await r[currency].total;
 }
 async function bid(symbol) {                //reurns Array of Objects bid,ask
-    r = await exchange.fetchOrderBook(symbol);
-    return bid = r.bids[0][0];
+    try {
+        r = await exchange.fetchOrderBook(symbol);
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
+    return bid = await r.bids[0][0];
 }
 async function ask(symbol) {                //reurns Array of Objects bid,ask
-    r = await exchange.fetchOrderBook(symbol);
-    return ask = r.asks[0][0];
+    try {
+        r = await exchange.fetchOrderBook(symbol);
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
+    return ask = await r.asks[0][0];
 }
 async function price(symbol) {                //reurns Array of Objects bid,ask
-    r = await exchange.fetchOrderBook(symbol);
-    high = r.asks[0][0];
-    low = r.bids[0][0];
-    spread = high - low;
+    try {
+        r = await exchange.fetchOrderBook(symbol);
+        high = r.asks[0][0];
+        low = r.bids[0][0];
+        spread = high - low;
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
     return price = high - (spread / 2);
 }
-async function cancel(id, symbol) {                 //cancels order with id
-    r = await exchange.cancelOrder(id, symbol);
+async function cancel(orderId, symbol) {                 //cancels order with id
+    try {
+        r = await exchange.cancelOrder(orderId, symbol);
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
     f.sendMail("Canceled", JSON.stringify(r));
     return "Canceled order" + JSON.stringify(r);
 }
 async function sell(symbol, amount, price) {// symbol, amount, ask 
-    r = await exchange.createLimitSellOrder(symbol, amount, price)
+    try {
+        r = await exchange.createLimitSellOrder(symbol, amount, price)
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
     orderId = r.id;
     orderStatus = r.status;
     f.sendMail("Sold", JSON.stringify(r));
     orderType = "sold";
     clear();
-    setTimeout(function () { cancel(orderId, symbol) }, ticker  * 0.9);
+    setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
 }
 async function buy(symbol, amount, price) { // symbol, amount, bid 
-    r = await exchange.createLimitBuyOrder(symbol, amount, price)
+    try {
+        r = await exchange.createLimitBuyOrder(symbol, amount, price);
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
     orderId = r.id;
     orderStatus = r.status;
     f.sendMail("Bougth", JSON.stringify(r));  //dev
@@ -153,11 +198,16 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
     return price;
 }
 async function markets() {                   //load all available markets on exchange
-    r = await exchange.loadMarkets();
+    try {
+        r = await exchange.loadMarkets();
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
     return exchange.symbols;
 }
+
+
 async function bestbuy() {
-    
     let symbols = await markets();
 
     let bestbuy = new Array();
