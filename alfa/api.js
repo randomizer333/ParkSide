@@ -226,7 +226,6 @@ async function bestbuy() {
             bestbuy[i].change = r;
             bestbuy[i].base = f.splitSymbol(symbols[i], "first");
             bestbuy[i].quote = f.splitSymbol(symbols[i], "second");
-            //f.cs(length - i);
             f.cs(bestbuy[i]);
         }
         return await bestbuy;

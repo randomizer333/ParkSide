@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 
-const tickerMinutes = 1;    //sim 1,5,10
+const tickerMinutes = 5;    //sim 1,5,10
 const stopLossF = 88;
 const stopLossA = 1;
 const altBots = 10;
@@ -317,15 +317,6 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         trendRSI = await TI.rsi(logAll);
         trendMACD = await TI.macd(logAll);
 
-        /*
-        logUD = await m.loger(price, 5, logUD);
-        trendUD = await TI.upDown(price, logUD);
-        logRSI = await m.loger(price, 15, logRSI);
-        trendRSI = await TI.rsi(logRSI);
-        logMACD = await m.loger(price, 77, logMACD);
-        trendMACD = await TI.macd(logMACD);
-*/
-
         if (strategy == "ud") {
             m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
         } else if (strategy == "pingPong") {
@@ -354,7 +345,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             baseCurrency: baseCurrency,
             quoteCurrency: quoteCurrency,
             baseBalance: baseBalance+" "+baseCurrency,
-            quoteBalance: quoteBalance+" "+quoteBalance,
+            quoteBalance: quoteBalance+" "+quoteCurrency,
             price: price.toFixed(8),
             change24hP: change24hP,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8)+" "+quoteCurrency,
@@ -370,6 +361,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             stopLoss: stopLoss, //f.boolToInitial(stopLoss),
             stopLossP: stopLossP+" %",
             minAmount: minAmount+" "+baseCurrency,
+            logLength: logAll.length,
             trendUD: trendUD,
             trendRSI: trendRSI,
             trendMACD: trendMACD,
