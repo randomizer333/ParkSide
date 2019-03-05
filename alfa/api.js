@@ -174,7 +174,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
             main.clear();
         }
         //setTimeout(function () { main.clear(); }, ticker * 0.9);
-        f.sendMail(orderType, JSON.stringify(r));
+        f.sendMail(orderType, JSON.stringify(r)+"\n"+JSON.stringify(main.marketInfo));
         return price;
     } catch (error) {
         console.log("EEE: ", error.message);
@@ -187,7 +187,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         orderStatus = r.status;
         orderType = "bougth";
         setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
-        f.sendMail(await orderType, JSON.stringify(r));  //dev
+        f.sendMail(await orderType, JSON.stringify(r)+"\n"+JSON.stringify(await main.marketInfo));  //dev
         return price;
     } catch (error) {
         console.log("EEE: ", error.message);
