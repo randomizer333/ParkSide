@@ -5,7 +5,8 @@ let f = require("./funk.js");
 
 
 let stor = new Array();     //storage for direction
-function upDown(value, logMA) {     //trendUD between curent and last value
+function upDown(logMA) {     //trendUD between curent and last value
+    let value = logMA[0];
     let ma = f.getAvgOfArray(logMA);
     if (stor[1] == undefined) {
         stor[1] = value;

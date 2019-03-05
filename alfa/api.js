@@ -219,7 +219,7 @@ async function bestbuy() {
 
     bestbuy = await parseChanges(symbols.length);
     async function parseChanges(length) {
-        for (i = 0; i < length - 1; i++) {
+        for (i = 0; i < length - 450; i++) {
             r = await change(symbols[i]);
             bestbuy[i].id = length - i;
             bestbuy[i].market = symbols[i];
