@@ -47,9 +47,9 @@ function macd(values) {     //log 70 should be bigger the better starts working 
     let MACD = TI.MACD;
     let macdInput = {
         values: values,   //34,70,140n of inputs - slowPeriod = n of outputs 
-        fastPeriod: 24,       //12,24,48
-        slowPeriod: 52,       //26,52,104      when this is full it putout
-        signalPeriod: 18,        //9,18,36
+        fastPeriod: 12,       //12,24,48
+        slowPeriod: 26,       //26,52,104      when this is full it putout
+        signalPeriod: 9,        //9,18,36
         SimpleMAOscillator: false,
         SimpleMASignal: false
     };

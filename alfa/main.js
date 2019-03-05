@@ -7,11 +7,12 @@ let TI = require("./ti.js");
 // init
 
 
-const tickerMinutes = 5;
+const tickerMinutes = 1;    //sim 1,5,10
 const stopLossF = 88;
 const stopLossA = 1;
-const altBots = 8;
+const altBots = 10;
 const portion = 0.99;
+const minProfitP = 0.1;        //holding addition //setting
 const quotes = ["BTC/USDT", "BNB/USDT", "ETH/USDT", "BNB/BTC", "ETH/BTC", "BNB/ETH"];   //binance
 const enableOrders = true;
 
@@ -112,7 +113,6 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
     //let strategy;
 
-    let minProfitP = 0.1;        //holding addition //setting
 
     let amountQuote;    //baseToQuote
     let amountBase;     //amountQuote
@@ -123,6 +123,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let quoteBalanceInBase; //selectCurrency
     let more = false;       //selectCurrency
 
+    let logAll = new Array();   //loger
     let logUD = new Array();    //loger
     let logMACD = new Array();  //loger
     let logRSI = new Array();   //loger
@@ -141,7 +142,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let headers;
     let rows;
     function modul() {
-        async function clTable(obj) {
+        async function clTable(obj) {       //dev
             headers = Object.keys(obj);
             rows = Object.values(obj);
 
@@ -201,7 +202,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
             return bougthPrice;
         }
-        function safeSale(tradingFeeP, bougthPrice, price) {  //returns holding status
+        function safeSale(tradingFeeP, bougthPrice, price, minProfitP) {  //returns holding status
             feeDouble = tradingFeeP * 2;
             tradingFeeAbs = f.part(feeDouble, bougthPrice);
             minProfitAbs = f.part(minProfitP, bougthPrice);
@@ -308,15 +309,22 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         bougthPrice = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
         purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
 
-        hold = await m.safeSale(tradingFeeP, bougthPrice, price);
+        hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
 
+        logAll = await m.loger(price,150, logAll);
+        trendUD = await TI.upDown(price, logAll);
+        trendRSI = await TI.rsi(logAll);
+        trendMACD = await TI.macd(logAll);
+
+        /*
         logUD = await m.loger(price, 5, logUD);
         trendUD = await TI.upDown(price, logUD);
         logRSI = await m.loger(price, 15, logRSI);
         trendRSI = await TI.rsi(logRSI);
         logMACD = await m.loger(price, 77, logMACD);
         trendMACD = await TI.macd(logMACD);
+*/
 
         if (strategy == "ud") {
             m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
@@ -336,34 +344,40 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
+        let relativeProfit = await f.percent(price - sellPrice, sellPrice);
+        let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
+
         marketInfo = {
             No: b,
             time: f.getTime(),
+            symbol:symbol,
             baseCurrency: baseCurrency,
             quoteCurrency: quoteCurrency,
-            baseBalance: baseBalance,
-            quoteBalance: quoteBalance,
+            baseBalance: baseBalance+" "+baseCurrency,
+            quoteBalance: quoteBalance+" "+quoteBalance,
             price: price.toFixed(8),
             change24hP: change24hP,
-            baseBalanceInQuote: baseBalanceInQuote.toFixed(8),
-            quoteBalanceInBase: quoteBalanceInBase.toFixed(8),
-            bougthPrice: bougthPrice.toFixed(8),
-            sellPrice: sellPrice.toFixed(8),
-            sale: f.boolToInitial(sale),
-            purchase: f.boolToInitial(purchase),
-            more: f.boolToInitial(more),
-            hold: f.boolToInitial(hold),
-            stopLoss: f.boolToInitial(stopLoss),
-            stopLossP: stopLossP,
-            minAmount: minAmount,
+            baseBalanceInQuote: baseBalanceInQuote.toFixed(8)+" "+quoteCurrency,
+            quoteBalanceInBase: quoteBalanceInBase.toFixed(8)+" "+baseCurrency,
+            bougthPrice: bougthPrice.toFixed(8)+" "+symbol,
+            sellPrice: sellPrice.toFixed(8)+" "+symbol,
+            relativeProfit: (relativeProfit+minProfitP).toFixed(2)+" %",
+            absoluteProfit: absoluteProfit.toFixed(8)+" "+quoteCurrency,
+            sale: sale, //f.boolToInitial(sale),
+            purchase: purchase, //f.boolToInitial(purchase),
+            more: more, //f.boolToInitial(more),
+            hold: hold, //f.boolToInitial(hold),
+            stopLoss: stopLoss, //f.boolToInitial(stopLoss),
+            stopLossP: stopLossP+" %",
+            minAmount: minAmount+" "+baseCurrency,
             trendUD: trendUD,
             trendRSI: trendRSI,
             trendMACD: trendMACD,
             orderType: orderType,
         }
         //await m.clTable(marketInfo);
-        //await console.dir(marketInfo);
-        await f.cs(marketInfo);
+        await console.dir(marketInfo);
+        //await f.cs(marketInfo);
         return marketInfo;
     }
 }

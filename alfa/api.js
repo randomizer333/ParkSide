@@ -207,6 +207,7 @@ async function bestbuy() {
         let arr = new Array();
         for (i = 0; i < length - 1; i++) {
             arr[i] = {
+                id: "",
                 market: "",
                 change: "",
                 base: "",
@@ -220,11 +221,13 @@ async function bestbuy() {
     async function parseChanges(length) {
         for (i = 0; i < length - 1; i++) {
             r = await change(symbols[i]);
+            bestbuy[i].id = length - i;
             bestbuy[i].market = symbols[i];
             bestbuy[i].change = r;
             bestbuy[i].base = f.splitSymbol(symbols[i], "first");
             bestbuy[i].quote = f.splitSymbol(symbols[i], "second");
-            f.cs(length - i);
+            //f.cs(length - i);
+            f.cs(bestbuy[i]);
         }
         return await bestbuy;
     };
