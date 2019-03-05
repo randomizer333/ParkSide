@@ -349,7 +349,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
             bougthPrice: bougthPrice.toFixed(8) + " " + symbol,
             sellPrice: sellPrice.toFixed(8) + " " + symbol,
-            relativeProfit: (relativeProfit + minProfitP).toFixed(2) + " %",
+            relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             sale: sale, //f.boolToInitial(sale),
             purchase: purchase, //f.boolToInitial(purchase),

@@ -154,9 +154,9 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 }
 async function cancel(orderId, symbol) {                 //cancels order with id
     try {
-        c = await exchange.cancelOrder(orderId, symbol);
-        f.sendMail("Canceled", JSON.stringify(c));
-        return "Canceled order" + JSON.stringify(c);
+        r = await exchange.cancelOrder(orderId, symbol);
+        f.sendMail("Canceled", JSON.stringify(r));
+        return true;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
@@ -168,8 +168,12 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         orderStatus = r.status;
         orderType = "sold";
         //main.clear();
-        setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.85);
-        setTimeout(function () { main.clear(); }, ticker * 0.9);
+        let noSale;
+        setTimeout(function () {noSale = cancel(orderId, symbol) }, ticker * 0.85);
+        if(await !noSale){
+            main.clear();
+        }
+        //setTimeout(function () { main.clear(); }, ticker * 0.9);
         f.sendMail(orderType, JSON.stringify(r));
         return price;
     } catch (error) {
