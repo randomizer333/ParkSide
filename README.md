@@ -38,7 +38,7 @@ additional Node packages:
 - currency
 - market/product
 - balance
-- symbol
+- market symbol/trade pair
 - pair
 - base
 - quote

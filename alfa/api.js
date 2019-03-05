@@ -147,53 +147,55 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         high = r.asks[0][0];
         low = r.bids[0][0];
         spread = high - low;
+        return price = high - (spread / 2);
     } catch (error) {
         console.log("EEE: ", error.message);
     }
-    return price = high - (spread / 2);
 }
 async function cancel(orderId, symbol) {                 //cancels order with id
     try {
         c = await exchange.cancelOrder(orderId, symbol);
+        f.sendMail("Canceled", JSON.stringify(c));
+        return "Canceled order" + JSON.stringify(c);
     } catch (error) {
         console.log("EEE: ", error.message);
     }
-    f.sendMail("Canceled", JSON.stringify(c));
-    return "Canceled order" + JSON.stringify(c);
 }
 async function sell(symbol, amount, price) {// symbol, amount, ask 
     try {
         r = await exchange.createLimitSellOrder(symbol, amount, price)
+        orderId = r.id;
+        orderStatus = r.status;
+        orderType = "sold";
+        //main.clear();
+        setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.85);
+        setTimeout(function () { main.clear(); }, ticker * 0.9);
+        f.sendMail(orderType, JSON.stringify(r));
+        return price;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
-    orderId = r.id;
-    orderStatus = r.status;
-    orderType = "sold";
-    main.clear();
-    f.sendMail(orderType, JSON.stringify(r));
-    setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
 }
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
         r = await exchange.createLimitBuyOrder(symbol, amount, price);
+        orderId = r.id;
+        orderStatus = r.status;
+        orderType = "bougth";
+        setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
+        f.sendMail(await orderType, JSON.stringify(r));  //dev
+        return price;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
-    orderId = r.id;
-    orderStatus = r.status;
-    orderType = "bougth";
-    f.sendMail(orderType, JSON.stringify(r));  //dev
-    setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
-    return price;
 }
 async function markets() {                   //load all available markets on exchange
     try {
         r = await exchange.loadMarkets();
+        return exchange.symbols;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
-    return exchange.symbols;
 }
 
 async function bestbuy() {

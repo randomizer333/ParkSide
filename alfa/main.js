@@ -8,14 +8,14 @@ let TI = require("./ti.js");
 
 
 const tickerMinutes = 5;
-const ticker = f.minToMs(tickerMinutes);
 const stopLossF = 88;
 const stopLossA = 1;
 const altBots = 8;
 const portion = 0.99;
-const quotes = ["BTC/USDT", "BNB/USDT", "ETH/USDT", "BNB/BTC", "ETH/BTC", "BNB/ETH"];
+const quotes = ["BTC/USDT", "BNB/USDT", "ETH/USDT", "BNB/BTC", "ETH/BTC", "BNB/ETH"];   //binance
 const enableOrders = true;
 
+const ticker = f.minToMs(tickerMinutes);
 const numOfBots = altBots + quotes.length;
 const delay = (ticker / numOfBots);
 
@@ -318,18 +318,6 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logMACD = await m.loger(price, 77, logMACD);
         trendMACD = await TI.macd(logMACD);
 
-        //orderType = runStrategy(strategy);
-        function runStrategy(strategy) {
-            switch (strategy) {
-                case "ud":
-                    m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
-                    break;
-                case "pingPong":
-                    m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
-                    break;
-            }
-        }
-
         if (strategy == "ud") {
             m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
         } else if (strategy == "pingPong") {
@@ -349,10 +337,10 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         marketInfo = {
-            No: b + " ",
-            ________time_______: f.getTime(),
-            baseCurrency: "    " + baseCurrency + "     ",
-            quoteCurrency: "   " + quoteCurrency + "    ",
+            No: b,
+            time: f.getTime(),
+            baseCurrency: baseCurrency,
+            quoteCurrency: quoteCurrency,
             baseBalance: baseBalance,
             quoteBalance: quoteBalance,
             price: price.toFixed(8),
@@ -373,8 +361,9 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             trendMACD: trendMACD,
             orderType: orderType,
         }
-        await m.clTable(marketInfo);
-        //await f.cs(marketInfo);
+        //await m.clTable(marketInfo);
+        //await console.dir(marketInfo);
+        await f.cs(marketInfo);
         return marketInfo;
     }
 }

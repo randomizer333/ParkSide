@@ -187,7 +187,7 @@ function f1() {
                     };
                 }
                 //f.cs(marks);
-            }
+            }           
 
             let change24h = 0;
             //fetchTickers(symbol);
@@ -226,6 +226,7 @@ function f1() {
                     function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
                         return ((x.percentage == y.percentage) ? 0 : ((x.percentage > y.percentage) ? -1 : 1));
                     }
+                    
                     for (i = 0; i <= 5; i++) {  //display top 5
                         f.cs(sortedMarks[i]);
                     }
