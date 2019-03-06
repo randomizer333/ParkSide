@@ -15,13 +15,13 @@ const minProfitP = 0.1;        //holding addition //setting
 const enableOrders = true;
 const quotes = [
     "BNB/BTC", "ETH/BTC",
-    "BNB/ETH"/*
+    "BNB/ETH"
     ,
     "BTC/USDT", "BNB/USDT", "ETH/USDT"
     ,
     "PAX/USDT", "TUSD/USDT", "USDC/USDT",
     "BNB/USDC", "BTC/USDC", "ETH/USDC",
-    "BNB/PAX", "BTC/PAX", "ETH/PAX"*/
+    "BNB/PAX", "BTC/PAX", "ETH/PAX"
 ];   //binance
 
 const ticker = f.minToMs(tickerMinutes);
