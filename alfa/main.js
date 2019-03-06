@@ -6,7 +6,6 @@ let TI = require("./ti.js");
 
 // init
 
-
 const tickerMinutes = 5;    //sim 1,5,10
 const stopLossF = 88;
 const stopLossA = 1;
@@ -15,15 +14,14 @@ const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
 const enableOrders = true;
 const quotes = [
-    "BNB/BTC", "ETH/BTC", 
-    "BNB/ETH"
-  , 
-    "BTC/USDT", "BNB/USDT", "ETH/USDT", 
-
-    "PAX/USDT", "TUSD/USDT", "USDC/USDT", 
-    "BNB/USDC", "BTC/USDC", "ETH/USDC", 
-    "BNB/PAX", "BTC/PAX", "ETH/PAX"
-
+    "BNB/BTC", "ETH/BTC",
+    "BNB/ETH"/*
+    ,
+    "BTC/USDT", "BNB/USDT", "ETH/USDT"
+    ,
+    "PAX/USDT", "TUSD/USDT", "USDC/USDT",
+    "BNB/USDC", "BTC/USDC", "ETH/USDC",
+    "BNB/PAX", "BTC/PAX", "ETH/PAX"*/
 ];   //binance
 
 const ticker = f.minToMs(tickerMinutes);
@@ -43,19 +41,19 @@ async function setup() {
     tradingFeeP = exInfo.feeMaker;
     f.cs(exInfo);
     bestBuy = await a.bestbuy();
-    f.sendMail("Restart", "RUN! at " + f.getTime()+"\n"+
-    JSON.stringify(bestBuy[0])+"\n"+
-    JSON.stringify(bestBuy[1])+"\n"+
-    JSON.stringify(bestBuy[2])+"\n"+
-    JSON.stringify(bestBuy[3])+"\n"+
-    JSON.stringify(bestBuy[4])
+    f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
+        JSON.stringify(bestBuy[0]) + "\n" +
+        JSON.stringify(bestBuy[1]) + "\n" +
+        JSON.stringify(bestBuy[2]) + "\n" +
+        JSON.stringify(bestBuy[3]) + "\n" +
+        JSON.stringify(bestBuy[4])
     )
     f.csL(bestBuy, altBots);
     await setBots(bestBuy);
 }
 
 // set bots
-let b;
+let b; 
 async function setBots(arr) {
     f.csL(arr, altBots);
     cleared = false;
