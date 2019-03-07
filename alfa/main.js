@@ -13,15 +13,15 @@ const altBots = 10;
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
 const enableOrders = true;
-const quotes = [
+const quotes = [    //binance
     "BNB/BTC","BNB/ETH","BNB/USDT","BNB/USDC","BNB/USDS","BNB/PAX",
-    "ETH/BNB","ETH/BTC","ETH/USDT","ETH/USDC","ETH/PAX",
+    "ETH/BTC","ETH/USDT","ETH/USDC","ETH/PAX",
     "BTC/USDT","BTC/USDC","BTC/USDS","BTC/PAX",
     "PAX/USDT","PAX/TUSD", 
     "TUSD/BNB", "TUSD/BTC", "TUSD/ETH","TUSD/USDT", 
     "USDC/USDT","USDC/PAX","USDC/TUSD",
     "USDS/PAX","USDS/USDC","USDS/TUSD","USDS/USDT",
-];   //binance
+];   
 
 
 const ticker = f.minToMs(tickerMinutes);
@@ -126,9 +126,6 @@ function clear() {
 // main loop
 
 function bot(symbol, ticker, strategy, stopLossP, botNumber) {
-
-    //let strategy;
-
 
     let amountQuote;    //baseToQuote
     let amountBase;     //amountQuote

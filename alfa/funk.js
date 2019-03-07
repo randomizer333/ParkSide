@@ -57,7 +57,7 @@ function getTime() {     //returns time in EU format
                 h = hh,
                 min = ('0' + d.getMinutes()).slice(-2),		// Add leading 0.
                 ss = ('0' + d.getSeconds()).slice(-2),
-                mis = ("0" + d.getMilliseconds()).slice(-3),
+                ms = ("0" + d.getMilliseconds()).slice(-3),
                 ampm = 'AM',
                 time;
         /*if (hh > 12) {
@@ -73,7 +73,7 @@ function getTime() {     //returns time in EU format
         //var t = d.toLocaleTimeString();
         // ie: 2013-02-18, 8:35 AM	
         //time = yyyy h + ':' + min + ampm + '-' + mm + '-' + dd + '. ' +  ' ' +;
-        time = yyyy + '.' + mm + '.' + dd + " " + h + ':' + min + ':' + ss + ":" + mis;
+        time = yyyy + '.' + mm + '.' + dd + " " + h + ':' + min + ':' + ss + "." + ms;
         return time;
 }
 function hToMs(timeInHours) {    //return time in ms if inputed in h

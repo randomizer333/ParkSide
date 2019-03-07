@@ -161,6 +161,7 @@ async function cancel(orderId, symbol) {                 //cancels order with id
         console.log("EEE: ", error.message);
     }
 }
+
 async function sell(symbol, amount, price) {// symbol, amount, ask 
     try {
         r = await exchange.createLimitSellOrder(symbol, amount, price)
@@ -174,7 +175,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
             main.clear();
         }
         //setTimeout(function () { main.clear(); }, ticker * 0.9);
-        f.sendMail(orderType, JSON.stringify(r)+"\n"+JSON.stringify(main.marketInfo));
+        f.sendMail(orderType, JSON.stringify(r)+"\n"+JSON.stringify(await main.marketInfo));
         return price;
     } catch (error) {
         console.log("EEE: ", error.message);
