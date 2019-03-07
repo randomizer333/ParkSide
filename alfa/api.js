@@ -15,7 +15,7 @@ req();
 async function req() {
     m = await require("./main.js");
     ticker = m.ticker;
-    f.cs("Ticker time: " + ticker);
+    //f.cs("Ticker time: " + ticker);
 }
 
 //  Init
@@ -80,7 +80,7 @@ function exInfos() {     //returns JSON of exchange info
         feeMaker: exchange.fees.trading.maker,
         feeTaker: exchange.fees.trading.taker,
         exchanges: ccxt.exchanges,
-        markets: exchange.symbols
+
     }
 }
 async function change(symbol) {             //returns Variable change percentage of a market

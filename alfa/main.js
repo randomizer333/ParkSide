@@ -14,15 +14,15 @@ const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
 const enableOrders = true;
 const quotes = [
-    "BNB/BTC", "ETH/BTC",
-    "BNB/ETH"
-    ,
-    "BTC/USDT", "BNB/USDT", "ETH/USDT"
-    ,
-    "PAX/USDT", "TUSD/USDT", "USDC/USDT",
-    "BNB/USDC", "BTC/USDC", "ETH/USDC",
-    "BNB/PAX", "BTC/PAX", "ETH/PAX"
+    "BNB/BTC","BNB/ETH","BNB/USDT","BNB/USDC","BNB/USDS","BNB/PAX",
+    "ETH/BNB","ETH/BTC","ETH/USDT","ETH/USDC","ETH/PAX",
+    "BTC/USDT","BTC/USDC","BTC/USDS","BTC/PAX",
+    "PAX/USDT","PAX/TUSD", 
+    "TUSD/BNB", "TUSD/BTC", "TUSD/ETH","TUSD/USDT", 
+    "USDC/USDT","USDC/PAX","USDC/TUSD",
+    "USDS/PAX","USDS/USDC","USDS/TUSD","USDS/USDT",
 ];   //binance
+
 
 const ticker = f.minToMs(tickerMinutes);
 const numOfBots = altBots + quotes.length;
@@ -39,7 +39,9 @@ setup();
 async function setup() {
     exInfo = await a.exInfos();
     tradingFeeP = exInfo.feeMaker;
-    f.cs(exInfo);
+    await f.cs(exInfo);
+    markets = await a.markets();
+    await f.cs(markets);
     bestBuy = await a.bestbuy();
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
         JSON.stringify(bestBuy[0]) + "\n" +
