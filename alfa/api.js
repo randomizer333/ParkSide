@@ -170,12 +170,12 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         orderType = "sold";
         //main.clear();
         let noSale;
-        setTimeout(function () {noSale = cancel(orderId, symbol) }, ticker * 0.85);
-        if(await !noSale){
+        setTimeout(function () { noSale = cancel(orderId, symbol) }, ticker * 0.85);
+        if (await !noSale) {
             main.clear();
         }
         //setTimeout(function () { main.clear(); }, ticker * 0.9);
-        f.sendMail(orderType, JSON.stringify(r)+"\n"+JSON.stringify(await main.marketInfo));
+        f.sendMail(orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));
         return price;
     } catch (error) {
         console.log("EEE: ", error.message);
@@ -187,8 +187,9 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         orderId = r.id;
         orderStatus = r.status;
         orderType = "bougth";
+        bougthPrice = price;
         setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
-        f.sendMail(await orderType, JSON.stringify(r)+"\n"+JSON.stringify(await main.marketInfo));  //dev
+        f.sendMail(await orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));  //dev
         return price;
     } catch (error) {
         console.log("EEE: ", error.message);
@@ -203,7 +204,7 @@ async function markets() {                   //load all available markets on exc
     }
 }
 
-async function bestbuy() {
+async function bestbuy(num) {
     let symbols = await markets();
 
     let bestbuy = new Array();
@@ -223,7 +224,7 @@ async function bestbuy() {
     }
 
     bestbuy = await parseChanges(symbols.length);
-    async function parseChanges(length) {
+    async function parseChanges(length) {   //sim
         for (i = 0; i < length - 1; i++) {
             r = await change(symbols[i]);
             bestbuy[i].id = length - i;
@@ -237,13 +238,17 @@ async function bestbuy() {
     };
 
     let sortedMarks = new Array();
-    sortedMarks = await populate(bestbuy);
+    //sortedMarks = await populate(bestbuy.length);
     sortedMarks = await bestbuy.sort(SortByAtribute);
     function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
         return ((x.change == y.change) ? 0 : ((x.change > y.change) ? -1 : 1));
     }
 
-    return await sortedMarks;
+    let bests = new Array();
+    //bests = await populate(1);
+    bests = await f.cutArray(sortedMarks, num);
+
+    return bests;
 }
 
 //  Exports of this module

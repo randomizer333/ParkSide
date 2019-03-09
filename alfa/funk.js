@@ -97,6 +97,13 @@ function percent(part, whole) {  //percent is part divided by whole
 function part(percent, whole) {  //part is percent multiplied by whole
         return (percent / 100) * whole;
 }
+function cutArray(arr, num) {     //cuts array to length
+        let result = new Array();
+        for (i = 0; i < num; i++) {
+                result[i] = arr[i];
+        }
+        return result;
+}
 function getMinOfArray(numArray) {	//in: numericArray out: minValue
         return Math.min.apply(null, numArray);
 }
@@ -138,6 +145,14 @@ function boolToInitial(bool) {	//returns initial of string|bool
         return b;
 }
 
+function jsonToArray(json, attribute) {
+        for (i = 0; i < length; i++){
+                
+        }
+        arr[i] = json.attribute
+        return arr;
+}
+
 exports.sendMail = sendMail;
 exports.csL = csL;
 exports.cs = cs;
@@ -148,6 +163,7 @@ exports.msToMin = msToMin;
 exports.whole = whole;
 exports.percent = percent;
 exports.part = part;
+exports.cutArray = cutArray;
 exports.getMinOfArray = getMinOfArray;
 exports.getMaxOfArray = getMaxOfArray;
 exports.getAvgOfArray = getAvgOfArray;

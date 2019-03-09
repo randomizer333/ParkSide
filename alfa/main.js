@@ -42,7 +42,7 @@ async function setup() {
     await f.cs(exInfo);
     markets = await a.markets();
     await f.cs(markets);
-    bestBuy = await a.bestbuy();
+    bestBuy = await a.bestbuy(altBots);
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
         JSON.stringify(bestBuy[0]) + "\n" +
         JSON.stringify(bestBuy[1]) + "\n" +
@@ -81,22 +81,6 @@ async function setBots(arr) {
         x3++;
         return x3;
     }
-
-    //old set
-    /*
-    setTimeout(function () { bot(quotes[0], ticker, "ud", stopLossF, 1) }, count());
-    setTimeout(function () { bot(quotes[1], ticker, "ud", stopLossF, 2) }, count());
-    setTimeout(function () { bot(quotes[2], ticker, "ud", stopLossF, 3) }, count());
-    setTimeout(function () { bot(quotes[3], ticker, "ud", stopLossF, 4) }, count());
-    setTimeout(function () { bot(quotes[4], ticker, "ud", stopLossF, 5) }, count());
-    setTimeout(function () { bot(quotes[5], ticker, "ud", stopLossF, 6) }, count());
-
-    setTimeout(function () { bot(arr[0].market, ticker, "pingPong", stopLossP, 7) }, count());
-    setTimeout(function () { bot(arr[1].market, ticker, "pingPong", stopLossP, 8) }, count());
-    setTimeout(function () { bot(arr[2].market, ticker, "pingPong", stopLossP, 9) }, count());
-    setTimeout(function () { bot(arr[3].market, ticker, "pingPong", stopLossP, 10) }, count());
-    setTimeout(function () { bot(arr[4].market, ticker, "pingPong", stopLossP, 11) }, count());
-*/
 
     for (i = 0; i < quotes.length; i++) {     //run FIAT bots
         setTimeout(function () { bot(quotes[cunt2()], ticker, "ud", stopLossF, cunt3()) }, count());
@@ -203,13 +187,14 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             if (bougthPrice == 0) {
                 bougthPrice = price;
             }
+            /*
             if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
                     bougthPrice = price;
                     more = true;
                     console.log("Bougth price updated: " + symbol);
                 }
-            }
+            }*/
             return bougthPrice;
         }
         function safeSale(tradingFeeP, bougthPrice, price, minProfitP) {  //returns holding status
@@ -237,7 +222,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLossP, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
             if (purchase && !sale && (trendUD > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
-                bougthPrice = price;    //dev
+                //bougthPrice = price;    //dev
                 enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
             } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                 orderType = "sold";
@@ -259,7 +244,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         function makeOrder(trendMACD, trendRSI, trendUD, trend24hP, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
             if (purchase && !sale && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
-                bougthPrice = price;    //dev
+                //bougthPrice = price;    //dev
                 enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
             } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                 orderType = "sold";
@@ -376,6 +361,8 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             trendRSI: trendRSI,
             trendMACD: trendMACD,
             orderType: orderType,
+            quotes:JSON.stringify(quotes),
+            bestBuy:JSON.stringify(bestBuy),
         }
         //await m.clTable(marketInfo);
         await console.dir(marketInfo);
