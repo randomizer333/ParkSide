@@ -220,7 +220,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return stopLoss;
         }
         function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLossP, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-            if (purchase && !sale && (trendUD > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+            if (purchase && !sale && (trendUD > 0) && (trendMACD >= 0) && !hold && !stopLoss ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
                 //bougthPrice = price;    //dev
                 enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
