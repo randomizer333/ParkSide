@@ -204,11 +204,37 @@ async function markets() {                   //load all available markets on exc
     }
 }
 
-async function bestbuy(num) {
-    let symbols = await markets();
+async function bestbuy(num, mainQuoteCurrency) {
+    let symbols = await markets();  //get all market symbols
+
+    let symbols2 = symbols;
+    symbols2 = await filter(mainQuoteCurrency, symbols);
+    async function filter(mainQuoteCurrency, syms) {
+        let results = new Array();;
+        let quote = new Array();
+        f.cs(mainQuoteCurrency);
+
+        for (i = 0; i < syms.length -1; i++) {
+            //f.cs(syms);
+            //f.cs(mainQuoteCurrency);
+
+            //f.cs(syms[i]);
+            quote = f.splitSymbol(syms[i], "second");
+            //f.cs(quote);
+            
+            if (quote == mainQuoteCurrency) {
+                results[i] = syms[i];
+                //f.cs(mainQuoteCurrency);
+            }
+        }
+        let results2;
+        results2 =await f.cleanArray(results);
+        f.cs(results2);
+        return results2;
+    }
 
     let bestbuy = new Array();
-    bestbuy = await populate(symbols.length);
+    bestbuy = await populate(symbols2.length);
     function populate(length) {
         let arr = new Array();
         for (i = 0; i < length - 1; i++) {
@@ -223,8 +249,8 @@ async function bestbuy(num) {
         return arr;
     }
 
-    bestbuy = await parseChanges(symbols.length);
-    async function parseChanges(length) {   //sim
+    bestbuy = await parseChanges(symbols2.length, symbols2);
+    async function parseChanges(length, symbols) {   //sim
         for (i = 0; i < length - 1; i++) {
             r = await change(symbols[i]);
             bestbuy[i].id = length - i;

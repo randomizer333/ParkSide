@@ -12,15 +12,17 @@ const stopLossA = 1;
 const altBots = 10;
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
+const mainQuoteCurrency = "BNB";
 const enableOrders = true;
 const quotes = [    //binance
+    "BNB/USDT",/*
     "BNB/BTC","BNB/ETH","BNB/USDT","BNB/USDC","BNB/USDS","BNB/PAX",
     "ETH/BTC","ETH/USDT","ETH/USDC","ETH/PAX",
     "BTC/USDT","BTC/USDC","BTC/USDS","BTC/PAX",
     "PAX/USDT","PAX/TUSD", 
     "TUSD/BNB", "TUSD/BTC", "TUSD/ETH","TUSD/USDT", 
     "USDC/USDT","USDC/PAX","USDC/TUSD",
-    "USDS/PAX","USDS/USDC","USDS/TUSD","USDS/USDT",
+    "USDS/PAX","USDS/USDC","USDS/TUSD","USDS/USDT",*/
 ];   
 
 
@@ -41,8 +43,8 @@ async function setup() {
     tradingFeeP = exInfo.feeMaker;
     await f.cs(exInfo);
     markets = await a.markets();
-    await f.cs(markets);
-    bestBuy = await a.bestbuy(altBots);
+    //await f.cs(markets);
+    bestBuy = await a.bestbuy(altBots, mainQuoteCurrency);
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
         JSON.stringify(bestBuy[0]) + "\n" +
         JSON.stringify(bestBuy[1]) + "\n" +
@@ -366,6 +368,9 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
         //await m.clTable(marketInfo);
         await console.dir(marketInfo);
+        if (marketInfo.orderType = "sold"){
+            //f.sendMail("Info",marketInfo);
+        }
         //await f.cs(marketInfo);
         return marketInfo;
     }

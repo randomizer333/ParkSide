@@ -121,6 +121,18 @@ function getAvgOfArray(numArray) {	//in: numericArray out: avgValue
         }
         return avg;
 }
+
+
+function cleanArray(arr) {   // Will remove all falsy values: undefined, null, 0, false, NaN and "" (empty string)
+        var newArray = new Array();
+        for (var i = 0; i < arr.length; i++) {
+                if (arr[i]) {
+                        newArray.push(arr[i]);
+                }
+        }
+        return newArray;
+}
+
 function mergeSymbol(base, quote) {
         return mergedSymbol = base + "/" + quote;
 
@@ -146,13 +158,14 @@ function boolToInitial(bool) {	//returns initial of string|bool
 }
 
 function jsonToArray(json, attribute) {
-        for (i = 0; i < length; i++){
-                
+        for (i = 0; i < length; i++) {
+
         }
         arr[i] = json.attribute
         return arr;
 }
 
+exports.cleanArray = cleanArray;
 exports.sendMail = sendMail;
 exports.csL = csL;
 exports.cs = cs;
