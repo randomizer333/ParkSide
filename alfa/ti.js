@@ -16,10 +16,10 @@ function upDown(logMA) {     //trendUD between curent and last value
     stor[0] = value;
     let direction = stor[0] - ma;
     if (direction > 0) {
-        trendSign = "+";
+        //trendSign = "+";
         trendUD = 1;   //buy coz rising
     } else {
-        trendSign = "-";
+        //trendSign = "-";
         trendUD = -1;   //hold or park coz stationary
     }
     return trendUD;
@@ -55,6 +55,7 @@ function macd(values) {     //log 70 should be bigger the better starts working 
         SimpleMASignal: false
     };
     let r = MACD.calculate(macdInput);      //array with JSONs
+    f.cs(r);
     let lastMACD;
     r ? lastMACD = r[r.length - 1] : lastMACD = 0; //last JSON
     let macdHistogram = 0;
@@ -63,7 +64,7 @@ function macd(values) {     //log 70 should be bigger the better starts working 
         signalLine = lastMACD.signal;
         macdHistogram = lastMACD.histogram;
         if (!isNaN(macdHistogram)) {     //isNumber
-            //sendMail("Started MACD", msg);
+            //f.sendMail("Started MACD", r);
             trendMACD = 0;
         };
         if (macdHistogram > 0) {

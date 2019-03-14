@@ -6,16 +6,16 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 5;    //sim 1,5,10
+const tickerMinutes = 1;    //sim 1,5,10
 const stopLossF = 88;
 const stopLossA = 1;
 const altBots = 10;
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
-const mainQuoteCurrency = "BNB";
+const mainQuoteCurrency = "BTC";    //dev
 const enableOrders = true;
 const quotes = [    //binance
-    "BNB/USDT",/*
+    mainQuoteCurrency+"/USDT",/*
     "BNB/BTC","BNB/ETH","BNB/USDT","BNB/USDC","BNB/USDS","BNB/PAX",
     "ETH/BTC","ETH/USDT","ETH/USDC","ETH/PAX",
     "BTC/USDT","BTC/USDC","BTC/USDS","BTC/PAX",
@@ -23,7 +23,7 @@ const quotes = [    //binance
     "TUSD/BNB", "TUSD/BTC", "TUSD/ETH","TUSD/USDT", 
     "USDC/USDT","USDC/PAX","USDC/TUSD",
     "USDS/PAX","USDS/USDC","USDS/TUSD","USDS/USDT",*/
-];   
+];
 
 
 const ticker = f.minToMs(tickerMinutes);
@@ -57,7 +57,7 @@ async function setup() {
 }
 
 // set bots
-let b; 
+let b;
 async function setBots(arr) {
     f.csL(arr, altBots);
     cleared = false;
@@ -90,21 +90,48 @@ async function setBots(arr) {
     for (i = 0; i < altBots; i++) {     //run ALT bots
         setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
     }
+    
 }
 
+// time from last restart than reset
+
+
+const resetTime = 12;   //reset time in hours
+let startTime;
+startTime = Date.now();
+let durationH = 2;   //hours, miinutes
+//durationMS = durationH * 60 * 60 * 1000;// *3600000   //hours
+durationMS = durationH * 60 * 1000;// *3600000          //minutes
+endTime = startTime + durationMS;
+let timerOnce = false;
+//timerClear(startTime, durationH);
+function timerClear(startTime, durationH) {     //dev
+    currentTime = Date.now();
+
+    f.cs(currentTime);
+    f.cs(endTime);
+    f.cs(endTime - currentTime);
+    if (currentTime >= endTime && !timerOnce) {
+        f.cs("TimeOut");
+        clear();
+        startTime = Date.now();
+        timerOnce = true;
+    }
+    return;
+}
 
 // clear bots
 let cleared = false;
 function clear() {
     if (!cleared) {
         f.cs("HALT!!!");
-        clearInterval(botNo[b]);
+        //clearInterval(botNo[b]);
         for (i = 0; i < altBots + quotes.length; i++) {
             f.cs("Clearing:" + i);
-            clearInterval(botNo[i]);
+            clearInterval(botNo[i]);    //stopp all bots
         }
         cleared = true;
-        setup();
+        setup();    //run again from start
     }
 }
 
@@ -222,7 +249,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return stopLoss;
         }
         function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLossP, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-            if (purchase && !sale && (trendUD > 0) && !hold && !stopLoss ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+            if (purchase && !sale && (trendUD > 0) && !hold && !stopLoss) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                 orderType = "bougth";
                 //bougthPrice = price;    //dev
                 enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
@@ -251,12 +278,12 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                 orderType = "sold";
                 enableOrders ? a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
-            } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {                          //stopLoss sell bad
+            } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {//stopLoss sell bad
                 orderType = "lossed";
                 enableOrders ? a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
-            } else if (sale && hold && !stopLoss) {                                  //holding fee NOT covered
+            } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                 orderType = "holding";
-            } else if (sale && !hold && !stopLoss) {                                 //holding fee covered
+            } else if (sale && !hold && !stopLoss) {    //holding fee covered
                 orderType = "holding good";
             } else if (purchase) {      // ( change24h > 0 )
                 orderType = "parked";
@@ -280,25 +307,17 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     }
     const m = modul();
 
-    //test();
-    async function test() {
-        try {
-            await loop(symbol, strategy);
-            botNo[b] = setInterval(function () { loop(symbol, strategy) }, ticker);
-        } catch (error) {
-            console.log('caught', error.message);
-        }
-    }
-
     loop(symbol, strategy);
     botNo[b] = setInterval(function () { loop(symbol, strategy) }, ticker);
     async function loop(symbol, strategy) {
+
         minAmount = await a.minAmount(symbol);
         baseCurrency = await f.splitSymbol(symbol, "first");
         quoteCurrency = await f.splitSymbol(symbol, "second");
         baseBalance = await a.balance(baseCurrency);
         quoteBalance = await a.balance(quoteCurrency);
         change24hP = await a.change(symbol);
+        wallet = await a.wallet();
 
         price = await a.price(symbol);
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
@@ -363,15 +382,14 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             trendRSI: trendRSI,
             trendMACD: trendMACD,
             orderType: orderType,
-            quotes:JSON.stringify(quotes),
-            bestBuy:JSON.stringify(bestBuy),
+            quoteMarkets: JSON.stringify(quotes),
+            wallet: JSON.stringify(wallet),
+            bestBuy: JSON.stringify(bestBuy),
         }
-        //await m.clTable(marketInfo);
         await console.dir(marketInfo);
-        if (marketInfo.orderType = "sold"){
-            //f.sendMail("Info",marketInfo);
+        if (marketInfo.orderType == "sold") {
+            f.sendMail("Sold Info", JSON.stringify(marketInfo));
         }
-        //await f.cs(marketInfo);
         return marketInfo;
     }
 }

@@ -146,8 +146,13 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         r = await exchange.fetchOrderBook(symbol);
         high = r.asks[0][0];
         low = r.bids[0][0];
-        spread = high - low;
-        return price = high - (spread / 2);
+        lower = r.bids[1][0];
+        f.cs("low: "+low+" low2: "+lower);
+        spread = low - lower;   //bid spread
+        price = low - (spread / 2); //bid spread
+        //spread = high - low;        //real spread
+        //price = high - (spread / 2);//real spread
+        return price;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
@@ -156,25 +161,23 @@ async function cancel(orderId, symbol) {                 //cancels order with id
     try {
         r = await exchange.cancelOrder(orderId, symbol);
         f.sendMail("Canceled", JSON.stringify(r));
+        canceled = false;
         return true;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
 }
-
 async function sell(symbol, amount, price) {// symbol, amount, ask 
     try {
         r = await exchange.createLimitSellOrder(symbol, amount, price)
         orderId = r.id;
         orderStatus = r.status;
         orderType = "sold";
-        //main.clear();
-        let noSale;
-        setTimeout(function () { noSale = cancel(orderId, symbol) }, ticker * 0.85);
-        if (await !noSale) {
+        let canceled = true;
+        setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.85);
+        if (await !canceled) {
             main.clear();
         }
-        //setTimeout(function () { main.clear(); }, ticker * 0.9);
         f.sendMail(orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));
         return price;
     } catch (error) {
@@ -264,14 +267,12 @@ async function bestbuy(num, mainQuoteCurrency) {
     };
 
     let sortedMarks = new Array();
-    //sortedMarks = await populate(bestbuy.length);
     sortedMarks = await bestbuy.sort(SortByAtribute);
     function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
         return ((x.change == y.change) ? 0 : ((x.change > y.change) ? -1 : 1));
     }
 
     let bests = new Array();
-    //bests = await populate(1);
     bests = await f.cutArray(sortedMarks, num);
 
     return bests;
