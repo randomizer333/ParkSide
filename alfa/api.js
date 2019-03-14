@@ -147,7 +147,7 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         high = r.asks[0][0];
         low = r.bids[0][0];
         lower = r.bids[1][0];
-        f.cs("low: "+low+" low2: "+lower);
+        //f.cs("low: "+low+" low2: "+lower);
         spread = low - lower;   //bid spread
         price = low - (spread / 2); //bid spread
         //spread = high - low;        //real spread
