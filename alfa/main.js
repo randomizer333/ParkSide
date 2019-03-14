@@ -12,7 +12,7 @@ const stopLossA = 1;
 const altBots = 10;
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
-const mainQuoteCurrency = "BTC";    //dev
+const mainQuoteCurrency = "BNB";    //dev
 const enableOrders = true;
 const quotes = [    //binance
     mainQuoteCurrency + "/USDT",/*
@@ -95,30 +95,16 @@ async function setBots(arr) {
 
 // time from last restart than reset
 
-
-const resetTime = 12;   //reset time in hours
-let startTime;
-startTime = Date.now();
-let durationH = 2;   //hours, miinutes
-//durationMS = durationH * 60 * 60 * 1000;// *3600000   //hours
-durationMS = durationH * 60 * 1000;// *3600000          //minutes
-endTime = startTime + durationMS;
-let timerOnce = false;
-//timerClear(startTime, durationH);
-function timerClear(startTime, durationH) {     //dev
-    currentTime = Date.now();
-
-    f.cs(currentTime);
-    f.cs(endTime);
-    f.cs(endTime - currentTime);
-    if (currentTime >= endTime && !timerOnce) {
-        f.cs("TimeOut");
-        clear();
-        startTime = Date.now();
-        timerOnce = true;
+const resetTime = 6;   //reset time in hours
+//timer(resetTime);
+function timer(time){
+    if(true){
+        setInterval(function(){
+            clear();
+        },time * 60 * 60 * 1000);
     }
-    return;
 }
+
 
 // clear bots
 let cleared = false;
@@ -360,6 +346,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         marketInfo = {
             No: b,
             time: f.getTime(),
+            ticker: tickerMinutes,
             symbol: symbol,
             baseCurrency: baseCurrency,
             quoteCurrency: quoteCurrency,
