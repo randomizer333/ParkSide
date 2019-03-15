@@ -175,7 +175,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         orderType = "sold";
         let canceled = true;
         setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.85);
-        if (await !canceled) {
+        if (await !canceled) {  
             main.clear();
         }
         f.sendMail(orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));
@@ -193,7 +193,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         bougthPrice = price;
         setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
         f.sendMail(await orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));  //dev
-        return price;
+        return bougthPrice;
     } catch (error) {
         console.log("EEE: ", error.message);
     }

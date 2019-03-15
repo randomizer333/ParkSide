@@ -7,13 +7,13 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 1;    //sim 1,5,10
-const stopLossF = 88;
-const stopLossA = 1;
-const altBots = 10;
+const stopLossF = 88;   //stoploss for fiat and quote markets
+const stopLossA = 1;    //stoploss for alt arkets !!!   Never go over 1%   !!!
+const altBots = 10;     //number of alt bots to shufle
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BNB";    //dev
-const enableOrders = true;
+let enableOrders = false;
 const quotes = [    //binance
     mainQuoteCurrency + "/USDT",/*
     "BNB/BTC","BNB/ETH","BNB/USDT","BNB/USDC","BNB/USDS","BNB/PAX",
@@ -35,7 +35,7 @@ let bestBuy = new Array();
 
 //  main setup
 let marketInfo;
-
+let bougthPriceFiat = 0;
 let exInfo;
 setup();
 async function setup() {
@@ -85,24 +85,27 @@ async function setBots(arr) {
     }
 
     for (i = 0; i < quotes.length; i++) {     //run FIAT bots
+        if (bougthPriceFiat == 0){
+            //setTimeout(function () { bot(quotes[cunt2()], ticker, "ud", stopLossF, cunt3()) }, count());
+        }
         setTimeout(function () { bot(quotes[cunt2()], ticker, "ud", stopLossF, cunt3()) }, count());
     }
     for (i = 0; i < altBots; i++) {     //run ALT bots
         setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
     }
+    
+    //resetTimer(resetTime);
 
 }
 
 // time from last restart than reset
 
 const resetTime = 6;   //reset time in hours
-//timer(resetTime);
-function timer(time){
-    if(true){
-        setInterval(function(){
+//resetTimer(resetTime);
+function resetTimer(time) {
+        setTimeout(function () {
             clear();
-        },time * 60 * 60 * 1000);
-    }
+        }, f.hToMs(time));
 }
 
 
@@ -112,7 +115,7 @@ function clear() {
     if (!cleared) {
         f.cs("HALT!!!");
         //clearInterval(botNo[b]);
-        for (i = 0; i < altBots + quotes.length; i++) {
+        for (i = 0; i < quotes.length + altBots +1; i++) { //start with  i = 0
             f.cs("Clearing:" + i);
             clearInterval(botNo[i]);    //stopp all bots
         }
@@ -235,54 +238,10 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
             return stopLoss;
         }
-        function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLossP, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-            if (purchase && !sale && (trendUD > 0) && !hold && !stopLoss) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
-                orderType = "bougth";
-                //bougthPrice = price;    //dev
-                enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-            } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
-                orderType = "sold";
-                enableOrders ? a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
-            } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {                          //stopLoss sell bad
-                orderType = "lossed";
-                enableOrders ? a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
-            } else if (sale && hold && !stopLoss) {                                  //holding fee NOT covered
-                orderType = "holding";
-            } else if (sale && !hold && !stopLoss) {                                 //holding fee covered
-                orderType = "holding good";
-            } else if (purchase) {      // ( change24h > 0 )
-                orderType = "parked";
-            } else {
-                orderType = "still none";
-            }
-            return orderType;
-        }
-        function makeOrder(trendMACD, trendRSI, trendUD, trend24hP, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-            if (purchase && !sale && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0) && (trend24h > 0) && (change24hP > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
-                orderType = "bougth";
-                //bougthPrice = price;    //dev
-                enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-            } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
-                orderType = "sold";
-                enableOrders ? a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
-            } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {//stopLoss sell bad
-                orderType = "lossed";
-                enableOrders ? a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
-            } else if (sale && hold && !stopLoss) { //holding fee NOT covered
-                orderType = "holding";
-            } else if (sale && !hold && !stopLoss) {    //holding fee covered
-                orderType = "holding good";
-            } else if (purchase) {      // ( change24h > 0 )
-                orderType = "parked";
-            } else {
-                orderType = "still none";
-            }
-            return orderType;
-        }
+
+
         return {
             clTable: clTable,
-            makeOrderFiat: makeOrderFiat,
-            makeOrder: makeOrder,
             checkStopLoss: checkStopLoss,
             safeSale: safeSale,
             baseToQuote: baseToQuote,
@@ -323,9 +282,60 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         trendMACD = await TI.macd(logAll);
 
         if (strategy == "ud") {
-            m.makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+
+            //hold = await m.safeSale(tradingFeeP, bougthPriceFiat, price, minProfitP);
+            //bougthPriceFiat = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
+
+            makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+
+            function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLossP, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+                if (purchase && !sale && (trendUD > 0) && !hold && !stopLoss) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                    orderType = "bougth";
+                    bougthPrice = price;            //dev
+                    bougthPriceFiat = bougthPrice;  //dev
+                    enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
+                    orderType = "sold";
+                    enableOrders ? a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
+                } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {                          //stopLoss sell bad
+                    orderType = "lossed";
+                    enableOrders ? a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
+                } else if (sale && hold && !stopLoss) {                                  //holding fee NOT covered
+                    orderType = "holding";
+                } else if (sale && !hold && !stopLoss) {                                 //holding fee covered
+                    orderType = "holding good";
+                } else if (purchase) {      // ( change24h > 0 )
+                    orderType = "parked";
+                } else {
+                    orderType = "still none";
+                }
+                return orderType;
+            }
         } else if (strategy == "pingPong") {
-            m.makeOrder(trendMACD, trendRSI, trendUD, change24hP, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+
+            makeOrderAlt(trendMACD, trendRSI, trendUD, change24hP, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+            function makeOrderAlt(trendMACD, trendRSI, trendUD, trend24hP, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+                if (purchase && !sale && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0) && (trend24h > 0) && (change24hP > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                    orderType = "bougth";
+                    //bougthPrice = price;    //dev
+                    enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
+                    orderType = "sold";
+                    enableOrders ? a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
+                } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {//stopLoss sell bad
+                    orderType = "lossed";
+                    enableOrders ? a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
+                } else if (sale && hold && !stopLoss) { //holding fee NOT covered
+                    orderType = "holding";
+                } else if (sale && !hold && !stopLoss) {    //holding fee covered
+                    orderType = "holding good";
+                } else if (purchase) {      // ( change24h > 0 )
+                    orderType = "parked";
+                } else {
+                    orderType = "still none";
+                }
+                return orderType;
+            }
         }
 
 
@@ -357,6 +367,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
             quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
             bougthPrice: bougthPrice.toFixed(8) + " " + symbol,
+            bougthPriceFiat: bougthPriceFiat.toFixed(8) + " " + quotes[0],
             sellPrice: sellPrice.toFixed(8) + " " + symbol,
             relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,

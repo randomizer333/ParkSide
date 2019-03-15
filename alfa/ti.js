@@ -55,7 +55,6 @@ function macd(values) {     //log 70 should be bigger the better starts working 
         SimpleMASignal: false
     };
     let r = MACD.calculate(macdInput);      //array with JSONs
-    f.cs(r);
     let lastMACD;
     r ? lastMACD = r[r.length - 1] : lastMACD = 0; //last JSON
     let macdHistogram = 0;
