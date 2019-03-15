@@ -8,12 +8,12 @@ let TI = require("./ti.js");
 
 const tickerMinutes = 1;    //sim 1,5,10
 const stopLossF = 88;   //stoploss for fiat and quote markets
-const stopLossA = 1;    //stoploss for alt arkets !!!   Never go over 1%   !!!
+const stopLossA = 2;    //stoploss for alt arkets !!!   Never go over 1%   !!!
 const altBots = 10;     //number of alt bots to shufle
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
-const mainQuoteCurrency = "BNB";    //dev
-let enableOrders = false;
+const mainQuoteCurrency = "BTC";    //dev
+const enableOrders = true;
 const quotes = [    //binance
     mainQuoteCurrency + "/USDT",/*
     "BNB/BTC","BNB/ETH","BNB/USDT","BNB/USDC","BNB/USDS","BNB/PAX",
@@ -93,19 +93,21 @@ async function setBots(arr) {
     for (i = 0; i < altBots; i++) {     //run ALT bots
         setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
     }
-    
-    //resetTimer(resetTime);
+    /*
+    if (wallet[0].balance > 0){
+        //resetTimer(resetTime);
+    }*/
 
 }
 
 // time from last restart than reset
 
-const resetTime = 6;   //reset time in hours
+const resetTime = 2;   //reset time in hours
 //resetTimer(resetTime);
 function resetTimer(time) {
         setTimeout(function () {
             clear();
-        }, f.hToMs(time));
+        }, f.minToMs(time));
 }
 
 
@@ -114,7 +116,6 @@ let cleared = false;
 function clear() {
     if (!cleared) {
         f.cs("HALT!!!");
-        //clearInterval(botNo[b]);
         for (i = 0; i < quotes.length + altBots +1; i++) { //start with  i = 0
             f.cs("Clearing:" + i);
             clearInterval(botNo[i]);    //stopp all bots
