@@ -285,7 +285,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         if (strategy == "ud") {
 
             //hold = await m.safeSale(tradingFeeP, bougthPriceFiat, price, minProfitP);
-            //bougthPriceFiat = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
+            bougthPriceFiat = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
 
             makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
 
