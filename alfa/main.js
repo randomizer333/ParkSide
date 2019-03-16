@@ -8,12 +8,12 @@ let TI = require("./ti.js");
 
 const tickerMinutes = 1;    //sim 1,5,10
 const stopLossF = 88;   //stoploss for fiat and quote markets
-const stopLossA = 5;    //stoploss for alt arkets !!!   Never go over 1%   !!!
+const stopLossA = 10;    //stoploss for alt arkets !!!   Never go over 1%   !!!
 const altBots = 10;     //number of alt bots to shufle
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
-const mainQuoteCurrency = "BNB";    //dev
-const enableOrders = false;
+const mainQuoteCurrency = "BTC";    //dev
+const enableOrders = true;
 const quotes = [    //binance
     mainQuoteCurrency + "/USDT",/*
     "BNB/BTC","BNB/ETH","BNB/USDT","BNB/USDC","BNB/USDS","BNB/PAX",
@@ -96,7 +96,7 @@ async function setBots(arr) {
     }
     
     if (wallet[0].balance > minAmount){
-        resetTimer(resetTime);
+        //resetTimer(resetTime);
     }
 
 }
