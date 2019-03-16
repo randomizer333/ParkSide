@@ -8,12 +8,12 @@ let TI = require("./ti.js");
 
 const tickerMinutes = 1;    //sim 1,5,10
 const stopLossF = 88;   //stoploss for fiat and quote markets
-const stopLossA = 2;    //stoploss for alt arkets !!!   Never go over 1%   !!!
+const stopLossA = 5;    //stoploss for alt arkets !!!   Never go over 1%   !!!
 const altBots = 10;     //number of alt bots to shufle
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
-const mainQuoteCurrency = "BTC";    //dev
-const enableOrders = true;
+const mainQuoteCurrency = "BNB";    //dev
+const enableOrders = false;
 const quotes = [    //binance
     mainQuoteCurrency + "/USDT",/*
     "BNB/BTC","BNB/ETH","BNB/USDT","BNB/USDC","BNB/USDS","BNB/PAX",
@@ -40,10 +40,11 @@ let exInfo;
 setup();
 async function setup() {
     exInfo = await a.exInfos();
-    tradingFeeP = exInfo.feeMaker;
+    tradingFeeP = exInfo.feeMaker * 100;
     await f.cs(exInfo);
     markets = await a.markets();
     //await f.cs(markets);
+    wallet = a.wallet();
     bestBuy = await a.bestbuy(altBots, mainQuoteCurrency);
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
         JSON.stringify(bestBuy[0]) + "\n" +
@@ -85,7 +86,7 @@ async function setBots(arr) {
     }
 
     for (i = 0; i < quotes.length; i++) {     //run FIAT bots
-        if (bougthPriceFiat == 0){
+        if (bougthPriceFiat == 0) {
             //setTimeout(function () { bot(quotes[cunt2()], ticker, "ud", stopLossF, cunt3()) }, count());
         }
         setTimeout(function () { bot(quotes[cunt2()], ticker, "ud", stopLossF, cunt3()) }, count());
@@ -93,21 +94,21 @@ async function setBots(arr) {
     for (i = 0; i < altBots; i++) {     //run ALT bots
         setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
     }
-    /*
-    if (wallet[0].balance > 0){
-        //resetTimer(resetTime);
-    }*/
+    
+    if (wallet[0].balance > minAmount){
+        resetTimer(resetTime);
+    }
 
 }
 
 // time from last restart than reset
 
-const resetTime = 2;   //reset time in hours
+const resetTime = 6;   //reset time in hours
 //resetTimer(resetTime);
 function resetTimer(time) {
-        setTimeout(function () {
-            clear();
-        }, f.minToMs(time));
+    setTimeout(function () {
+        clear();
+    }, f.minToMs(time));
 }
 
 
@@ -116,7 +117,7 @@ let cleared = false;
 function clear() {
     if (!cleared) {
         f.cs("HALT!!!");
-        for (i = 0; i < quotes.length + altBots +1; i++) { //start with  i = 0
+        for (i = 0; i < quotes.length + altBots + 1; i++) { //start with  i = 0
             f.cs("Clearing:" + i);
             clearInterval(botNo[i]);    //stopp all bots
         }
@@ -219,15 +220,19 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
         function safeSale(tradingFeeP, bougthPrice, price, minProfitP) {  //returns holding status
             feeDouble = tradingFeeP * 2;
+            //f.cs("FeeDouble:" + feeDouble);
             tradingFeeAbs = f.part(feeDouble, bougthPrice);
+            //f.cs("tradingFeeAbs:" + tradingFeeAbs);
             minProfitAbs = f.part(minProfitP, bougthPrice);
+            //f.cs("minProfitAbs:" + minProfitAbs);
             sellPrice = bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
+            //f.cs("sellPrice:" + sellPrice);
             if (sellPrice > price) {      //if bougthPrice is not high enough
-                safeSale = true;    	//dont allow sell force holding
+                hold = true;    	//dont allow sell force holding
             } else {
-                safeSale = false;           //allow sale of holding to parked
+                hold = false;           //allow sale of holding to parked
             }
-            return safeSale;
+            return hold;
         }
         function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
             absStopLoss = f.part(stopLossP, sellPrice);
@@ -287,9 +292,9 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             //hold = await m.safeSale(tradingFeeP, bougthPriceFiat, price, minProfitP);
             bougthPriceFiat = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
 
-            makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
+            makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
-            function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLossP, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+            function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale && (trendUD > 0) && !hold && !stopLoss) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     bougthPrice = price;            //dev
@@ -314,8 +319,8 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         } else if (strategy == "pingPong") {
 
-            makeOrderAlt(trendMACD, trendRSI, trendUD, change24hP, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price);
-            function makeOrderAlt(trendMACD, trendRSI, trendUD, trend24hP, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, quoteBalance, price) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+            makeOrderAlt(trendMACD, trendRSI, trendUD,  trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance,  price, enableOrders);
+            function makeOrderAlt(trendMACD, trendRSI, trendUD,  trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance,  price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0) && (trend24h > 0) && (change24hP > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     //bougthPrice = price;    //dev
