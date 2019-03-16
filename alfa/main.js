@@ -37,6 +37,7 @@ let bestBuy = new Array();
 let marketInfo;
 let bougthPriceFiat = 0;
 let exInfo;
+let wallet;
 setup();
 async function setup() {
     exInfo = await a.exInfos();
@@ -44,7 +45,7 @@ async function setup() {
     await f.cs(exInfo);
     markets = await a.markets();
     //await f.cs(markets);
-    wallet = a.wallet();
+    wallet = await a.wallet();
     bestBuy = await a.bestbuy(altBots, mainQuoteCurrency);
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
         JSON.stringify(bestBuy[0]) + "\n" +
@@ -95,8 +96,8 @@ async function setBots(arr) {
         setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
     }
     
-    if (wallet[0].balance > minAmount){
-        //resetTimer(resetTime);
+    if (wallet[0].balance > 0.0001){    //how much BTC must there be
+        resetTimer(resetTime);
     }
 
 }
@@ -111,7 +112,6 @@ function resetTimer(time) {
     }, f.minToMs(time));
 }
 
-
 // clear bots
 let cleared = false;
 function clear() {
@@ -125,7 +125,6 @@ function clear() {
         setup();    //run again from start
     }
 }
-
 
 // main loop
 
