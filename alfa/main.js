@@ -96,8 +96,9 @@ async function setBots(arr) {
         setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
     }
     
+    
     if (wallet[0].balance > 0.0001){    //how much BTC must there be
-        resetTimer(resetTime);
+        //resetTimer(resetTime);
     }
 
 }
