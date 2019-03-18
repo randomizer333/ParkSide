@@ -109,7 +109,7 @@ const resetTime = 6;   //reset time in hours
 function resetTimer(time) {
     setTimeout(function () {
         clear();
-    }, f.minToMs(time));
+    }, f.hToMs(time));
 }
 
 // clear bots

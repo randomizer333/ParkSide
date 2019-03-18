@@ -178,7 +178,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         orderType = "sold";
         let canceled = true;
         setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.85);
-        if (await !canceled) {  
+        if (await !canceled) {
             main.clear();
         }
         f.sendMail(orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));
@@ -220,21 +220,21 @@ async function bestbuy(num, mainQuoteCurrency) {
         let quote = new Array();
         f.cs(mainQuoteCurrency);
 
-        for (i = 0; i < syms.length -1; i++) {
+        for (i = 0; i < syms.length - 1; i++) {
             //f.cs(syms);
             //f.cs(mainQuoteCurrency);
 
             //f.cs(syms[i]);
             quote = f.splitSymbol(syms[i], "second");
             //f.cs(quote);
-            
+
             if (quote == mainQuoteCurrency) {
                 results[i] = syms[i];
                 //f.cs(mainQuoteCurrency);
             }
         }
         let results2;
-        results2 =await f.cleanArray(results);
+        results2 = await f.cleanArray(results);
         f.cs(results2);
         return results2;
     }
@@ -247,6 +247,7 @@ async function bestbuy(num, mainQuoteCurrency) {
             arr[i] = {
                 id: "",
                 market: "",
+                price: "",
                 change: "",
                 base: "",
                 quote: ""
@@ -259,8 +260,11 @@ async function bestbuy(num, mainQuoteCurrency) {
     async function parseChanges(length, symbols) {   //sim
         for (i = 0; i < length - 1; i++) {
             r = await change(symbols[i]);
+            //p = ask(symbols[i]);
+            //f.cs(p);
             bestbuy[i].id = length - i;
             bestbuy[i].market = symbols[i];
+            //bestbuy[i].price = p;
             bestbuy[i].change = r;
             bestbuy[i].base = f.splitSymbol(symbols[i], "first");
             bestbuy[i].quote = f.splitSymbol(symbols[i], "second");
@@ -281,7 +285,7 @@ async function bestbuy(num, mainQuoteCurrency) {
     return bests;
 }
 
-//  Exports of this module
+// Exports of this module
 
 exports.bestbuy = bestbuy;
 exports.exInfos = exInfos;
