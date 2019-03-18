@@ -46,7 +46,8 @@ async function setup() {
     markets = await a.markets();
     //await f.cs(markets);
     wallet = await a.wallet();
-    bestBuy = await a.bestbuy(altBots, mainQuoteCurrency);
+    bestBuy = await a.bestbuy(altBots, mainQuoteCurrency);    //select markets with highest 24h change
+    //bestBuy = await a.microPrice(altBots, mainQuoteCurrency),   //select markets with lowest price
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
         JSON.stringify(bestBuy[0]) + "\n" +
         JSON.stringify(bestBuy[1]) + "\n" +
@@ -54,13 +55,14 @@ async function setup() {
         JSON.stringify(bestBuy[3]) + "\n" +
         JSON.stringify(bestBuy[4])
     )
+    await setBots(bestBuy, quotes);
     f.csL(bestBuy, altBots);
-    await setBots(bestBuy);
+
 }
 
 // set bots
 let b;
-async function setBots(arr) {
+async function setBots(arr, quotes) {
     f.csL(arr, altBots);
     cleared = false;
 
@@ -95,9 +97,9 @@ async function setBots(arr) {
     for (i = 0; i < altBots; i++) {     //run ALT bots
         setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
     }
-    
-    
-    if (wallet[0].balance > 0.0001){    //how much BTC must there be
+
+
+    if (wallet[0].balance > 0.0001) {    //how much BTC must there be
         //resetTimer(resetTime);
     }
 
@@ -319,8 +321,8 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         } else if (strategy == "pingPong") {
 
-            makeOrderAlt(trendMACD, trendRSI, trendUD,  trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance,  price, enableOrders);
-            function makeOrderAlt(trendMACD, trendRSI, trendUD,  trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance,  price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+            makeOrderAlt(trendMACD, trendRSI, trendUD, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
+            function makeOrderAlt(trendMACD, trendRSI, trendUD, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0) && (trend24h > 0) && (change24hP > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     //bougthPrice = price;    //dev
@@ -377,18 +379,30 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             sellPrice: sellPrice.toFixed(8) + " " + symbol,
             relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
-            sale: sale, //f.boolToInitial(sale),
-            purchase: purchase, //f.boolToInitial(purchase),
-            more: more, //f.boolToInitial(more),
-            hold: hold, //f.boolToInitial(hold),
+            conditions: {
+                sale: sale,
+                purchase: purchase,
+                more: more,
+                hold: hold,
+            },
+            //sale: sale, //f.boolToInitial(sale),
+            //purchase: purchase, //f.boolToInitial(purchase),
+            //more: more, //f.boolToInitial(more),
+            //hold: hold, //f.boolToInitial(hold),
             stopLoss: stopLoss, //f.boolToInitial(stopLoss),
             stopLossP: stopLossP + " %",
             minAmount: minAmount + " " + baseCurrency,
             logLength: logAll.length,
-            trendUD: trendUD,
-            trendRSI: trendRSI,
-            trendMACD: trendMACD,
-            trend24h: trend24h,
+            //trendUD: trendUD,
+            //trendRSI: trendRSI,
+            //trendMACD: trendMACD,
+            //trend24h: trend24h,
+            trends: {
+                UD: trendUD,         //dev
+                RSI: trendRSI,
+                MACD: trendMACD,
+                c24h: trend24h
+            },
             orderType: orderType,
             quoteMarkets: JSON.stringify(quotes),
             wallet: JSON.stringify(wallet),

@@ -86,10 +86,10 @@ function exInfos() {     //returns JSON of exchange info
 async function change(symbol) {             //returns Variable change percentage of a market
     try {
         r = await exchange.fetchTicker(symbol);
+        return await r.percentage;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
-    return await r.percentage;
 }
 async function minAmount(symbol) {          //returns minimum amount of base allowed to buy
     try {
@@ -128,18 +128,18 @@ async function balance(currency) {          //returns Array of Objects balances 
 async function bid(symbol) {                //reurns Array of Objects bid,ask
     try {
         r = await exchange.fetchOrderBook(symbol);
+        return re = await r.bids[0][0];
     } catch (error) {
         console.log("EEE: ", error.message);
     }
-    return bid = await r.bids[0][0];
 }
 async function ask(symbol) {                //reurns Array of Objects bid,ask
     try {
-        r = await exchange.fetchOrderBook(symbol);
+        r2 = await exchange.fetchOrderBook(symbol);
+        return await r2.asks[0][0];
     } catch (error) {
         console.log("EEE: ", error.message);
     }
-    return ask = await r.asks[0][0];
 }
 async function price(symbol) {                //reurns Array of Objects bid,ask
     try {
@@ -218,19 +218,11 @@ async function bestbuy(num, mainQuoteCurrency) {
     async function filter(mainQuoteCurrency, syms) {
         let results = new Array();;
         let quote = new Array();
-        f.cs(mainQuoteCurrency);
-
+        f.cs("Main quote: "+mainQuoteCurrency);
         for (i = 0; i < syms.length - 1; i++) {
-            //f.cs(syms);
-            //f.cs(mainQuoteCurrency);
-
-            //f.cs(syms[i]);
             quote = f.splitSymbol(syms[i], "second");
-            //f.cs(quote);
-
             if (quote == mainQuoteCurrency) {
                 results[i] = syms[i];
-                //f.cs(mainQuoteCurrency);
             }
         }
         let results2;
@@ -260,8 +252,7 @@ async function bestbuy(num, mainQuoteCurrency) {
     async function parseChanges(length, symbols) {   //sim
         for (i = 0; i < length - 1; i++) {
             r = await change(symbols[i]);
-            //p = ask(symbols[i]);
-            //f.cs(p);
+            //p = await ask(symbols[i]);
             bestbuy[i].id = length - i;
             bestbuy[i].market = symbols[i];
             //bestbuy[i].price = p;
@@ -276,7 +267,74 @@ async function bestbuy(num, mainQuoteCurrency) {
     let sortedMarks = new Array();
     sortedMarks = await bestbuy.sort(SortByAtribute);
     function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
-        return ((x.change == y.change) ? 0 : ((x.change > y.change) ? -1 : 1));
+        return ((x.change == y.change) ? 0 : ((x.change > y.change) ? - 1 : 1));
+    }
+
+    let bests = new Array();
+    bests = await f.cutArray(sortedMarks, num);
+
+    return bests;
+}
+
+// get microPrice markets
+async function microPrice(num, mainQuoteCurrency) {
+    let symbols = await markets();  //get all market symbols
+
+    let symbols2 = symbols;
+    symbols2 = await filter(mainQuoteCurrency, symbols);
+    async function filter(mainQuoteCurrency, syms) {
+        let results = new Array();;
+        let quote = new Array();
+        f.cs("Main quote: "+mainQuoteCurrency);
+        for (i = 0; i < syms.length - 1; i++) {
+            quote = f.splitSymbol(syms[i], "second");
+            if (quote == mainQuoteCurrency) {
+                results[i] = syms[i];
+            }
+        }
+        let results2;
+        results2 = await f.cleanArray(results);
+        f.cs(results2);
+        return results2;
+    }
+
+    let bestbuy = new Array();
+    bestbuy = await populate(symbols2.length);
+    function populate(length) {
+        let arr = new Array();
+        for (i = 0; i < length - 1; i++) {
+            arr[i] = {
+                id: "",
+                market: "",
+                price: "",
+                change: "",
+                base: "",
+                quote: ""
+            };
+        }
+        return arr;
+    }
+
+    bestbuy = await parseChanges(symbols2.length, symbols2);
+    async function parseChanges(length, symbols) {   //sim
+        for (i = 0; i < length - 1; i++) {
+            //r = await change(symbols[i]);
+            p = await ask(symbols[i]);
+            bestbuy[i].id = length - i;
+            bestbuy[i].market = symbols[i];
+            bestbuy[i].price = p;
+            //bestbuy[i].change = r;
+            bestbuy[i].base = f.splitSymbol(symbols[i], "first");
+            bestbuy[i].quote = f.splitSymbol(symbols[i], "second");
+            f.cs(bestbuy[i]);
+        }
+        return await bestbuy;
+    };
+
+    let sortedMarks = new Array();
+    sortedMarks = await bestbuy.sort(SortByAtribute);
+    function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
+        return ((x.price == y.price) ? 0 : ((x.price > y.price) ? 1 : - 1));
     }
 
     let bests = new Array();
@@ -287,6 +345,7 @@ async function bestbuy(num, mainQuoteCurrency) {
 
 // Exports of this module
 
+exports.microPrice = microPrice;
 exports.bestbuy = bestbuy;
 exports.exInfos = exInfos;
 exports.balance = balance;
