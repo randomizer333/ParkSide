@@ -8,23 +8,24 @@ let TI = require("./ti.js");
 
 const tickerMinutes = 1;    //sim 1,5,10
 const stopLossF = 88;   //stoploss for fiat and quote markets
-const stopLossA = 10;    //stoploss for alt arkets !!!   Never go over 1%   !!!
+const stopLossA = 2;    //stoploss for alt arkets !!!   Never go over 1%   !!!
 const altBots = 10;     //number of alt bots to shufle
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev
 const enableOrders = true;
 const quotes = [    //binance
-    mainQuoteCurrency + "/USDT",/*
+    mainQuoteCurrency + "/USDT",
     "BNB/BTC","BNB/ETH","BNB/USDT","BNB/USDC","BNB/USDS","BNB/PAX",
     "ETH/BTC","ETH/USDT","ETH/USDC","ETH/PAX",
-    "BTC/USDT","BTC/USDC","BTC/USDS","BTC/PAX",
+    "BTC/USDC","BTC/USDS","BTC/PAX",//"BTC/USDT",
     "PAX/USDT","PAX/TUSD", 
     "TUSD/BNB", "TUSD/BTC", "TUSD/ETH","TUSD/USDT", 
     "USDC/USDT","USDC/PAX","USDC/TUSD",
-    "USDS/PAX","USDS/USDC","USDS/TUSD","USDS/USDT",*/
+    "USDS/PAX","USDS/USDC","USDS/TUSD","USDS/USDT",
 ];
 
+let microCurrency = ["NPXS/BTC","BCN/BTC","BTT/BTC","HOT/BTC",]
 
 const ticker = f.minToMs(tickerMinutes);
 const numOfBots = altBots + quotes.length;
@@ -48,13 +49,13 @@ async function setup() {
     wallet = await a.wallet();
     bestBuy = await a.bestbuy(altBots, mainQuoteCurrency);    //select markets with highest 24h change
     //bestBuy = await a.microPrice(altBots, mainQuoteCurrency),   //select markets with lowest price
-    f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
-        JSON.stringify(bestBuy[0]) + "\n" +
-        JSON.stringify(bestBuy[1]) + "\n" +
-        JSON.stringify(bestBuy[2]) + "\n" +
-        JSON.stringify(bestBuy[3]) + "\n" +
-        JSON.stringify(bestBuy[4])
-    )
+        f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
+            JSON.stringify(bestBuy[0]) + "\n" +
+            JSON.stringify(bestBuy[1]) + "\n" +
+            JSON.stringify(bestBuy[2]) + "\n" +
+            JSON.stringify(bestBuy[3]) + "\n" +
+            JSON.stringify(bestBuy[4])
+        )
     await setBots(bestBuy, quotes);
     f.csL(bestBuy, altBots);
 
@@ -299,7 +300,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             function makeOrderFiat(trendMACD, trendUD, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale && (trendUD > 0) && !hold && !stopLoss) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
-                    bougthPrice = price;            //dev
+                    //bougthPrice = price;            //dev
                     bougthPriceFiat = bougthPrice;  //dev
                     enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
@@ -382,14 +383,15 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             conditions: {
                 sale: sale,
                 purchase: purchase,
-                more: more,
                 hold: hold,
+                stopLoss: stopLoss,
             },
             //sale: sale, //f.boolToInitial(sale),
             //purchase: purchase, //f.boolToInitial(purchase),
             //more: more, //f.boolToInitial(more),
             //hold: hold, //f.boolToInitial(hold),
-            stopLoss: stopLoss, //f.boolToInitial(stopLoss),
+            more: more,
+            //stopLoss: stopLoss, //f.boolToInitial(stopLoss),
             stopLossP: stopLossP + " %",
             minAmount: minAmount + " " + baseCurrency,
             logLength: logAll.length,
