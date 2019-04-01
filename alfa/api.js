@@ -83,6 +83,19 @@ function exInfos() {     //returns JSON of exchange info
 
     }
 }
+
+//symbol = "BTC/USDT";
+//volume(symbol);
+async function volume(symbol) {
+    try {
+        v = await exchange.fetchTicker(symbol);
+        //f.cs(v);
+        return await v.quoteVolume;
+    } catch (error) {
+        console.log("EEE: ", error.message);
+    }
+}
+
 async function change(symbol) {             //returns Variable change percentage of a market
     try {
         r = await exchange.fetchTicker(symbol);
@@ -218,7 +231,7 @@ async function bestbuy(num, mainQuoteCurrency) {
     async function filter(mainQuoteCurrency, syms) {
         let results = new Array();;
         let quote = new Array();
-        f.cs("Main quote: "+mainQuoteCurrency);
+        f.cs("Main quote: " + mainQuoteCurrency);
         for (i = 0; i < syms.length - 1; i++) {
             quote = f.splitSymbol(syms[i], "second");
             if (quote == mainQuoteCurrency) {
@@ -285,7 +298,7 @@ async function microPrice(num, mainQuoteCurrency) {
     async function filter(mainQuoteCurrency, syms) {
         let results = new Array();;
         let quote = new Array();
-        f.cs("Main quote: "+mainQuoteCurrency);
+        f.cs("Main quote: " + mainQuoteCurrency);
         for (i = 0; i < syms.length - 1; i++) {
             quote = f.splitSymbol(syms[i], "second");
             if (quote == mainQuoteCurrency) {
@@ -345,6 +358,7 @@ async function microPrice(num, mainQuoteCurrency) {
 
 // Exports of this module
 
+exports.volume = volume;
 exports.microPrice = microPrice;
 exports.bestbuy = bestbuy;
 exports.exInfos = exInfos;

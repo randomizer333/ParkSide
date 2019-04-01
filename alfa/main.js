@@ -6,7 +6,7 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 2;    //sim 1,5,10
+const tickerMinutes = 1;    //sim 1,5,10
 const stopLossF = 88;   //stoploss for fiat and quote markets
 const stopLossA = 2;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 5;     //number of alt bots to shufle
@@ -60,7 +60,7 @@ async function setup() {
     markets = await a.markets();
     //await f.cs(markets);
     wallet = await a.wallet();
-    enableOrders?bestBuy = await a.bestbuy(altBots, mainQuoteCurrency):"";    //select markets with highest 24h change
+    enableOrders?bestBuy = await a.bestbuy(altBots, mainQuoteCurrency):bestBuy = "BTC/USDT";    //select markets with highest 24h change
     //bestBuy = await a.microPrice(altBots, mainQuoteCurrency),   //select markets with lowest price
         f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
             JSON.stringify(bestBuy[0]) + "\n" +
@@ -70,7 +70,7 @@ async function setup() {
             JSON.stringify(bestBuy[4])
         )
     await setBots(bestBuy, quotes);
-    enableOrders?f.csL(bestBuy, altBots):"";
+    f.csL(bestBuy, altBots);
 
 }
 
@@ -158,6 +158,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
     let logAll = new Array();   //loger
     let log24hP = new Array();   //loger
+    let logVol = new Array();   //loger
 
     let price;      //balanceChanged
     let bougthPrice = 0;//balanceChanged
@@ -288,6 +289,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         price = await a.price(symbol);
         wallet = await a.wallet();
         change24hP = await a.change(symbol);
+        volume = await a.volume(symbol);
 
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
@@ -299,10 +301,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         logAll = await m.loger(price, 100, logAll);
         log24hP = await m.loger(change24hP, 5, log24hP);
+        logVol = await m.loger(volume, 5, logVol);
+
         trend24h = await TI.upDown(log24hP);
         trendUD = await TI.upDown(logAll);
         trendRSI = await TI.rsi(logAll);
         trendMACD = await TI.macd(logAll);
+        trendVol = await TI.upDown(logVol);
 
         if (strategy == "ud") {
 
@@ -337,8 +342,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         } else if (strategy == "pingPong") {
 
             makeOrderAlt(trendMACD, trendRSI, trendUD, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
-            function makeOrderAlt(trendMACD, trendRSI, trendUD, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0) && (trend24h > 0) && (change24hP > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+            function makeOrderAlt(trendMACD, trendRSI, trendUD, trend24h,trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+                if (purchase && !sale && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0) && (trend24h > 0) && (change24hP > 0) && (trendVol > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     //bougthPrice = price;    //dev
                     enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
@@ -360,7 +365,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 return orderType;
             }
         }
-
 
         //await sim();
         function sim() {    //sim
@@ -409,7 +413,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 UD: trendUD,         //dev
                 RSI: trendRSI,
                 MACD: trendMACD,
-                c24h: trend24h
+                c24h: trend24h,
+                trendVol: trendVol
             },
             orderType: orderType,
             quoteMarkets: JSON.stringify(quotes),
