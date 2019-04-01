@@ -6,13 +6,13 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 1;    //sim 1,5,10
+const tickerMinutes = 2;    //sim 1,5,10
 const stopLossF = 88;   //stoploss for fiat and quote markets
 const stopLossA = 2;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 5;     //number of alt bots to shufle
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
-const mainQuoteCurrency = "BTC";    //dev
+const mainQuoteCurrency = "BTC";    //dev   //"BTC"
 const enableOrders = true;
 const quotes = [    //binance
     mainQuoteCurrency + "/USDT","BNB/USDT","ETH/USDT",
@@ -60,7 +60,7 @@ async function setup() {
     markets = await a.markets();
     //await f.cs(markets);
     wallet = await a.wallet();
-    bestBuy = await a.bestbuy(altBots, mainQuoteCurrency);    //select markets with highest 24h change
+    enableOrders?bestBuy = await a.bestbuy(altBots, mainQuoteCurrency):"";    //select markets with highest 24h change
     //bestBuy = await a.microPrice(altBots, mainQuoteCurrency),   //select markets with lowest price
         f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
             JSON.stringify(bestBuy[0]) + "\n" +
@@ -70,7 +70,7 @@ async function setup() {
             JSON.stringify(bestBuy[4])
         )
     await setBots(bestBuy, quotes);
-    f.csL(bestBuy, altBots);
+    enableOrders?f.csL(bestBuy, altBots):"";
 
 }
 
@@ -145,7 +145,7 @@ function clear() {
 
 // main loop
 
-function bot(symbol, ticker, strategy, stopLossP, botNumber) {
+async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
     let amountQuote;    //baseToQuote
     let amountBase;     //amountQuote
@@ -275,6 +275,7 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     }
     const m = modul();
 
+    
     loop(symbol, strategy);
     botNo[b] = setInterval(function () { loop(symbol, strategy) }, ticker);
     async function loop(symbol, strategy) {
@@ -386,6 +387,8 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             quoteBalance: quoteBalance + " " + quoteCurrency,
             price: price.toFixed(8) + " " + symbol,
             change24hP: change24hP + " %",
+            stopLossP: stopLossP + " %",
+            minAmount: minAmount + " " + baseCurrency,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
             quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
             bougthPrice: bougthPrice.toFixed(8) + " " + symbol,
@@ -399,19 +402,9 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 hold: hold,
                 stopLoss: stopLoss,
             },
-            //sale: sale, //f.boolToInitial(sale),
-            //purchase: purchase, //f.boolToInitial(purchase),
-            //more: more, //f.boolToInitial(more),
-            //hold: hold, //f.boolToInitial(hold),
             more: more,
             //stopLoss: stopLoss, //f.boolToInitial(stopLoss),
-            stopLossP: stopLossP + " %",
-            minAmount: minAmount + " " + baseCurrency,
             logLength: logAll.length,
-            //trendUD: trendUD,
-            //trendRSI: trendRSI,
-            //trendMACD: trendMACD,
-            //trend24h: trend24h,
             trends: {
                 UD: trendUD,         //dev
                 RSI: trendRSI,
@@ -423,10 +416,13 @@ function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             wallet: JSON.stringify(wallet),
             bestBuy: JSON.stringify(bestBuy),
         }
-        await console.dir(marketInfo);
+        /*
         if (marketInfo.orderType == "sold") {
             f.sendMail("Sold Info", JSON.stringify(marketInfo));
         }
+        */
+        
+        console.dir(marketInfo);
         return marketInfo;
     }
 }
