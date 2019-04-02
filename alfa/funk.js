@@ -4,6 +4,7 @@ is a js module for generic comonly used simple functions that should be aplicabl
 */
 
 function sendMail(subject, message, to) {
+        
         // email account data
         let nodemailer = require('nodemailer');
         let transporter = nodemailer.createTransport({

@@ -9,7 +9,7 @@ let TI = require("./ti.js");
 const tickerMinutes = 2;    //sim 1,5,10
 const stopLossF = 99;   //stoploss for fiat and quote markets
 const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
-const altBots = 5;     //number of alt bots to shufle
+const altBots = 0;     //number of alt bots to shufle
 const portion = 0.99;
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC"
@@ -108,6 +108,7 @@ async function setBots(arr, quotes) {
         }
         setTimeout(function () { bot(quotes[cunt2()], ticker, "ud", stopLossF, cunt3()) }, count());
     }
+
     for (i = 0; i < altBots; i++) {     //run ALT bots
         setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
     }
@@ -303,10 +304,10 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         log24hP = await m.loger(change24hP, 5, log24hP);
         logVol = await m.loger(volume, 5, logVol);
 
-        trend24h = await TI.upDown(log24hP);
         trendUD = await TI.upDown(logAll);
         trendRSI = await TI.rsi(logAll);
         trendMACD = await TI.macd(logAll);
+        trend24h = await TI.upDown(log24hP);
         trendVol = await TI.upDown(logVol);
 
         if (strategy == "ud") {
@@ -379,19 +380,20 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
         let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
-
-        marketInfo = {
+        
+        //main console output
+        marketInfo = {  
             No: b,
             time: f.getTime(),
             ticker: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
             symbol: symbol,
             change24hP: change24hP + " %",
-            baseCurrency: baseCurrency,
-            quoteCurrency: quoteCurrency,
+            //baseCurrency: baseCurrency,
+            //quoteCurrency: quoteCurrency,
+            minAmount: minAmount + " " + baseCurrency,
             baseBalance: baseBalance + " " + baseCurrency,
             quoteBalance: quoteBalance + " " + quoteCurrency,
-            minAmount: minAmount + " " + baseCurrency,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
             quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
             bougthPrice: bougthPrice.toFixed(8) + " " + symbol,

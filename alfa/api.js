@@ -177,7 +177,7 @@ async function cancel(orderId, symbol) {                 //cancels order with id
     try {
         r = await exchange.cancelOrder(orderId, symbol);
         f.sendMail("Canceled", JSON.stringify(r));
-        canceled = false;
+        canceled = true;
         return true;
     } catch (error) {
         console.log("EEE: ", error.message);
@@ -189,12 +189,14 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         orderId = r.id;
         orderStatus = r.status;
         orderType = "sold";
-        let canceled = true;
+        let canceled;
         setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.85);
-        if (await !canceled) {
-            main.clear();
+        if (await canceled) {
+            /*dont stop*/
+        } else {
+            //main.clear();
+            f.sendMail(orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));
         }
-        f.sendMail(orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));
         return price;
     } catch (error) {
         console.log("EEE: ", error.message);
