@@ -317,7 +317,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale && !hold && !stopLoss && (trendUD > 0)(trendMACD > 0) && (trendRSI > 0) && (trend24h > 0) && (change24hP > 0) && (trendVol > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                if (purchase && !sale && !hold && !stopLoss && (trendUD > 0)(trendMACD > 0) && (trendRSI >= 0) && (trend24h > 0) && (change24hP > 0) && (trendVol > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     //bougthPrice = price;            //dev
                     bougthPriceFiat = bougthPrice;  //dev
