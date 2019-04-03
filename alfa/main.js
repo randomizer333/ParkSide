@@ -6,20 +6,33 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 2;    //sim 1,5,10
+const tickerMinutes = 3;    //sim 1,5,10
 const stopLossF = 99;   //stoploss for fiat and quote markets
 const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 0;     //number of alt bots to shufle
-const portion = 0.99;
+const portion = 0.55;
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC"
 const enableOrders = true;
 const quotes = [    //binance
     mainQuoteCurrency + "/USDT", "BNB/USDT", "ETH/USDT",
+
+    "BNB/ETH",
+
     "BNB/BTC",
     "ETH/BTC",
 
-    "BNB/ETH",
+    "ADA/USDT",
+    "BCH/USDT",
+    "BNB/USDT",
+    "BSV/USDT",
+    "BTC/USDT",
+    "EOS/USDT",
+    "LTC/USDT",
+    "TRX/USDT",
+    "XLM/USDT",
+    "XRP/USDT",
+
     /*
         "TUSD/BNB", 
         "TUSD/BTC", 
@@ -318,7 +331,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale && !hold && !stopLoss && (trendUD > 0)(trendMACD > 0) && (trendRSI >= 0) && (trend24h > 0) && (change24hP > 0) && (trendVol > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                if (purchase && !sale && !hold && !stopLoss && (trendUD > 0) &&(trendMACD >= 0) && (trendRSI >= 0) && (trend24h >= 0) && (change24hP > 0) && (trendVol > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     //bougthPrice = price;            //dev
                     bougthPriceFiat = bougthPrice;  //dev
