@@ -6,14 +6,15 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 3;    //sim 1,5,10
-const stopLossF = 99;   //stoploss for fiat and quote markets
+const tickerMinutes = 3;    //1,5,10,60
+const stopLossF = 1;   //stoploss for fiat and quote markets
 const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
-const altBots = 0;     //number of alt bots to shufle
-const portion = 0.55;
+const altBots = 5;     //number of alt bots to shufle
+const altBotsEnable = false;
+const portion = 0.55;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC"
-const enableOrders = true;
+const enableOrders = true;  //sim
 const quotes = [    //binance
     mainQuoteCurrency + "/USDT", "BNB/USDT", "ETH/USDT",
 
@@ -123,7 +124,7 @@ async function setBots(arr, quotes) {
     }
 
     for (i = 0; i < altBots; i++) {     //run ALT bots
-        setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count());
+        altBotsEnable?setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count()):"";
     }
 
 
@@ -331,7 +332,14 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale && !hold && !stopLoss && (trendUD > 0) &&(trendMACD >= 0) && (trendRSI >= 0) && (trend24h >= 0) && (change24hP > 0) && (trendVol > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                if (purchase && !sale && !hold && !stopLoss &&
+                    (trendUD > 0) &&
+                    (trendMACD > 0) &&
+                    (trendRSI >= 0) &&
+                    (trend24h > 0) &&
+                    (change24hP > 0) &&
+                    (trendVol > 0)
+                ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     //bougthPrice = price;            //dev
                     bougthPriceFiat = bougthPrice;  //dev
@@ -357,7 +365,14 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
             makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
             function makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale && (trendUD > 0) && (trendMACD > 0) && (trendRSI > 0) && (trend24h > 0) && (change24hP > 0) && (trendVol > 0)) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                if (purchase && !sale &&
+                    (trendUD > 0) &&
+                    (trendMACD > 0) &&
+                    (trendRSI > 0) &&
+                    (trend24h > 0) &&
+                    (change24hP > 0) &&
+                    (trendVol > 0)
+                ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     //bougthPrice = price;    //dev
                     enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
@@ -393,9 +408,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
         let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
-        
+
         //main console output
-        marketInfo = {  
+        marketInfo = {
             No: b,
             time: f.getTime(),
             ticker: tickerMinutes + " min",
