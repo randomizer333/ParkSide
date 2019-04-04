@@ -10,31 +10,22 @@ const tickerMinutes = 3;    //1,5,10,60
 const stopLossF = 1;   //stoploss for fiat and quote markets
 const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 5;     //number of alt bots to shufle
-const altBotsEnable = false;
+const altBotsEnable = false;    //enable bestbuy altbots
 const portion = 0.55;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC"
 const enableOrders = true;  //sim
-const quotes = [    //binance
+/*
+const quotes = [  //binance
     mainQuoteCurrency + "/USDT", "BNB/USDT", "ETH/USDT",
 
-    "BNB/ETH",
+    "ADA/USDT","BCH/USDT","BNB/USDT","BSV/USDT","BTC/USDT","EOS/USDT","LTC/USDT","TRX/USDT","XLM/USDT","XRP/USDT",
+    
+        "BNB/ETH",
 
-    "BNB/BTC",
-    "ETH/BTC",
+        "BNB/BTC",
+        "ETH/BTC",
 
-    "ADA/USDT",
-    "BCH/USDT",
-    "BNB/USDT",
-    "BSV/USDT",
-    "BTC/USDT",
-    "EOS/USDT",
-    "LTC/USDT",
-    "TRX/USDT",
-    "XLM/USDT",
-    "XRP/USDT",
-
-    /*
         "TUSD/BNB", 
         "TUSD/BTC", 
         "TUSD/ETH",
@@ -49,8 +40,12 @@ const quotes = [    //binance
         "BTC/PAX","ETH/PAX","BNB/PAX",
         "USDC/PAX","USDS/PAX",
         
-        "PAX/TUSD","USDC/TUSD","USDS/TUSD",*/
+        "PAX/TUSD","USDC/TUSD","USDS/TUSD",
+    
 ];
+*/
+const quotes = ["ADA/USDT", "BAT/USDT", "BCC/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "BTT/USDT", "CELR/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "FET/USDT", "HOT/USDT", "ICX/USDT", "IOST/USDT", "IOTA/USDT", "LINK/USDT", "LTC/USDT", "NANO/USDT", "NEO/USDT", "NULS/USDT", "OMG/USDT", "ONG/USDT", "ONT/USDT", "PAX/USDT", "QTUM/USDT", "TRX/USDT", "TUSD/USDT", "USDC/USDT", "USDS/USDT", "VEN/USDT", "VET/USDT", "WAVES/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT", "ZEC/USDT", "ZIL/USDT"]
+
 
 let microCurrency = ["NPXS/BTC", "BCN/BTC", "BTT/BTC", "HOT/BTC",]
 
@@ -124,7 +119,7 @@ async function setBots(arr, quotes) {
     }
 
     for (i = 0; i < altBots; i++) {     //run ALT bots
-        altBotsEnable?setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count()):"";
+        altBotsEnable ? setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count()) : "";
     }
 
 
