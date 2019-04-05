@@ -11,7 +11,7 @@ const stopLossF = 1;   //stoploss for fiat and quote markets
 const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 5;     //number of alt bots to shufle
 const altBotsEnable = false;    //enable bestbuy altbots
-const portion = 0.55;   //part of balance to spend
+const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC"
 const enableOrders = true;  //sim
@@ -411,7 +411,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             ticker: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
             symbol: symbol,
-            change24hP: change24hP + " %",
             //baseCurrency: baseCurrency,
             //quoteCurrency: quoteCurrency,
             minAmount: minAmount + " " + baseCurrency,
@@ -431,13 +430,14 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 hold: hold,
                 stopLoss: stopLoss,
             },
+            change24hP: change24hP + " %",
             more: more,
             logLength: logAll.length,
             trends: {
                 UD: trendUD,         //dev
                 RSI: trendRSI,
                 MACD: trendMACD,
-                c24h: trend24h,
+                trend24h: trend24h,
                 trendVol: trendVol
             },
             orderType: orderType,

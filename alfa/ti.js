@@ -82,6 +82,7 @@ function macd(values) {     //log 70 should be bigger the better starts working 
             //f.sendMail("Started MACD", r);
             trendMACD = 0;
         };
+        /*
         if (macdHistogram > 0) {
             trendMACD = 1;   //buy coz rising
         } else if (macdHistogram < 0) {
@@ -89,6 +90,7 @@ function macd(values) {     //log 70 should be bigger the better starts working 
         } else {
             trendMACD = 0;   //hold or park coz stationary
         };
+        */
     } else {
         trendMACD = 0;
     }
