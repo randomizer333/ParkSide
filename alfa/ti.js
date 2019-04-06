@@ -90,8 +90,7 @@ function macd(values) {     //log 70 should be bigger the better starts working 
             //trendMACD = -1;  //sell coz falling
             trendMACD = macdHistogram;
         } else {
-            //trendMACD = 0;   //hold or park coz stationary
-            trendMACD = macdHistogram;
+            trendMACD = 0;   //hold or park coz stationary
         };
         
     } else {

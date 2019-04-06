@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossF = 1;   //stoploss for fiat and quote markets
+const stopLossF = 99;   //stoploss for fiat and quote markets
 const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 5;     //number of alt bots to shufle
 const altBotsEnable = false;    //enable bestbuy altbots
@@ -44,7 +44,7 @@ const quotes = [  //binance
     
 ];
 */
-const quotes = ["ADA/USDT", "BAT/USDT", "BCC/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "BTT/USDT", "CELR/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "FET/USDT", "HOT/USDT", "ICX/USDT", "IOST/USDT", "IOTA/USDT", "LINK/USDT", "LTC/USDT", "NANO/USDT", "NEO/USDT", "NULS/USDT", "OMG/USDT", "ONG/USDT", "ONT/USDT", "PAX/USDT", "QTUM/USDT", "TRX/USDT", "TUSD/USDT", "USDC/USDT", "USDS/USDT", "VEN/USDT", "VET/USDT", "WAVES/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT", "ZEC/USDT", "ZIL/USDT"]
+const quotes = ["ADA/USDT", "BAT/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "BTT/USDT", "CELR/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "FET/USDT", "HOT/USDT", "ICX/USDT", "IOST/USDT", "IOTA/USDT", "LINK/USDT", "LTC/USDT", "NANO/USDT", "NEO/USDT", "NULS/USDT", "OMG/USDT", "ONG/USDT", "ONT/USDT", "PAX/USDT", "QTUM/USDT", "TRX/USDT", "TUSD/USDT", "USDC/USDT", "USDS/USDT", "VEN/USDT", "VET/USDT", "WAVES/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT", "ZEC/USDT", "ZIL/USDT"]
 
 
 let microCurrency = ["NPXS/BTC", "BCN/BTC", "BTT/BTC", "HOT/BTC",]
@@ -245,6 +245,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }*/
             return bougthPrice;
         }
+
+        let tradingFeeAbs;
         function safeSale(tradingFeeP, bougthPrice, price, minProfitP) {  //returns holding status
             feeDouble = tradingFeeP * 2;
             //f.cs("FeeDouble:" + feeDouble);
@@ -263,7 +265,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
         function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
             absStopLoss = f.part(stopLossP, sellPrice);
-            loss = sellPrice - price;     //default: loss = sellPrice - price;
+            loss = sellPrice - price - tradingFeeAbs;     //default: loss = sellPrice - price;
             if (loss > absStopLoss) {
                 stopLoss = true;         //sell ASAP!!!
             } else {
@@ -334,12 +336,12 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                     (trend24h > 0) &&
                     (change24hP > 0) &&
                     (trendVol > 0)
-                ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
+                    ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     //bougthPrice = price;            //dev
                     bougthPriceFiat = bougthPrice;  //dev
                     enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
+                } else if (sale && !hold && !stopLoss && (trendUD < 0) /*&& (trendMACD < 0)*/) {   //sell good
                     orderType = "sold";
                     enableOrders ? a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 } else if (sale && hold && stopLoss) { //stopLoss sell bad
@@ -436,8 +438,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 UD: trendUD,         //dev
                 RSI: trendRSI,
                 MACD: trendMACD,
-                change24hP: change24hP + " %",
                 trend24h: trend24h,
+                change24hP: change24hP + " %",
                 trendVol: trendVol
             },
             orderType: orderType,

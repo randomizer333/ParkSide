@@ -162,12 +162,16 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         low = r.bids[0][0];
         lower = r.bids[1][0];
         //f.cs("high: "+high+" higher: "+higher);
+
         //spread = low - lower;   //bid spread
         //price = low - (spread / 2); //bid spread
-        //spread = high - low;        //real spread
-        //price = high - (spread / 2);//real spread
+
+        spread = high - low;        //real spread
+        price = high - (spread / 2);//real spread
+
         spread = higher - high;   //ask spread
         price = higher - (spread / 2); //ask spread
+
         return price;
     } catch (error) {
         console.log("EEE: ", error.message);
