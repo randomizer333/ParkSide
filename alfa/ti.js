@@ -82,15 +82,18 @@ function macd(values) {     //log 70 should be bigger the better starts working 
             //f.sendMail("Started MACD", r);
             trendMACD = 0;
         };
-        /*
+        
         if (macdHistogram > 0) {
-            trendMACD = 1;   //buy coz rising
+            //trendMACD = 1;   //buy coz rising
+            trendMACD = macdHistogram;
         } else if (macdHistogram < 0) {
-            trendMACD = -1;  //sell coz falling
+            //trendMACD = -1;  //sell coz falling
+            trendMACD = macdHistogram;
         } else {
-            trendMACD = 0;   //hold or park coz stationary
+            //trendMACD = 0;   //hold or park coz stationary
+            trendMACD = macdHistogram;
         };
-        */
+        
     } else {
         trendMACD = 0;
     }

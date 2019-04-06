@@ -13,7 +13,7 @@ const altBots = 5;     //number of alt bots to shufle
 const altBotsEnable = false;    //enable bestbuy altbots
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
-const mainQuoteCurrency = "BTC";    //dev   //"BTC"
+const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"
 const enableOrders = true;  //sim
 /*
 const quotes = [  //binance
@@ -430,13 +430,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 hold: hold,
                 stopLoss: stopLoss,
             },
-            change24hP: change24hP + " %",
             more: more,
             logLength: logAll.length,
             trends: {
                 UD: trendUD,         //dev
                 RSI: trendRSI,
                 MACD: trendMACD,
+                change24hP: change24hP + " %",
                 trend24h: trend24h,
                 trendVol: trendVol
             },
