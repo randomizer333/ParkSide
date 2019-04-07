@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossF = 99;   //stoploss for fiat and quote markets
+const stopLossF = 1;   //stoploss for fiat and quote markets
 const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 5;     //number of alt bots to shufle
 const altBotsEnable = false;    //enable bestbuy altbots
@@ -44,7 +44,7 @@ const quotes = [  //binance
     
 ];
 */
-const quotes = ["ADA/USDT", "BAT/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "BTT/USDT", "CELR/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "FET/USDT", "HOT/USDT", "ICX/USDT", "IOST/USDT", "IOTA/USDT", "LINK/USDT", "LTC/USDT", "NANO/USDT", "NEO/USDT", "NULS/USDT", "OMG/USDT", "ONG/USDT", "ONT/USDT", "PAX/USDT", "QTUM/USDT", "TRX/USDT", "TUSD/USDT", "USDC/USDT", "USDS/USDT", "VEN/USDT", "VET/USDT", "WAVES/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT", "ZEC/USDT", "ZIL/USDT"]
+const quotes = ["ADA/USDT", "BAT/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "BTT/USDT", "CELR/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "FET/USDT", "HOT/USDT", "ICX/USDT", "IOST/USDT", "IOTA/USDT", "LINK/USDT", "LTC/USDT", "NANO/USDT", "NEO/USDT", "NULS/USDT", "OMG/USDT", "ONG/USDT", "ONT/USDT", "PAX/USDT", "QTUM/USDT", "TRX/USDT", "VEN/USDT", "VET/USDT", "WAVES/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT", "ZEC/USDT", "ZIL/USDT"]
 
 
 let microCurrency = ["NPXS/BTC", "BCN/BTC", "BTT/BTC", "HOT/BTC",]
@@ -332,7 +332,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 if (purchase && !sale && !hold && !stopLoss &&
                     (trendUD > 0) &&
                     (trendMACD > 0) &&
-                    (trendRSI >= 0) &&
+                    (trendRSI > 0) &&
                     (trend24h > 0) &&
                     (change24hP > 0) &&
                     (trendVol > 0)
@@ -435,12 +435,12 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             more: more,
             logLength: logAll.length,
             trends: {
-                UD: trendUD,         //dev
+                UD: trendUD,         
                 RSI: trendRSI,
                 MACD: trendMACD,
+                trendVol: trendVol,
                 trend24h: trend24h,
-                change24hP: change24hP + " %",
-                trendVol: trendVol
+                change24hP: change24hP + " %"
             },
             orderType: orderType,
             quoteMarkets: JSON.stringify(quotes),
