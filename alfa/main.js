@@ -265,7 +265,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
         function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
             absStopLoss = f.part(stopLossP, sellPrice);
-            loss = sellPrice - price - tradingFeeAbs;     //default: loss = sellPrice - price;
+            //lossPrice = sellPrice - absStopLoss;
+            loss = sellPrice - price;     //default: loss = sellPrice - price;
+            //f.cs("absStopLoss: "+absStopLoss);
+            //f.cs("loss: "+loss);
+            //f.cs("lossPrice: "+lossPrice);
             if (loss > absStopLoss) {
                 stopLoss = true;         //sell ASAP!!!
             } else {
@@ -309,10 +313,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
+        //sellPrice;  //safeSale() returns
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
 
         logAll = await m.loger(price, 100, logAll);
-        log24hP = await m.loger(change24hP, 5, log24hP);
+        log24hP = await m.loger(change24hP, 10, log24hP);
         logVol = await m.loger(volume, 5, logVol);
 
         trendUD = await TI.upDown(logAll);
