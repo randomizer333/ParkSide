@@ -6,7 +6,7 @@ function main() {
 
     //  Reqiurements
 
-    let f = require("./funk.js");           //common functions
+    let f = require("./funk.js.js.js");           //common functions
     let keys = require("../keys.json");     //keys file location
     let ccxt = require('ccxt');             //api module
 
