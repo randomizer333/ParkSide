@@ -6,7 +6,7 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 3;    //1,5,10,60
+const tickerMinutes = 5;    //1,5,10,60
 const stopLossF = 1;   //stoploss for fiat and quote markets
 const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 5;     //number of alt bots to shufle
@@ -14,7 +14,7 @@ const altBotsEnable = false;    //enable bestbuy altbots
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"
-const enableOrders = true;  //sim
+const enableOrders = false;  //sim
 /*
 const quotes = [  //binance
     mainQuoteCurrency + "/USDT", "BNB/USDT", "ETH/USDT",
