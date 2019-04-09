@@ -14,7 +14,7 @@ const altBotsEnable = false;    //enable bestbuy altbots
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"
-const enableOrders = false;  //sim
+const enableOrders = true;  //sim
 /*
 const quotes = [  //binance
     mainQuoteCurrency + "/USDT", "BNB/USDT", "ETH/USDT",
