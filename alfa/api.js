@@ -202,7 +202,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
             //main.clear();
             f.sendMail(orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));
         }
-        return price;
+        return r;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
@@ -216,7 +216,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         bougthPrice = price;
         setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
         f.sendMail(await orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));  //dev
-        return bougthPrice;
+        return r;
     } catch (error) {
         console.log("EEE: ", error.message);
     }

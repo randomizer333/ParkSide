@@ -9,12 +9,12 @@ let TI = require("./ti.js");
 const tickerMinutes = 3;    //1,5,10,60
 const stopLossF = 1;   //stoploss for fiat and quote markets
 const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
-const altBots = 0;     //number of alt bots to shufle
+const altBots = 5;     //number of alt bots to shufle
 const altBotsEnable = false;    //enable bestbuy altbots
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"
-const enableOrders = true;  //sim
+const enableOrders = true;  //sim true
 /*
 const quotes = [  //binance
     mainQuoteCurrency + "/USDT", "BNB/USDT", "ETH/USDT",
@@ -44,7 +44,7 @@ const quotes = [  //binance
     
 ];
 */
-const quotes = ["ADA/USDT", "BAT/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "BTT/USDT", "CELR/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "FET/USDT", "HOT/USDT", "ICX/USDT", "IOST/USDT", "IOTA/USDT", "LINK/USDT", "LTC/USDT", "NANO/USDT", "NEO/USDT", "NULS/USDT", "OMG/USDT", "ONG/USDT", "ONT/USDT", "QTUM/USDT", "TRX/USDT", "VEN/USDT", "VET/USDT", "WAVES/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT", "ZEC/USDT", "ZIL/USDT"]
+const quotes = ["ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT",  "IOTA/USDT", "LTC/USDT",  "NEO/USDT",  "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT", ]
 
 
 let microCurrency = ["NPXS/BTC", "BCN/BTC", "BTT/BTC", "HOT/BTC",]
@@ -329,12 +329,15 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         trend24h = await TI.upDown(log24hP);
         trendVol = await TI.upDown(logVol);
 
+        let marketInfo = false;
+        let buyed = false
+
         if (strategy == "ud") {
 
             //hold = await m.safeSale(tradingFeeP, bougthPriceFiat, price, minProfitP);
             //bougthPriceFiat = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
 
-            await makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
+            marketInfo = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale && !hold && !stopLoss &&
@@ -348,7 +351,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                     orderType = "bougth";
                     //bougthPrice = price;            //dev
                     bougthPriceFiat = bougthPrice;  //dev
-                    enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                    enableOrders ? buyed = a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 } else if (sale && !hold && !stopLoss && (trendUD < 0) /*&& (trendMACD < 0)*/) {   //sell good
                     orderType = "sold";
                     enableOrders ? a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
@@ -414,6 +417,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
         let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
 
+        if(marketInfo){
+            f.cs("lololool")
+        }else{
+            f.cs("nulllllllllllllllllllll")
+        }
         //main console output
         marketInfo = {
             No: b,
