@@ -6,9 +6,9 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 3;    //1,5,10,60
-const stopLossF = 1;   //stoploss for fiat and quote markets
-const stopLossA = 1;    //stoploss for alt markets !!!   Never go over 1%   !!!
+const tickerMinutes = 10;    //1,5,10,60
+const stopLossF = 99;   //stoploss for fiat and quote markets
+const stopLossA = 99;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 5;     //number of alt bots to shufle
 const altBotsEnable = false;    //enable bestbuy altbots
 const portion = 0.99;   //part of balance to spend
@@ -43,8 +43,19 @@ const quotes = [  //binance
         "PAX/TUSD","USDC/TUSD","USDS/TUSD",
     
 ];
-*/
+
 const quotes = ["ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT",  "IOTA/USDT", "LTC/USDT",  "NEO/USDT",  "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT", ]
+*/
+
+const quotes = [
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT",  "IOTA/USDT", "LTC/USDT",  "NEO/USDT",  "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
+
+    "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC",  "IOTA/BTC", "LTC/BTC",  "NEO/BTC",  "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
+
+    "ADA/ETH", "BCH/ETH", "BNB/ETH", "BSV/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH",  "NEO/ETH",  "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
+
+    "ADA/BNB", "BCH/BNB", "BSV/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "ETH/BNB",  "IOTA/BNB", "LTC/BNB",  "NEO/BNB",  "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB",
+]
 
 
 let microCurrency = ["NPXS/BTC", "BCN/BTC", "BTT/BTC", "HOT/BTC",]
@@ -172,6 +183,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let logAll = new Array();   //loger
     let log24hP = new Array();   //loger
     let logVol = new Array();   //loger
+    let logMacdTrend = new Array(); //loger
 
     let price;      //balanceChanged
     let bougthPrice = 0;//balanceChanged
@@ -320,14 +332,17 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
 
         logAll = await m.loger(price, 100, logAll);
-        log24hP = await m.loger(change24hP, 10, log24hP);
-        logVol = await m.loger(volume, 5, logVol);
+        log24hP = await m.loger(change24hP, 5, log24hP);
+        logVol = await m.loger(volume, 3, logVol);
 
         trendUD = await TI.upDown(logAll);
         trendRSI = await TI.rsi(logAll);
         trendMACD = await TI.macd(logAll);
         trend24h = await TI.upDown(log24hP);
         trendVol = await TI.upDown(logVol);
+
+        logMacdTrend = await m.loger(trendMACD, 2, logMacdTrend);
+        trendMacdTrend = await TI.upDown(logMacdTrend);
 
         let marketInfo = false;
         let buyed = false
@@ -373,7 +388,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
             makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
             function makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale &&
+                if (purchase && !sale && !hold && !stopLoss &&
                     (trendUD > 0) &&
                     (trendMACD > 0) &&
                     (trendRSI > 0) &&
@@ -456,7 +471,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 MACD: trendMACD,
                 trendVol: trendVol,
                 trend24h: trend24h,
-                change24hP: change24hP + " %"
+                change24hP: change24hP + " %",
+                trendMacdTrend: trendMacdTrend
             },
             orderType: orderType,
             quoteMarkets: JSON.stringify(quotes),

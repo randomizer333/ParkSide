@@ -17,9 +17,11 @@ function upDown(logMA) {     //trendUD between curent and last value
     if (direction > 0) {
         //trendSign = "+";
         trendUD = 1;   //buy coz rising
-    } else {
+    } else if(direction < 0){
         //trendSign = "-";
         trendUD = -1;   //hold or park coz stationary
+    } else {
+        trendUD = 0;
     }
     return trendUD;
 }
