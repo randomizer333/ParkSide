@@ -11,6 +11,7 @@
   "dependencies": {
     "ccxt": "^1.18.422",
     "nodemailer": "^4.7.0",
-    "technicalindicators": "^1.1.13"
+    "technicalindicators": "^1.1.13",
+    "websocket": "^1.0.28"
   }
 }

@@ -9,7 +9,7 @@ let TI = require("./ti.js");
 const tickerMinutes = 10;    //1,5,10,60
 const stopLossF = 99;   //stoploss for fiat and quote markets
 const stopLossA = 99;    //stoploss for alt markets !!!   Never go over 1%   !!!
-const altBots = 5;     //number of alt bots to shufle
+const altBots = 0;     //number of alt bots to shufle
 const altBotsEnable = false;    //enable bestbuy altbots
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
@@ -48,13 +48,13 @@ const quotes = ["ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DAS
 */
 
 const quotes = [
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT",  "IOTA/USDT", "LTC/USDT",  "NEO/USDT",  "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
 
-    "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC",  "IOTA/BTC", "LTC/BTC",  "NEO/BTC",  "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
+    "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
-    "ADA/ETH", "BCH/ETH", "BNB/ETH", "BSV/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH",  "NEO/ETH",  "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
+    "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
-    "ADA/BNB", "BCH/BNB", "BSV/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "ETH/BNB",  "IOTA/BNB", "LTC/BNB",  "NEO/BNB",  "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB",
+    "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB",
 ]
 
 
@@ -80,7 +80,7 @@ async function setup() {
     markets = await a.markets();
     //await f.cs(markets);
     wallet = await a.wallet();
-    enableOrders ? bestBuy = await a.bestbuy(altBots, mainQuoteCurrency) : bestBuy = "BTC/USDT";    //select markets with highest 24h change
+    //enableOrders ? bestBuy = await a.bestbuy(altBots, mainQuoteCurrency) : bestBuy = "BTC/USDT";    //select markets with highest 24h change
     //bestBuy = await a.microPrice(altBots, mainQuoteCurrency),   //select markets with lowest price
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
         JSON.stringify(bestBuy[0]) + "\n" +
@@ -89,15 +89,15 @@ async function setup() {
         JSON.stringify(bestBuy[3]) + "\n" +
         JSON.stringify(bestBuy[4])
     )
-    await setBots(bestBuy, quotes);
-    f.csL(bestBuy, altBots);
+    await setBots(quotes);
+    //f.csL(bestBuy, altBots);
 
 }
 
 // set bots
 let b;
-async function setBots(arr, quotes) {
-    f.csL(arr, altBots);
+async function setBots(quotes) {
+    //f.csL(arr, altBots);
     cleared = false;
 
     let a = 0;
@@ -122,22 +122,15 @@ async function setBots(arr, quotes) {
         return x3;
     }
 
-    for (const cur in quotes){
+    for (const cur in quotes) {
         await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossF, cunt3()) }, count());
     }
-    /*
-    for (i = 0; i < quotes.length; i++) {     //run FIAT bots
-        setTimeout(function () { bot(quotes[cunt2()], ticker, "ud", stopLossF, cunt3()) }, count());
-    }
-    */
 
+    /*
     for (i = 0; i < altBots; i++) {     //run ALT bots
         altBotsEnable ? setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count()) : "";
-    }
+    }*/
 
-    if (wallet[0].balance > 0.0001) {    //how much BTC must there be
-        //resetTimer(resetTime);
-    }
 
 }
 
@@ -344,15 +337,15 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logMacdTrend = await m.loger(trendMACD, 2, logMacdTrend);
         trendMacdTrend = await TI.upDown(logMacdTrend);
 
-        let marketInfo = false;
         let buyed = false
+        let orderType = false;
 
         if (strategy == "ud") {
 
             //hold = await m.safeSale(tradingFeeP, bougthPriceFiat, price, minProfitP);
             //bougthPriceFiat = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
 
-            marketInfo = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
+            orderType = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale && !hold && !stopLoss &&
@@ -432,11 +425,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
         let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
 
-        if(marketInfo){
-            f.cs("lololool")
-        }else{
-            f.cs("nulllllllllllllllllllll")
-        }
         //main console output
         marketInfo = {
             No: b,
@@ -465,7 +453,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             },
             more: more,
             logLength: logAll.length,
-            trends: {
+            indicators: {
                 UD: trendUD,
                 RSI: trendRSI,
                 MACD: trendMACD,
@@ -479,6 +467,15 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             wallet: JSON.stringify(wallet),
             bestBuy: JSON.stringify(bestBuy),
         }
+
+
+        if (await orderType == "sold") {
+            f.cs("lololool")
+            f.sendMail("Sold Info", JSON.stringify(marketInfo));
+        } else {
+            f.cs("nulll")
+        }
+
         /*
         if (marketInfo.orderType == "sold") {
             f.sendMail("Sold Info", JSON.stringify(marketInfo));
