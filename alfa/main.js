@@ -54,7 +54,7 @@ const quotes = [
 
     "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
-    "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB",
+    "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"
 ]
 
 
@@ -337,7 +337,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logMacdTrend = await m.loger(trendMACD, 2, logMacdTrend);
         trendMacdTrend = await TI.upDown(logMacdTrend);
 
-        let buyed = false
         let orderType = false;
 
         if (strategy == "ud") {
@@ -348,24 +347,27 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             orderType = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale && !hold && !stopLoss &&
+                if (purchase && !sale &&
                     (trendUD > 0) &&
                     (trendMACD > 0) &&
                     (trendRSI > 0) &&
                     (trend24h > 0) &&
                     (change24hP > 0) &&
                     (trendVol > 0)
-                ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
-                    orderType = "bougth";
+                ) {    // buy 
+                    //orderType = "bougth";
                     //bougthPrice = price;            //dev
-                    bougthPriceFiat = bougthPrice;  //dev
-                    enableOrders ? buyed = a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                } else if (sale && !hold && !stopLoss && (trendUD < 0) /*&& (trendMACD < 0)*/) {   //sell good
-                    orderType = "sold";
-                    enableOrders ? a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
+                    enableOrders ? ret = a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                    orderType = ret.orderType;
+                    bougthPrice = ret.bougthPrice;
+                } else if (sale && !hold && !stopLoss && (trendUD < 0)) {   //sell good
+                    //orderType = "sold";
+                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
+                    orderType = ret.orderType;
                 } else if (sale && hold && stopLoss) { //stopLoss sell bad
-                    orderType = "lossed";
-                    enableOrders ? a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
+                    //orderType = "lossed";
+                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
+                    orderType = ret.orderType;
                 } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                     orderType = "holding";
                 } else if (sale && !hold && !stopLoss) {//holding fee covered
@@ -378,7 +380,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 return orderType;
             }
         } else if (strategy == "pingPong") {
-
             makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
             function makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale && !hold && !stopLoss &&
@@ -391,13 +392,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
                     orderType = "bougth";
                     //bougthPrice = price;    //dev
-                    enableOrders ? a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                    enableOrders ? ret = a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
                     orderType = "sold";
-                    enableOrders ? a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
+                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {//stopLoss sell bad
                     orderType = "lossed";
-                    enableOrders ? a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
+                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                     orderType = "holding";
                 } else if (sale && !hold && !stopLoss) {    //holding fee covered
@@ -445,9 +446,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             price: price.toFixed(8) + " " + symbol,
             //bougthPriceFiat: bougthPriceFiat.toFixed(8) + " " + quotes[0],
-            conditions: {
-                sale: sale,
+            buyConditions: {
                 purchase: purchase,
+            },
+            sellConditions: {
+                sale: sale,
                 hold: hold,
                 stopLoss: stopLoss,
             },
@@ -468,12 +471,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             bestBuy: JSON.stringify(bestBuy),
         }
 
-
+        //mailer
         if (await orderType == "sold") {
-            f.cs("lololool")
             f.sendMail("Sold Info", JSON.stringify(marketInfo));
-        } else {
-            f.cs("nulll")
+        } else if (await orderType == "bougth") {
+            f.sendMail("Bougth Info", JSON.stringify(marketInfo));
+        } else if (await orderType == "lossed") {
+            f.sendMail("Lossed Info", JSON.stringify(marketInfo));
         }
 
         /*

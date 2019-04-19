@@ -181,28 +181,36 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 async function cancel(orderId, symbol) {                 //cancels order with id
     try {
         r = await exchange.cancelOrder(orderId, symbol);
+        //order was NOT filled
+        filled = false;
         f.sendMail("Canceled", JSON.stringify(r));
-        canceled = true;
-        return true;
+        return filled;
     } catch (error) {
+        //order was filled
+        filled = true;
         console.log("EEE: ", error.message);
     }
 }
 async function sell(symbol, amount, price) {// symbol, amount, ask 
     try {
-        r = await exchange.createLimitSellOrder(symbol, amount, price)
+        r = await exchange.createLimitSellOrder(symbol, amount, price);
         orderId = r.id;
-        orderStatus = r.status;
-        orderType = "sold";
-        let canceled;
-        setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.85);
-        if (await canceled) {
-            /*dont stop*/
+        setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.9);
+        if (await filled) {
+            //order was filled
+            filled = true;
+            orderType = "sold";
         } else {
-            //main.clear();
-            f.sendMail(orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));
+            //order was canceled
         }
-        return r;
+        ret = {
+            orderId: r.id,
+            orderStatus: r.status,
+            orderType: orderType,
+            filled: filled,
+            bougthPrice: price,
+        }
+        return await ret;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
@@ -211,12 +219,22 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
     try {
         r = await exchange.createLimitBuyOrder(symbol, amount, price);
         orderId = r.id;
-        orderStatus = r.status;
-        orderType = "bougth";
-        bougthPrice = price;
         setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
-        f.sendMail(await orderType, JSON.stringify(r) + "\n" + JSON.stringify(await main.marketInfo));  //dev
-        return r;
+        if (await filled) {
+            //order was filled
+            bougthPrice = price;
+            orderType = "bougth";
+        } else {
+            //order was canceled
+        }
+        ret = await {
+            orderId: r.id,
+            orderStatus: r.status,
+            orderType: orderType,
+            filled: filled,
+            bougthPrice: price,
+        }
+        return await ret;
     } catch (error) {
         console.log("EEE: ", error.message);
     }
