@@ -80,7 +80,6 @@ function exInfos() {     //returns JSON of exchange info
         feeMaker: exchange.fees.trading.maker,
         feeTaker: exchange.fees.trading.taker,
         exchanges: ccxt.exchanges,
-
     }
 }
 

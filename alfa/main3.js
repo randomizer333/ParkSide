@@ -6,35 +6,30 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 0.10;    //1,5,10,60
-const stopLossF = 99;   //stoploss for fiat and quote markets
-const stopLossA = 99;    //stoploss for alt markets !!!   Never go over 1%   !!!
-const altBots = 0;     //number of alt bots to shufle
-const altBotsEnable = false;    //enable bestbuy altbots
+const tickerMinutes = 10;    //1,5,10,60
+const stopLossF = 99;  //stoploss Never go over 1%   !!!
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"
 const enableOrders = true;  //sim true
 
 const quotes = [
-    "ADA/USDT", /*"BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
     "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
-    "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
+    "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"
 ]
-
 
 let microCurrency = ["NPXS/BTC", "BCN/BTC", "BTT/BTC", "HOT/BTC",]
 
 const ticker = f.minToMs(tickerMinutes);
-const numOfBots = altBots + quotes.length;
+const numOfBots = quotes.length;
 const delay = (ticker / numOfBots);
 
 let botNo = new Array();
-let bestBuy = new Array();
 
 //  main setup
 let marketInfo;
@@ -49,24 +44,14 @@ async function setup() {
     markets = await a.markets();
     //await f.cs(markets);
     wallet = await a.wallet();
-    //enableOrders ? bestBuy = await a.bestbuy(altBots, mainQuoteCurrency) : bestBuy = "BTC/USDT";    //select markets with highest 24h change
-    //bestBuy = await a.microPrice(altBots, mainQuoteCurrency),   //select markets with lowest price
-    f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
-        JSON.stringify(bestBuy[0]) + "\n" +
-        JSON.stringify(bestBuy[1]) + "\n" +
-        JSON.stringify(bestBuy[2]) + "\n" +
-        JSON.stringify(bestBuy[3]) + "\n" +
-        JSON.stringify(bestBuy[4])
-    )
+    f.sendMail("Restart", "RUN! at " + f.getTime())
     await setBots(quotes);
-    //f.csL(bestBuy, altBots);
 
 }
 
 // set bots
 let b;
 async function setBots(quotes) {
-    //f.csL(arr, altBots);
     cleared = false;
 
     let a = 0;
@@ -74,16 +59,6 @@ async function setBots(quotes) {
         r = a * delay;
         a++;
         return r;
-    }
-    let x = -1;
-    function cunt() {
-        x++;
-        return x;
-    }
-    let x2 = -1;
-    function cunt2() {
-        x2++;
-        return x2;
     }
     let x3 = 0;
     function cunt3() {
@@ -94,13 +69,6 @@ async function setBots(quotes) {
     for (const cur in quotes) {
         await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossF, cunt3()) }, count());
     }
-
-    /*
-    for (i = 0; i < altBots; i++) {     //run ALT bots
-        altBotsEnable ? setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count()) : "";
-    }*/
-
-
 }
 
 // time from last restart than reset
@@ -312,19 +280,17 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         if (strategy == "ud") {
 
-            //hold = await m.safeSale(tradingFeeP, bougthPriceFiat, price, minProfitP);
-            //bougthPriceFiat = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
+            orderType = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, trendMacdTrend, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
-            orderType = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
-
-            function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+            function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, trendMacdTrend, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale &&
                     (trendUD > 0) &&
                     (trendMACD >= 0) &&
                     (trendRSI >= 0) &&
-                    (trend24h > 0) &&
+                    (trend24h > 0)// &&
                     (change24hP > 0) &&
-                    (trendVol > 0)
+                    (trendVol > 0) 
+                    //(trendMacdTrend > 0)
                 ) {    // buy 
                     //orderType = "bougth";
                     //bougthPrice = price;            //dev
@@ -383,17 +349,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
-        //await sim();
-        function sim() {    //sim
-            c++;
-            //f.cs("C:" + c);
-            if (c >= 5) {
-                f.cs("Stoppping!!!" + b);
-                clear();
-                //clearInterval(botNo[b]);
-            }
-        }
-
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
         let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
 
@@ -425,6 +380,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 stopLoss: stopLoss,
             },
             purchase: purchase,
+            logUD: logUD,
             buyIndicators: {
                 UD: trendUD,
                 RSI: trendRSI,
@@ -437,16 +393,18 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             orderType: orderType,
             quoteMarkets: JSON.stringify(quotes),
             wallet: JSON.stringify(wallet),
-            bestBuy: JSON.stringify(bestBuy),
         }
 
         //mailer
-        if (await orderType == "sold") {
-            f.sendMail("Sold Info", JSON.stringify(marketInfo));
-        } else if (await orderType == "bougth") {
-            f.sendMail("Bougth Info", JSON.stringify(marketInfo));
-        } else if (await orderType == "lossed") {
-            f.sendMail("Lossed Info", JSON.stringify(marketInfo));
+        await mailer(orderType);
+        async function mailer(ot) {
+            if (await ot == "sold") {
+                f.sendMail("Sold Info", JSON.stringify(await marketInfo));
+            } else if (await ot == "bougth") {
+                f.sendMail("Bougth Info", JSON.stringify(marketInfo));
+            } else if (await ot == "lossed") {
+                f.sendMail("Lossed Info", JSON.stringify(marketInfo));
+            }
         }
 
         /*
