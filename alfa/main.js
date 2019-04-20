@@ -177,6 +177,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let log24hP = new Array();   //loger
     let logVol = new Array();   //loger
     let logMacdTrend = new Array(); //loger
+    let logUD = new Array();    //loger
 
     let price;      //balanceChanged
     let bougthPrice = 0;//balanceChanged
@@ -324,11 +325,12 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
 
-        logAll = await m.loger(price, 100, logAll);
-        log24hP = await m.loger(change24hP, 5, log24hP);
+        logAll = await m.loger(price, 40, logAll);
+        log24hP = await m.loger(change24hP, 3, log24hP);
         logVol = await m.loger(volume, 3, logVol);
+        logUD = await m.loger(price, 3, logUD);
 
-        trendUD = await TI.upDown(logAll);
+        trendUD = await TI.upDown(logUD);
         trendRSI = await TI.rsi(logAll);
         trendMACD = await TI.macd(logAll);
         trend24h = await TI.upDown(log24hP);
@@ -349,8 +351,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale &&
                     (trendUD > 0) &&
-                    (trendMACD > 0) &&
-                    (trendRSI > 0) &&
+                    (trendMACD >= 0) &&
+                    (trendRSI >= 0) &&
                     (trend24h > 0) &&
                     (change24hP > 0) &&
                     (trendVol > 0)
@@ -446,17 +448,15 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             price: price.toFixed(8) + " " + symbol,
             //bougthPriceFiat: bougthPriceFiat.toFixed(8) + " " + quotes[0],
-            buyConditions: {
-                purchase: purchase,
-            },
-            sellConditions: {
+            purchase: purchase,
+            sell_conditions: {
                 sale: sale,
                 hold: hold,
                 stopLoss: stopLoss,
             },
             more: more,
             logLength: logAll.length,
-            indicators: {
+            buy_indicators: {
                 UD: trendUD,
                 RSI: trendRSI,
                 MACD: trendMACD,
