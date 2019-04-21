@@ -79,7 +79,7 @@ function exInfos() {     //returns JSON of exchange info
         referral: exchange.urls.referral,
         feeMaker: exchange.fees.trading.maker,
         feeTaker: exchange.fees.trading.taker,
-        exchanges: ccxt.exchanges,
+        exchanges: ccxt.exchanges
     }
 }
 

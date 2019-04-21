@@ -6,7 +6,7 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 10;    //1,5,10,60
+const tickerMinutes = 3;    //1,5,10,60
 const stopLossF = 99;  //stoploss Never go over 1%   !!!
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
@@ -15,12 +15,12 @@ const enableOrders = true;  //sim true
 
 const quotes = [
     "ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
-
-    "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
-
-    "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
-
-    "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"
+    /*
+        "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
+    
+        "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
+    
+        "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
 ]
 
 let microCurrency = ["NPXS/BTC", "BCN/BTC", "BTT/BTC", "HOT/BTC",]
@@ -283,28 +283,31 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             orderType = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, trendMacdTrend, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, trendMacdTrend, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale &&
-                    (trendUD > 0) &&
-                    (trendMACD >= 0) &&
-                    (trendRSI >= 0) &&
-                    (trend24h > 0)// &&
-                    (change24hP > 0) &&
-                    (trendVol > 0) 
-                    //(trendMacdTrend > 0)
+                if (purchase && !sale 
+                    && (trendUD > 0) 
+                    && (trendMACD >= 0) 
+                    &&(trendRSI >= 0) 
+                    && (change24hP > 0) 
+                    && (trend24h > 0) 
+                    && (trendVol > 0)
+                    //&& (trendMacdTrend > 0)
                 ) {    // buy 
                     //orderType = "bougth";
                     //bougthPrice = price;            //dev
                     enableOrders ? ret = a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                     orderType = ret.orderType;
                     bougthPrice = ret.bougthPrice;
+                    await mailer(orderType);
                 } else if (sale && !hold && !stopLoss && (trendUD < 0)) {   //sell good
                     //orderType = "sold";
                     enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                     orderType = ret.orderType;
+                    await mailer(orderType);
                 } else if (sale && hold && stopLoss) { //stopLoss sell bad
                     //orderType = "lossed";
                     enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                     orderType = ret.orderType;
+                    await mailer(orderType);
                 } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                     orderType = "holding";
                 } else if (sale && !hold && !stopLoss) {//holding fee covered
@@ -396,7 +399,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         //mailer
-        await mailer(orderType);
         async function mailer(ot) {
             if (await ot == "sold") {
                 f.sendMail("Sold Info", JSON.stringify(await marketInfo));
