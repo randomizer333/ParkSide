@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossF = 99;  //stoploss Never go over 1%   !!!
+const stopLossF = 1;  //stoploss Never go over 1%   !!!
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"
@@ -286,7 +286,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 if (purchase && !sale 
                     && (trendUD > 0) 
                     && (trendMACD >= 0) 
-                    &&(trendRSI >= 0) 
+                    && (trendRSI >= 0) 
                     && (change24hP > 0) 
                     && (trend24h > 0) 
                     && (trendVol > 0)
@@ -297,17 +297,17 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                     enableOrders ? ret = a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                     orderType = ret.orderType;
                     bougthPrice = ret.bougthPrice;
-                    await mailer(orderType);
+                    mailer(orderType);
                 } else if (sale && !hold && !stopLoss && (trendUD < 0)) {   //sell good
                     //orderType = "sold";
                     enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                     orderType = ret.orderType;
-                    await mailer(orderType);
+                    mailer(orderType);
                 } else if (sale && hold && stopLoss) { //stopLoss sell bad
                     //orderType = "lossed";
                     enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                     orderType = ret.orderType;
-                    await mailer(orderType);
+                    mailer(orderType);
                 } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                     orderType = "holding";
                 } else if (sale && !hold && !stopLoss) {//holding fee covered
