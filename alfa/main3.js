@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossF = 1;  //stoploss Never go over 1%   !!!
+const stopLossF = 5;  //stoploss Never go over 1%   !!!
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"
@@ -38,9 +38,9 @@ let exInfo;
 let wallet;
 setup();
 async function setup() {
-    exInfo = await a.exInfos();
+    exInfo = a.exInfos();
     tradingFeeP = exInfo.feeMaker * 100;
-    await f.cs(exInfo);
+    f.cs(exInfo);
     markets = await a.markets();
     //await f.cs(markets);
     wallet = await a.wallet();
@@ -314,6 +314,10 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                     orderType = "holding good";
                 } else if (purchase) {      // ( change24h > 0 )
                     orderType = "parked";
+                    //enableOrders ? ret = a.buy(symbol, quoteBalanceInBase * portion, 99) : console.log('buy orders disabled');
+                    //orderType = ret.orderType;
+                    //bougthPrice = ret.bougthPrice;
+                    mailer(orderType);
                 } else {
                     orderType = "still none";
                 }

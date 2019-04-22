@@ -7,7 +7,7 @@ This file should contain all the api callbacks to module ccxt
 const f = require("./funk.js");           //common functions
 const keys = require("../keys.json");     //keys file location
 const ccxt = require('ccxt');             //api module
-const main = require("./main.js");             //api module
+//const main = require("./main.js");             //api module
 
 let m;
 let ticker;
@@ -20,6 +20,7 @@ async function req() {
 
 //  Init
 
+let filled;
 let orderId = 0;
 let exchange = "binance";
 switch (exchange) {     //Select exchange
@@ -72,7 +73,7 @@ switch (exchange) {     //Select exchange
 //  Call functions of CCXT
 
 function exInfos() {     //returns JSON of exchange info
-    return {
+    let r = {
         version: ccxt.version,
         exchange: exchange.name,
         url: exchange.urls.www,
@@ -81,7 +82,19 @@ function exInfos() {     //returns JSON of exchange info
         feeTaker: exchange.fees.trading.taker,
         exchanges: ccxt.exchanges
     }
+    return r;
 }
+/*
+let exInfos;
+exInfos = {
+        version: ccxt.version,
+        exchange: exchange.name,
+        url: exchange.urls.www,
+        referral: exchange.urls.referral,
+        feeMaker: exchange.fees.trading.maker,
+        feeTaker: exchange.fees.trading.taker,
+        exchanges: ccxt.exchanges
+};*/
 
 //symbol = "BTC/USDT";
 //volume(symbol);
@@ -201,6 +214,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
             orderType = "sold";
         } else {
             //order was canceled
+            orderType = "canceled";
         }
         ret = {
             orderId: r.id,
@@ -214,17 +228,19 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         console.log("EEE: ", error.message);
     }
 }
+let c;
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
         r = await exchange.createLimitBuyOrder(symbol, amount, price);
         orderId = r.id;
-        setTimeout(function () { cancel(orderId, symbol) }, ticker * 0.9);
-        if (await filled) {
+        setTimeout(function () { c = cancel(orderId, symbol) }, ticker * 0.9);
+        if (await c) {
             //order was filled
             bougthPrice = price;
             orderType = "bougth";
         } else {
             //order was canceled
+            orderType = "canceled";
         }
         ret = await {
             orderId: r.id,
@@ -236,6 +252,14 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         return await ret;
     } catch (error) {
         console.log("EEE: ", error.message);
+        ret = await {
+            orderId: r.id,
+            orderStatus: r.status,
+            orderType: "invalid",
+            filled: false,
+            bougthPrice: price,
+        }
+        return await ret;
     }
 }
 async function markets() {                   //load all available markets on exchange

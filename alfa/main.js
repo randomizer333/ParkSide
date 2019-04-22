@@ -43,9 +43,9 @@ let exInfo;
 let wallet;
 setup();
 async function setup() {
-    exInfo = await a.exInfos();
+    exInfo = a.exInfos();
     tradingFeeP = exInfo.feeMaker * 100;
-    await f.cs(exInfo);
+    f.cs(exInfo);
     markets = await a.markets();
     //await f.cs(markets);
     wallet = await a.wallet();
