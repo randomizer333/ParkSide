@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossF = 5;  //stoploss Never go over 1%   !!!
+const stopLossF = 99;  //stoploss Never go over 1%   !!!
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"

@@ -6,7 +6,7 @@ let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 0.10;    //1,5,10,60
+const tickerMinutes = 3;    //1,5,10,60
 const stopLossF = 99;   //stoploss for fiat and quote markets
 const stopLossA = 99;    //stoploss for alt markets !!!   Never go over 1%   !!!
 const altBots = 0;     //number of alt bots to shufle
@@ -17,7 +17,7 @@ const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"
 const enableOrders = true;  //sim true
 
 const quotes = [
-    "ADA/USDT", /*"BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
