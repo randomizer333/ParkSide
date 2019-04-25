@@ -73,16 +73,21 @@ switch (exchange) {     //Select exchange
 //  Call functions of CCXT
 
 function exInfos() {     //returns JSON of exchange info
-    let r = {
-        version: ccxt.version,
-        exchange: exchange.name,
-        url: exchange.urls.www,
-        referral: exchange.urls.referral,
-        feeMaker: exchange.fees.trading.maker,
-        feeTaker: exchange.fees.trading.taker,
-        exchanges: ccxt.exchanges
+    try {
+        let r = {
+            version: ccxt.version,
+            exchange: exchange.name,
+            url: exchange.urls.www,
+            referral: exchange.urls.referral,
+            feeMaker: exchange.fees.trading.maker,
+            feeTaker: exchange.fees.trading.taker,
+            exchanges: ccxt.exchanges
+        }
+        return r;
     }
-    return r;
+    catch (error) {
+        f.cs("EEE: " + error);
+    }
 }
 /*
 let exInfos;
@@ -208,7 +213,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         r = await exchange.createLimitSellOrder(symbol, amount, price);
         orderId = r.id;
         setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.9);
-        
+
         if (await filled) {
             //order was filled
             f.sendMail("sold", JSON.stringify(r));
