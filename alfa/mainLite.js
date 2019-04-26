@@ -163,11 +163,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             absStopLoss = f.part(stopLossP, sellPrice);
             lossPrice = sellPrice - absStopLoss;
             loss = sellPrice - price;     //default: loss = sellPrice - price;
-            relativeLoss = f.percent(loss,sellPrice);
-            f.cs("absStopLoss: "+absStopLoss);
-            f.cs("relativeLoss: "+relativeLoss.toFixed(2)+" %");
-            f.cs("loss: "+loss);
-            f.cs("lossPrice: "+lossPrice);
+            relativeLoss = f.percent(loss, sellPrice);
+            f.cs("absStopLoss: " + absStopLoss);
+            f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
+            f.cs("loss: " + loss);
+            f.cs("lossPrice: " + lossPrice);
             if (loss > absStopLoss) {
                 stopLoss = true;         //sell ASAP!!!
             } else {
@@ -230,9 +230,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         if (strategy == "ud") {
 
-            //hold = await m.safeSale(tradingFeeP, bougthPriceFiat, price, minProfitP);
-            //bougthPriceFiat = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
-
             orderType = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
@@ -268,40 +265,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 }
                 return orderType;
             }
-        } else if (strategy == "pingPong") {
-            makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
-            function makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale && !hold && !stopLoss &&
-                    (trendUD > 0) &&
-                    (trendMACD > 0) &&
-                    (trendRSI > 0) &&
-                    (trend24h > 0) &&
-                    (change24hP > 0) &&
-                    (trendVol > 0)
-                ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
-                    orderType = "bougth";
-                    //bougthPrice = price;    //dev
-                    enableOrders ? ret = a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
-                    orderType = "sold";
-                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
-                } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {//stopLoss sell bad
-                    orderType = "lossed";
-                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
-                } else if (sale && hold && !stopLoss) { //holding fee NOT covered
-                    orderType = "holding";
-                } else if (sale && !hold && !stopLoss) {    //holding fee covered
-                    orderType = "holding good";
-                } else if (purchase) {      // ( change24h > 0 )
-                    orderType = "parked";
-                } else {
-                    orderType = "still none";
-                }
-                return orderType;
-            }
-        }
+        } else if (strategy == "pingPong") {}
 
-    
+
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
         let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
 

@@ -213,7 +213,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         r = await exchange.createLimitSellOrder(symbol, amount, price);
         orderId = r.id;
         f.sendMail("sold", JSON.stringify(r));
-        setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.9);
+        setTimeout(function () { cancel(orderId, symbol); }, 15000);
 
         if (await filled) {
             //order was filled
@@ -241,7 +241,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
     try {
         r = await exchange.createLimitBuyOrder(symbol, amount, price);
         orderId = r.id;
-        setTimeout(function () { c = cancel(orderId, symbol) }, ticker * 0.9);
+        setTimeout(function () { c = cancel(orderId, symbol) }, 15000);
         f.sendMail("bougth", JSON.stringify(r));
         if (await c) {
             //order was filled
