@@ -13,7 +13,7 @@ const minProfitP = 0.1;        //holding addition //setting
 const enableOrders = true;  //sim true
 
 const quotes = [
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BSV/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "ADA/USDT", "BCH/USDT", "BNB/USDT",  "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*"BSV/USDT","BCHABC/USDT",
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -158,21 +158,20 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
             return hold;
         }
-        function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
-            absStopLoss = f.part(stopLossP, sellPrice);
-            lossPrice = sellPrice - absStopLoss;
-            loss = sellPrice - price;     //default: loss = sellPrice - price;
-            relativeLoss = f.percent(loss, sellPrice);
-            f.cs("absStopLoss: " + absStopLoss);
-            f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
-            f.cs("loss: " + loss);
-            f.cs("lossPrice: " + lossPrice);
+        async function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
+            absStopLoss = await f.part(stopLossP, sellPrice);
+            lossPrice = await sellPrice - absStopLoss;
+            loss = await sellPrice - price;     //default: loss = sellPrice - price;
+            relativeLoss = await f.percent(loss, sellPrice);
+            await f.cs("absStopLoss: " + absStopLoss);
+            await f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
+            await f.cs("loss: " + loss);
+            await f.cs("lossPrice: " + lossPrice);
             if (loss > absStopLoss) {
-                stopLoss = true;         //sell ASAP!!!
+                return true;         //sell ASAP!!!
             } else {
-                stopLoss = false;
+                return false;             //hodl
             }
-            return stopLoss;
         }
 
         return {

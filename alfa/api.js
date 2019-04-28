@@ -189,7 +189,6 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 
         //spread = higher - high;   //ask spread
         //price = higher - (spread / 2); //ask spread
-
         return price;
     } catch (error) {
         console.log("EEE: ", error.message);
@@ -431,7 +430,7 @@ exports.sell = sell;
 exports.buy = buy;
 exports.price = price;
 exports.markets = markets;
-
-
+exports.filled = filled;
+////exports.orderType = orderType;
 
 
