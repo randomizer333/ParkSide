@@ -8,12 +8,8 @@ let TI = require("./ti.js");
 
 const tickerMinutes = 3;    //1,5,10,60
 const stopLossF = 99;   //stoploss for fiat and quote markets
-const stopLossA = 99;    //stoploss for alt markets !!!   Never go over 1%   !!!
-const altBots = 0;     //number of alt bots to shufle
-const altBotsEnable = false;    //enable bestbuy altbots
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
-const mainQuoteCurrency = "BTC";    //dev   //"BTC", "USDT"
 const enableOrders = true;  //sim true
 
 const quotes = [
@@ -26,11 +22,8 @@ const quotes = [
     "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
 ]
 
-
-let microCurrency = ["NPXS/BTC", "BCN/BTC", "BTT/BTC", "HOT/BTC",]
-
 const ticker = f.minToMs(tickerMinutes);
-const numOfBots = altBots + quotes.length;
+const numOfBots = quotes.length;
 const delay = (ticker / numOfBots);
 
 let botNo = new Array();
@@ -38,92 +31,34 @@ let bestBuy = new Array();
 
 //  main setup
 let marketInfo;
-let bougthPriceFiat = 0;
 let exInfo;
 let wallet;
 setup();
 async function setup() {
-    exInfo = a.exInfos();
+    exInfo = a.exInfos;
     tradingFeeP = exInfo.feeMaker * 100;
     f.cs(exInfo);
     markets = await a.markets();
     //await f.cs(markets);
     wallet = await a.wallet();
-    //enableOrders ? bestBuy = await a.bestbuy(altBots, mainQuoteCurrency) : bestBuy = "BTC/USDT";    //select markets with highest 24h change
-    //bestBuy = await a.microPrice(altBots, mainQuoteCurrency),   //select markets with lowest price
-    f.sendMail("Restart", "RUN! at " + f.getTime() + "\n" +
-        JSON.stringify(bestBuy[0]) + "\n" +
-        JSON.stringify(bestBuy[1]) + "\n" +
-        JSON.stringify(bestBuy[2]) + "\n" +
-        JSON.stringify(bestBuy[3]) + "\n" +
-        JSON.stringify(bestBuy[4])
-    )
+    f.sendMail("Restart", "RUN! at " + f.getTime() + "\n")
     await setBots(quotes);
-    //f.csL(bestBuy, altBots);
-
 }
 
 // set bots
-let b;
 async function setBots(quotes) {
-    //f.csL(arr, altBots);
     cleared = false;
 
     let a = 0;
-    function count() {
+    function setStartTime() {
         r = a * delay;
         a++;
         return r;
     }
-    let x = -1;
-    function cunt() {
-        x++;
-        return x;
-    }
-    let x2 = -1;
-    function cunt2() {
-        x2++;
-        return x2;
-    }
-    let x3 = 0;
-    function cunt3() {
-        x3++;
-        return x3;
-    }
 
     for (const cur in quotes) {
-        await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossF, cunt3()) }, count());
-    }
-
-    /*
-    for (i = 0; i < altBots; i++) {     //run ALT bots
-        altBotsEnable ? setTimeout(function () { bot(arr[cunt()].market, ticker, "pingPong", stopLossA, cunt3()) }, count()) : "";
-    }*/
-
-
-}
-
-// time from last restart than reset
-
-const resetTime = 6;   //reset time in hours
-//resetTimer(resetTime);
-function resetTimer(time) {
-    setTimeout(function () {
-        clear();
-    }, f.hToMs(time));
-}
-
-// clear bots
-let cleared = false;
-function clear() {
-    if (!cleared) {
-        f.cs("HALT!!!");
-        for (i = 0; i < quotes.length + altBots + 1; i++) { //start with  i = 0
-            f.cs("Clearing:" + i);
-            clearInterval(botNo[i]);    //stopp all bots
-        }
-        cleared = true;
-        setup();    //run again from start
+        await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossF, cur) }, setStartTime());
+        //f.cs("Number:"+cur)
     }
 }
 
@@ -157,29 +92,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let stopLoss;   //checkStopLoss
 
     let c = 0;  //sim
-    b = botNumber;  //clearInterval(botNo[b])
+    //b = botNumber;  //clearInterval(botNo[b])
 
     let headers;
     let rows;
     function modul() {
-        async function clTable(obj) {       //dev
-            headers = Object.keys(obj);
-            rows = Object.values(obj);
-
-            for (i = 0; i < headers.length; i++) {
-                hl = headers[i].length;
-                rl = rows[i].length;
-                if (hl > rl) {
-                    rows[i] += "  ";
-                } else if (hl < rl) {
-                    headers[i] += "____";
-                }
-            }
-            await f.cs(headers);
-            await f.cs(rows);
-            return;
-        }
-
         function baseToQuote(amountBase, price) {
             amountQuote = amountBase * price;
             return amountQuote;
@@ -243,11 +160,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
         function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
             absStopLoss = f.part(stopLossP, sellPrice);
-            //lossPrice = sellPrice - absStopLoss;
+            lossPrice = sellPrice - absStopLoss;
             loss = sellPrice - price;     //default: loss = sellPrice - price;
-            //f.cs("absStopLoss: "+absStopLoss);
-            //f.cs("loss: "+loss);
-            //f.cs("lossPrice: "+lossPrice);
+            relativeLoss = f.percent(loss, sellPrice);
+            f.cs("absStopLoss: " + absStopLoss);
+            f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
+            f.cs("loss: " + loss);
+            f.cs("lossPrice: " + lossPrice);
             if (loss > absStopLoss) {
                 stopLoss = true;         //sell ASAP!!!
             } else {
@@ -256,9 +175,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return stopLoss;
         }
 
-
         return {
-            clTable: clTable,
             checkStopLoss: checkStopLoss,
             safeSale: safeSale,
             baseToQuote: baseToQuote,
@@ -272,7 +189,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
 
     loop(symbol, strategy);
-    botNo[b] = setInterval(function () { loop(symbol, strategy) }, ticker);
+    botNo[botNumber] = setInterval(function () { loop(symbol, strategy) }, ticker);
     async function loop(symbol, strategy) {
 
         minAmount = await a.minAmount(symbol);
@@ -312,9 +229,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         if (strategy == "ud") {
 
-            //hold = await m.safeSale(tradingFeeP, bougthPriceFiat, price, minProfitP);
-            //bougthPriceFiat = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
-
             orderType = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
             function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
@@ -350,56 +264,15 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 }
                 return orderType;
             }
-        } else if (strategy == "pingPong") {
-            makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
-            function makeOrderAlt(change24hP, trendMACD, trendRSI, trendUD, trend24h, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale && !hold && !stopLoss &&
-                    (trendUD > 0) &&
-                    (trendMACD > 0) &&
-                    (trendRSI > 0) &&
-                    (trend24h > 0) &&
-                    (change24hP > 0) &&
-                    (trendVol > 0)
-                ) {    // buy with RSI and MACD (rsi > 0) | (macd >= 0) && (c24h >= 0)
-                    orderType = "bougth";
-                    //bougthPrice = price;    //dev
-                    enableOrders ? ret = a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                } else if (sale && !hold && !stopLoss && (trendUD < 0) && (trendMACD <= 0)) {         //sell good
-                    orderType = "sold";
-                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
-                } else if (sale && hold && stopLoss /*&& (trend2 < 0)*/) {//stopLoss sell bad
-                    orderType = "lossed";
-                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
-                } else if (sale && hold && !stopLoss) { //holding fee NOT covered
-                    orderType = "holding";
-                } else if (sale && !hold && !stopLoss) {    //holding fee covered
-                    orderType = "holding good";
-                } else if (purchase) {      // ( change24h > 0 )
-                    orderType = "parked";
-                } else {
-                    orderType = "still none";
-                }
-                return orderType;
-            }
-        }
+        } else if (strategy == "pingPong") {}
 
-        //await sim();
-        function sim() {    //sim
-            c++;
-            //f.cs("C:" + c);
-            if (c >= 5) {
-                f.cs("Stoppping!!!" + b);
-                clear();
-                //clearInterval(botNo[b]);
-            }
-        }
 
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
         let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
 
         //main console output
         marketInfo = {
-            No: b,
+            No: botNumber,
             time: f.getTime(),
             ticker: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
@@ -418,13 +291,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             price: price.toFixed(8) + " " + symbol,
             //bougthPriceFiat: bougthPriceFiat.toFixed(8) + " " + quotes[0],
             //more: more,
-            logLength: logAll.length,
             sellConditions: {
                 sale: sale,
                 hold: hold,
                 stopLoss: stopLoss,
             },
             purchase: purchase,
+            logLength: logAll.length,
             buyIndicators: {
                 UD: trendUD,
                 RSI: trendRSI,
@@ -465,7 +338,3 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 exports.ticker = ticker;
 exports.enableOrders = enableOrders;
 exports.marketInfo = marketInfo;
-exports.cleared = cleared;
-
-//functions
-exports.clear = clear;

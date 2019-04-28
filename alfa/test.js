@@ -1,10 +1,21 @@
-let a = require("./api2.js");
+//let a = require("./api2.js");
+let f = require("./funk.js");
 
-let symbol = "LTC/USDT"
-let res;
-
-setInterval(function () { loop(symbol) }, 20000);
-
-function loop(){
-    ret = a.sell(symbol, 0.1, 200)
+async function compute() {
+    setTimeout(function(){
+        return result = input * 2;
+    }, 6000);
+    //return await result;
 }
+
+let result;
+let input = 2;
+async function cb() {
+    result = await compute();
+    await f.cs(result);
+    return result;
+}
+
+let fetch;
+fetch = cb();
+//f.cs(fetch);

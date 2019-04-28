@@ -13,7 +13,7 @@ let m;
 let ticker;
 req();
 async function req() {
-    m = await require("./main.js");
+    m = await require("./mainOld3.js/index.js.js");
     ticker = m.ticker;
     //f.cs("Ticker time: " + ticker);
 }

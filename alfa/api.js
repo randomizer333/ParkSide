@@ -71,7 +71,7 @@ switch (exchange) {     //Select exchange
 }
 
 //  Call functions of CCXT
-
+/*
 async function exInfos() {     //returns JSON of exchange info
     try {
         let r = {
@@ -88,8 +88,8 @@ async function exInfos() {     //returns JSON of exchange info
     catch (error) {
         f.cs("EEE: " + error);
     }
-}
-/*
+}*/
+
 let exInfos;
 exInfos = {
         version: ccxt.version,
@@ -99,7 +99,7 @@ exInfos = {
         feeMaker: exchange.fees.trading.maker,
         feeTaker: exchange.fees.trading.taker,
         exchanges: ccxt.exchanges
-};*/
+};
 
 //symbol = "BTC/USDT";
 //volume(symbol);
