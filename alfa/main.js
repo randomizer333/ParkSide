@@ -262,6 +262,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 } else {
                     orderType = "still none";
                 }
+                mailInfo(orderType);
                 return orderType;
             }
         } else if (strategy == "pingPong") { }
@@ -314,13 +315,18 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         //mailer
-        if (await orderType == "sold") {
-            f.sendMail("Sold Info", JSON.stringify(marketInfo));
-        } else if (await orderType == "bougth") {
-            f.sendMail("Bougth Info", JSON.stringify(marketInfo));
-        } else if (await orderType == "lossed") {
-            f.sendMail("Lossed Info", JSON.stringify(marketInfo));
+
+        function mailInfo(orderType) {
+            if (orderType == "sold") {
+                f.sendMail("Sold Info", JSON.stringify(marketInfo));
+            } else if (orderType == "bougth") {
+                f.sendMail("Bougth Info", JSON.stringify(marketInfo));
+            } else if (orderType == "lossed") {
+                f.sendMail("Lossed Info", JSON.stringify(marketInfo));
+            }
         }
+
+
 
         /*
         if (marketInfo.orderType == "sold") {
