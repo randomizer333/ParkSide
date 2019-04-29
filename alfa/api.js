@@ -211,7 +211,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
     try {
         r = await exchange.createLimitSellOrder(symbol, amount, price);
         orderId = r.id;
-        f.sendMail("sold", JSON.stringify(r));
+        //f.sendMail("sold", JSON.stringify(r));
         setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.9);
 
         if (await filled) {

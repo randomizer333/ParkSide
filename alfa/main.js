@@ -7,13 +7,13 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossF = 99;   //stoploss for fiat and quote markets
+const stopLossP = 1;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const enableOrders = true;  //sim true
 
 const quotes = [
-    "ADA/USDT", "BCH/USDT", "BNB/USDT",  "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*"BSV/USDT","BCHABC/USDT",
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*"BSV/USDT","BCHABC/USDT",
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -39,7 +39,7 @@ async function setup() {
     tradingFeeP = exInfo.feeMaker * 100;
     f.cs(exInfo);
     markets = await a.markets();
-    //await f.cs(markets);
+    await f.cs(markets);
     wallet = await a.wallet();
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n")
     await setBots(quotes);
@@ -57,7 +57,7 @@ async function setBots(quotes) {
     }
 
     for (const cur in quotes) {
-        await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossF, cur) }, setStartTime());
+        await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossP, cur) }, setStartTime());
         //f.cs("Number:"+cur)
     }
 }
@@ -158,15 +158,16 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
             return hold;
         }
-        async function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
-            absStopLoss = await f.part(stopLossP, sellPrice);
-            lossPrice = await sellPrice - absStopLoss;
-            loss = await sellPrice - price;     //default: loss = sellPrice - price;
-            relativeLoss = await f.percent(loss, sellPrice);
-            await f.cs("absStopLoss: " + absStopLoss);
-            await f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
-            await f.cs("loss: " + loss);
-            await f.cs("lossPrice: " + lossPrice);
+        function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
+            absStopLoss = f.part(stopLossP, sellPrice);
+            lossPrice = sellPrice - absStopLoss;
+            loss = sellPrice - price;     //default: loss = sellPrice - price;
+            relativeLoss = f.percent(loss, sellPrice);
+            f.cs("loss       : " + loss);
+            f.cs(" > is biger than");
+            f.cs("absStopLoss: " + absStopLoss);
+            f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
+            f.cs("lossPrice: " + lossPrice);
             if (loss > absStopLoss) {
                 return true;         //sell ASAP!!!
             } else {
@@ -230,7 +231,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
             orderType = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
-            function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+            async function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
                 if (purchase && !sale &&
                     (trendUD > 0) &&
                     (trendMACD >= 0) &&
@@ -241,16 +242,16 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 ) {    // buy 
                     //orderType = "bougth";
                     //bougthPrice = price;            //dev
-                    enableOrders ? ret = a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                    enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                     orderType = ret.orderType;
                     bougthPrice = ret.bougthPrice;
                 } else if (sale && !hold && !stopLoss && (trendUD < 0)) {   //sell good
                     //orderType = "sold";
-                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
+                    enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                     orderType = ret.orderType;
                 } else if (sale && hold && stopLoss) { //stopLoss sell bad
                     //orderType = "lossed";
-                    enableOrders ? ret = a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
+                    enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                     orderType = ret.orderType;
                 } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                     orderType = "holding";
@@ -263,7 +264,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 }
                 return orderType;
             }
-        } else if (strategy == "pingPong") {}
+        } else if (strategy == "pingPong") { }
 
 
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
