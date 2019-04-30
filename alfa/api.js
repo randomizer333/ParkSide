@@ -71,24 +71,6 @@ switch (exchange) {     //Select exchange
 }
 
 //  Call functions of CCXT
-/*
-async function exInfos() {     //returns JSON of exchange info
-    try {
-        let r = {
-            version: ccxt.version,
-            exchange: exchange.name,
-            url: exchange.urls.www,
-            referral: exchange.urls.referral,
-            feeMaker: exchange.fees.trading.maker,
-            feeTaker: exchange.fees.trading.taker,
-            exchanges: ccxt.exchanges
-        }
-        return await r;
-    }
-    catch (error) {
-        f.cs("EEE: " + error);
-    }
-}*/
 
 let exInfos;
 exInfos = {
@@ -101,8 +83,6 @@ exInfos = {
         exchanges: ccxt.exchanges
 };
 
-//symbol = "BTC/USDT";
-//volume(symbol);
 async function volume(symbol) {
     try {
         v = await exchange.fetchTicker(symbol);

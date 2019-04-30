@@ -7,15 +7,15 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 1;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 5;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1;        //holding addition //setting
 const enableOrders = true;  //sim true
 
 const quotes = [
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*"BSV/USDT","BCHABC/USDT",
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
 
-    "ADA/BTC", "BCH/BTC", "BNB/BTC", "BSV/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
+    "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",/*
 
     "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
@@ -227,45 +227,105 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         let orderType = false;
 
-        if (strategy == "ud") {
+        orderType = await makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
-            orderType = makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
-
-            async function makeOrderFiat(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
-                if (purchase && !sale &&
-                    (trendUD > 0) &&
-                    (trendMACD >= 0) &&
-                    (trendRSI >= 0) &&
-                    (trend24h > 0) &&
-                    (change24hP > 0) &&
-                    (trendVol > 0)
-                ) {    // buy 
-                    //orderType = "bougth";
-                    //bougthPrice = price;            //dev
-                    enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                    orderType = ret.orderType;
-                    bougthPrice = ret.bougthPrice;
-                } else if (sale && !hold && !stopLoss && (trendUD < 0)) {   //sell good
-                    //orderType = "sold";
-                    enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
-                    orderType = ret.orderType;
-                } else if (sale && hold && stopLoss) { //stopLoss sell bad
-                    //orderType = "lossed";
-                    enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
-                    orderType = ret.orderType;
-                } else if (sale && hold && !stopLoss) { //holding fee NOT covered
-                    orderType = "holding";
-                } else if (sale && !hold && !stopLoss) {//holding fee covered
-                    orderType = "holding good";
-                } else if (purchase) {      // ( change24h > 0 )
-                    orderType = "parked";
-                } else {
-                    orderType = "still none";
-                }
-                mailInfo(orderType);
-                return orderType;
+        // make strategic decision about order type
+        async function makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+            if (purchase && !sale &&
+                (trendUD > 0) &&
+                (trendMACD >= 0) &&
+                (trendRSI >= 0) &&
+                (trend24h > 0) &&
+                (change24hP > 0) &&
+                (trendVol > 0)
+            ) {    // buy 
+                //orderType = "bougth";
+                //bougthPrice = price;            //dev
+                enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                orderType = ret.orderType;
+                bougthPrice = ret.bougthPrice;
+            } else if (sale && !hold && !stopLoss && (trendUD < 0)) {   //sell good
+                //orderType = "sold";
+                enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
+                orderType = ret.orderType;
+            } else if (sale && hold && stopLoss) { //stopLoss sell bad
+                //orderType = "lossed";
+                enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
+                orderType = ret.orderType;
+            } else if (sale && hold && !stopLoss) { //holding fee NOT covered
+                orderType = "holding";
+            } else if (sale && !hold && !stopLoss) {//holding fee covered
+                orderType = "holding good";
+            } else if (purchase) {      // ( change24h > 0 )
+                orderType = "parked";
+            } else {
+                orderType = "still none";
             }
-        } else if (strategy == "pingPong") { }
+            mailInfo(orderType);
+            return orderType;
+        }
+
+
+
+
+
+
+        // make strategic decision about order type
+        function makeOrder111(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //r: orderType
+            if (purchase && !sale &&
+                (trendUD > 0) &&
+                (trendMACD >= 0) &&
+                (trendRSI >= 0) &&
+                (trend24h > 0) &&
+                (change24hP > 0) &&
+                (trendVol > 0)
+            ) {    // buy 
+                //orderType = "bougth";
+                //bougthPrice = price;            //dev
+                orderType = ret.orderType;
+                bougthPrice = ret.bougthPrice;
+            } else if (sale && !hold && !stopLoss && (trendUD < 0)) {   //sell good
+                //orderType = "sold";
+                orderType = ret.orderType;
+            } else if (sale && hold && stopLoss) { //stopLoss sell bad
+                //orderType = "lossed";
+                orderType = ret.orderType;
+            } else if (sale && hold && !stopLoss) { //holding fee NOT covered
+                orderType = "holding";
+            } else if (sale && !hold && !stopLoss) {//holding fee covered
+                orderType = "holding good";
+            } else if (purchase) {      // ( change24h > 0 )
+                orderType = "parked";
+            } else {
+                orderType = "still none";
+            }
+            mailInfo(orderType);
+            putOrder(orderType);
+            return orderType;
+        }
+
+        //put order
+        function putOrder111(orderType) {  //r: orderMade
+            switch (orderType) {
+                case "buy":
+                    orderMade = a.buy(symbol, quoteBalanceInBase * portion, price)
+                    break;
+                case "sell":
+                    orderMade = a.sell(symbol, baseBalance, price)
+                    break;
+                case "hold":
+                    orderMade = "none"
+                    break;
+            }
+        }
+
+
+
+
+
+
+
+
 
 
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
@@ -315,19 +375,21 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         //mailer
-
         function mailInfo(orderType) {
             if (orderType == "sold") {
                 f.sendMail("Sold Info", JSON.stringify(marketInfo));
+                return true;
             } else if (orderType == "bougth") {
                 f.sendMail("Bougth Info", JSON.stringify(marketInfo));
+                return true;
             } else if (orderType == "lossed") {
                 f.sendMail("Lossed Info", JSON.stringify(marketInfo));
+                return true;
+            } else {
+                return false;
             }
+
         }
-
-
-
         /*
         if (marketInfo.orderType == "sold") {
             f.sendMail("Sold Info", JSON.stringify(marketInfo));
