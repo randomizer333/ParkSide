@@ -333,6 +333,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         //main console output
         marketInfo = {
+            quoteMarkets: JSON.stringify(quotes),
+            wallet: JSON.stringify(wallet),
             No: botNumber,
             time: f.getTime(),
             ticker: tickerMinutes + " min",
@@ -369,9 +371,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 trendMacdTrend: trendMacdTrend
             },
             orderType: orderType,
-            quoteMarkets: JSON.stringify(quotes),
-            wallet: JSON.stringify(wallet),
-            bestBuy: JSON.stringify(bestBuy),
+            //bestBuy: JSON.stringify(bestBuy),
         }
 
         //mailer

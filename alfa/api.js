@@ -196,7 +196,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
 
         if (await filled) {
             //order was filled
-            f.sendMail("sold2", JSON.stringify(r));
+            //f.sendMail("sold2", JSON.stringify(r));
             filled = true;
             orderType = "sold";
         } else {
@@ -221,17 +221,17 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         r = await exchange.createLimitBuyOrder(symbol, amount, price);
         orderId = r.id;
         setTimeout(function () { c = cancel(orderId, symbol) }, ticker * 0.9);
-        f.sendMail("bougth", JSON.stringify(r));
-        if (await c) {
+        //f.sendMail("bougth", JSON.stringify(r));
+        if (await filled) {
             //order was filled
-            f.sendMail("bougth2", JSON.stringify(r));
-            bougthPrice = price;
+            //f.sendMail("sold2", JSON.stringify(r));
+            filled = true;
             orderType = "bougth";
         } else {
             //order was canceled
             orderType = "canceled";
         }
-        ret = await {
+        ret = {
             orderId: r.id,
             orderStatus: r.status,
             orderType: orderType,
