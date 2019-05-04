@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 99;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
 const enableOrders = true;  //sim true
@@ -66,6 +66,9 @@ async function setBots(quotes) {
 
 async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
+
+    //var id = botNumber;
+
     let amountQuote;    //baseToQuote
     let amountBase;     //amountQuote
 
@@ -91,11 +94,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
     let stopLoss;   //checkStopLoss
 
-    let c = 0;  //sim
-    //b = botNumber;  //clearInterval(botNo[b])
 
-    let headers;
-    let rows;
     function modul() {
         function baseToQuote(amountBase, price) {
             amountQuote = amountBase * price;
@@ -213,7 +212,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         logAll = await m.loger(price, 40, logAll);
         log24hP = await m.loger(change24hP, 3, log24hP);
-        logVol = await m.loger(volume, 3, logVol);
+        logVol = await m.loger(volume, 5, logVol);
         logUD = await m.loger(price, 3, logUD);
 
         trendUD = await TI.upDown(logUD);
@@ -225,19 +224,24 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logMacdTrend = await m.loger(trendMACD, 2, logMacdTrend);
         trendMacdTrend = await TI.upDown(logMacdTrend);
 
+        logVolMACD = await m.loger(volume, 40, logVol);
+        trendVolMACD = await TI.macd(logVolMACD);
+
         let orderType = false;
 
-        orderType = await makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
+        orderType = await makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, trendMacdTrend, trendVolMACD);
 
         // make strategic decision about order type
-        async function makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+        async function makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, trendMacdTrend, trendVolMACD) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
             if (purchase && !sale &&
                 (trendUD > 0) &&
-                (trendMACD >= 0) &&
+                (trendMACD > 0) &&
                 (trendRSI >= 0) &&
                 (trend24h > 0) &&
-                (change24hP > 0) &&
-                (trendVol > 0)
+                (change24hP > 2) &&
+                (trendVol > 0) &&
+                (trendMacdTrend >= 0) &&
+                (trendVolMACD >= 0)
             ) {    // buy 
                 //orderType = "bougth";
                 //bougthPrice = price;            //dev
@@ -333,9 +337,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         //main console output
         marketInfo = {
-            quoteMarkets: JSON.stringify(quotes),
-            wallet: JSON.stringify(wallet),
             No: botNumber,
+            //id: id,
             time: f.getTime(),
             ticker: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
@@ -368,9 +371,12 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 trendVol: trendVol,
                 trend24h: trend24h,
                 change24hP: change24hP + " %",
-                trendMacdTrend: trendMacdTrend
+                trendMacdTrend: trendMacdTrend,
+                trendVolMACD: trendVolMACD
             },
             orderType: orderType,
+            quoteMarkets: JSON.stringify(quotes),
+            wallet: JSON.stringify(wallet),
             //bestBuy: JSON.stringify(bestBuy),
         }
 
