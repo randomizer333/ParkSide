@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 1.333;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
 const enableOrders = true;  //sim true
@@ -162,11 +162,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             lossPrice = sellPrice - absStopLoss;
             loss = sellPrice - price;     //default: loss = sellPrice - price;
             relativeLoss = f.percent(loss, sellPrice);
-            f.cs("loss       : " + loss);
+            /*f.cs("loss       : " + loss);
             f.cs(" > is biger than");
             f.cs("absStopLoss: " + absStopLoss);
             f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
-            f.cs("lossPrice: " + lossPrice);
+            f.cs("lossPrice: " + lossPrice);*/
             if (loss > absStopLoss) {
                 return true;         //sell ASAP!!!
             } else {
@@ -226,6 +226,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         logVolMACD = await m.loger(volume, 40, logVol);
         trendVolMACD = await TI.macd(logVolMACD);
+        f.cs("logVolMACD: "+logVolMACD);
+        f.cs("trendVolMACD: " +trendVolMACD);
 
         let orderType = false;
 
@@ -253,9 +255,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 orderType = ret.orderType;
             } else if (sale && hold && stopLoss) { //stopLoss sell bad
-                //orderType = "lossed";
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
-                orderType = ret.orderType;
+                orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
