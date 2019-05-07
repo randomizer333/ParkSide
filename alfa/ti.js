@@ -82,23 +82,26 @@ function macd(values) {     //log 70 should be bigger the better starts working 
         macdHistogram = lastMACD.histogram;
         if (!isNaN(macdHistogram)) {     //isNumber
             //f.sendMail("Started MACD", r);
-            trendMACD = 0;
-        };
+            return macdHistogram;
+        }else{
+            return 0;
+        }
         
+
+        /*
         if (macdHistogram > 0) {
-            //trendMACD = 1;   //buy coz rising
-            trendMACD = macdHistogram;
+            //return 1;   //buy coz rising
+            return macdHistogram;
         } else if (macdHistogram < 0) {
-            //trendMACD = -1;  //sell coz falling
-            trendMACD = macdHistogram;
+            //return -1;  //sell coz falling
+            return macdHistogram;
         } else {
-            trendMACD = 0;   //hold or park coz stationary
-        };
+            return 0;   //hold or park coz stationary
+        };*/
         
     } else {
-        trendMACD = 0;
+        return macdHistogram;
     }
-    return trendMACD;
 }
 
 exports.upDown = upDown;

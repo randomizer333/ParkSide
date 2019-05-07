@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 1.333;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
 const enableOrders = true;  //sim true
@@ -215,33 +215,43 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logVol = await m.loger(volume, 5, logVol);
         logUD = await m.loger(price, 3, logUD);
 
+        
+        f.cs("logAll: " + logAll);
+
         trendUD = await TI.upDown(logUD);
         trendRSI = await TI.rsi(logAll);
         trendMACD = await TI.macd(logAll);
         trend24h = await TI.upDown(log24hP);
         trendVol = await TI.upDown(logVol);
 
-        logMacdTrend = await m.loger(trendMACD, 2, logMacdTrend);
-        trendMacdTrend = await TI.upDown(logMacdTrend);
 
+        f.cs("trendMACD: " + trendMACD);
+
+        logMacdTrend = await m.loger(trendMACD, 3, logMacdTrend);
         logVolMACD = await m.loger(volume, 40, logVol);
+
+        trendMacdTrend = await TI.upDown(logMacdTrend);
         trendVolMACD = await TI.macd(logVolMACD);
-        f.cs("logVolMACD: "+logVolMACD);
-        f.cs("trendVolMACD: " +trendVolMACD);
+
+        f.cs("logMacdTrend: " + logMacdTrend);
+        f.cs("logVolMACD: " + logVolMACD);
+
+        f.cs("trendMacdTrend: " + trendMacdTrend);
+        f.cs("trendVolMACD: " + trendVolMACD);
 
         let orderType = false;
 
-        orderType = await makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, trendMacdTrend, trendVolMACD);
+        orderType = await makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
         // make strategic decision about order type
-        async function makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, trendMacdTrend, trendVolMACD) { //purchase,sale,hold,stopLoss,price,symbol,baseBalance,quoteBalance
+        async function makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //trendMacdTrend, trendVolMACD
             if (purchase && !sale &&
                 (trendUD > 0) &&
-                (trendMACD > 0) &&
+                (trendMACD >= 0) &&
                 (trendRSI >= 0) &&
                 (trend24h > 0) &&
-                (change24hP > 2) &&
-                (trendVol > 0) &&
+                (change24hP > 0) &&
+                (trendVol >= 0) &&
                 (trendMacdTrend >= 0) &&
                 (trendVolMACD >= 0)
             ) {    // buy 
@@ -372,8 +382,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 trendVol: trendVol,
                 trend24h: trend24h,
                 change24hP: change24hP + " %",
-                trendMacdTrend: trendMacdTrend,
-                trendVolMACD: trendVolMACD
+                //trendMacdTrend: trendMacdTrend,
+                //trendVolMACD: trendVolMACD
             },
             orderType: orderType,
             quoteMarkets: JSON.stringify(quotes),
