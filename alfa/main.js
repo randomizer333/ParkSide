@@ -7,7 +7,8 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 99;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const startValue = 50;//value of assets on start in USDT
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
 const enableOrders = true;  //sim true
@@ -48,7 +49,6 @@ async function setup() {
 // set bots
 async function setBots(quotes) {
     cleared = false;
-
     let a = 0;
     function setStartTime() {
         r = a * delay;
@@ -58,6 +58,15 @@ async function setBots(quotes) {
 
     for (const cur in quotes) {
         await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossP, cur) }, setStartTime());
+        //f.cs("Number:"+cur)
+    }
+}
+
+// stop bots
+
+function clear(){
+    for (const cur in quotes) {
+        clearInterval(quotes[cur]);
         //f.cs("Number:"+cur)
     }
 }
@@ -215,7 +224,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logVol = await m.loger(volume, 5, logVol);
         logUD = await m.loger(price, 3, logUD);
 
-        
+
         f.cs("logAll: " + logAll);
 
         trendUD = await TI.upDown(logUD);
@@ -227,7 +236,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         f.cs("trendMACD: " + trendMACD);
 
-        logMacdTrend = await m.loger(trendMACD, 3, logMacdTrend);
+        logMacdTrend = await m.loger(trendMACD, 40, logMacdTrend);
         logVolMACD = await m.loger(volume, 40, logVol);
 
         trendMacdTrend = await TI.upDown(logMacdTrend);
@@ -285,6 +294,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
 
 
+
+
         // make strategic decision about order type
         function makeOrder111(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //r: orderType
             if (purchase && !sale &&
@@ -334,11 +345,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
-
-
-
-
-
+        // dinamic stoploss
+        function dinamicStopLoss(startValue) {
+            aProfit = f.part(relativeProfit, startValue);
+            return profit;//stopLoss
+        }
 
 
 
@@ -405,13 +416,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             } else {
                 return false;
             }
-
         }
-        /*
-        if (marketInfo.orderType == "sold") {
-            f.sendMail("Sold Info", JSON.stringify(marketInfo));
-        }
-        */
 
         await console.dir(marketInfo);
         return await marketInfo;
