@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 99;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 1;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const startValue = 50;//value of assets on start in USDT
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
@@ -42,6 +42,10 @@ async function setup() {
     markets = await a.markets();
     await f.cs(markets);
     wallet = await a.wallet();
+
+    //wall = await a.priceAll();
+    //f.cs(wall);
+
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n")
     await setBots(quotes);
 }
@@ -225,51 +229,51 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logUD = await m.loger(price, 3, logUD);
 
 
-        f.cs("logAll: " + logAll);
+        //f.cs("logAll: " + logAll);
 
-        trendUD = await TI.upDown(logUD);
-        trendRSI = await TI.rsi(logAll);
-        trendMACD = await TI.macd(logAll);
+        MA = await TI.upDown(logUD);
+        RSI = await TI.rsi(logAll);
+        MACD = await TI.macd(logAll);
         trend24h = await TI.upDown(log24hP);
         trendVol = await TI.upDown(logVol);
 
 
-        f.cs("trendMACD: " + trendMACD);
+        //f.cs("MACD: " + MACD);
 
-        logMacdTrend = await m.loger(trendMACD, 40, logMacdTrend);
+        logMacdTrend = await m.loger(MACD, 40, logMacdTrend);
         logVolMACD = await m.loger(volume, 40, logVol);
 
         trendMacdTrend = await TI.upDown(logMacdTrend);
         trendVolMACD = await TI.macd(logVolMACD);
 
-        f.cs("logMacdTrend: " + logMacdTrend);
-        f.cs("logVolMACD: " + logVolMACD);
+        //f.cs("logMacdTrend: " + logMacdTrend);
+        //f.cs("logVolMACD: " + logVolMACD);
 
-        f.cs("trendMacdTrend: " + trendMacdTrend);
-        f.cs("trendVolMACD: " + trendVolMACD);
+        //f.cs("trendMacdTrend: " + trendMacdTrend);
+        //f.cs("trendVolMACD: " + trendVolMACD);
 
         let orderType = false;
 
-        orderType = await makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
+        orderType = await makeOrder(MACD, MA, RSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
         // make strategic decision about order type
-        async function makeOrder(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //trendMacdTrend, trendVolMACD
+        async function makeOrder(MACD, MA, RSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //trendMacdTrend, trendVolMACD
             if (purchase && !sale &&
-                (trendUD > 0) &&
-                (trendMACD >= 0) &&
-                (trendRSI >= 0) &&
+                (MA > 0) &&
+                (MACD >= 0) &&
+                (RSI >= 0) &&
                 (trend24h > 0) &&
                 (change24hP > 0) &&
-                (trendVol >= 0) &&
-                (trendMacdTrend >= 0) &&
-                (trendVolMACD >= 0)
+                (trendVol >= 0)// &&
+                //(trendMacdTrend >= 0) &&
+                //(trendVolMACD >= 0)
             ) {    // buy 
                 //orderType = "bougth";
                 //bougthPrice = price;            //dev
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 orderType = ret.orderType;
                 bougthPrice = ret.bougthPrice;
-            } else if (sale && !hold && !stopLoss && (trendUD < 0)) {   //sell good
+            } else if (sale && !hold && !stopLoss && (MA < 0)) {   //sell good
                 //orderType = "sold";
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 orderType = ret.orderType;
@@ -297,11 +301,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
 
         // make strategic decision about order type
-        function makeOrder111(trendMACD, trendUD, trendRSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //r: orderType
+        function makeOrder111(MACD, MA, RSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //r: orderType
             if (purchase && !sale &&
-                (trendUD > 0) &&
-                (trendMACD >= 0) &&
-                (trendRSI >= 0) &&
+                (MA > 0) &&
+                (MACD >= 0) &&
+                (RSI >= 0) &&
                 (trend24h > 0) &&
                 (change24hP > 0) &&
                 (trendVol > 0)
@@ -310,7 +314,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 //bougthPrice = price;            //dev
                 orderType = ret.orderType;
                 bougthPrice = ret.bougthPrice;
-            } else if (sale && !hold && !stopLoss && (trendUD < 0)) {   //sell good
+            } else if (sale && !hold && !stopLoss && (MA < 0)) {   //sell good
                 //orderType = "sold";
                 orderType = ret.orderType;
             } else if (sale && hold && stopLoss) { //stopLoss sell bad
@@ -387,14 +391,14 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             purchase: purchase,
             logLength: logAll.length,
             buyIndicators: {
-                UD: trendUD,
-                RSI: trendRSI,
-                MACD: trendMACD,
+                MA: MA,
+                RSI: RSI,
+                MACD: MACD,
                 trendVol: trendVol,
                 trend24h: trend24h,
                 change24hP: change24hP + " %",
-                //trendMacdTrend: trendMacdTrend,
-                //trendVolMACD: trendVolMACD
+                trendMacdTrend: trendMacdTrend,
+                trendVolMACD: trendVolMACD
             },
             orderType: orderType,
             quoteMarkets: JSON.stringify(quotes),

@@ -74,13 +74,13 @@ switch (exchange) {     //Select exchange
 
 let exInfos;
 exInfos = {
-        version: ccxt.version,
-        exchange: exchange.name,
-        url: exchange.urls.www,
-        referral: exchange.urls.referral,
-        feeMaker: exchange.fees.trading.maker,
-        feeTaker: exchange.fees.trading.taker,
-        exchanges: ccxt.exchanges
+    version: ccxt.version,
+    exchange: exchange.name,
+    url: exchange.urls.www,
+    referral: exchange.urls.referral,
+    feeMaker: exchange.fees.trading.maker,
+    feeTaker: exchange.fees.trading.taker,
+    exchanges: ccxt.exchanges
 };
 
 async function volume(symbol) {
@@ -89,7 +89,7 @@ async function volume(symbol) {
         //f.cs(v);
         return await v.quoteVolume;
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
 }
 
@@ -98,7 +98,7 @@ async function change(symbol) {             //returns Variable change percentage
         r = await exchange.fetchTicker(symbol);
         return await r.percentage;
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
 }
 async function minAmount(symbol) {          //returns minimum amount of base allowed to buy
@@ -106,32 +106,63 @@ async function minAmount(symbol) {          //returns minimum amount of base all
         r = await exchange.loadMarkets();
         re = r[symbol].limits.amount.min;
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
     return await re;
 }
+async function sellAll() {
+    for (var cell in array) {
+        //r = await sell();
+    }
+    return r;
+}
+
+let curs;
 async function wallet() {                   //returns Array of Objects balances of an account
     r = await exchange.fetchBalance();
     curs = Object.keys(r);
     vals = Object.values(r.total);
     let balances = [];
-    parseBlances();
-    function parseBlances() {
+    parseBalances();
+    async function parseBalances() {
         let j = 0
         for (i = 0; i < curs.length; i++) {
             if (vals[i] > 0) {
-                balances[j] = { currency: curs[i + 1], balance: vals[i] }
+                balances[j] = { currency: curs[i + 1], balance: vals[i], price: 0.0000 };
                 j++
             }
+
         }
     }
+    //await f.cs(balances);
     return await balances;
 }
+
+async function priceAll() {
+    let wal;
+    wal = await wallet();
+    for (i = 0; i < wal.length; i++) {
+        sym = wal[i].currency+"/BTC";
+        r = price(sym);
+        wal[i].price;
+    }
+    /*
+    for (var cell in array) {
+        r = await price(sym);
+        wal[i].price = r;
+        i++
+        await f.cs(wal);
+    }*/
+    await f.cs(wall);
+    return wal;
+}
+
+
 async function balance(currency) {          //returns Array of Objects balances of an account
     try {
         r = await exchange.fetchBalance();
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
     return await r[currency].total;
 }
@@ -140,7 +171,7 @@ async function bid(symbol) {                //reurns Array of Objects bid,ask
         r = await exchange.fetchOrderBook(symbol);
         return re = await r.bids[0][0];
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
 }
 async function ask(symbol) {                //reurns Array of Objects bid,ask
@@ -148,7 +179,7 @@ async function ask(symbol) {                //reurns Array of Objects bid,ask
         r2 = await exchange.fetchOrderBook(symbol);
         return await r2.asks[0][0];
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
 }
 async function price(symbol) {                //reurns Array of Objects bid,ask
@@ -171,7 +202,7 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         //price = higher - (spread / 2); //ask spread
         return price;
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
 }
 async function cancel(orderId, symbol) {                 //cancels order with id
@@ -184,7 +215,7 @@ async function cancel(orderId, symbol) {                 //cancels order with id
     } catch (error) {
         //order was filled
         filled = true;
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
 }
 async function sell(symbol, amount, price) {// symbol, amount, ask 
@@ -212,7 +243,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         }
         return await ret;
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
 }
 let c;
@@ -240,11 +271,11 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         }
         return await ret;
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
         ret = await {
             orderId: r.id,
             orderStatus: r.status,
-            orderType: "invalid",
+            orderType: "invalid" + error.mesage,
             filled: false,
             bougthPrice: price,
         }
@@ -256,7 +287,7 @@ async function markets() {                   //load all available markets on exc
         r = await exchange.loadMarkets();
         return exchange.symbols;
     } catch (error) {
-        console.log("EEE: ", error.message);
+        console.log("EEE: ", error);
     }
 }
 
@@ -395,6 +426,7 @@ async function microPrice(num, mainQuoteCurrency) {
 
 // Exports of this module
 
+exports.priceAll = priceAll;
 exports.volume = volume;
 exports.microPrice = microPrice;
 exports.bestbuy = bestbuy;
