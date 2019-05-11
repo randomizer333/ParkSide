@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 1;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const startValue = 50;//value of assets on start in USDT
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
@@ -68,7 +68,7 @@ async function setBots(quotes) {
 
 // stop bots
 
-function clear(){
+function clear() {
     for (const cur in quotes) {
         clearInterval(quotes[cur]);
         //f.cs("Number:"+cur)
@@ -416,6 +416,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 return true;
             } else if (orderType == "lossed") {
                 f.sendMail("Lossed Info", JSON.stringify(marketInfo));
+                return true;
+            } else if (orderType == "canceled") {
+                f.sendMail("Canceled Info", JSON.stringify(marketInfo));
                 return true;
             } else {
                 return false;

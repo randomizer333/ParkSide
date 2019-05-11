@@ -110,9 +110,11 @@ async function minAmount(symbol) {          //returns minimum amount of base all
     }
     return await re;
 }
-async function sellAll() {
+
+//sellAll(wallet);
+async function sellAll(array) {
     for (var cell in array) {
-        //r = await sell();
+        r = await sell(array[cell].currency+"/USDT");
     }
     return r;
 }
@@ -128,17 +130,16 @@ async function wallet() {                   //returns Array of Objects balances 
         let j = 0
         for (i = 0; i < curs.length; i++) {
             if (vals[i] > 0) {
-                balances[j] = { currency: curs[i + 1], balance: vals[i], price: 0.0000 };
+                balances[j] = { currency: curs[i + 1], balance: vals[i]/*, price: 0.0000*/ };
                 j++
             }
-
         }
     }
     //await f.cs(balances);
     return await balances;
 }
 
-async function priceAll() {
+async function priceAll() { //dev
     let wal;
     wal = await wallet();
     for (i = 0; i < wal.length; i++) {
@@ -210,7 +211,7 @@ async function cancel(orderId, symbol) {                 //cancels order with id
         r = await exchange.cancelOrder(orderId, symbol);
         //order was NOT filled
         filled = false;
-        f.sendMail("Canceled", JSON.stringify(r));
+        //f.sendMail("Canceled", JSON.stringify(r));
         return filled;
     } catch (error) {
         //order was filled
