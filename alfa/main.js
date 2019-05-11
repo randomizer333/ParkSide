@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 3.33;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const startValue = 50;//value of assets on start in USDT
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
@@ -31,11 +31,10 @@ let botNo = new Array();
 let bestBuy = new Array();
 
 //  main setup
-let marketInfo;
 let exInfo;
 let wallet;
 setup();
-async function setup() {
+async function setup() {    //runs once at the begining of the program
     exInfo = a.exInfos;
     tradingFeeP = exInfo.feeMaker * 100;
     f.cs(exInfo);
@@ -81,6 +80,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
 
     //var id = botNumber;
+    
+    let orderType = false;  //loop output
+    let marketInfo;         //loop output
 
     let amountQuote;    //baseToQuote
     let amountBase;     //amountQuote
@@ -97,7 +99,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let log24hP = new Array();   //loger
     let logVol = new Array();   //loger
     let logMacdTrend = new Array(); //loger
-    let logUD = new Array();    //loger
+    let logMA = new Array();    //loger
 
     let price;      //balanceChanged
     let bougthPrice = 0;//balanceChanged
@@ -226,12 +228,12 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logAll = await m.loger(price, 40, logAll);
         log24hP = await m.loger(change24hP, 3, log24hP);
         logVol = await m.loger(volume, 5, logVol);
-        logUD = await m.loger(price, 3, logUD);
+        logMA = await m.loger(price, 3, logMA);
 
 
         //f.cs("logAll: " + logAll);
 
-        MA = await TI.upDown(logUD);
+        MA = await TI.upDown(logMA);
         RSI = await TI.rsi(logAll);
         MACD = await TI.macd(logAll);
         trend24h = await TI.upDown(log24hP);
@@ -251,8 +253,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         //f.cs("trendMacdTrend: " + trendMacdTrend);
         //f.cs("trendVolMACD: " + trendVolMACD);
-
-        let orderType = false;
 
         orderType = await makeOrder(MACD, MA, RSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
 
@@ -390,6 +390,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             },
             purchase: purchase,
             logLength: logAll.length,
+            MAlength: logMA.length,
             buyIndicators: {
                 MA: MA,
                 RSI: RSI,
@@ -434,4 +435,3 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 //constants and variables
 exports.ticker = ticker;
 exports.enableOrders = enableOrders;
-exports.marketInfo = marketInfo;
