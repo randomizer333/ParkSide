@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 3.33;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 5;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const startValue = 50;//value of assets on start in USDT
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
