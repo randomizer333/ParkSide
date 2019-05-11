@@ -244,7 +244,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         }
         return await ret;
     } catch (error) {
-        console.log("EEE: ", error);
+        console.log("EEE in sell: ", error);
     }
 }
 let c;
@@ -272,7 +272,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         }
         return await ret;
     } catch (error) {
-        console.log("EEE: ", error);
+        console.log("EEE in buy: ", error);
         ret = await {
             orderId: r.id,
             orderStatus: r.status,
