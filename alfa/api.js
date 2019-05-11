@@ -276,7 +276,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         ret = await {
             orderId: r.id,
             orderStatus: r.status,
-            orderType: "invalid" + error.mesage,
+            orderType: "invalid order: " + error.message,
             filled: false,
             bougthPrice: price,
         }
