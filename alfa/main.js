@@ -7,11 +7,11 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 99;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const startValue = 50;//value of assets on start in USDT
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
-const enableOrders = true;  //sim true
+const enableOrders = true;  //sim
 
 const quotes = [    //trading portofio
     "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
@@ -80,7 +80,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
 
     //var id = botNumber;
-    
+
     let orderType = false;  //loop output
     let marketInfo;         //loop output
 
@@ -100,6 +100,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let logVol = new Array();   //loger
     let logMacdTrend = new Array(); //loger
     let logMA = new Array();    //loger
+    let logMA200 = new Array();    //loger
 
     let price;      //balanceChanged
     let bougthPrice = 0;//balanceChanged
@@ -189,6 +190,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
+        function mainMarketCap(fiatPrice, fiatVol) {
+            let BTCsupply = 17696250;
+            let marketCap = fiatPrice * BTCsupply;        //BTC supply 17,696,250 BTC
+
+            return MCapMA;
+        }
+
         return {
             checkStopLoss: checkStopLoss,
             safeSale: safeSale,
@@ -200,7 +208,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
     }
     const m = modul();
-
 
     loop(symbol, strategy);
     botNo[botNumber] = setInterval(function () { loop(symbol, strategy) }, ticker);
@@ -229,6 +236,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         log24hP = await m.loger(change24hP, 3, log24hP);
         logVol = await m.loger(volume, 5, logVol);
         logMA = await m.loger(price, 3, logMA);
+        logMA200 = await m.loger(price, 200, logMA200);
 
 
         //f.cs("logAll: " + logAll);
@@ -238,7 +246,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         MACD = await TI.macd(logAll);
         trend24h = await TI.upDown(log24hP);
         trendVol = await TI.upDown(logVol);
-
+        MA200 = await TI.upDown(logMA200);
 
         //f.cs("MACD: " + MACD);
 
@@ -264,20 +272,29 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 (RSI >= 0) &&
                 (trend24h > 0) &&
                 (change24hP > 0) &&
-                (trendVol >= 0)// &&
+                (trendVol >= 0) &&
+                (MA200 > 0)
                 //(trendMacdTrend >= 0) &&
                 //(trendVolMACD >= 0)
-            ) {    // buy 
-                //orderType = "bougth";
-                //bougthPrice = price;            //dev
+            ) {                                  // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 orderType = ret.orderType;
                 bougthPrice = ret.bougthPrice;
-            } else if (sale && !hold && !stopLoss && (MA < 0)) {   //sell good
-                //orderType = "sold";
+            } else if (sale && 
+                !hold && 
+                !stopLoss && 
+                (MA < 0)
+            ) {                                 //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 orderType = ret.orderType;
-            } else if (sale && hold && stopLoss) { //stopLoss sell bad
+            } else if (sale && 
+                hold && 
+                stopLoss &&
+                (MA200 < 0) /*&&
+                (MA < 0) &&
+                (MACD <= 0) &&
+                (trend24h < 0)*/
+                ) {                             //stopLoss sell bad
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
@@ -332,10 +349,10 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 stopLoss: stopLoss,
             },
             purchase: purchase,
-            logLength: logAll.length,
-            MAlength: logMA.length,
+            logLength: logMA200.length,
             buyIndicators: {
-                MA: MA,
+                MA3: MA,
+                MA200: MA200,
                 RSI: RSI,
                 MACD: MACD,
                 trendVol: trendVol,
