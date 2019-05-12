@@ -7,7 +7,7 @@ let TI = require("./ti.js");
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 5;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const stopLossP = 99;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const startValue = 50;//value of assets on start in USDT
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
@@ -294,68 +294,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
 
-
-
-
-
-
-
-        // make strategic decision about order type
-        function makeOrder111(MACD, MA, RSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //r: orderType
-            if (purchase && !sale &&
-                (MA > 0) &&
-                (MACD >= 0) &&
-                (RSI >= 0) &&
-                (trend24h > 0) &&
-                (change24hP > 0) &&
-                (trendVol > 0)
-            ) {    // buy 
-                //orderType = "bougth";
-                //bougthPrice = price;            //dev
-                orderType = ret.orderType;
-                bougthPrice = ret.bougthPrice;
-            } else if (sale && !hold && !stopLoss && (MA < 0)) {   //sell good
-                //orderType = "sold";
-                orderType = ret.orderType;
-            } else if (sale && hold && stopLoss) { //stopLoss sell bad
-                //orderType = "lossed";
-                orderType = ret.orderType;
-            } else if (sale && hold && !stopLoss) { //holding fee NOT covered
-                orderType = "holding";
-            } else if (sale && !hold && !stopLoss) {//holding fee covered
-                orderType = "holding good";
-            } else if (purchase) {      // ( change24h > 0 )
-                orderType = "parked";
-            } else {
-                orderType = "still none";
-            }
-            mailInfo(orderType);
-            putOrder(orderType);
-            return orderType;
-        }
-
-        //put order
-        function putOrder111(orderType) {  //r: orderMade
-            switch (orderType) {
-                case "buy":
-                    orderMade = a.buy(symbol, quoteBalanceInBase * portion, price)
-                    break;
-                case "sell":
-                    orderMade = a.sell(symbol, baseBalance, price)
-                    break;
-                case "hold":
-                    orderMade = "none"
-                    break;
-            }
-        }
-
         // dinamic stoploss
         function dinamicStopLoss(startValue) {
             aProfit = f.part(relativeProfit, startValue);
             return profit;//stopLoss
         }
-
-
 
 
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
