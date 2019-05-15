@@ -16,7 +16,7 @@ const enableOrders = true;  //sim
 const quotes = [    //trading portofio
     "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
-    "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
+    "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",/*
 
     "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
@@ -87,20 +87,24 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let amountQuote;    //baseToQuote
     let amountBase;     //amountQuote
 
-    let sale = false;       //selectCurrency
-    let purchase = false;   //selectCurrency
-    let baseCurrency;       //selectCurrency
-    let quoteCurrency;      //selectCurrency
-    let baseBalanceInQuote; //selectCurrency
-    let quoteBalanceInBase; //selectCurrency
-    let more = false;       //selectCurrency
+    //selectCurrency
+    let sale = false;
+    let purchase = false;
+    let baseCurrency;
+    let quoteCurrency;
+    let baseBalanceInQuote;
+    let quoteBalanceInBase;
+    let more = false;
 
-    let logAll = new Array();   //loger
-    let log24hP = new Array();   //loger
-    let logVol = new Array();   //loger
-    let logMacdTrend = new Array(); //loger
-    let logMA = new Array();    //loger
-    let logMA200 = new Array();    //loger
+    //loger
+    let logAll = new Array();
+    let log24hP = new Array();
+    let logVol = new Array();
+    let logMacd = new Array();
+    let logMA3 = new Array();
+    let logMA200 = new Array();
+    let logVolMACD = new Array()
+    let logMA200second = new Array()
 
     let price;      //balanceChanged
     let bougthPrice = 0;//balanceChanged
@@ -232,69 +236,67 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
 
-        logAll = await m.loger(price, 40, logAll);
+
+        //market data colection
+        logAll = await m.loger(price, 105, logAll);
         log24hP = await m.loger(change24hP, 3, log24hP);
         logVol = await m.loger(volume, 5, logVol);
-        logMA = await m.loger(price, 3, logMA);
+        logMA3 = await m.loger(price, 3, logMA3);
         logMA200 = await m.loger(price, 200, logMA200);
 
 
-        //f.cs("logAll: " + logAll);
+        //technical analysis
+        MA = await TI.ma(logMA3);   //MA of last 3 prices
 
-        MA = await TI.upDown(logMA);
-        RSI = await TI.rsi(logAll);
-        MACD = await TI.macd(logAll);
-        trend24h = await TI.upDown(log24hP);
-        trendVol = await TI.upDown(logVol);
-        MA200 = await TI.upDown(logMA200);
+        MA200 = await TI.ma(logMA200);  //MA of last 200 prices
+        logMA200second = await m.loger(MA200, 3, logMA200second)
+        MA200MA3 = await TI.ma(logMA200second); //MA3 of last 3 MA200
+        f.cs("MA200MA3: " + MA200MA3);
 
-        //f.cs("MACD: " + MACD);
+        RSI = await TI.rsi(logAll); //RSI (30,70)
 
-        logMacdTrend = await m.loger(MACD, 40, logMacdTrend);
-        logVolMACD = await m.loger(volume, 40, logVol);
+        MACD = await TI.macd(logAll);   //standard MACD
+        logMacd = await m.loger(MACD, 40, logMacd);
+        MACDMA = await TI.ma(logMacd);  //MA of MACD
 
-        trendMacdTrend = await TI.upDown(logMacdTrend);
-        trendVolMACD = await TI.macd(logVolMACD);
+        DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
+        QMACD = await TI.quadMacd(logAll);      //quadruple MACD
 
-        //f.cs("logMacdTrend: " + logMacdTrend);
-        //f.cs("logVolMACD: " + logVolMACD);
+        MA24hP = await TI.ma(log24hP);  //MA3 of 24h price change
 
-        //f.cs("trendMacdTrend: " + trendMacdTrend);
-        //f.cs("trendVolMACD: " + trendVolMACD);
-
-        orderType = await makeOrder(MACD, MA, RSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
+        MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
+        logVolMACD = await m.loger(volume, 40, logVolMACD);
+        MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
 
         // make strategic decision about order type
-        async function makeOrder(MACD, MA, RSI, trend24h, change24hP, trendVol, purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //trendMacdTrend, trendVolMACD
+        orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
+        async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //trendMacdTrend, MAVol
             if (purchase && !sale &&
                 (MA > 0) &&
                 (MACD >= 0) &&
+                (DMACD >= 0) &&
                 (RSI >= 0) &&
-                (trend24h > 0) &&
+                (MA24hP > 0) &&
                 (change24hP > 0) &&
-                (trendVol >= 0) &&
-                (MA200 > 0)
-                //(trendMacdTrend >= 0) &&
-                //(trendVolMACD >= 0)
+                (MACDVol >= 0) &&
+                (MA200MA3 > 0)
             ) {                                  // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 orderType = ret.orderType;
                 bougthPrice = ret.bougthPrice;
-            } else if (sale && 
-                !hold && 
-                !stopLoss && 
+            } else if (sale &&
+                !hold &&
+                !stopLoss &&
                 (MA < 0)
             ) {                                 //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 orderType = ret.orderType;
-            } else if (sale && 
-                hold && 
+            } else if (sale &&
+                hold &&
                 stopLoss &&
-                (MA200 < 0) /*&&
                 (MA < 0) &&
-                (MACD <= 0) &&
-                (trend24h < 0)*/
-                ) {                             //stopLoss sell bad
+                (MA200MA3 < 0)
+            ) {                             //stopLoss sell bad
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
@@ -324,25 +326,20 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         //main console output
         marketInfo = {
             No: botNumber,
-            //id: id,
-            time: f.getTime(),
-            ticker: tickerMinutes + " min",
-            stopLossP: stopLossP + " %",
-            symbol: symbol,
-            //baseCurrency: baseCurrency,
-            //quoteCurrency: quoteCurrency,
-            minAmount: minAmount + " " + baseCurrency,
+            relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
+            absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             baseBalance: baseBalance + " " + baseCurrency,
             quoteBalance: quoteBalance + " " + quoteCurrency,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
             quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
+            time: f.getTime(),
+            ticker: tickerMinutes + " min",
+            stopLossP: stopLossP + " %",
+            symbol: symbol,
+            minAmount: minAmount + " " + baseCurrency,
             bougthPrice: bougthPrice.toFixed(8) + " " + symbol,
             sellPrice: sellPrice.toFixed(8) + " " + symbol,
-            relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
-            absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             price: price.toFixed(8) + " " + symbol,
-            //bougthPriceFiat: bougthPriceFiat.toFixed(8) + " " + quotes[0],
-            //more: more,
             sellConditions: {
                 sale: sale,
                 hold: hold,
@@ -352,21 +349,21 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             logLength: logMA200.length,
             buyIndicators: {
                 MA3: MA,
-                MA200: MA200,
+                MA200MA3: MA200MA3,
                 RSI: RSI,
                 MACD: MACD,
-                trendVol: trendVol,
-                trend24h: trend24h,
+                DMACD: DMACD,
+                QMACD: QMACD,
+                MAVol: MAVol,
+                MACDVol: MACDVol,
                 change24hP: change24hP + " %",
-                trendMacdTrend: trendMacdTrend,
-                trendVolMACD: trendVolMACD
+                MA24hP: MA24hP,
             },
             orderType: orderType,
             quoteMarkets: JSON.stringify(quotes),
             wallet: JSON.stringify(wallet),
             //bestBuy: JSON.stringify(bestBuy),
         }
-
         //mailer
         function mailInfo(orderType) {
             if (orderType == "sold") {
