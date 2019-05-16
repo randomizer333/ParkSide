@@ -1,20 +1,21 @@
-//requirements
-
-let a = require("./api.js");
-let f = require("./funk.js");
-let TI = require("./ti.js");
+/* 
+1.crypto to fiat bot
+2.intracrypto trading bot
+3.highriser catcher bot
+*/
 
 // init
 
-const tickerMinutes = 0.3;    //1,5,10,60
+const tickerMinutes = 3;    //1,5,10,60
 const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
-const startValue = 50;//value of assets on start in USDT
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
 const enableOrders = false;  //sim
 
+const startValue = 50;//value of assets on start in USDT
+
 const quotes = [    //trading portofio
-    "ADA/USDT"/*, "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",/*
 
@@ -22,6 +23,13 @@ const quotes = [    //trading portofio
 
     "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
 ]
+
+//requirements
+
+let a = require("./api.js");
+let f = require("./funk.js");
+let TI = require("./ti.js");
+
 
 const ticker = f.minToMs(tickerMinutes);
 const numOfBots = quotes.length;
@@ -277,53 +285,54 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 change24hP: change24hP
             }
         }
-        await f.cs(indicator);
+        //await f.cs(indicator);
 
-        let signal = await upDown(indicator);
-        function upDown(indicator) {
-            if ((indicator.MA > 0) && (indicator.MA200 > 0)) {
-                f.cs("MA: " + indicator.MA)
+        let upSignal = await up(indicator);
+        function up(indicator) {
+            if (        //up signal
+                (indicator.MA > 0) &&
+                (indicator.MA200 > 0) &&
+                (indicator.MACD >= 0) &&
+                (indicator.MAVol > 0) &&
+                (indicator.change24hP > 0)
+            ) {
                 return 1;
-            } else {
-                f.cs("MA: " + indicator.MA)
+            } else {    //no signal
                 return 0;
             }
         }
 
-        await f.cs("signal: " + signal)
+        let downSignal = await down(indicator);
+        function down(indicator) {
+            if (        //down signal
+                (indicator.MA < 0) &&
+                (indicator.MA200 < 0)
+            ) {
+                return 1;
+            } else {    //no signal
+                return 0;
+            }
+        }
+
 
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //trendMacdTrend, MAVol
-            if (purchase && !sale &&
-                (indicator.MA > 0) &&
-                (MACD >= 0) &&
-                (DMACD >= 0) &&
-                (RSI >= 0) &&
-                (MA24hP > 0) &&
-                (change24hP > 0) &&
-                (MACDVol >= 0) &&
-                (MA200 > 0)
-            ) {                                  // buy 
+            if (purchase && !sale && upSignal) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 orderType = ret.orderType;
                 bougthPrice = ret.bougthPrice;
-            } else if (sale && !hold && !stopLoss &&
-                (MA < 0)
-            ) {                                 //sell good
+            } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 orderType = ret.orderType;
-            } else if (sale && hold && stopLoss &&
-                (MA < 0) &&
-                (MA200 < 0)
-            ) {                             //stopLoss sell bad
+            } else if (sale && hold && stopLoss && downSignal) {    //stopLoss sell bad
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
                 orderType = "holding good";
-            } else if (purchase) {      // ( change24hP > 0 )
+            } else if (purchase) {
                 orderType = "parked";
             } else {
                 orderType = "still none";
@@ -348,6 +357,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             No: botNumber,
             relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
+            minAmount__: minAmount + " " + baseCurrency,
             baseBalance: baseBalance + " " + baseCurrency,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
             quoteBalance: quoteBalance + " " + quoteCurrency,
@@ -356,16 +366,17 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             ticker: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
             symbol: symbol,
-            minAmount: minAmount + " " + baseCurrency,
             bougthPrice: bougthPrice.toFixed(8) + " " + symbol,
             sellPrice: sellPrice.toFixed(8) + " " + symbol,
             price: price.toFixed(8) + " " + symbol,
+            purchase: purchase,
+            upSignal: upSignal,
+            downSignal: downSignal,
             sellConditions: {
                 sale: sale,
                 hold: hold,
                 stopLoss: stopLoss,
             },
-            purchase: purchase,
             logLength: logMA200.length,
             indicator: indicator,
             orderType: orderType,
