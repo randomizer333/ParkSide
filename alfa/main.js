@@ -1,17 +1,18 @@
-//requirements
-
-let a = require("./api.js");
-let f = require("./funk.js");
-let TI = require("./ti.js");
+/* 
+1.crypto to fiat bot
+2.intracrypto trading bot
+3.highriser catcher bot
+*/
 
 // init
 
 const tickerMinutes = 3;    //1,5,10,60
 const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
-const startValue = 50;//value of assets on start in USDT
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
-const enableOrders = true;  //sim
+const enableOrders = false;  //sim
+
+const startValue = 50;//value of assets on start in USDT
 
 const quotes = [    //trading portofio
     "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
@@ -22,6 +23,13 @@ const quotes = [    //trading portofio
 
     "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
 ]
+
+//requirements
+
+let a = require("./api.js");
+let f = require("./funk.js");
+let TI = require("./ti.js");
+
 
 const ticker = f.minToMs(tickerMinutes);
 const numOfBots = quotes.length;
@@ -78,9 +86,6 @@ function clear() {
 
 async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
-
-    //var id = botNumber;
-
     let orderType = false;  //loop output
     let marketInfo;         //loop output
 
@@ -96,15 +101,15 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let quoteBalanceInBase;
     let more = false;
 
-    //loger
-    let logAll = new Array();
-    let log24hP = new Array();
-    let logVol = new Array();
-    let logMacd = new Array();
-    let logMA3 = new Array();
-    let logMA200 = new Array();
-    let logVolMACD = new Array()
-    let logMA200second = new Array()
+    //loger init
+    let logAll = [],
+        log24hP = [],
+        logVol = [],
+        logMacd = [],
+        logMA3 = [],
+        logMA200 = [],
+        logVolMACD = [],
+        logMA200second = [];
 
     let price;      //balanceChanged
     let bougthPrice = 0;//balanceChanged
@@ -236,74 +241,98 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
 
+        let indicator = await indicators(price, volume, change24hP)
+        async function indicators(price, volume, change24hP) {
+            //market data colection
+            logAll = await m.loger(price, 105, logAll);
+            log24hP = await m.loger(change24hP, 3, log24hP);
+            logVol = await m.loger(volume, 5, logVol);
+            logMA3 = await m.loger(price, 3, logMA3);
+            logMA200 = await m.loger(price, 200, logMA200);
 
-        //market data colection
-        logAll = await m.loger(price, 105, logAll);
-        log24hP = await m.loger(change24hP, 3, log24hP);
-        logVol = await m.loger(volume, 5, logVol);
-        logMA3 = await m.loger(price, 3, logMA3);
-        logMA200 = await m.loger(price, 200, logMA200);
 
+            //technical analysis
+            MA = await TI.ma(logMA3);   //MA of last 3 prices
 
-        //technical analysis
-        MA = await TI.ma(logMA3);   //MA of last 3 prices
+            MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
-        MA200 = await TI.ma(logMA200);  //MA of last 200 prices
-        logMA200second = await m.loger(MA200, 3, logMA200second)
-        MA200MA3 = await TI.ma(logMA200second); //MA3 of last 3 MA200
-        f.cs("MA200MA3: " + MA200MA3);
+            RSI = await TI.rsi(logAll); //RSI (30,70)
 
-        RSI = await TI.rsi(logAll); //RSI (30,70)
+            MACD = await TI.macd(logAll);   //standard MACD
+            logMacd = await m.loger(MACD, 40, logMacd);
+            MACDMA = await TI.ma(logMacd);  //MA of MACD
 
-        MACD = await TI.macd(logAll);   //standard MACD
-        logMacd = await m.loger(MACD, 40, logMacd);
-        MACDMA = await TI.ma(logMacd);  //MA of MACD
+            DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
+            QMACD = await TI.quadMacd(logAll);      //quadruple MACD
 
-        DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
-        QMACD = await TI.quadMacd(logAll);      //quadruple MACD
+            MA24hP = await TI.ma(log24hP);  //MA3 of 24h price change
 
-        MA24hP = await TI.ma(log24hP);  //MA3 of 24h price change
+            MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
+            logVolMACD = await m.loger(volume, 40, logVolMACD);
+            MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
 
-        MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
-        logVolMACD = await m.loger(volume, 40, logVolMACD);
-        MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
+            return await {
+                MA: MA,
+                MA200: MA200,
+                RSI: RSI,
+                MACD: MACD,
+                MACDMA: MACDMA,
+                DMACD: DMACD,
+                QMACD: QMACD,
+                MA24hP: MA24hP,
+                MAVol: MAVol,
+                MACDVol: MACDVol,
+                change24hP: change24hP
+            }
+        }
+        //await f.cs(indicator);
+
+        let upSignal = await up(indicator);
+        function up(indicator) {
+            if (        //up signal
+                (indicator.MA > 0) &&
+                (indicator.MA200 > 0) &&
+                (indicator.MACD >= 0) &&
+                (indicator.MAVol > 0) &&
+                (indicator.change24hP > 0)
+            ) {
+                return 1;
+            } else {    //no signal
+                return 0;
+            }
+        }
+
+        let downSignal = await down(indicator);
+        function down(indicator) {
+            if (        //down signal
+                (indicator.MA < 0) &&
+                (indicator.MA200 < 0)
+            ) {
+                return 1;
+            } else {    //no signal
+                return 0;
+            }
+        }
+
 
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //trendMacdTrend, MAVol
-            if (purchase && !sale &&
-                (MA > 0) &&
-                (MACD >= 0) &&
-                (DMACD >= 0) &&
-                (RSI >= 0) &&
-                (MA24hP > 0) &&
-                (change24hP > 0) &&
-                (MACDVol >= 0) &&
-                (MA200MA3 > 0)
-            ) {                                  // buy 
+            if (purchase && !sale && upSignal) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 orderType = ret.orderType;
                 bougthPrice = ret.bougthPrice;
-            } else if (sale &&
-                !hold &&
-                !stopLoss &&
-                (MA < 0)
-            ) {                                 //sell good
+            } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 orderType = ret.orderType;
-            } else if (sale &&
-                hold &&
-                stopLoss &&
-                (MA < 0) &&
-                (MA200MA3 < 0)
-            ) {                             //stopLoss sell bad
+            } else if (sale && hold && stopLoss && downSignal) {    //stopLoss sell bad
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
                 orderType = "holding good";
-            } else if (purchase) {      // ( change24h > 0 )
+            } else if (purchase) {
                 orderType = "parked";
             } else {
                 orderType = "still none";
@@ -324,41 +353,32 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
 
         //main console output
-        marketInfo = {
+        marketInfo = await {
             No: botNumber,
             relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
+            minAmount__: minAmount + " " + baseCurrency,
             baseBalance: baseBalance + " " + baseCurrency,
-            quoteBalance: quoteBalance + " " + quoteCurrency,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
+            quoteBalance: quoteBalance + " " + quoteCurrency,
             quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
             time: f.getTime(),
             ticker: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
             symbol: symbol,
-            minAmount: minAmount + " " + baseCurrency,
             bougthPrice: bougthPrice.toFixed(8) + " " + symbol,
             sellPrice: sellPrice.toFixed(8) + " " + symbol,
             price: price.toFixed(8) + " " + symbol,
+            purchase: purchase,
+            upSignal: upSignal,
+            downSignal: downSignal,
             sellConditions: {
                 sale: sale,
                 hold: hold,
                 stopLoss: stopLoss,
             },
-            purchase: purchase,
             logLength: logMA200.length,
-            buyIndicators: {
-                MA3: MA,
-                MA200MA3: MA200MA3,
-                RSI: RSI,
-                MACD: MACD,
-                DMACD: DMACD,
-                QMACD: QMACD,
-                MAVol: MAVol,
-                MACDVol: MACDVol,
-                change24hP: change24hP + " %",
-                MA24hP: MA24hP,
-            },
+            indicator: indicator,
             orderType: orderType,
             quoteMarkets: JSON.stringify(quotes),
             wallet: JSON.stringify(wallet),
