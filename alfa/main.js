@@ -10,7 +10,7 @@ const tickerMinutes = 3;    //1,5,10,60
 const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
 const portion = 0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
-const enableOrders = false;  //sim
+const enableOrders = true;  //sim
 
 const startValue = 50;//value of assets on start in USDT
 
