@@ -228,7 +228,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         baseBalance = await a.balance(baseCurrency);
         quoteBalance = await a.balance(quoteCurrency);
         price = await a.price(symbol);
-        wallet = await a.wallet();
+        //wallet = await a.wallet();
         change24hP = await a.change(symbol);
         volume = await a.volume(symbol);
 
@@ -274,15 +274,15 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return await {
                 MA: MA,
                 MA200: MA200,
-                RSI: RSI,
                 MACD: MACD,
-                MACDMA: MACDMA,
+                MAVol: MAVol,
+                change24hP: change24hP,
                 DMACD: DMACD,
+                RSI: RSI,
                 QMACD: QMACD,
                 MA24hP: MA24hP,
-                MAVol: MAVol,
+                MACDMA: MACDMA,
                 MACDVol: MACDVol,
-                change24hP: change24hP
             }
         }
         //await f.cs(indicator);
@@ -350,7 +350,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
 
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
-        let absoluteProfit = await f.part(relativeProfit, baseBalanceInQuote);
+        let absoluteProfit = await f.part(relativeProfit, quoteBalance);
+        let absoluteProfit2 = await f.part(relativeProfit, baseBalanceInQuote);
 
         //main console output
         marketInfo = await {
