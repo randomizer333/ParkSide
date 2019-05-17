@@ -121,7 +121,8 @@ async function sellAll(array) {
 
 let curs;
 async function wallet() {                   //returns Array of Objects balances of an account
-    r = await exchange.fetchBalance();
+    try{
+        r = await exchange.fetchBalance();
     curs = Object.keys(r);
     vals = Object.values(r.total);
     let balances = [];
@@ -130,13 +131,17 @@ async function wallet() {                   //returns Array of Objects balances 
         let j = 0
         for (i = 0; i < curs.length; i++) {
             if (vals[i] > 0) {
-                balances[j] = { currency: curs[i + 1], balance: vals[i]/*, price: 0.0000*/ };
+                balances[j] = await { currency: curs[i + 1], balance: vals[i]/*, price: 0.0000*/ };
                 j++
             }
         }
     }
     //await f.cs(balances);
     return await balances;
+    }catch (error) {
+        console.log("EEE: ", error);
+    }
+    
 }
 
 async function priceAll() { //dev
