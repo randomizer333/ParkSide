@@ -358,6 +358,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             No: botNumber,
             relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
+            absoluteProfit2: absoluteProfit2.toFixed(8) + " " + quoteCurrency,
             minAmount__: minAmount + " " + baseCurrency,
             baseBalance: baseBalance + " " + baseCurrency,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
