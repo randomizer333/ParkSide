@@ -74,8 +74,8 @@ function macd(values) {     //log 70 should be bigger the better starts working 
 
 function doubleMacd(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
     let MACD = TI.MACD;
-    let macdInput = {
-        values: values,   //34,70,140n of inputs - slowPeriod = n of outputs 
+    let macdInput = {   // n of values = fastPeriod + slow period
+        values: values,   //38,76,152 n of inputs - slowPeriod = n of outputs 
         fastPeriod: 24,       //12,24,48
         slowPeriod: 52,       //26,52,104      when this is full it putout
         signalPeriod: 18,        //9,18,36
