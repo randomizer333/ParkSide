@@ -83,14 +83,14 @@ function msToMin(timeInMiliseconds) {
         var r = (timeInMiliseconds / 1000) / 60;
         return r;
 }
-function whole(part, percent) {  //whole is part divided by percentage
-        return part / (percent / 100);
+async function whole(part, percent) {  //whole is part divided by percentage
+        return await part / (percent / 100);
 }
-function percent(part, whole) {  //percent is part divided by whole
-        return (part / whole) * 100;
+async function percent(part, whole) {  //percent is part divided by whole
+        return await (part / whole) * 100;
 }
-function part(percent, whole) {  //part is percent multiplied by whole
-        return (percent / 100) * whole;
+async function part(percent, whole) {  //part is percent multiplied by whole
+        return await (percent / 100) * whole;
 }
 function cutArray(arr, num) {     //cuts array to length
         let result = new Array();

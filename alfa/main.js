@@ -17,7 +17,7 @@ const startValue = 50;//value of assets on start in USDT
 const quotes = [    //trading portofio
     "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
-    "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",/*
+    "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
     "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
@@ -68,9 +68,17 @@ async function setBots(quotes) {
     }
 
     for (const cur in quotes) {
-        await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossP, cur) }, setStartTime());
-        //f.cs("Number:"+cur)
+        await setTimeout(function () {bot(quotes[cur], ticker, "ud", stopLossP, cur) }, setStartTime());
+        /*runner()
+        async function runner() {   //for websocket
+            r = await bot(quotes[cur], ticker, "ud", stopLossP, cur)
+            if (await r) {
+                runner()
+            }
+        }*/
     }
+
+
 }
 
 // stop bots
@@ -121,13 +129,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
 
     function modul() {
-        function baseToQuote(amountBase, price) {
+        async function baseToQuote(amountBase, price) {
             amountQuote = amountBase * price;
-            return amountQuote;
+            return await amountQuote;
         }
-        function quoteToBase(amountQuote, price) {
+        async function quoteToBase(amountQuote, price) {
             amountBase = amountQuote / price;
-            return amountBase;
+            return await amountBase;
         }
         function selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
@@ -143,12 +151,12 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 //f.cs("Too low!");
             }
         }
-        function loger(value, length, array) {        //log FILO to array
+        async function loger(value, length, array) {        //log FILO to array
             while (array.length >= length) {
                 array.pop();
             }
             array.unshift(value);
-            return array;
+            return await array;
         }
         function balanceChanged(baseBalanceInQuote, quoteBalance, price) {
             if (bougthPrice == 0) {
@@ -166,23 +174,23 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         let tradingFeeAbs;
-        function safeSale(tradingFeeP, bougthPrice, price, minProfitP) {  //returns holding status
+        async function safeSale(tradingFeeP, bougthPrice, price, minProfitP) {  //returns holding status
             feeDouble = tradingFeeP * 2;
             //f.cs("FeeDouble:" + feeDouble);
-            tradingFeeAbs = f.part(feeDouble, bougthPrice);
+            tradingFeeAbs = await f.part(feeDouble, bougthPrice);
             //f.cs("tradingFeeAbs:" + tradingFeeAbs);
-            minProfitAbs = f.part(minProfitP, bougthPrice);
+            minProfitAbs = await f.part(minProfitP, bougthPrice);
             //f.cs("minProfitAbs:" + minProfitAbs);
-            sellPrice = bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
+            sellPrice = await bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
             //f.cs("sellPrice:" + sellPrice);
             if (sellPrice > price) {      //if bougthPrice is not high enough
-                hold = true;    	//dont allow sell force holding
+                r = true;    	//dont allow sell force holding
             } else {
-                hold = false;           //allow sale of holding to parked
+                r = false;           //allow sale of holding to parked
             }
-            return hold;
+            return await r;
         }
-        function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
+        async function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
             absStopLoss = f.part(stopLossP, sellPrice);
             lossPrice = sellPrice - absStopLoss;
             loss = sellPrice - price;     //default: loss = sellPrice - price;
@@ -217,6 +225,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
     }
     const m = modul();
+
 
     loop(symbol, strategy);
     botNo[botNumber] = setInterval(function () { loop(symbol, strategy) }, ticker);
@@ -259,7 +268,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             RSI = await TI.rsi(logAll); //RSI (30,70)
 
             MACD = await TI.macd(logAll);   //standard MACD
-            logMacd = await m.loger(MACD, 40, logMacd);
+            logMacd = await m.loger(MACD, 3, logMacd);
             MACDMA = await TI.ma(logMacd);  //MA of MACD
 
             DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
@@ -293,8 +302,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 (indicator.MA > 0) &&
                 (indicator.MA200 > 0) &&
                 (indicator.MACD >= 0) &&
-                (indicator.MAVol > 0) &&
-                (indicator.change24hP > 0)
+                (indicator.MAVol > 0)
             ) {
                 return 1;
             } else {    //no signal
@@ -320,8 +328,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = price;
                 orderType = ret.orderType;
-                bougthPrice = ret.bougthPrice;
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 orderType = ret.orderType;
@@ -355,7 +363,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         //main console output
         marketInfo = await {
-            No: botNumber,
+            No:botNumber,
             relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             absoluteProfit2: absoluteProfit2.toFixed(8) + " " + quoteCurrency,

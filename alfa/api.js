@@ -167,10 +167,11 @@ async function priceAll() { //dev
 async function balance(currency) {          //returns Array of Objects balances of an account
     try {
         r = await exchange.fetchBalance();
+        ret = await r[currency].total;
     } catch (error) {
         console.log("EEE: ", error);
     }
-    return await r[currency].total;
+    return await ret;
 }
 async function bid(symbol) {                //reurns Array of Objects bid,ask
     try {
@@ -206,7 +207,7 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 
         //spread = higher - high;   //ask spread
         //price = higher - (spread / 2); //ask spread
-        return price;
+        return await price;
     } catch (error) {
         console.log("EEE: ", error);
     }
@@ -217,7 +218,7 @@ async function cancel(orderId, symbol) {                 //cancels order with id
         //order was NOT filled
         filled = false;
         //f.sendMail("Canceled", JSON.stringify(r));
-        return filled;
+        return await filled;
     } catch (error) {
         //order was filled
         filled = true;
