@@ -14,8 +14,9 @@ const enableOrders = true;  //sim
 
 const startValue = 50;//value of assets on start in USDT
 
+
 const quotes = [    //trading portofio
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", /*"BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -26,6 +27,7 @@ const quotes = [    //trading portofio
 
 //requirements
 
+let s = require("../set.json")  //
 let a = require("./api.js");
 let f = require("./funk.js");
 let TI = require("./ti.js");
@@ -35,8 +37,8 @@ const ticker = f.minToMs(tickerMinutes);
 const numOfBots = quotes.length;
 const delay = (ticker / numOfBots);
 
-let botNo = new Array();
-let bestBuy = new Array();
+let botNo = [];
+let bestBuy = [];
 
 //  main setup
 let exInfo;
@@ -49,15 +51,12 @@ async function setup() {    //runs once at the begining of the program
     markets = await a.markets();
     await f.cs(markets);
     wallet = await a.wallet();
-
-    //wall = await a.priceAll();
-    //f.cs(wall);
-
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n")
     await setBots(quotes);
 }
 
 // set bots
+
 async function setBots(quotes) {
     cleared = false;
     let a = 0;
@@ -137,19 +136,20 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             amountBase = amountQuote / price;
             return await amountBase;
         }
-        function selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds
+        async function selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
                 sale = true;
-                return purchase = false;
+                purchase = false;
             } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalanceInBase > minAmount)) {    //can buy
                 sale = false;
                 more = false;
-                return purchase = true;
+                purchase = true;
             } else {
                 sale = false;
-                return purchase = false;
+                purchase = false;
                 //f.cs("Too low!");
             }
+            return await purchase;
         }
         async function loger(value, length, array) {        //log FILO to array
             while (array.length >= length) {
@@ -333,7 +333,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 orderType = ret.orderType;
-            } else if (sale && hold && stopLoss && downSignal) {    //stopLoss sell bad
+            } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered

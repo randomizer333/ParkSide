@@ -83,6 +83,19 @@ exInfos = {
     exchanges: ccxt.exchanges
 };
 
+
+//ohlcv("BTC/USDT")
+async function ohlcv(symbol){
+
+    const klines = await exchange.fetchOHLCV(symbol, "1d")
+    //resolve(klines)
+
+    //f.cs(klines)
+
+    return
+
+}
+
 async function volume(symbol) {
     try {
         v = await exchange.fetchTicker(symbol);

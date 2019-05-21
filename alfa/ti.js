@@ -3,10 +3,10 @@
 let TI = require("technicalindicators");
 let f = require("./funk.js");
 
-let stor = new Array();     //storage for direction
-function ma(arr) {     //trendMA between curent and last value
+let stor = [];     //storage for direction
+async function ma(arr) {     //trendMA between curent and last value
     let value = arr[0];
-    let ma = f.getAvgOfArray(arr);
+    let ma = await f.getAvgOfArray(arr);
     if (stor[1] == undefined) {
         stor[1] = value;
         stor[0] = value;
@@ -21,16 +21,16 @@ function ma(arr) {     //trendMA between curent and last value
     } else {    //all input data is the same
         trendMA = 0;
     }
-    return trendMA;
+    return await trendMA;
 }
 
-function rsi(values) {  //returns trndRSI   log15
+async function rsi(values) {  //returns trndRSI   log15
     let RSI = TI.RSI;
     let inputRSI = {
         values: values,
         period: 14   //9
     };
-    let r = RSI.calculate(inputRSI);
+    let r = await RSI.calculate(inputRSI);
     let n = r.length - 1;
     let lastRSI = r[n]; //last JSON
     if (lastRSI > 70) {
@@ -40,10 +40,10 @@ function rsi(values) {  //returns trndRSI   log15
     } else {
         trendRSI = 0;   //hold or park coz stationary
     };
-    return trendRSI;
+    return await trendRSI;
 }
 
-function macd(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
+async function macd(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
     let MACD = TI.MACD;
     let macdInput = {
         values: values,   //34,70,140n of inputs - slowPeriod = n of outputs 
@@ -53,7 +53,7 @@ function macd(values) {     //log 70 should be bigger the better starts working 
         SimpleMAOscillator: false,
         SimpleMASignal: false
     };
-    let r = MACD.calculate(macdInput);      //array with JSONs
+    let r = await MACD.calculate(macdInput);      //array with JSONs
     let lastMACD;
     r ? lastMACD = r[r.length - 1] : lastMACD = 0; //last JSON
     let macdHistogram = 0;
@@ -63,16 +63,16 @@ function macd(values) {     //log 70 should be bigger the better starts working 
         macdHistogram = lastMACD.histogram;
         if (!isNaN(macdHistogram)) {     //isNumber
             //f.sendMail("Started MACD", r);
-            return macdHistogram;
+            return await macdHistogram;
         }else{
             return 0;
         }
     } else {
-        return macdHistogram;
+        return await macdHistogram;
     }
 }
 
-function doubleMacd(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
+async function doubleMacd(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
     let MACD = TI.MACD;
     let macdInput = {   // n of values = fastPeriod + slow period
         values: values,   //38,76,152 n of inputs - slowPeriod = n of outputs 
@@ -82,7 +82,7 @@ function doubleMacd(values) {     //log 70 should be bigger the better starts wo
         SimpleMAOscillator: false,
         SimpleMASignal: false
     };
-    let r = MACD.calculate(macdInput);      //array with JSONs
+    let r = await MACD.calculate(macdInput);      //array with JSONs
     let lastMACD;
     r ? lastMACD = r[r.length - 1] : lastMACD = 0; //last JSON
     let macdHistogram = 0;
@@ -92,16 +92,16 @@ function doubleMacd(values) {     //log 70 should be bigger the better starts wo
         macdHistogram = lastMACD.histogram;
         if (!isNaN(macdHistogram)) {     //isNumber
             //f.sendMail("Started MACD", r);
-            return macdHistogram;
+            return await macdHistogram;
         }else{
             return 0;
         }
     } else {
-        return macdHistogram;
+        return await macdHistogram;
     }
 }
 
-function quadMacd(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
+async function quadMacd(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
     let MACD = TI.MACD;
     let macdInput = {
         values: values,   //34,70,140n of inputs - slowPeriod = n of outputs 
@@ -111,8 +111,9 @@ function quadMacd(values) {     //log 70 should be bigger the better starts work
         SimpleMAOscillator: false,
         SimpleMASignal: false
     };
-    let r = MACD.calculate(macdInput);      //array with JSONs
+    let r = await MACD.calculate(macdInput);      //array with JSONs
     let lastMACD;
+    f.cs(lastMACD)
     r ? lastMACD = r[r.length - 1] : lastMACD = 0; //last JSON
     let macdHistogram = 0;
     if (lastMACD) {
@@ -121,15 +122,14 @@ function quadMacd(values) {     //log 70 should be bigger the better starts work
         macdHistogram = lastMACD.histogram;
         if (!isNaN(macdHistogram)) {     //isNumber
             //f.sendMail("Started MACD", r);
-            return macdHistogram;
+            return await macdHistogram;
         }else{
             return 0;
         }
     } else {
-        return macdHistogram;
+        return await macdHistogram;
     }
 }
-
 
 //ic();
 function ic(values){  //ichimokuCloud(conversionLinePeriods, baseLinePeriods, leadingSpanPeriods, laggingSpanPeriods)
