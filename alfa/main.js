@@ -27,6 +27,7 @@ const quotes = [    //trading portofio
 
 //requirements
 
+let s = require("../set.json")  //
 let a = require("./api.js");
 let f = require("./funk.js");
 let TI = require("./ti.js");
@@ -332,7 +333,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 orderType = ret.orderType;
-            } else if (sale && hold && stopLoss && downSignal) {    //stopLoss sell bad
+            } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
