@@ -113,7 +113,7 @@ async function quadMacd(values) {     //log 70 should be bigger the better start
     };
     let r = await MACD.calculate(macdInput);      //array with JSONs
     let lastMACD;
-    f.cs(lastMACD)
+    //f.cs(lastMACD)
     r ? lastMACD = r[r.length - 1] : lastMACD = 0; //last JSON
     let macdHistogram = 0;
     if (lastMACD) {
