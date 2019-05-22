@@ -1,22 +1,28 @@
 /* 
 1.crypto to fiat bot
-2.intracrypto trading bot
-3.highriser catcher bot
+2.highriser catcher bot
+3.intracrypto trading bot
 */
+
+//requirements
+
+let s = require("../set.json")
+let a = require("./api.js");
+let f = require("./funk.js");
+let TI = require("./ti.js");
 
 // init
 
-const tickerMinutes = 3;    //1,5,10,60
-const stopLossP = 2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
-const portion = 0.99;   //part of balance to spend
+const tickerMinutes = s.tickerMinutes;    //1,3,5, for all 10,60,120
+const stopLossP = s.stopLossP//2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+const portion = s.portion//0.99;   //part of balance to spend
 const minProfitP = 0.1; //holding addition
-const enableOrders = true;  //sim
+const enableOrders = s.enableOrders//true;  //sim
 
 const startValue = 50;//value of assets on start in USDT
 
-
-const quotes = [    //trading portofio
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", /*"BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+let quotes = [    //trading portofio
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -25,17 +31,10 @@ const quotes = [    //trading portofio
     "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
 ]
 
-//requirements
-
-let s = require("../set.json")  //
-let a = require("./api.js");
-let f = require("./funk.js");
-let TI = require("./ti.js");
-
 
 const ticker = f.minToMs(tickerMinutes);
-const numOfBots = quotes.length;
-const delay = (ticker / numOfBots);
+let numOfBots
+let delay
 
 let botNo = [];
 let bestBuy = [];
@@ -51,13 +50,21 @@ async function setup() {    //runs once at the begining of the program
     markets = await a.markets();
     await f.cs(markets);
     wallet = await a.wallet();
+    await f.cs(wallet);
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n")
+    s.markets == ("all" || "ALL") ? quotes = markets : ""
     await setBots(quotes);
 }
 
 // set bots
 
 async function setBots(quotes) {
+    
+    numOfBots = await quotes.length;
+    //f.cs("numOfBots"+numOfBots)
+    delay = await (ticker / numOfBots);
+    //f.cs("delay"+delay)
+
     cleared = false;
     let a = 0;
     function setStartTime() {
@@ -66,8 +73,8 @@ async function setBots(quotes) {
         return r;
     }
 
-    for (const cur in quotes) {
-        await setTimeout(function () {bot(quotes[cur], ticker, "ud", stopLossP, cur) }, setStartTime());
+    for (const cur in await quotes) {
+        await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossP, cur) }, setStartTime());
         /*runner()
         async function runner() {   //for websocket
             r = await bot(quotes[cur], ticker, "ud", stopLossP, cur)
@@ -361,9 +368,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         let absoluteProfit = await f.part(relativeProfit, quoteBalance);
         let absoluteProfit2 = await f.part(relativeProfit, baseBalanceInQuote);
 
+
+
         //main console output
         marketInfo = await {
-            No:botNumber,
+            No: botNumber,
             relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             absoluteProfit2: absoluteProfit2.toFixed(8) + " " + quoteCurrency,
@@ -390,8 +399,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             logLength: logMA200.length,
             indicator: indicator,
             orderType: orderType,
-            quoteMarkets: JSON.stringify(quotes),
-            wallet: JSON.stringify(wallet),
+            //quoteMarkets: JSON.stringify(quotes),
+            wallet: JSON.stringify(wallet)
             //bestBuy: JSON.stringify(bestBuy),
         }
         //mailer

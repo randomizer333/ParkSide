@@ -205,18 +205,18 @@ async function ask(symbol) {                //reurns Array of Objects bid,ask
 async function price(symbol) {                //reurns Array of Objects bid,ask
     try {
         r = await exchange.fetchOrderBook(symbol);
-        higher = r.asks[1][0];
-        high = r.asks[0][0];
-        low = r.bids[0][0];
-        lower = r.bids[1][0];
+        higher = await r.asks[1][0];
+        high = await r.asks[0][0];
+        low = await r.bids[0][0];
+        lower = await r.bids[1][0];
         //f.cs("high: "+high+" higher: "+higher);
         //f.cs("low: "+low+" lower: "+lower);
 
         //spread = low - lower;   //bid spread
         //price = low - (spread / 2); //bid spread
 
-        spread = high - low;        //real spread
-        price = high - (spread / 2);//real spread
+        spread = await high - low;        //real spread
+        price = await high - (spread / 2);//real spread
 
         //spread = higher - high;   //ask spread
         //price = higher - (spread / 2); //ask spread
