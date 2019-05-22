@@ -5,19 +5,32 @@
 */
 
 //requirements
-
-let s = require("../set.json")
-let a = require("./api.js");
-let f = require("./funk.js");
-let TI = require("./ti.js");
+let s,a,f,TI
+req();
+async function req() {
+    s = await require("../set.json")
+    a = await require("./api.js");
+    f = await require("./funk.js");
+    TI = await require("./ti.js");
+    return await init()
+}
 
 // init
-
-const tickerMinutes = s.tickerMinutes;    //1,3,5, for all 10,60,120
-const stopLossP = s.stopLossP//2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
-const portion = s.portion//0.99;   //part of balance to spend
-const minProfitP = 0.1; //holding addition
-const enableOrders = s.enableOrders//true;  //sim
+let tickerMinutes,
+    stopLossP,
+    portion,
+    minProfitP,
+    enableOrders,
+    ticker
+async function init() {
+    tickerMinutes = await s.tickerMinutes;    //1,3,5, for all 10,60,120
+    stopLossP = await s.stopLossP//2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
+    portion = await s.portion//0.99;   //part of balance to spend
+    minProfitP = await 0.1; //holding addition
+    enableOrders = await s.enableOrders//true;  //sim
+    ticker = await f.minToMs(tickerMinutes);
+    return await setup();
+}
 
 const startValue = 50;//value of assets on start in USDT
 
@@ -31,8 +44,6 @@ let quotes = [    //trading portofio
     "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
 ]
 
-
-const ticker = f.minToMs(tickerMinutes);
 let numOfBots
 let delay
 
@@ -42,7 +53,7 @@ let bestBuy = [];
 //  main setup
 let exInfo;
 let wallet;
-setup();
+//setup();
 async function setup() {    //runs once at the begining of the program
     exInfo = a.exInfos;
     tradingFeeP = exInfo.feeMaker * 100;
@@ -59,7 +70,7 @@ async function setup() {    //runs once at the begining of the program
 // set bots
 
 async function setBots(quotes) {
-    
+
     numOfBots = await quotes.length;
     //f.cs("numOfBots"+numOfBots)
     delay = await (ticker / numOfBots);
