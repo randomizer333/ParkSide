@@ -5,7 +5,7 @@
 */
 
 //requirements
-let s,a,f,TI
+let s, a, f, TI
 req();
 async function req() {
     s = await require("../set.json")
@@ -57,8 +57,11 @@ let wallet;
 async function setup() {    //runs once at the begining of the program
     exInfo = a.exInfos;
     tradingFeeP = exInfo.feeMaker * 100;
-    f.cs(exInfo);
+    await f.cs(exInfo);
     markets = await a.markets();
+    await f.cs("Ms: " + markets.length)
+    markets = await a.filterAll(markets);
+    await f.cs("Ms: " + markets.length)
     await f.cs(markets);
     wallet = await a.wallet();
     await f.cs(wallet);
@@ -105,6 +108,38 @@ function clear() {
         clearInterval(quotes[cur]);
         //f.cs("Number:"+cur)
     }
+}
+
+// global indicator
+
+let globalLog = []
+let history = [];
+async function topRiser(change24hP, symbol, botNumber) {
+    try {
+        globalLog[botNumber] = change24hP
+        max = f.getMaxOfArray(globalLog)
+        avg = f.getAvgOfArray(globalLog)
+        history[botNumber] = {change24hP, symbol, botNumber}
+
+        let sortedHistory = [];
+        sortedHistory = await history.sort(SortByAtribute);
+        function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
+            return ((x.change24hP == y.change24hP) ? 0 : ((x.change24hP > y.change24hP) ? - 1 : 1));
+        }
+
+
+        f.cs("BEST YET:")
+        f.cs(sortedHistory[0])
+        f.cs("average rise: " + avg)
+
+        if ((change24hP > avg) && (change24hP > 0)) {
+            return 1;    //up trend
+        } else {
+            return 0;
+        }
+    } catch (error) {
+        globalLog[botNumber] = 0
+    };
 }
 
 // main loop
@@ -277,6 +312,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             logMA3 = await m.loger(price, 3, logMA3);
             logMA200 = await m.loger(price, 200, logMA200);
 
+            rise = await topRiser(change24hP, symbol, botNumber);
+            //f.cs("rise: "+ rise);
 
             //technical analysis
             MA = await TI.ma(logMA3);   //MA of last 3 prices
@@ -310,6 +347,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 MA24hP: MA24hP,
                 MACDMA: MACDMA,
                 MACDVol: MACDVol,
+                RISE: rise
             }
         }
         //await f.cs(indicator);
@@ -317,10 +355,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         let upSignal = await up(indicator);
         function up(indicator) {
             if (        //up signal
-                (indicator.MA > 0) &&
-                (indicator.MA200 > 0) &&
-                (indicator.MACD >= 0) &&
-                (indicator.MAVol > 0)
+                (indicator.MA > 0)
+                && (indicator.MA200 > 0)
+                && (indicator.MACD >= 0)
+                && (indicator.MAVol > 0)
+                && (indicator.rise > 0)
             ) {
                 return 1;
             } else {    //no signal
@@ -331,8 +370,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         let downSignal = await down(indicator);
         function down(indicator) {
             if (        //down signal
-                (indicator.MA < 0) &&
-                (indicator.MA200 < 0)
+                (indicator.MA < 0)
+                && (indicator.MA200 < 0)
             ) {
                 return 1;
             } else {    //no signal
