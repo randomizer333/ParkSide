@@ -34,6 +34,15 @@ function sendMail(subject, message, to) {
         });
 }
 
+
+async function loger(value, length, array) {        //log FILO to array
+        while (array.length >= length) {
+            array.pop();
+        }
+        array.unshift(value);
+        return await array;
+    }
+
 function cs(object) {    //console logs with json.stringify for console wraping
         console.log(JSON.stringify(object));
 }
@@ -118,7 +127,7 @@ function getAvgOfArray(numArray) {	//in: numericArray out: avgValue
 }
 
 function cleanArray(arr) {   // Will remove all falsy values: undefined, null, 0, false, NaN and "" (empty string)
-        var newArray = new Array();
+        var newArray = []
         for (var i = 0; i < arr.length; i++) {
                 if (arr[i]) {
                         newArray.push(arr[i]);
@@ -159,7 +168,7 @@ function jsonToArray(json, attribute) {
         return arr;
 }
 
-
+exports.loger = loger;
 exports.cleanArray = cleanArray;
 exports.sendMail = sendMail;
 exports.csL = csL;

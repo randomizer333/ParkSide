@@ -85,7 +85,7 @@ exInfos = {
 
 
 //ohlcv("BTC/USDT")
-async function ohlcv(symbol){
+async function ohlcv(symbol) {
 
     const klines = await exchange.fetchOHLCV(symbol, "1d")
     //resolve(klines)
@@ -127,41 +127,41 @@ async function minAmount(symbol) {          //returns minimum amount of base all
 //sellAll(wallet);
 async function sellAll(array) {
     for (var cell in array) {
-        r = await sell(array[cell].currency+"/USDT");
+        r = await sell(array[cell].currency + "/USDT");
     }
     return r;
 }
 
 let curs;
 async function wallet() {                   //returns Array of Objects balances of an account
-    try{
+    try {
         r = await exchange.fetchBalance();
-    curs = Object.keys(r);
-    vals = Object.values(r.total);
-    let balances = [];
-    parseBalances();
-    async function parseBalances() {
-        let j = 0
-        for (i = 0; i < curs.length; i++) {
-            if (vals[i] > 0) {
-                balances[j] = await { currency: curs[i + 1], balance: vals[i]/*, price: 0.0000*/ };
-                j++
+        curs = Object.keys(r);
+        vals = Object.values(r.total);
+        let balances = [];
+        parseBalances();
+        async function parseBalances() {
+            let j = 0
+            for (i = 0; i < curs.length; i++) {
+                if (vals[i] > 0) {
+                    balances[j] = await { currency: curs[i + 1], balance: vals[i]/*, price: 0.0000*/ };
+                    j++
+                }
             }
         }
-    }
-    //await f.cs(balances);
-    return await balances;
-    }catch (error) {
+        //await f.cs(balances);
+        return await balances;
+    } catch (error) {
         console.log("EEE: ", error);
     }
-    
+
 }
 
 async function priceAll() { //dev
     let wal;
     wal = await wallet();
     for (i = 0; i < wal.length; i++) {
-        sym = wal[i].currency+"/BTC";
+        sym = wal[i].currency + "/BTC";
         r = price(sym);
         wal[i].price;
     }
@@ -223,6 +223,7 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         return await price;
     } catch (error) {
         console.log("EEE: ", error);
+        //price(symbol)
     }
 }
 async function cancel(orderId, symbol) {                 //cancels order with id
@@ -311,6 +312,37 @@ async function markets() {                   //load all available markets on exc
     }
 }
 
+async function filterAll(markets, qus) {
+    qus = ["USDT", "BTC", "BNB", "ETH"]
+    r1 = await filter(qus[0], markets)
+    r2= await filter(qus[1], markets)
+    r3 = await filter(qus[2], markets)
+    r4 = await filter(qus[3], markets)
+    
+    //r = r1.concat(r2);
+    r = r1.concat(r2,r3);
+    //r = r1.concat(r2,r3,r4);
+    return await r;
+}
+
+//symbols2 = await filter(mainQuoteCurrency, symbols);
+async function filter(mainQuoteCurrency, syms) {
+    let results = [];
+    let quote = [];
+    f.cs("Main quote: " + mainQuoteCurrency);
+    for (i = 0; i < syms.length - 1; i++) {
+        quote = f.splitSymbol(syms[i], "second");
+        if (quote == mainQuoteCurrency) {
+            results[i] = syms[i];
+        }
+    }
+    let results2;
+    results2 = await f.cleanArray(results);
+    f.cs(results2);
+    return results2;
+}
+
+//selects top riser
 async function bestbuy(num, mainQuoteCurrency) {
     let symbols = await markets();  //get all market symbols
 
@@ -365,7 +397,7 @@ async function bestbuy(num, mainQuoteCurrency) {
         return await bestbuy;
     };
 
-    let sortedMarks = new Array();
+    let sortedMarks = [];
     sortedMarks = await bestbuy.sort(SortByAtribute);
     function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
         return ((x.change == y.change) ? 0 : ((x.change > y.change) ? - 1 : 1));
@@ -446,6 +478,8 @@ async function microPrice(num, mainQuoteCurrency) {
 
 // Exports of this module
 
+exports.filterAll = filterAll;
+exports.filter = filter;
 exports.priceAll = priceAll;
 exports.volume = volume;
 exports.microPrice = microPrice;
