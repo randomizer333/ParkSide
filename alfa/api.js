@@ -319,8 +319,9 @@ async function filterAll(markets, qus) {
     r3 = await filter(qus[2], markets)
     r4 = await filter(qus[3], markets)
     
+    r = r1
     //r = r1.concat(r2);
-    r = r1.concat(r2,r3);
+    //r = r1.concat(r2,r3);
     //r = r1.concat(r2,r3,r4);
     return await r;
 }

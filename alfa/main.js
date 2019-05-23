@@ -32,8 +32,6 @@ async function init() {
     return await setup();
 }
 
-const startValue = 50;//value of assets on start in USDT
-
 let quotes = [    //trading portofio
     "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
@@ -127,10 +125,11 @@ async function topRiser(change24hP, symbol, botNumber) {
             return ((x.change24hP == y.change24hP) ? 0 : ((x.change24hP > y.change24hP) ? - 1 : 1));
         }
 
-
         f.cs("BEST YET:")
-        f.cs(sortedHistory[0])
+        f.cs(sortedHistory[0])  //top ten
         f.cs("average rise: " + avg)
+
+        
 
         if ((change24hP > avg) && (change24hP > 0)) {
             return 1;    //up trend
@@ -359,6 +358,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 && (indicator.MA200 > 0)
                 && (indicator.MACD >= 0)
                 && (indicator.MAVol > 0)
+                && (indicator.MA24hP >=0)
                 && (indicator.rise > 0)
             ) {
                 return 1;
@@ -371,7 +371,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         function down(indicator) {
             if (        //down signal
                 (indicator.MA < 0)
-                && (indicator.MA200 < 0)
+                && (indicator.MA200 <= 0)
             ) {
                 return 1;
             } else {    //no signal
