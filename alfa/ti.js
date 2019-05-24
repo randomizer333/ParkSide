@@ -15,9 +15,9 @@ async function ma(arr) {     //trendMA between curent and last value
     stor[0] = value;
     let direction = stor[0] - ma;
     if (direction > 0) {//goin UP buy coz rising
-        trendMA = 1;   
+        trendMA = direction;   
     } else if(direction < 0){//going DOWN hold or park coz stationary
-        trendMA = -1;   
+        trendMA = direction;   
     } else {    //all input data is the same
         trendMA = 0;
     }

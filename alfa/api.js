@@ -176,7 +176,6 @@ async function priceAll() { //dev
     return wal;
 }
 
-
 async function balance(currency) {          //returns Array of Objects balances of an account
     try {
         r = await exchange.fetchBalance();
@@ -223,7 +222,7 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         return await price;
     } catch (error) {
         console.log("EEE: ", error);
-        //price(symbol)
+        return price = 0
     }
 }
 async function cancel(orderId, symbol) {                 //cancels order with id
@@ -319,8 +318,8 @@ async function filterAll(markets, qus) {
     r3 = await filter(qus[2], markets)
     r4 = await filter(qus[3], markets)
     
-    r = r1
-    //r = r1.concat(r2);
+    //r = r1
+    r = r1.concat(r2);
     //r = r1.concat(r2,r3);
     //r = r1.concat(r2,r3,r4);
     return await r;
