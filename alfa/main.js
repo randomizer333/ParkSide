@@ -33,7 +33,7 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -110,34 +110,41 @@ function clear() {
 
 // global indicator
 
-let globalLog = []
-let history = [];
-async function topRiser(change24hP, symbol, botNumber) {
+const history = [];
+async function globalLog(value, symbol, botN, rise) {
+    history[botN] = await { value, symbol, botN, rise }
+
+    //await console.dir(history)
+    return history
+}
+
+let sorted = [];
+async function sortAO(arr) {
     try {
-        globalLog[botNumber] = change24hP
-        max = f.getMaxOfArray(globalLog)
-        avg = f.getAvgOfArray(globalLog)
-        history[botNumber] = {change24hP, symbol, botNumber}
 
-        let sortedHistory = [];
-        sortedHistory = await history.sort(SortByAtribute);
-        function SortByAtribute(x, y) { //sort array of JSON objects by one of its properties
-            return ((x.change24hP == y.change24hP) ? 0 : ((x.change24hP > y.change24hP) ? - 1 : 1));
+        toSort = arr.slice().sort();    //copy array
+
+        for (i = 0; i < await toSort.legth; i++) {   //clear rise awards
+            toSort[i].rise = 0
         }
 
-        f.cs("BEST YET:")
-        f.cs(sortedHistory[0])  //top ten
-        f.cs("average rise: " + avg)
+        sorted = await toSort.sort(function (a, b) {  //sort array of JSON objects by one of its properties
+            return b.value - a.value;
+        })
 
+        for (i = 0; i < 3; i++) {   //give riser award
+            sorted[i].rise = 1
+        }
         
+        /*
+        for (i = 0; i < 10; i++) {  //display top n
+            await f.cs(sorted[i])
+        }*/
 
-        if ((change24hP > avg) && (change24hP > 0)) {
-            return 1;    //up trend
-        } else {
-            return 0;
-        }
+        return 1
+
     } catch (error) {
-        globalLog[botNumber] = 0
+        f.cs("EEE: " + error)
     };
 }
 
@@ -307,12 +314,10 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             //market data colection
             logAll = await m.loger(price, 105, logAll);
             log24hP = await m.loger(change24hP, 3, log24hP);
-            logVol = await m.loger(volume, 5, logVol);
+            logVol = await m.loger(volume, 3, logVol);
             logMA3 = await m.loger(price, 3, logMA3);
             logMA200 = await m.loger(price, 200, logMA200);
 
-            rise = await topRiser(change24hP, symbol, botNumber);
-            //f.cs("rise: "+ rise);
 
             //technical analysis
             MA = await TI.ma(logMA3);   //MA of last 3 prices
@@ -331,6 +336,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             MA24hP = await TI.ma(log24hP);  //MA3 of 24h price change
 
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
+            gl = await globalLog(MAVol, symbol, botNumber, 0);
+            rise = sortAO(gl);
+            //f.cs("rise: "+ rise);
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
 
@@ -358,8 +366,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 && (indicator.MA200 > 0)
                 && (indicator.MACD >= 0)
                 && (indicator.MAVol > 0)
-                && (indicator.MA24hP >=0)
-                && (indicator.rise > 0)
+                && (indicator.MA24hP >= 0)
+                //&& (indicator.rise > 0)
             ) {
                 return 1;
             } else {    //no signal
@@ -450,7 +458,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             indicator: indicator,
             orderType: orderType,
             //quoteMarkets: JSON.stringify(quotes),
-            wallet: JSON.stringify(wallet)
+            // wallet: JSON.stringify(wallet)
             //bestBuy: JSON.stringify(bestBuy),
         }
         //mailer
