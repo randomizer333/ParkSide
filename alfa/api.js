@@ -319,8 +319,8 @@ async function filterAll(markets, qus) {
     r3 = await filter(qus[2], markets)
     r4 = await filter(qus[3], markets)
     
-    r = r1            //USDT
-    //r = r1.concat(r2);  //USDT BTC
+    r = r1                      //USDT
+    //r = r1.concat(r2);        //USDT BTC
     //r = r1.concat(r2,r3);     //USDT BTC BNB
     //r = r1.concat(r2,r3,r4);  //USDT BTC BNB ETH
     return await r;
