@@ -33,7 +33,7 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "ADA/USDT", /*"BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -122,24 +122,59 @@ let sorted = [];
 async function sortAO(arr) {
     try {
 
-        toSort = arr.slice().sort();    //copy array
 
-        for (i = 0; i < await toSort.legth; i++) {   //clear rise awards
-            toSort[i].rise = 0
+        let arr1 = await copyArr(arr)
+        async function copyArr(toCopy) {//copy array
+            let copy = []
+            copy = await toCopy.slice().sort();
+            return await copy
         }
+        await f.cs("copy: ")
+        await f.cs(arr1)
 
-        sorted = await toSort.sort(function (a, b) {  //sort array of JSON objects by one of its properties
-            return b.value - a.value;
-        })
-
-        for (i = 0; i < 3; i++) {   //give riser award
-            sorted[i].rise = 1
+        let arr2 = await clearAward(arr1)
+        async function clearAward(toClear) {
+            let cleared = await toClear.slice().sort();
+            for (i = 0; i < toClear.legth; i++) {   //clear rise awards
+                cleared[i].rise = 0
+            }
+            return await cleared
         }
-        
-        /*
+        await f.cs("cleared: ")
+        await f.cs(arr2)
+
+        let arr3 = await sortAward(arr2)
+        async function sortAward(toSort) {
+            let sorted = await toSort.slice().sort();
+            sorted = await toSort.sort(function (a, b) {  //sort array of JSON objects by one of its properties
+                return b.value - a.value;
+            })
+            return await sorted
+        }
+        await f.cs("sorted: ")
+        await f.cs(arr3)
+
+        let arr4 = await award(arr3, 3)
+        async function award(toAward, N) {
+            let awarded = await toAward.slice().sort();
+            /*if (toAward.length > N) {
+                len
+            }*/
+            for (i = 0; i < 1; i++) {   //give riser award
+                awarded[i].rise = 1
+                f.cs("awarded: " + awarded[i].symbol);
+            }
+            return await awarded
+        }
+        await f.cs("awarded")
+        await f.cs(arr4)
+
+
+
+
         for (i = 0; i < 10; i++) {  //display top n
-            await f.cs(sorted[i])
-        }*/
+            await f.cs(arr4[i])
+        }
 
         return 1
 
@@ -336,8 +371,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             MA24hP = await TI.ma(log24hP);  //MA3 of 24h price change
 
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
-            gl = await globalLog(MAVol, symbol, botNumber, 0);
-            rise = sortAO(gl);
+            //gl = await globalLog(MAVol, symbol, botNumber, 0);
+            //rise = sortAO(gl);
             //f.cs("rise: "+ rise);
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -353,8 +388,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 QMACD: QMACD,
                 MA24hP: MA24hP,
                 MACDMA: MACDMA,
-                MACDVol: MACDVol,
-                RISE: rise
+                MACDVol: MACDVol
+                //RISE: rise
             }
         }
         //await f.cs(indicator);

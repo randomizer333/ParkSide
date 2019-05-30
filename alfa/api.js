@@ -7,6 +7,7 @@ This file should contain all the api callbacks to module ccxt
 const f = require("./funk.js");           //common functions
 const keys = require("../keys.json");     //keys file location
 const ccxt = require('ccxt');             //api module
+const set = require("../set.json");
 //const main = require("./main.js");             //api module
 
 let m;
@@ -318,10 +319,10 @@ async function filterAll(markets, qus) {
     r3 = await filter(qus[2], markets)
     r4 = await filter(qus[3], markets)
     
-    //r = r1
-    r = r1.concat(r2);
-    //r = r1.concat(r2,r3);
-    //r = r1.concat(r2,r3,r4);
+    r = r1            //USDT
+    //r = r1.concat(r2);  //USDT BTC
+    //r = r1.concat(r2,r3);     //USDT BTC BNB
+    //r = r1.concat(r2,r3,r4);  //USDT BTC BNB ETH
     return await r;
 }
 
