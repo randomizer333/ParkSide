@@ -219,6 +219,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let hold;       //safeSale
 
     let stopLoss;   //checkStopLoss
+    let lossPrice;  //checkStopLoss
 
 
     function modul() {
@@ -255,15 +256,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         function balanceChanged(baseBalanceInQuote, quoteBalance, price) {
             if (bougthPrice == 0) {
                 bougthPrice = price;
-            }
-            /*
-            if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
+            } else if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
                     bougthPrice = price;
                     more = true;
                     console.log("Bougth price updated: " + symbol);
                 }
-            }*/
+            }
             return bougthPrice;
         }
 
@@ -285,20 +284,26 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return await r;
         }
         async function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
-            absStopLoss = f.part(stopLossP, sellPrice);
-            lossPrice = sellPrice - absStopLoss;
-            loss = sellPrice - price;     //default: loss = sellPrice - price;
-            relativeLoss = f.percent(loss, sellPrice);
+            absStopLoss = await f.part(stopLossP, sellPrice);
+            lossPrice = await sellPrice - absStopLoss;
+            loss = await sellPrice - price;     //default: loss = sellPrice - price;
+            relativeLoss = await f.percent(loss, sellPrice);
             /*f.cs("loss       : " + loss);
             f.cs(" > is biger than");
             f.cs("absStopLoss: " + absStopLoss);
             f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
             f.cs("lossPrice: " + lossPrice);*/
-            if (loss > absStopLoss) {
-                return true;         //sell ASAP!!!
+            if (price <= lossPrice) {
+                return await true   //sell ASAP!!!
             } else {
-                return false;             //hodl
+                return await false  //hodl
             }
+            /*
+            if (loss > absStopLoss) {
+                return await true;   //sell ASAP!!!      
+            } else {
+                return await false;  //hodl
+            }*/
         }
 
         function mainMarketCap(fiatPrice, fiatVol) {
@@ -414,7 +419,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         function down(indicator) {
             if (        //down signal
                 (indicator.MA < 0)
-                && (indicator.MA200 <= 0)
+                //&& (indicator.MA200 <= 0)
             ) {
                 return 1;
             } else {    //no signal
@@ -424,8 +429,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
 
         // make strategic decision about order type
-        orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders);
-        async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders) { //trendMacdTrend, MAVol
+        orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
+        async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = price;
@@ -466,33 +471,35 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         //main console output
         marketInfo = await {
             No: botNumber,
-            relativeProfit: (relativeProfit + minProfitP).toFixed(3) + " %",
-            absoluteProfit: absoluteProfit.toFixed(8) + " " + quoteCurrency,
+            relativeProfit_: (relativeProfit + minProfitP).toFixed(3) + " %",
+            absoluteProfit_: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             absoluteProfit2: absoluteProfit2.toFixed(8) + " " + quoteCurrency,
-            minAmount__: minAmount + " " + baseCurrency,
-            baseBalance: baseBalance + " " + baseCurrency,
+            baseBalance_______: baseBalance + " " + baseCurrency,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
-            quoteBalance: quoteBalance + " " + quoteCurrency,
+            quoteBalance______: quoteBalance + " " + quoteCurrency,
             quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
-            time: f.getTime(),
-            ticker: tickerMinutes + " min",
+            minAmount_________: minAmount + " " + baseCurrency,
+            time_____: f.getTime(),
+            ticker___: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
-            symbol: symbol,
+            symbol___: symbol,
+            sellPrice__: sellPrice.toFixed(8) + " " + symbol,
+            price______: price.toFixed(8) + " " + symbol,
             bougthPrice: bougthPrice.toFixed(8) + " " + symbol,
-            sellPrice: sellPrice.toFixed(8) + " " + symbol,
-            price: price.toFixed(8) + " " + symbol,
-            purchase: purchase,
-            upSignal: upSignal,
-            downSignal: downSignal,
+            lossPrice__: lossPrice.toFixed(8) + " " + symbol,
+            purchase___: purchase,
+            more_______: more,
+            upSignal___: upSignal,
+            downSignal_: downSignal,
             sellConditions: {
                 sale: sale,
                 hold: hold,
                 stopLoss: stopLoss,
             },
             logLength: logMA200.length,
+            orderType__: orderType,
             indicator: indicator,
-            orderType: orderType,
-            //quoteMarkets: JSON.stringify(quotes),
+            quoteMarkets: JSON.stringify(quotes),
             // wallet: JSON.stringify(wallet)
             //bestBuy: JSON.stringify(bestBuy),
         }
