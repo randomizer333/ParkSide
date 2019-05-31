@@ -131,6 +131,8 @@ async function quadMacd(values) {     //log 70 should be bigger the better start
     }
 }
 
+
+
 //ic();
 function ic(values){  //ichimokuCloud(conversionLinePeriods, baseLinePeriods, leadingSpanPeriods, laggingSpanPeriods)
     let IC = IchimokuCloud;
