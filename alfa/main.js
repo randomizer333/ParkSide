@@ -313,6 +313,25 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return MCapMA;
         }
 
+        async function change1h(priceLog, tickerInMs, price, durationInMinutes) {
+            /*f.cs("priceLog: "+priceLog)
+            f.cs("tickerInMinutes: "+tickerInMs)
+            f.cs("price: "+price)
+            f.cs("durationInMinutes: "+durationInMinutes)*/
+            index1h = await (f.minToMs(durationInMinutes) / tickerInMs) - 1
+            price1h = await priceLog[index1h]
+            diff = await price - price1h
+            ch1h = await f.percent(diff, price1h)
+            /*await f.cs(index1h)
+            await f.cs(price1h)
+            await f.cs(ch1h)*/
+            if (await ch1h) {
+                return ch1h
+            } else {
+                return 0
+            }
+        }
+
         return {
             checkStopLoss: checkStopLoss,
             safeSale: safeSale,
@@ -321,6 +340,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             selectCurrency: selectCurrency,
             loger: loger,
             balanceChanged: balanceChanged,
+            change1h: change1h
         }
     }
     const m = modul();
@@ -358,7 +378,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             logMA3 = await m.loger(price, 3, logMA3);
             logMA200 = await m.loger(price, 200, logMA200);
 
-
             //technical analysis
             MA = await TI.ma(logMA3);   //MA of last 3 prices
 
@@ -373,6 +392,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
             QMACD = await TI.quadMacd(logAll);      //quadruple MACD
 
+            change1hP = await m.change1h(logAll, ticker, price, 60)  //price change percentage in duration
             MA24hP = await TI.ma(log24hP);  //MA3 of 24h price change
 
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
@@ -388,6 +408,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 MACD: MACD,
                 MAVol: MAVol,
                 change24hP: change24hP,
+                change1hP: change1hP,
                 DMACD: DMACD,
                 RSI: RSI,
                 QMACD: QMACD,
@@ -406,7 +427,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 && (indicator.MA200 > 0)
                 && (indicator.MACD >= 0)
                 && (indicator.MAVol > 0)
-                && (indicator.MA24hP >= 0)
+                && (indicator.change1hP >= 0)
                 //&& (indicator.rise > 0)
             ) {
                 return 1;
