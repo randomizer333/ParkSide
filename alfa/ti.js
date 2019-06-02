@@ -13,15 +13,16 @@ async function ma(arr) {     //trendMA between curent and last value
     };
     stor[1] = stor[0];
     stor[0] = value;
-    let direction = stor[0] - ma;
-    if (direction > 0) {//goin UP buy coz rising
-        trendMA = direction;   
-    } else if(direction < 0){//going DOWN hold or park coz stationary
-        trendMA = direction;   
+    let direction = await stor[0] - ma;
+    let trendMA = await f.percent(direction,value);
+    if (trendMA > 0) {//goin UP buy coz rising
+        return trendMA
+    } else if(trendMA < 0){//going DOWN hold or park coz stationary
+        return trendMA
     } else {    //all input data is the same
         trendMA = 0;
     }
-    return await trendMA;
+    return await trendMA
 }
 
 async function rsi(values) {  //returns trndRSI   log15
