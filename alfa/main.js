@@ -114,7 +114,7 @@ let history = [];
 async function globalLog(value, symbol, botN, rise) {
     history[botN] = await { value, symbol, botN, rise }
 
-    sortedH = await sortAO(history, 5);
+    sortedH = await sortAO(history, 10);
     async function sortAO(arr, N) { //sort array and return top N
         try {
             let arr1 = await copyArr(arr)
