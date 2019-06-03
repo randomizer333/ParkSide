@@ -165,7 +165,7 @@ async function globalLog(value, symbol, botN, awards) {
             //await f.cs("awarded")
             //await f.cs(arr4)
 
-            for (i = 0; i < awards + 2; i++) {  //display top n
+            for (i = 0; i < 5; i++) {  //display top n
                 f.cs(arr4[i])
             }
 
