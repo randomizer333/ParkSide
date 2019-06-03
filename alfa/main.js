@@ -176,7 +176,6 @@ async function globalLog(value, symbol, botN, awards) {
                             } else if (toAward[i].value > 0) {
                                 awarded[i].rise = 1
                             }
-                            //f.cs("awarded: " + awarded[i].symbol);
                         }
                     } else {
                         for (i = 0; i < N; i++) {   //give riser award
@@ -185,7 +184,6 @@ async function globalLog(value, symbol, botN, awards) {
                             } else if (toAward[i].value > 0) {
                                 awarded[i].rise = 1
                             }
-                            //f.cs("awarded: " + awarded[i].symbol);
                         }
                     }
                     return await awarded
