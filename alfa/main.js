@@ -33,7 +33,7 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", /*"BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT"/*, "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -111,10 +111,11 @@ function clear() {
 // global indicator
 
 let history = [];
-async function globalLog(value, symbol, botN, rise) {
+async function globalLog(value, symbol, botN, awards) {
+    rise = 0
     history[botN] = await { value, symbol, botN, rise }
 
-    sortedH = await sortAO(history, 10);
+    sortedH = await sortAO(history, awards);
     async function sortAO(arr, N) { //sort array and return top N
         try {
             let arr1 = await copyArr(arr)
@@ -154,7 +155,7 @@ async function globalLog(value, symbol, botN, rise) {
                 for (i = 0; i < N; i++) {   //give riser award
                     if (toAward[i].value <= 0) {
                         awarded[i].rise = 0
-                    } else if(toAward[i].value > 0){
+                    } else if (toAward[i].value > 0) {
                         awarded[i].rise = 1
                     }
                     //f.cs("awarded: " + awarded[i].symbol);
@@ -164,9 +165,10 @@ async function globalLog(value, symbol, botN, rise) {
             //await f.cs("awarded")
             //await f.cs(arr4)
 
-            for (i = 0; i < 10; i++) {  //display top n
+            for (i = 0; i < 5; i++) {  //display top n
                 await f.cs(arr4[i])
             }
+
             return arr4
         } catch (error) {
             f.cs("EEE: " + error)
@@ -339,7 +341,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     }
     const m = modul();
 
-
     loop(symbol, strategy);
     botNo[botNumber] = setInterval(function () { loop(symbol, strategy) }, ticker);
     async function loop(symbol, strategy) {
@@ -390,7 +391,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
 
-            rise = await globalLog(MAVol, symbol, botNumber, 0);
+            //rise = await globalLog(MAVol, symbol, botNumber, 2);
+            rise = await globalLog(change1hP, symbol, botNumber, 77);
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -408,6 +410,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 MACDMA: MACDMA,
                 MACDVol: MACDVol,
                 RISE: rise
+                //RISEP: riseP
             }
         }
         //await f.cs(indicator);
@@ -420,7 +423,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 && (indicator.MACD >= 0)
                 && (indicator.MAVol > 0)
                 && (indicator.change1hP >= 0)
-                && (indicator.rise > 0)
+                && (indicator.rise >= 0)
             ) {
                 return 1;
             } else {    //no signal
