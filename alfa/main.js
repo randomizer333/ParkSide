@@ -112,22 +112,6 @@ function clear() {
 
 let history = []
 async function globalLog(value, symbol, botN, awards) {
-
-
-    function populate(length) {
-        let arr = new Array();
-        for (i = 0; i < length - 1; i++) {
-            arr[i] = {
-                value: "",
-                symbol: "",
-                botN: "",
-                rise: ""
-            };
-        }
-        return arr;
-    }
-
-
     rise = 0
     history[botN] = await { value, symbol, botN, rise }
 
@@ -194,7 +178,7 @@ async function globalLog(value, symbol, botN, awards) {
             //await f.cs("awarded")
             //await f.cs(arr4)
 
-            for (i = 0; i < 5; i++) {  //display top n
+            for (i = 1; i < 5; i++) {  //display top n
                 f.cs(arr4[i])
             }
 
@@ -452,7 +436,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 && (indicator.MACD >= 0)
                 && (indicator.MAVol > 0)
                 && (indicator.change1hP >= 0)
-                && (indicator.rise >= 0)
+                && (indicator.rise > 0)
             ) {
                 return 1;
             } else {    //no signal
