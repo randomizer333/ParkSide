@@ -33,7 +33,7 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", /*"BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT"/*, "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -165,9 +165,10 @@ async function globalLog(value, symbol, botN, awards) {
             //await f.cs("awarded")
             //await f.cs(arr4)
 
-            for (i = 0; i < N + 2; i++) {  //display top n
+            for (i = 0; i < 5; i++) {  //display top n
                 await f.cs(arr4[i])
             }
+
             return arr4
         } catch (error) {
             f.cs("EEE: " + error)
@@ -340,7 +341,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     }
     const m = modul();
 
-
     loop(symbol, strategy);
     botNo[botNumber] = setInterval(function () { loop(symbol, strategy) }, ticker);
     async function loop(symbol, strategy) {
@@ -391,8 +391,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
 
-            rise = await globalLog(MAVol, symbol, botNumber, 2);
-            //riseP = await globalLog(change1hP, symbol, botNumber, 2);
+            //rise = await globalLog(MAVol, symbol, botNumber, 2);
+            rise = await globalLog(change1hP, symbol, botNumber, 77);
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5

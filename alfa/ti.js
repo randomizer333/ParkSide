@@ -20,9 +20,8 @@ async function ma(arr) {     //trendMA between curent and last value
     } else if(trendMA < 0){//going DOWN hold or park coz stationary
         return trendMA
     } else {    //all input data is the same
-        trendMA = 0;
+        return trendMA = 0;
     }
-    return await trendMA
 }
 
 async function rsi(values) {  //returns trndRSI   log15
