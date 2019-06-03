@@ -110,8 +110,24 @@ function clear() {
 
 // global indicator
 
-let history = [];
+let history = []
 async function globalLog(value, symbol, botN, awards) {
+
+
+    function populate(length) {
+        let arr = new Array();
+        for (i = 0; i < length - 1; i++) {
+            arr[i] = {
+                value: "",
+                symbol: "",
+                botN: "",
+                rise: ""
+            };
+        }
+        return arr;
+    }
+
+
     rise = 0
     history[botN] = await { value, symbol, botN, rise }
 
@@ -151,16 +167,31 @@ async function globalLog(value, symbol, botN, awards) {
 
             let arr4 = await award(arr3, N)
             async function award(toAward, N) {
-                let awarded = await toAward.slice().sort();
-                for (i = 0; i < N; i++) {   //give riser award
-                    if (toAward[i].value <= 0) {
-                        awarded[i].rise = 0
-                    } else if (toAward[i].value > 0) {
-                        awarded[i].rise = 1
+                try {
+                    let awarded = await toAward.slice().sort();
+                    if (toAward.length < N) {
+                        for (i = 0; i < toAward.length; i++) {   //give riser award
+                            if (toAward[i].value <= 0) {
+                                awarded[i].rise = 0
+                            } else if (toAward[i].value > 0) {
+                                awarded[i].rise = 1
+                            }
+                            //f.cs("awarded: " + awarded[i].symbol);
+                        }
+                    } else {
+                        for (i = 0; i < N; i++) {   //give riser award
+                            if (toAward[i].value <= 0) {
+                                awarded[i].rise = 0
+                            } else if (toAward[i].value > 0) {
+                                awarded[i].rise = 1
+                            }
+                            //f.cs("awarded: " + awarded[i].symbol);
+                        }
                     }
-                    //f.cs("awarded: " + awarded[i].symbol);
+                    return await awarded
+                } catch (error) {
+                    f.cs("EEE: " + error)
                 }
-                return await awarded
             }
             //await f.cs("awarded")
             //await f.cs(arr4)
@@ -172,10 +203,10 @@ async function globalLog(value, symbol, botN, awards) {
             return arr4
         } catch (error) {
             f.cs("EEE: " + error)
-        };
+        }
     }
 
-    //await console.dir(history)
+    //console.dir(sortedH)
     return await sortedH[botN].rise
 }
 
