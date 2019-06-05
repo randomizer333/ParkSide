@@ -178,7 +178,7 @@ async function globalLog(value, symbol, botN, awards) {
             //await f.cs("awarded")
             //await f.cs(arr4)
 
-            for (i = 1; i < 5; i++) {  //display top n
+            for (i = 1; i < 10; i++) {  //display top n
                 f.cs(arr4[i])
             }
 
@@ -414,15 +414,16 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 MA: MA,
                 MA200: MA200,
                 MACD: MACD,
-                MAVol: MAVol,
-                change24hP: change24hP,
                 change1hP: change1hP,
-                DMACD: DMACD,
+                RISE: rise,
+                UPS:"--------------------------------------------------",
+                change24hP: change24hP,
                 RSI: RSI,
+                DMACD: DMACD,
                 MA24hP: MA24hP,
+                MAVol: MAVol,
                 MACDMA: MACDMA,
                 MACDVol: MACDVol,
-                RISE: rise
                 //RISEP: riseP
             }
         }
@@ -434,7 +435,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 (indicator.MA > 0)
                 && (indicator.MA200 > 0)
                 && (indicator.MACD >= 0)
-                && (indicator.MAVol > 0)
+                //&& (indicator.MAVol > 0)
                 && (indicator.change1hP >= 0)
                 && (indicator.rise > 0)
             ) {
@@ -552,6 +553,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         await console.dir(marketInfo);
+        //await f.cs(marketInfo)
         return await marketInfo;
     }
     return await marketInfo;
