@@ -85,8 +85,8 @@ async function setBots(quotes) {
         return r;
     }
 
-    for (const cur in await quotes) {
-        await setTimeout(function () { bot(quotes[cur], ticker, "ud", stopLossP, cur) }, setStartTime());
+    for (let i in await quotes) {
+        await setTimeout(function () { bot(quotes[i], ticker, "ud", stopLossP, i) }, setStartTime());
         /*runner()
         async function runner() {   //for websocket
             r = await bot(quotes[cur], ticker, "ud", stopLossP, cur)
@@ -115,81 +115,72 @@ async function globalLog(value, symbol, botN, awards) {
     rise = 0
     history[botN] = await { value, symbol, botN, rise }
 
-    sortedH = await sortAO(history, awards);
-    async function sortAO(arr, N) { //sort array and return top N
+    let arr1 = await copyArr(history)
+    async function copyArr(toCopy) {//copy array
+        let copy = []
+        copy = await toCopy.slice().sort();
+        return await copy
+    }
+    //await f.cs("copy: ")
+    //await f.cs(arr1)
+
+    let arr2 = await clearAward(arr1)
+    async function clearAward(toClear) {
+        let cleared = await toClear.slice().sort();
+        for (i in toClear) {    //clear rise awards
+            cleared[i].rise = 0
+        }
+        return await cleared
+    }
+    //await f.cs("cleared: ")
+    //await f.cs(arr2)
+
+    let arr3 = await sortAward(arr2)
+    async function sortAward(toSort) {
+        let sorted = await toSort.slice().sort();
+        sorted = await toSort.sort(function (a, b) {  //sort array of JSON objects by one of its properties
+            return b.value - a.value;   //set attribute to sort by
+        })
+        return await sorted
+    }
+    //await f.cs("sorted: ")
+    //await f.cs(arr3)
+
+    let arr4 = await award(arr3, awards)
+    async function award(toAward, N) {
         try {
-            let arr1 = await copyArr(arr)
-            async function copyArr(toCopy) {//copy array
-                let copy = []
-                copy = await toCopy.slice().sort();
-                return await copy
-            }
-            //await f.cs("copy: ")
-            //await f.cs(arr1)
-
-            let arr2 = await clearAward(arr1)
-            async function clearAward(toClear) {
-                let cleared = await toClear.slice().sort();
-                for (i in toClear) {    //clear rise awards
-                    cleared[i].rise = 0
-                }
-                return await cleared
-            }
-            //await f.cs("cleared: ")
-            //await f.cs(arr2)
-
-            let arr3 = await sortAward(arr2)
-            async function sortAward(toSort) {
-                let sorted = await toSort.slice().sort();
-                sorted = await toSort.sort(function (a, b) {  //sort array of JSON objects by one of its properties
-                    return b.value - a.value;   //set attribute to sort by
-                })
-                return await sorted
-            }
-            //await f.cs("sorted: ")
-            //await f.cs(arr3)
-
-            let arr4 = await award(arr3, N)
-            async function award(toAward, N) {
-                try {
-                    let awarded = await toAward.slice().sort();
-                    if (toAward.length < N) {
-                        for (i = 0; i < toAward.length; i++) {   //give riser award
-                            if (toAward[i].value <= 0) {
-                                awarded[i].rise = 0
-                            } else if (toAward[i].value > 0) {
-                                awarded[i].rise = 1
-                            }
-                        }
-                    } else {
-                        for (i = 0; i < N; i++) {   //give riser award
-                            if (toAward[i].value <= 0) {
-                                awarded[i].rise = 0
-                            } else if (toAward[i].value > 0) {
-                                awarded[i].rise = 1
-                            }
-                        }
+            let awarded = await toAward.slice().sort();
+            if (toAward.length < N) {
+                for (i = 0; i < toAward.length; i++) {   //give riser award
+                    if (toAward[i].value <= 0) {
+                        awarded[i].rise = 0
+                    } else if (toAward[i].value > 0) {
+                        awarded[i].rise = 1
                     }
-                    return await awarded
-                } catch (error) {
-                    f.cs("EEE: " + error)
+                }
+            } else {
+                for (i = 0; i < N; i++) {   //give riser award
+                    if (toAward[i].value <= 0) {
+                        awarded[i].rise = 0
+                    } else if (toAward[i].value > 0) {
+                        awarded[i].rise = 1
+                    }
                 }
             }
-            //await f.cs("awarded")
-            //await f.cs(arr4)
-
-            for (i = 1; i < 10; i++) {  //display top n
-                f.cs(arr4[i])
-            }
-
-            return arr4
+            return await awarded
         } catch (error) {
             f.cs("EEE: " + error)
         }
     }
+    //await f.cs("awarded")
+    //await f.cs(arr4)
 
-    //console.dir(sortedH)
-    return await sortedH[botN].rise
+    for (i = 0; i < 8; i++) {  //display top n
+        f.cs(arr4[i])
+    }
+
+//console.dir(sortedH)
+return await arr4[botN].rise
 }
 
 // main loop
@@ -221,6 +212,15 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logVolMACD = [],
         logMA200second = [];
 
+    let MA, MA200,
+        MACD,
+        change1hP,
+        rise,
+        change24hP,
+        RSI, DMACD,
+        MA24hP, MAVol,
+        MACDMA, MACDVol
+
     let price;      //balanceChanged
     let bougthPrice = 0;//balanceChanged
 
@@ -229,6 +229,10 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
     let stopLoss;   //checkStopLoss
     let lossPrice;  //checkStopLoss
+
+    let indicator;
+    let upSignal;
+    let downSignal;
 
 
     function modul() {
@@ -377,7 +381,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
 
-        let indicator = await indicators(price, volume, change24hP)
+        indicator = await indicators(price, volume, change24hP)
         async function indicators(price, volume, change24hP) {
             //market data colection
             logAll = await m.loger(price, 105, logAll);
@@ -415,45 +419,44 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 MA200: MA200,
                 MACD: MACD,
                 change1hP: change1hP,
+                MAVol: MAVol,
                 RISE: rise,
-                UPS:"--------------------------------------------------",
+                UPS: "--------------------------------------------------",
                 change24hP: change24hP,
                 RSI: RSI,
                 DMACD: DMACD,
                 MA24hP: MA24hP,
-                MAVol: MAVol,
                 MACDMA: MACDMA,
                 MACDVol: MACDVol,
-                //RISEP: riseP
             }
         }
-        //await f.cs(indicator);
+        //await f.cs("rajz: "+indicator.RISE);
 
-        let upSignal = await up(indicator);
-        function up(indicator) {
+        upSignal = await up(indicator);
+        async function up(indicator) {
             if (        //up signal
                 (indicator.MA > 0)
                 && (indicator.MA200 > 0)
                 && (indicator.MACD >= 0)
-                //&& (indicator.MAVol > 0)
-                && (indicator.change1hP >= 0)
-                && (indicator.rise > 0)
+                && (indicator.MAVol > 0)
+                && (indicator.change1hP > 0)
+                //&& (indicator.RISE > 0)
             ) {
-                return 1;
+                return await 1;
             } else {    //no signal
-                return 0;
+                return await 0;
             }
         }
 
-        let downSignal = await down(indicator);
-        function down(indicator) {
+        downSignal = await down(indicator);
+        async function down(indicator) {
             if (        //down signal
                 (indicator.MA < 0)
                 //&& (indicator.MA200 <= 0)
             ) {
-                return 1;
+                return await 1;
             } else {    //no signal
-                return 0;
+                return await 0;
             }
         }
 
@@ -481,7 +484,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 orderType = "still none";
             }
             mailInfo(orderType);
-            return orderType;
+            return await orderType;
         }
 
 
@@ -534,21 +537,21 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             //bestBuy: JSON.stringify(bestBuy),
         }
         //mailer
-        function mailInfo(orderType) {
-            if (orderType == "sold") {
+        async function mailInfo(orderType) {
+            if (await orderType == "sold") {
                 f.sendMail("Sold Info", JSON.stringify(marketInfo));
-                return true;
-            } else if (orderType == "bougth") {
+                return await true;
+            } else if (await orderType == "bougth") {
                 f.sendMail("Bougth Info", JSON.stringify(marketInfo));
-                return true;
-            } else if (orderType == "lossed") {
+                return await true;
+            } else if (await orderType == "lossed") {
                 f.sendMail("Lossed Info", JSON.stringify(marketInfo));
-                return true;
-            } else if (orderType == "canceled") {
+                return await true;
+            } else if (await orderType == "canceled") {
                 f.sendMail("Canceled Info", JSON.stringify(marketInfo));
-                return true;
+                return await true;
             } else {
-                return false;
+                return await false;
             }
         }
 
