@@ -121,8 +121,6 @@ async function globalLog(value, symbol, botN, awards) {
         copy = await toCopy.slice().sort();
         return await copy
     }
-    //await f.cs("copy: ")
-    //await f.cs(arr1)
 
     let arr2 = await clearAward(arr1)
     async function clearAward(toClear) {
@@ -132,8 +130,6 @@ async function globalLog(value, symbol, botN, awards) {
         }
         return await cleared
     }
-    //await f.cs("cleared: ")
-    //await f.cs(arr2)
 
     let arr3 = await sortAward(arr2)
     async function sortAward(toSort) {
@@ -143,8 +139,6 @@ async function globalLog(value, symbol, botN, awards) {
         })
         return await sorted
     }
-    //await f.cs("sorted: ")
-    //await f.cs(arr3)
 
     let arr4 = await award(arr3, awards)
     async function award(toAward, N) {
@@ -172,15 +166,23 @@ async function globalLog(value, symbol, botN, awards) {
             f.cs("EEE: " + error)
         }
     }
-    //await f.cs("awarded")
-    //await f.cs(arr4)
 
     for (i = 0; i < 8; i++) {  //display top n
         f.cs(arr4[i])
     }
 
-//console.dir(sortedH)
-return await arr4[botN].rise
+    ris = await ex(arr4, botN);
+    async function ex(arr, n) {
+        for (i in arr) {    //extract rise of botN
+            if (arr[i].botN == n) {
+                /*f.cs("Bot number: " + n)
+                f.cs("on position: " + i)
+                f.cs("valie of rise: "+arr[i].rise)*/
+                return await arr[i].rise
+            }
+        }
+    }
+    return await ris
 }
 
 // main loop
@@ -409,7 +411,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
 
             //rise = await globalLog(MAVol, symbol, botNumber, 2);
-            rise = await globalLog(change1hP, symbol, botNumber, 77);
+            rise = await globalLog(change1hP, symbol, botNumber, 33);
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -437,10 +439,10 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             if (        //up signal
                 (indicator.MA > 0)
                 && (indicator.MA200 > 0)
-                && (indicator.MACD >= 0)
+                && (indicator.MACD > 0)
                 && (indicator.MAVol > 0)
                 && (indicator.change1hP > 0)
-                //&& (indicator.RISE > 0)
+                && (indicator.RISE > 0)
             ) {
                 return await 1;
             } else {    //no signal
