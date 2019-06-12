@@ -33,7 +33,7 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT"/*, "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "AGI/BTC",/*"ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -111,7 +111,7 @@ function clear() {
 // global indicator
 
 let history = []
-async function globalLog(value, symbol, botN, awards) {
+async function globalLog(value, symbol, botN, awards, change24hP) {
     rise = 0
     history[botN] = await { value, symbol, botN, rise }
 
@@ -146,7 +146,7 @@ async function globalLog(value, symbol, botN, awards) {
             let awarded = await toAward.slice().sort();
             if (toAward.length < N) {
                 for (i = 0; i < toAward.length; i++) {   //give riser award
-                    if (toAward[i].value <= 0) {
+                    if ((toAward[i].value <= 0) && (change24hP >= 0)) {
                         awarded[i].rise = 0
                     } else if (toAward[i].value > 0) {
                         awarded[i].rise = 1
@@ -167,7 +167,7 @@ async function globalLog(value, symbol, botN, awards) {
         }
     }
 
-    for (i = 0; i < 8; i++) {  //display top n
+    for (i = 1; i < 6; i++) {  //display top n
         f.cs(arr4[i])
     }
 
@@ -196,13 +196,12 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let amountBase;     //amountQuote
 
     //selectCurrency
-    let sale = false;
-    let purchase = false;
-    let baseCurrency;
-    let quoteCurrency;
-    let baseBalanceInQuote;
-    let quoteBalanceInBase;
-    let more = false;
+    let more = false
+    let sale = false
+    let purchase = false
+    let baseBalance,quoteBalance,
+    baseCurrency,quoteCurrency,
+    baseBalanceInQuote,quoteBalanceInBase
 
     //loger init
     let logAll = [],
@@ -216,9 +215,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
     let MA, MA200,
         MACD,
-        change1hP,
+        change1hP, change24hP, change6hP,
         rise,
-        change24hP,
         RSI, DMACD,
         MA24hP, MAVol,
         MACDMA, MACDVol
@@ -248,18 +246,40 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
         async function selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
-                sale = true;
-                purchase = false;
+                sale = await true;
+                f.cs("sale is true")
+                purchase = await false;
             } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalanceInBase > minAmount)) {    //can buy
-                sale = false;
-                more = false;
-                purchase = true;
+                sale = await false;
+                f.cs("sale is false")
+                more = await false;
+                purchase = await true;
             } else {
-                sale = false;
-                purchase = false;
+                f.cs("sale is undef")
+                sale = await false;
+                purchase = await false;
                 //f.cs("Too low!");
             }
             return await purchase;
+        }
+        async function selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds
+            if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
+                return await {
+                    sale: true,
+                    purchase: false
+                }
+            } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalanceInBase > minAmount)) {    //can buy
+                return await {
+                    sale: false,
+                    more: false,
+                    purchase: true
+                }
+            } else {
+                return await {
+                    sale: false,
+                    purchase: false
+                }
+            }
         }
         async function loger(value, length, array) {        //log FILO to array
             while (array.length >= length) {
@@ -355,7 +375,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             selectCurrency: selectCurrency,
             loger: loger,
             balanceChanged: balanceChanged,
-            change1h: change1h
+            change1h: change1h,
+            selectCurrencyNew:selectCurrencyNew
         }
     }
     const m = modul();
@@ -370,14 +391,19 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         baseBalance = await a.balance(baseCurrency);
         quoteBalance = await a.balance(quoteCurrency);
         price = await a.price(symbol);
-        //wallet = await a.wallet();
+        priceFiat = await a.price(s.fiatMarket)
+        wallet = await a.wallet();
         change24hP = await a.change(symbol);
         volume = await a.volume(symbol);
 
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
         bougthPrice = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
-        purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
+        //purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
+        let conds = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
+        purchase = await conds.purchase
+        sale = await conds.sale
+        more = await conds.more
 
         //sellPrice;  //safeSale() returns
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
@@ -406,12 +432,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
 
             change1hP = await m.change1h(logAll, ticker, price, 60)  //price change percentage in duration
+            change6hP = await m.change1h(logAll, ticker, price, 360)  //price change percentage in duration
             MA24hP = await TI.ma(log24hP);  //MA3 of 24h price change
 
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
 
             //rise = await globalLog(MAVol, symbol, botNumber, 2);
-            rise = await globalLog(change1hP, symbol, botNumber, 33);
+            rise = await globalLog(change1hP, symbol, botNumber, 22, change24hP);
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -425,6 +452,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 RISE: rise,
                 UPS: "--------------------------------------------------",
                 change24hP: change24hP,
+                change6hP: change6hP,
                 RSI: RSI,
                 DMACD: DMACD,
                 MA24hP: MA24hP,
@@ -432,7 +460,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 MACDVol: MACDVol,
             }
         }
-        //await f.cs("rajz: "+indicator.RISE);
 
         upSignal = await up(indicator);
         async function up(indicator) {
@@ -462,7 +489,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
-
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
@@ -489,31 +515,33 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return await orderType;
         }
 
-
         // dinamic stoploss
         function dinamicStopLoss(startValue) {
             aProfit = f.part(relativeProfit, startValue);
             return profit;//stopLoss
         }
 
-
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
         let absoluteProfit = await f.part(relativeProfit, quoteBalance);
         let absoluteProfit2 = await f.part(relativeProfit, baseBalanceInQuote);
 
-
-
         //main console output
         marketInfo = await {
             No: botNumber,
+            fiatPrice: priceFiat + " " + s.fiatMarket,
+            fiatProfit: (absoluteProfit * priceFiat).toFixed(8) + " " + "USDT",
+            fiatProfit2: (absoluteProfit2 * priceFiat).toFixed(8) + " " + "USDT",
             relativeProfit_: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit_: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             absoluteProfit2: absoluteProfit2.toFixed(8) + " " + quoteCurrency,
+            fiatPrice: priceFiat + " " + s.fiatMarket,
+            fiatProfit: (absoluteProfit * priceFiat).toFixed(8) + " " + "USDT",
+            fiatProfit2: (absoluteProfit2 * priceFiat).toFixed(8) + " " + "USDT",
+            minAmount_________: minAmount + " " + baseCurrency,
             baseBalance_______: baseBalance + " " + baseCurrency,
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
             quoteBalance______: quoteBalance + " " + quoteCurrency,
             quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
-            minAmount_________: minAmount + " " + baseCurrency,
             time_____: f.getTime(),
             ticker___: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
@@ -533,9 +561,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             },
             logLength: logMA200.length,
             orderType: orderType,
-            indicator: indicator,
+            indicator: await indicator,
             //quoteMarkets: JSON.stringify(quotes),
-            //wallet: JSON.stringify(wallet)
+            wallet: JSON.stringify(wallet)
             //bestBuy: JSON.stringify(bestBuy),
         }
         //mailer
