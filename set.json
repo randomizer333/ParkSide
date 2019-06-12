@@ -1,6 +1,7 @@
 {
     "exchange":"binance",
-    "enableOrders": "false",
+    "fiatMarket":"BTC/USDT",
+    "enableOrders": false,
     "tickerMinutes": "5", 
     "stopLossP": "2", 
     "portion": "0.99", 

@@ -134,21 +134,28 @@ async function sellAll(array) {
 }
 
 let curs;
+let balances = [];
 async function wallet() {                   //returns Array of Objects balances of an account
     try {
         r = await exchange.fetchBalance();
-        curs = Object.keys(r);
-        vals = Object.values(r.total);
-        let balances = [];
-        parseBalances();
+        curs = await Object.keys(r);
+        vals = await Object.values(r.total);
+        balances = await parseBalances();
         async function parseBalances() {
             let j = 0
-            for (i = 0; i < curs.length; i++) {
-                if (vals[i] > 0) {
-                    balances[j] = await { currency: curs[i + 1], balance: vals[i]/*, price: 0.0000*/ };
+            /*for (i in curs) {
+                if (r[i] > 0) {
+                    balances[j] = await { currency: curs[i + 1], balance: vals[i]};
                     j++
                 }
-            }
+            }*/
+            for (i = 0; i < curs.length; i++) {
+                if (vals[i] > 0) {
+                    balances[j] = await { currency: curs[i+1], balance: vals[i] };
+                    j++
+                }
+}
+            return await balances
         }
         //await f.cs(balances);
         return await balances;
@@ -158,8 +165,8 @@ async function wallet() {                   //returns Array of Objects balances 
 
 }
 
+let wal;
 async function priceAll() { //dev
-    let wal;
     wal = await wallet();
     for (i = 0; i < wal.length; i++) {
         sym = wal[i].currency + "/BTC";
@@ -179,12 +186,13 @@ async function priceAll() { //dev
 
 async function balance(currency) {          //returns Array of Objects balances of an account
     try {
-        r = await exchange.fetchBalance();
-        ret = await r[currency].total;
+        let bR = await exchange.fetchBalance();
+        //f.cs(bR)
+        let balanceR = await bR[currency].total;
+        return await balanceR;
     } catch (error) {
         console.log("EEE: ", error);
     }
-    return await ret;
 }
 async function bid(symbol) {                //reurns Array of Objects bid,ask
     try {
@@ -313,9 +321,9 @@ async function markets() {                   //load all available markets on exc
 }
 
 async function filterAll(markets, qus) {
-    qus = ["USDT", "BTC", "BNB", "ETH",     "PAX","USDC","TUSD","USDS"]
+    qus = ["USDT", "BTC", "BNB", "ETH", "PAX", "USDC", "TUSD", "USDS"]
     r1 = await filter(qus[0], markets)  //USDT
-    r2= await filter(qus[1], markets)   //BTC
+    r2 = await filter(qus[1], markets)   //BTC
     r3 = await filter(qus[2], markets)  //BNB
     r4 = await filter(qus[3], markets)  //ETH
 
@@ -323,7 +331,7 @@ async function filterAll(markets, qus) {
     r6 = await filter(qus[5], markets)  //USDC
     r7 = await filter(qus[6], markets)  //TUSD
     r8 = await filter(qus[7], markets)  //USDS
-    
+
     //r = r1                      //USDT
     let f = ["BTC/USDT"]
     r = f.concat(r2)
