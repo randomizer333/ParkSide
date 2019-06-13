@@ -5,13 +5,21 @@
 */
 
 //requirements
-let s, a, f, TI
+let s, a, f, TI, fs
 req();
 async function req() {
     s = await require("../set.json")
     a = await require("./api.js");
     f = await require("./funk.js");
     TI = await require("./ti.js");
+    fs = require('fs');
+    firstLog()
+    function firstLog() {
+        fs.writeFile('log.txt', "Started log", function (err) {
+            if (err) throw err;
+            console.log("Started log");
+        })
+    }
     return await init()
 }
 
@@ -108,6 +116,13 @@ function clear() {
     }
 }
 
+function logToFile(message) {
+    fs.appendFile('log.txt', JSON.stringify(message), function (err) {
+        if (err) throw err;
+        //console.log('Saved!');
+    });
+}
+
 // global indicator
 
 let history = []
@@ -199,9 +214,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let more = false
     let sale = false
     let purchase = false
-    let baseBalance,quoteBalance,
-    baseCurrency,quoteCurrency,
-    baseBalanceInQuote,quoteBalanceInBase
+    let baseBalance, quoteBalance,
+        baseCurrency, quoteCurrency,
+        baseBalanceInQuote, quoteBalanceInBase
 
     //loger init
     let logAll = [],
@@ -376,7 +391,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             loger: loger,
             balanceChanged: balanceChanged,
             change1h: change1h,
-            selectCurrencyNew:selectCurrencyNew
+            selectCurrencyNew: selectCurrencyNew
         }
     }
     const m = modul();
@@ -563,7 +578,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             orderType: orderType,
             indicator: await indicator,
             //quoteMarkets: JSON.stringify(quotes),
-            wallet: JSON.stringify(wallet)
+            //wallet: JSON.stringify(wallet)
             //bestBuy: JSON.stringify(bestBuy),
         }
         //mailer
@@ -586,6 +601,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         await console.dir(marketInfo);
+        await logToFile(marketInfo)
         //await f.cs(marketInfo)
         return await marketInfo;
     }
