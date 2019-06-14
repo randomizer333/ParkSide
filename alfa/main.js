@@ -12,14 +12,8 @@ async function req() {
     a = await require("./api.js");
     f = await require("./funk.js");
     TI = await require("./ti.js");
-    fs = require('fs');
-    firstLog()
-    function firstLog() {
-        fs.writeFile('log.txt', "Started log", function (err) {
-            if (err) throw err;
-            console.log("Started log");
-        })
-    }
+    fs = require('fs'); //node.js native
+    firstLogToFile()
     return await init()
 }
 
@@ -41,7 +35,7 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "AGI/BTC",/*"ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", /*"XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "AGI/BTC","ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", /*"DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
 
     "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
@@ -121,6 +115,13 @@ function logToFile(message) {
         if (err) throw err;
         //console.log('Saved!');
     });
+}
+
+function firstLogToFile() {
+    fs.writeFile('log.txt', "Started log", function (err) {
+        if (err) throw err;
+        console.log("Started log");
+    })
 }
 
 // global indicator
@@ -245,10 +246,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let stopLoss;   //checkStopLoss
     let lossPrice;  //checkStopLoss
 
-    let indicator;
+    let indicator;  //indicator
     let upSignal;
     let downSignal;
 
+    let dol = 0 //logHistory
 
     function modul() {
         async function baseToQuote(amountBase, price) {
@@ -576,7 +578,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             },
             logLength: logMA200.length,
             orderType: orderType,
-            indicator: await indicator,
+            indicator: indicator,
             //quoteMarkets: JSON.stringify(quotes),
             //wallet: JSON.stringify(wallet)
             //bestBuy: JSON.stringify(bestBuy),
@@ -601,7 +603,20 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         await console.dir(marketInfo);
-        await logToFile(marketInfo)
+
+        logHistory(marketInfo,10)
+        function logHistory(toLog,length) {
+            //f.cs(dol)
+            if (dol >= length) {
+                firstLogToFile()
+                logToFile(toLog)
+                dol = 0
+            } else {
+                logToFile(toLog)
+                dol++
+            }
+        }
+
         //await f.cs(marketInfo)
         return await marketInfo;
     }
