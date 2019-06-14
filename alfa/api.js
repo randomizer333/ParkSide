@@ -282,8 +282,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         orderId = r.id;
         setTimeout(function () { c = cancel(orderId, symbol) }, ticker * 0.9);
         //f.sendMail("bougth", JSON.stringify(r));
-        if (await filled) {
-            //order was filled
+        if (await filled) {//order was filled
             //f.sendMail("sold2", JSON.stringify(r));
             filled = true;
             orderType = "bougth";
