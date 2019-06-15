@@ -1,6 +1,6 @@
 /* 
 1.crypto to fiat bot
-2.highriser catcher bot
+2.highrangr catcher bot
 3.intracrypto trading bot
 */
 
@@ -35,9 +35,9 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "AGI/BTC","ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", /*"DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",/*
+    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", /*"DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",*/
 
-    "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
+    "AGI/BTC","ADA/BTC", "BCH/BTC", "BNB/BTC"/*, "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
     "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
@@ -127,9 +127,9 @@ function firstLogToFile() {
 // global indicator
 
 let history = []
-async function globalLog(value, symbol, botN, awards, change24hP) {
-    rise = 0
-    history[botN] = await { value, symbol, botN, rise }
+async function globalRang(value, symbol, botN, awards, change24hP) {
+    rang = 0
+    history[botN] = await { value, symbol, botN, rang }
 
     let arr1 = await copyArr(history)
     async function copyArr(toCopy) {//copy array
@@ -141,8 +141,8 @@ async function globalLog(value, symbol, botN, awards, change24hP) {
     let arr2 = await clearAward(arr1)
     async function clearAward(toClear) {
         let cleared = await toClear.slice().sort();
-        for (i in toClear) {    //clear rise awards
-            cleared[i].rise = 0
+        for (i in toClear) {    //clear rang awards
+            cleared[i].rang = 0
         }
         return await cleared
     }
@@ -161,19 +161,19 @@ async function globalLog(value, symbol, botN, awards, change24hP) {
         try {
             let awarded = await toAward.slice().sort();
             if (toAward.length < N) {
-                for (i = 0; i < toAward.length; i++) {   //give riser award
+                for (i = 0; i < toAward.length; i++) {   //give rangr award
                     if ((toAward[i].value <= 0) && (change24hP >= 0)) {
-                        awarded[i].rise = 0
+                        awarded[i].rang = 0
                     } else if (toAward[i].value > 0) {
-                        awarded[i].rise = 1
+                        awarded[i].rang = 1
                     }
                 }
             } else {
-                for (i = 0; i < N; i++) {   //give riser award
+                for (i = 0; i < N; i++) {   //give rangr award
                     if (toAward[i].value <= 0) {
-                        awarded[i].rise = 0
+                        awarded[i].rang = 0
                     } else if (toAward[i].value > 0) {
-                        awarded[i].rise = 1
+                        awarded[i].rang = 1
                     }
                 }
             }
@@ -189,12 +189,87 @@ async function globalLog(value, symbol, botN, awards, change24hP) {
 
     ris = await ex(arr4, botN);
     async function ex(arr, n) {
-        for (i in arr) {    //extract rise of botN
+        for (i in arr) {    //extract rang of botN
             if (arr[i].botN == n) {
                 /*f.cs("Bot number: " + n)
                 f.cs("on position: " + i)
-                f.cs("valie of rise: "+arr[i].rise)*/
-                return await arr[i].rise
+                f.cs("valie of rang: "+arr[i].rang)*/
+                return await arr[i].rang
+            }
+        }
+    }
+    return await ris
+}
+
+let history2 = []
+async function globalRang2(value, symbol, botN, awards, value2) {
+    rang = 0
+    history2[botN] = await { value, symbol, botN, rang }
+
+    let arr1 = await copyArr(history2)
+    async function copyArr(toCopy) {//copy array
+        let copy = []
+        copy = await toCopy.slice().sort();
+        return await copy
+    }
+
+    let arr2 = await clearAward(arr1)
+    async function clearAward(toClear) {
+        let cleared = await toClear.slice().sort();
+        for (i in toClear) {    //clear rang awards
+            cleared[i].rang = 0
+        }
+        return await cleared
+    }
+
+    let arr3 = await sortAward(arr2)
+    async function sortAward(toSort) {
+        let sorted = await toSort.slice().sort();
+        sorted = await toSort.sort(function (a, b) {  //sort array of JSON objects by one of its properties
+            return b.value - a.value;   //set attribute to sort by
+        })
+        return await sorted
+    }
+
+    let arr4 = await award(arr3, awards)
+    async function award(toAward, N) {
+        try {
+            let awarded = await toAward.slice().sort();
+            if (toAward.length < N) {
+                for (i = 0; i < toAward.length; i++) {   //give rangr award
+                    if ((toAward[i].value <= 0) && (change24hP >= 0)) {
+                        awarded[i].rang = 0
+                    } else if (toAward[i].value > 0) {
+                        awarded[i].rang = 1
+                    }
+                }
+            } else {
+                for (i = 0; i < N; i++) {   //give rangr award
+                    if (toAward[i].value <= 0) {
+                        awarded[i].rang = 0
+                    } else if (toAward[i].value > 0) {
+                        awarded[i].rang = 1
+                    }
+                }
+            }
+            return await awarded
+        } catch (error) {
+            f.cs("EEE: " + error)
+        }
+    }
+
+    for (i = 1; i < 6; i++) {  //display top n
+        f.cs(arr4[i])
+    }
+
+    ris = await ex(arr4, botN);
+    async function ex(arr, n) {
+        for (i in arr) {    //extract rang of botN
+            if (arr[i].botN == n) {
+                /*f.cs("Bot number: " + n)
+                f.cs("on position: " + i)
+                f.cs("valie of rang: "+arr[i].rang)*/
+                return await arr[i].rang
             }
         }
     }
@@ -232,7 +307,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     let MA, MA200,
         MACD,
         change1hP, change24hP, change6hP,
-        rise,
+        rang,
         RSI, DMACD,
         MA24hP, MAVol,
         MACDMA, MACDVol
@@ -283,6 +358,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
                 return await {
                     sale: true,
+                    more: true,
                     purchase: false
                 }
             } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalanceInBase > minAmount)) {    //can buy
@@ -294,6 +370,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             } else {
                 return await {
                     sale: false,
+                    more: true,
                     purchase: false
                 }
             }
@@ -407,7 +484,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         quoteCurrency = await f.splitSymbol(symbol, "second");
         baseBalance = await a.balance(baseCurrency);
         quoteBalance = await a.balance(quoteCurrency);
-        price = await a.price(symbol);
+        price = await a.price(symbol);  //price for analysis
+        bid = await a.bid(symbol)   //price for buying
         priceFiat = await a.price(s.fiatMarket)
         wallet = await a.wallet();
         change24hP = await a.change(symbol);
@@ -454,8 +532,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
 
-            //rise = await globalLog(MAVol, symbol, botNumber, 2);
-            rise = await globalLog(change1hP, symbol, botNumber, 22, change24hP);
+            //rang = await globalRang(MAVol, symbol, botNumber, 2);
+            rang = await globalRang(change1hP, symbol, botNumber, 22, change24hP);
+            //rang2 = await globalRang2()
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -466,7 +545,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 MACD: MACD,
                 change1hP: change1hP,
                 MAVol: MAVol,
-                RISE: rise,
+                rang: rang,
                 UPS: "--------------------------------------------------",
                 change24hP: change24hP,
                 change6hP: change6hP,
@@ -486,7 +565,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 && (indicator.MACD > 0)
                 && (indicator.MAVol > 0)
                 && (indicator.change1hP > 0)
-                && (indicator.RISE > 0)
+                && (indicator.rang > 0)
             ) {
                 return await 1;
             } else {    //no signal
@@ -510,8 +589,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal) {    // buy 
-                enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = price;
+                enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, bid) : console.log('buy orders disabled');
+                enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = bid;
                 orderType = ret.orderType;
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
@@ -565,6 +644,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             symbol___: symbol,
             sellPrice__: sellPrice.toFixed(8) + " " + symbol,
             price______: price.toFixed(8) + " " + symbol,
+            bid________: bid.toFixed(8) + " " + symbol,
             bougthPrice: bougthPrice.toFixed(8) + " " + symbol,
             lossPrice__: lossPrice.toFixed(8) + " " + symbol,
             purchase___: purchase,
