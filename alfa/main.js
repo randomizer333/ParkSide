@@ -202,7 +202,7 @@ async function globalRang(value, symbol, botN, awards, change24hP) {
 }
 
 let history2 = []
-async function globalRang2(value, symbol, botN, awards, value2) {
+async function globalRang2(value, symbol, botN, awards) {
     rang = 0
     history2[botN] = await { value, symbol, botN, rang }
 
@@ -237,7 +237,7 @@ async function globalRang2(value, symbol, botN, awards, value2) {
             let awarded = await toAward.slice().sort();
             if (toAward.length < N) {
                 for (i = 0; i < toAward.length; i++) {   //give rangr award
-                    if ((toAward[i].value <= 0) && (change24hP >= 0)) {
+                    if ((toAward[i].value <= 0)) {
                         awarded[i].rang = 0
                     } else if (toAward[i].value > 0) {
                         awarded[i].rang = 1
@@ -534,7 +534,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
             //rang = await globalRang(MAVol, symbol, botNumber, 2);
             rang = await globalRang(change1hP, symbol, botNumber, 22, change24hP);
-            //rang2 = await globalRang2()
+            rang2 = await globalRang2(MAVol, symbol, botNumber, 22)
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -546,6 +546,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 change1hP: change1hP,
                 MAVol: MAVol,
                 rang: rang,
+                rang2:rang2,
                 UPS: "--------------------------------------------------",
                 change24hP: change24hP,
                 change6hP: change6hP,
@@ -563,9 +564,10 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 (indicator.MA > 0)
                 && (indicator.MA200 > 0)
                 && (indicator.MACD > 0)
-                && (indicator.MAVol > 0)
-                && (indicator.change1hP > 0)
+                //&& (indicator.MAVol > 0)
+                //&& (indicator.change1hP > 0)
                 && (indicator.rang > 0)
+                && (indicator.rang2 > 0)
             ) {
                 return await 1;
             } else {    //no signal
@@ -607,9 +609,10 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             } else {
                 orderType = "still none";
             }
-            mailInfo(orderType);
             return await orderType;
         }
+
+        await mailInfo(orderType);
 
         // dinamic stoploss
         function dinamicStopLoss(startValue) {
@@ -682,7 +685,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
-        await console.dir(marketInfo);
 
         logHistory(marketInfo,10)
         function logHistory(toLog,length) {
@@ -697,6 +699,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
+        await console.dir(marketInfo);
         //await f.cs(marketInfo)
         return await marketInfo;
     }

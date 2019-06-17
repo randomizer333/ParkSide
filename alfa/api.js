@@ -224,12 +224,12 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         //price = low - (spread / 2); //bid spread
 
         spread = await high - low;        //real spread
-        //price = await high - (spread / 2);//real spread
+        price = await high - (spread / 2);//real spread
 
         //spread = higher - high;   //ask spread
         //price = higher - (spread / 2); //ask spread
 
-        price = high    //market price
+        //price = high    //market price
         
         return await price;
     } catch (error) {
