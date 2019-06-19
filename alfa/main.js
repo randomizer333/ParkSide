@@ -35,9 +35,12 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", /*"DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",*/
+    "BTC/USDT", "ETH/USDT", "XRP/USDT", "LTC/USDT", "BNB/USDT",
+    "LTC/BNB", "XRP/BNB", "LTC/BNB"
 
-    "AGI/BTC","ADA/BTC", "BCH/BTC", "BNB/BTC"/*, "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
+    /*"ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
+
+    "AGI/BTC","ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
     "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
@@ -111,14 +114,14 @@ function clear() {
 }
 
 function logToFile(message) {
-    fs.appendFile('log.txt', JSON.stringify(message), function (err) {
+    fs.appendFile('../log.txt', JSON.stringify(message), function (err) {
         if (err) throw err;
         //console.log('Saved!');
     });
 }
 
 function firstLogToFile() {
-    fs.writeFile('log.txt', "Started log", function (err) {
+    fs.writeFile('../log.txt', "Started log", function (err) {
         if (err) throw err;
         console.log("Started log");
     })
@@ -540,34 +543,42 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
 
             return await {
-                MA: MA,
-                MA200: MA200,
-                MACD: MACD,
-                change1hP: change1hP,
-                MAVol: MAVol,
-                rang: rang,
-                rang2:rang2,
-                UPS: "--------------------------------------------------",
-                change24hP: change24hP,
-                change6hP: change6hP,
-                RSI: RSI,
-                DMACD: DMACD,
-                MA24hP: MA24hP,
-                MACDMA: MACDMA,
-                MACDVol: MACDVol,
+                uppers: {
+                    MA: MA,
+                    MA200: MA200,
+                },
+                downers: {
+                    MA: MA,
+                },
+                all: {
+                    MA: MA,
+                    MA200: MA200,
+                    MACD: MACD,
+                    change1hP: change1hP,
+                    MAVol: MAVol,
+                    rang: rang,
+                    rang2: rang2,
+                    change6hP: change6hP,
+                    change24hP: change24hP,
+                    MA24hP: MA24hP,
+                    RSI: RSI,
+                    DMACD: DMACD,
+                    MACDMA: MACDMA,
+                    MACDVol: MACDVol,
+                }
             }
         }
 
-        upSignal = await up(indicator);
+        upSignal = await up(indicator.uppers);
         async function up(indicator) {
             if (        //up signal
-                (indicator.MA > 0)
-                && (indicator.MA200 > 0)
-                && (indicator.MACD > 0)
-                //&& (indicator.MAVol > 0)
-                //&& (indicator.change1hP > 0)
-                && (indicator.rang > 0)
-                && (indicator.rang2 > 0)
+                (indicator.MA > 0)          //imidiate dual state
+                && (indicator.MA200 > 0)    //imidiate dual state
+                //&& (indicator.MACD >= 0)  //late dual state
+                //&& (indicator.MAVol > 0)  //imidiate dual state
+                //&& (indicator.change1hP > 0)//late dual state
+                //&& (indicator.rang > 0)   //imidiate dual state
+                //&& (indicator.rang2 > 0)  //imidiate dual state
             ) {
                 return await 1;
             } else {    //no signal
@@ -575,7 +586,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
-        downSignal = await down(indicator);
+        downSignal = await down(indicator.downers);
         async function down(indicator) {
             if (        //down signal
                 (indicator.MA < 0)
@@ -593,10 +604,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             if (purchase && !sale && upSignal) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, bid) : console.log('buy orders disabled');
                 enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = bid;
-                orderType = ret.orderType;
+                enableOrders ? orderType = ret.orderType : orderType = "bougth";
+                ;
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
-                orderType = ret.orderType;
+                enableOrders ? orderType = ret.orderType : orderType = "sold";
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
@@ -612,7 +624,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return await orderType;
         }
 
-        await mailInfo(orderType);
 
         // dinamic stoploss
         function dinamicStopLoss(startValue) {
@@ -641,6 +652,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
             quoteBalance______: quoteBalance + " " + quoteCurrency,
             quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
+            enabled__: enableOrders,
             time_____: f.getTime(),
             ticker___: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
@@ -653,6 +665,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             purchase___: purchase,
             more_______: more,
             upSignal___: upSignal,
+            uppers_: indicator.uppers,
+            downers: indicator.downers,
             downSignal_: downSignal,
             sellConditions: {
                 sale: sale,
@@ -661,12 +675,12 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             },
             logLength: logMA200.length,
             orderType: orderType,
-            indicator: indicator,
             //quoteMarkets: JSON.stringify(quotes),
             //wallet: JSON.stringify(wallet)
             //bestBuy: JSON.stringify(bestBuy),
         }
         //mailer
+        await mailInfo(orderType);
         async function mailInfo(orderType) {
             if (await orderType == "sold") {
                 f.sendMail("Sold Info", JSON.stringify(marketInfo));
@@ -686,8 +700,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
 
-        logHistory(marketInfo,10)
-        function logHistory(toLog,length) {
+        await logHistory(marketInfo, 10)
+        function logHistory(toLog, length) {
             //f.cs(dol)
             if (dol >= length) {
                 firstLogToFile()
