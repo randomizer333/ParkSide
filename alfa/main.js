@@ -35,12 +35,14 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "BTC/USDT", "ETH/USDT", "XRP/USDT", "LTC/USDT", "BNB/USDT",
-    "LTC/BNB", "XRP/BNB", "LTC/BNB"
+    "BTC/USDT", "ETH/USDT", "XRP/USDT", "LTC/USDT", "BNB/USDT","BCH/USDT",
+    "BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
+    "BNB/ETH","LTC/ETH","XRP/ETH",
+    "LTC/BNB", "XRP/BNB",
 
     /*"ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
 
-    "AGI/BTC","ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
+    "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
     "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
@@ -316,6 +318,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         MACDMA, MACDVol
 
     let price;      //balanceChanged
+    let bid
     let bougthPrice = 0;//balanceChanged
 
     let sellPrice;  //safeSale
@@ -602,8 +605,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal) {    // buy 
-                enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, bid) : console.log('buy orders disabled');
-                enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = bid;
+                enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = price;
                 enableOrders ? orderType = ret.orderType : orderType = "bougth";
                 ;
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
