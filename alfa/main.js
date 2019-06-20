@@ -36,9 +36,9 @@ async function init() {
 
 let quotes = [    //trading portofio
     "BTC/USDT", "ETH/USDT", "XRP/USDT", "LTC/USDT", "BNB/USDT","BCH/USDT",
-    "BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
-    "BNB/ETH","LTC/ETH","XRP/ETH",
-    "LTC/BNB", "XRP/BNB",
+    //"BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
+    //"BNB/ETH","LTC/ETH","XRP/ETH",
+    //"LTC/BNB", "XRP/BNB",
 
     /*"ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
 
@@ -577,9 +577,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             if (        //up signal
                 (indicator.MA > 0)          //imidiate dual state
                 && (indicator.MA200 > 0)    //imidiate dual state
-                //&& (indicator.MACD >= 0)  //late dual state
+                && (indicator.MACD >= 0)  //late dual state
                 //&& (indicator.MAVol > 0)  //imidiate dual state
-                //&& (indicator.change1hP > 0)//late dual state
+                //&& (indicator.change1hP >= 0)//late dual state
                 //&& (indicator.rang > 0)   //imidiate dual state
                 //&& (indicator.rang2 > 0)  //imidiate dual state
             ) {
@@ -695,7 +695,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 f.sendMail("Lossed Info", JSON.stringify(marketInfo));
                 return await true;
             } else if (await orderType == "canceled") {
-                f.sendMail("Canceled Info", JSON.stringify(marketInfo));
+                //f.sendMail("Canceled Info", JSON.stringify(marketInfo));
                 return await true;
             } else {
                 return await false;
