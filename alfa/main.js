@@ -1,7 +1,7 @@
 /* 
-1.crypto to fiat bot
-2.highrangr catcher bot
-3.intracrypto trading bot
+1.crypto to fiat trader
+2.high ranking catcher trader
+3.intracrypto trading trader
 */
 
 //requirements
@@ -35,7 +35,7 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "BTC/USDT", "ETH/USDT", "XRP/USDT", "LTC/USDT", "BNB/USDT","BCH/USDT",
+    "BTC/USDT", "ETH/USDT", "XRP/USDT", "LTC/USDT", "BNB/USDT", "BCH/USDT",
     //"BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
     //"BNB/ETH","LTC/ETH","XRP/ETH",
     //"LTC/BNB", "XRP/BNB",
@@ -549,9 +549,11 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 uppers: {
                     MA: MA,
                     MA200: MA200,
+                    MACD: MACD,
                 },
                 downers: {
                     MA: MA,
+                    MACD: MACD,
                 },
                 all: {
                     MA: MA,
@@ -593,7 +595,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         async function down(indicator) {
             if (        //down signal
                 (indicator.MA < 0)
-                //&& (indicator.MA200 <= 0)
+                && (indicator.MACD <= 0)
             ) {
                 return await 1;
             } else {    //no signal
