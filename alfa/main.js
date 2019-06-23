@@ -5,17 +5,19 @@
 */
 
 //requirements
-let s, a, f, TI, fs
+let s, a, f, TI, fs, db
 req();
 async function req() {
     s = await require("../set.json")
-    a = await require("./api.js");
-    f = await require("./funk.js");
-    TI = await require("./ti.js");
-    fs = require('fs'); //node.js native
+    a = await require("./api.js")
+    f = await require("./funk.js")
+    TI = await require("./ti.js")
+    fs = await require('fs') //node.js native
+    db = await require("./db.json")
     firstLogToFile()
     return await init()
 }
+
 
 // init
 let tickerMinutes,
@@ -704,6 +706,20 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
+        //f.cs(db.data[0])
+        //writeToDB(await marketInfo)
+        function writeToDB(input) {
+
+            function logToFile(message) {
+                fs.appendFile('./db.json', JSON.stringify(message), function (err) {
+                    if (err) throw err;
+                    //console.log('Saved!');
+                });
+            }
+
+            db.data[botNo] = input
+            return f.cs("writen")
+        }
 
         await logHistory(marketInfo, 10)
         function logHistory(toLog, length) {
