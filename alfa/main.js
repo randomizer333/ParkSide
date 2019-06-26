@@ -37,7 +37,7 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "BTC/USDT", "ETH/USDT", "XRP/USDT", "LTC/USDT", "BNB/USDT", "BCH/USDT",
+    "BTC/USDT", "ETH/USDT", "XRP/USDT", /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
     //"BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
     //"BNB/ETH","LTC/ETH","XRP/ETH",
     //"LTC/BNB", "XRP/BNB",
@@ -307,6 +307,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         logVol = [],
         logMacd = [],
         logMA3 = [],
+        logMA30 = [],
         logMA200 = [],
         logVolMACD = [],
         logMA200second = [];
@@ -519,11 +520,13 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             log24hP = await m.loger(change24hP, 3, log24hP);
             logVol = await m.loger(volume, 3, logVol);
             logMA3 = await m.loger(price, 3, logMA3);
+            logMA30 = await m.loger(price, 30, logMA30)
+
             logMA200 = await m.loger(price, 200, logMA200);
 
             //technical analysis
             MA = await TI.ma(logMA3);   //MA of last 3 prices
-
+            MA30 = await TI.ma(logMA30) //MA of last 30 prices
             MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
             RSI = await TI.rsi(logAll); //RSI (30,70)
@@ -550,15 +553,16 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             return await {
                 uppers: {
                     MA: MA,
+                    MA30: MA30,
                     MA200: MA200,
                     MACD: MACD,
                 },
                 downers: {
                     MA: MA,
-                    MACD: MACD,
                 },
                 all: {
                     MA: MA,
+                    MA30: MA30,
                     MA200: MA200,
                     MACD: MACD,
                     change1hP: change1hP,
@@ -577,15 +581,16 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         upSignal = await up(indicator.uppers);
-        async function up(indicator) {
+        async function up(uppers) {
             if (        //up signal
-                (indicator.MA > 0)          //imidiate dual state
-                && (indicator.MA200 > 0)    //imidiate dual state
-                && (indicator.MACD >= 0)  //late dual state
-                //&& (indicator.MAVol > 0)  //imidiate dual state
-                //&& (indicator.change1hP >= 0)//late dual state
-                //&& (indicator.rang > 0)   //imidiate dual state
-                //&& (indicator.rang2 > 0)  //imidiate dual state
+                (uppers.MA > 0)          //imidiate dual state
+                && (uppers.MA30 > 0)    //imidiate dual state
+                && (uppers.MA200 > 0)    //imidiate dual state
+                && (uppers.MACD >= 0)  //late dual state
+                //&& (uppers.MAVol > 0)  //imidiate dual state
+                //&& (uppers.change1hP >= 0)//late dual state
+                //&& (uppers.rang > 0)   //imidiate dual state
+                //&& (uppers.rang2 > 0)  //imidiate dual state
             ) {
                 return await 1;
             } else {    //no signal
@@ -594,10 +599,10 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         }
 
         downSignal = await down(indicator.downers);
-        async function down(indicator) {
+        async function down(downers) {
             if (        //down signal
-                (indicator.MA < 0)
-                && (indicator.MACD <= 0)
+                (downers.MA < 0)
+                //&& (downers.MACD <= 0)
             ) {
                 return await 1;
             } else {    //no signal
@@ -648,6 +653,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             fiatPrice: priceFiat + " " + s.fiatMarket,
             fiatProfit: (absoluteProfit * priceFiat).toFixed(8) + " " + "USDT",
             fiatProfit2: (absoluteProfit2 * priceFiat).toFixed(8) + " " + "USDT",
+            symbol: symbol,
             relativeProfit_: (relativeProfit + minProfitP).toFixed(3) + " %",
             absoluteProfit_: absoluteProfit.toFixed(8) + " " + quoteCurrency,
             absoluteProfit2: absoluteProfit2.toFixed(8) + " " + quoteCurrency,
@@ -663,7 +669,6 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             time_____: f.getTime(),
             ticker___: tickerMinutes + " min",
             stopLossP: stopLossP + " %",
-            symbol___: symbol,
             sellPrice__: sellPrice.toFixed(8) + " " + symbol,
             price______: price.toFixed(8) + " " + symbol,
             bid________: bid.toFixed(8) + " " + symbol,
