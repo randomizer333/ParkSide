@@ -556,6 +556,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                     MA30: MA30,
                     MA200: MA200,
                     MACD: MACD,
+                    DMACD: DMACD,
                 },
                 downers: {
                     MA: MA,
@@ -586,7 +587,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                 (uppers.MA > 0)          //imidiate dual state
                 && (uppers.MA30 > 0)    //imidiate dual state
                 && (uppers.MA200 > 0)    //imidiate dual state
-                && (uppers.MACD >= 0)  //late dual state
+                //&& (uppers.MACD >= 0)  //late dual state
+                //&& (uppers.DMACD >= 0)  //late dual state
                 //&& (uppers.MAVol > 0)  //imidiate dual state
                 //&& (uppers.change1hP >= 0)//late dual state
                 //&& (uppers.rang > 0)   //imidiate dual state
