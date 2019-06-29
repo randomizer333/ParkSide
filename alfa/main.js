@@ -287,7 +287,6 @@ async function globalRang2(value, symbol, botN, awards) {
 
 async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
-    let orderType = false;  //loop output
     let marketInfo;         //loop output
 
     let amountQuote;    //baseToQuote
@@ -488,6 +487,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     botNo[botNumber] = setInterval(function () { loop(symbol, strategy) }, ticker);
     async function loop(symbol, strategy) {
 
+        let orderType = false;  //loop output
+
         minAmount = await a.minAmount(symbol);
         baseCurrency = await f.splitSymbol(symbol, "first");
         quoteCurrency = await f.splitSymbol(symbol, "second");
@@ -556,7 +557,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                     MA30: MA30,
                     MA200: MA200,
                     MACD: MACD,
-                    DMACD: DMACD,
+                    change1hP: change1hP,
                 },
                 downers: {
                     MA: MA,
@@ -583,33 +584,20 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
         upSignal = await up(indicator.uppers);
         async function up(uppers) {
-            if (        //up signal
-                (uppers.MA > 0)          //imidiate dual state
-                && (uppers.MA30 > 0)    //imidiate dual state
-                && (uppers.MA200 > 0)    //imidiate dual state
-                //&& (uppers.MACD >= 0)  //late dual state
-                //&& (uppers.DMACD >= 0)  //late dual state
-                //&& (uppers.MAVol > 0)  //imidiate dual state
-                //&& (uppers.change1hP >= 0)//late dual state
-                //&& (uppers.rang > 0)   //imidiate dual state
-                //&& (uppers.rang2 > 0)  //imidiate dual state
-            ) {
-                return await 1;
-            } else {    //no signal
-                return await 0;
+            conds = await Object.values(uppers);
+            function limit(currentValue) {
+                return currentValue > 0;    //set condition
             }
+            return conds.every(limit)
         }
 
         downSignal = await down(indicator.downers);
         async function down(downers) {
-            if (        //down signal
-                (downers.MA < 0)
-                //&& (downers.MACD <= 0)
-            ) {
-                return await 1;
-            } else {    //no signal
-                return await 0;
+            conds = await Object.values(downers);
+            function limit(currentValue) {
+                return currentValue < 0;    //set condition
             }
+            return conds.every(limit)
         }
 
         // make strategic decision about order type
@@ -682,6 +670,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             uppers_: indicator.uppers,
             downers: indicator.downers,
             downSignal_: downSignal,
+            indicators: indicator.all,
             sellConditions: {
                 sale: sale,
                 hold: hold,
