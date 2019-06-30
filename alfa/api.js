@@ -323,11 +323,12 @@ async function markets() {                   //load all available markets on exc
 }
 
 async function filterAll(markets, qus) {
-    qus = ["USDT", "BTC", "BNB", "ETH", "PAX", "USDC", "TUSD", "USDS"]
+    qus = ["USDT", "BTC", "BNB", "ETH", "PAX", "USDC", "TUSD", "USDS","XRP"]
     r1 = await filter(qus[0], markets)  //USDT
     r2 = await filter(qus[1], markets)   //BTC
     r3 = await filter(qus[2], markets)  //BNB
     r4 = await filter(qus[3], markets)  //ETH
+    r9 = await filter(qus[8], markets)  //XRP
 
     r5 = await filter(qus[4], markets)  //PAX
     r6 = await filter(qus[5], markets)  //USDC
