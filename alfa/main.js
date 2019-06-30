@@ -37,7 +37,8 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "BTC/USDT", "ETH/USDT", "XRP/USDT", /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
+    "BNB/USDT", "BTC/USDT", "ETH/USDT", "XRP/USDT",//cripto base/fiat quote
+     /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
     //"BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
     //"BNB/ETH","LTC/ETH","XRP/ETH",
     //"LTC/BNB", "XRP/BNB",
@@ -526,7 +527,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             logMA200 = await m.loger(price, 200, logMA200);
 
             //technical analysis
-            MA = await TI.ma(logMA3);   //MA of last 3 prices
+            MA3 = await TI.ma(logMA3);   //MA of last 3 prices
             MA30 = await TI.ma(logMA30) //MA of last 30 prices
             MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
@@ -553,31 +554,30 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
             return await {
                 uppers: {
-                    MA: MA,
+                    MA3: MA3,
                     MA30: MA30,
-                    MA200: MA200,
                     MACD: MACD,
                     change1hP: change1hP,
                 },
                 downers: {
-                    MA: MA,
+                    MA3: MA3,
                 },
                 all: {
-                    MA: MA,
+                    MA3: MA3,
                     MA30: MA30,
                     MA200: MA200,
-                    MACD: MACD,
                     change1hP: change1hP,
-                    MAVol: MAVol,
-                    rang: rang,
-                    rang2: rang2,
                     change6hP: change6hP,
                     change24hP: change24hP,
                     MA24hP: MA24hP,
                     RSI: RSI,
-                    DMACD: DMACD,
+                    MACD: MACD,
                     MACDMA: MACDMA,
+                    DMACD: DMACD,
+                    MAVol: MAVol,
                     MACDVol: MACDVol,
+                    rang: rang,
+                    rang2: rang2,
                 }
             }
         }
