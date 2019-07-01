@@ -37,7 +37,12 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    "BNB/USDT", "BTC/USDT", "ETH/USDT", "XRP/USDT",//cripto base/fiat quote
+    //cripto base/fiat quote
+    "BNB/USDT", "BTC/USDT", "ETH/USDT", "XRP/USDT", 
+    //crypto/fiat backings
+    "BNB/BTC","ETH/BTC","XRP/BTC",    
+    "BNB/ETH","XRP/ETH",
+    "XRP/BNB",
      /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
     //"BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
     //"BNB/ETH","LTC/ETH","XRP/ETH",
@@ -541,7 +546,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
 
             change1hP = await m.change1h(logAll, ticker, price, 60)  //price change percentage in duration
             change6hP = await m.change1h(logAll, ticker, price, 360)  //price change percentage in duration
-            MA24hP = await TI.ma(log24hP);  //MA3 of 24h price change
+            MA3change24hP = await TI.ma(log24hP);  //MA3 of 24h price change
 
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
 
@@ -569,7 +574,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                     change1hP: change1hP,
                     change6hP: change6hP,
                     change24hP: change24hP,
-                    MA24hP: MA24hP,
+                    MA3change24hP: MA3change24hP,
                     RSI: RSI,
                     MACD: MACD,
                     MACDMA: MACDMA,
@@ -582,22 +587,24 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             }
         }
 
+        //confirm signals above 0 with AND
         upSignal = await up(indicator.uppers);
         async function up(uppers) {
             conds = await Object.values(uppers);
-            function limit(currentValue) {
+            function condition(currentValue) {
                 return currentValue > 0;    //set condition
             }
-            return conds.every(limit)
+            return conds.every(condition)
         }
 
+        //confirm signals below 0 with AND
         downSignal = await down(indicator.downers);
         async function down(downers) {
             conds = await Object.values(downers);
-            function limit(currentValue) {
+            function condition(currentValue) {
                 return currentValue < 0;    //set condition
             }
-            return conds.every(limit)
+            return conds.every(condition)
         }
 
         // make strategic decision about order type
