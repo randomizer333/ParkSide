@@ -14,7 +14,6 @@ async function req() {
     TI = await require("./ti.js")
     fs = await require('fs') //node.js native
     db = await require("./db.json")
-    firstLogToFile()
     return await init()
 }
 
@@ -38,23 +37,23 @@ async function init() {
 
 let quotes = [    //trading portofio
     //cripto base/fiat quote
-    "BNB/USDT", "BTC/USDT", "ETH/USDT", "XRP/USDT", 
+    //"BNB/USDT", "BTC/USDT", "ETH/USDT", "XRP/USDT", 
     //crypto/fiat backings
-    "BNB/BTC","ETH/BTC","XRP/BTC",    
-    "BNB/ETH","XRP/ETH",
-    "XRP/BNB",
-     /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
+    "BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC",
+    //"BNB/ETH", "XRP/ETH",
+    //"XRP/BNB",
+    /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
     //"BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
     //"BNB/ETH","LTC/ETH","XRP/ETH",
     //"LTC/BNB", "XRP/BNB",
 
-    /*"ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
+   /*"ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
 
-    "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
+   "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
 
-    "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
+   "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
 
-    "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
+   "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
 ]
 
 let numOfBots
@@ -72,20 +71,27 @@ async function setup() {    //runs once at the begining of the program
     tradingFeeP = exInfo.feeMaker * 100;
     await f.cs(exInfo);
     markets = await a.markets();
-    await f.cs("Ms: " + markets.length)
-    markets = await a.filterAll(markets);
-    await f.cs("Ms: " + markets.length)
-    await f.cs(markets);
+    await f.cs("Number of markets: " + markets.length)
+    markets = await a.filterAll(markets, "BTC");
+    //await f.cs("Ms: " + markets.length)
+    //await f.cs(markets);
     wallet = await a.wallet();
     await f.cs(wallet);
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n")
     s.markets == ("all" || "ALL") ? quotes = markets : ""
+    firstLogToFile()
     await setBots(quotes);
 }
 
 // set bots
 
 async function setBots(quotes) {
+    if (s.fiatMarket == "" || s.fiatMarket == false || s.fiatMarket == false) {
+        f.cs("no fiat")
+    }
+    else if (s.fiatMarket) {
+        quotes.unshift(s.fiatMarket)
+    }
 
     numOfBots = await quotes.length;
     //f.cs("numOfBots"+numOfBots)
@@ -99,6 +105,8 @@ async function setBots(quotes) {
         a++;
         return r;
     }
+
+    f.cs("Runing markets: " + quotes)
 
     for (let i in await quotes) {
         await setTimeout(function () { bot(quotes[i], ticker, "ud", stopLossP, i) }, setStartTime());
@@ -523,7 +531,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         indicator = await indicators(price, volume, change24hP)
         async function indicators(price, volume, change24hP) {
             //market data colection
-            logAll = await m.loger(price, 105, logAll);
+            logAll = await m.loger(price, 555, logAll);
             log24hP = await m.loger(change24hP, 3, log24hP);
             logVol = await m.loger(volume, 3, logVol);
             logMA3 = await m.loger(price, 3, logMA3);
@@ -551,8 +559,8 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
 
             //rang = await globalRang(MAVol, symbol, botNumber, 2);
-            rang = await globalRang(change1hP, symbol, botNumber, 22, change24hP);
-            rang2 = await globalRang2(MAVol, symbol, botNumber, 22)
+            rang = await globalRang(change1hP, symbol, botNumber, 1, change24hP);
+            rang2 = await globalRang2(MAVol, symbol, botNumber, 1)
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -581,9 +589,20 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
                     DMACD: DMACD,
                     MAVol: MAVol,
                     MACDVol: MACDVol,
-                    rang: rang,
-                    rang2: rang2,
+                    rank: rang,
+                    rank2: rang2,
                 }
+            }
+        }
+
+        function startegy(startegy, indicators) {
+            switch (startegy) {
+                case "fiat":
+                    return indicators.all
+                    break
+                case "crypto":
+                    return indicators.uppers
+                    break
             }
         }
 
@@ -610,7 +629,7 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
-            if (purchase && !sale && upSignal) {    // buy 
+            if (purchase && !sale && upSignal && !hold && !stopLoss) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = price;
                 enableOrders ? orderType = ret.orderType : orderType = "bougth";

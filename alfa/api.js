@@ -350,7 +350,7 @@ async function filterAll(markets, qus) {
 async function filter(mainQuoteCurrency, syms) {
     let results = [];
     let quote = [];
-    f.cs("Main quote: " + mainQuoteCurrency);
+    //f.cs("Main quote: " + mainQuoteCurrency);
     for (i = 0; i < syms.length - 1; i++) {
         quote = f.splitSymbol(syms[i], "second");
         if (quote == mainQuoteCurrency) {
@@ -359,7 +359,7 @@ async function filter(mainQuoteCurrency, syms) {
     }
     let results2;
     results2 = await f.cleanArray(results);
-    f.cs(results2);
+    //f.cs(results2);
     return results2;
 }
 
