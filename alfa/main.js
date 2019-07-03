@@ -29,7 +29,7 @@ async function init() {
     tickerMinutes = await s.tickerMinutes;    //1,3,5, for all 10,60,120
     stopLossP = await s.stopLossP//2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
     portion = await s.portion//0.99;   //part of balance to spend
-    minProfitP = await 0.1; //holding addition
+    minProfitP = await s.minProfitP; //holding addition
     enableOrders = await s.enableOrders//true;  //sim
     ticker = await f.minToMs(tickerMinutes);
     return await setup();
