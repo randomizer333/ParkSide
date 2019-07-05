@@ -70,12 +70,14 @@ async function setup() {    //runs once at the begining of the program
     exInfo = a.exInfos;
     tradingFeeP = exInfo.feeMaker * 100;
     await f.cs(exInfo);
+    await f.cs("Exchange: " + s.exchange)
     markets = await a.markets();
+    await f.cs(markets);
     await f.cs("Number of markets: " + markets.length)
     markets = await a.filterAll(markets, "BTC");
     //await f.cs("Ms: " + markets.length)
-    //await f.cs(markets);
     wallet = await a.wallet();
+    await f.cs("Wallet:");
     await f.cs(wallet);
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n")
     s.markets == ("all" || "ALL") ? quotes = markets : ""
@@ -86,10 +88,11 @@ async function setup() {    //runs once at the begining of the program
 // set bots
 
 async function setBots(quotes) {
-    if (s.fiatMarket == "" || s.fiatMarket == false || s.fiatMarket == false) {
-        f.cs("no fiat")
+    if (s.startegy == "crypto") {
+        f.cs("Strategy: "+s.startegy)
     }
-    else if (s.fiatMarket) {
+    else if (s.startegy == "fiat") {
+        f.cs("Strategy: "+s.startegy)
         quotes.unshift(s.fiatMarket)
     }
 
@@ -109,10 +112,10 @@ async function setBots(quotes) {
     f.cs("Runing markets: " + quotes)
 
     for (let i in await quotes) {
-        await setTimeout(function () { bot(quotes[i], ticker, "ud", stopLossP, i) }, setStartTime());
+        await setTimeout(function () { bot(quotes[i], ticker, stopLossP, i) }, setStartTime());
         /*runner()
         async function runner() {   //for websocket
-            r = await bot(quotes[cur], ticker, "ud", stopLossP, cur)
+            r = await bot(quotes[cur], ticker, stopLossP, cur)
             if (await r) {
                 runner()
             }
@@ -299,7 +302,7 @@ async function globalRang2(value, symbol, botN, awards) {
 
 // main loop
 
-async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
+async function bot(symbol, ticker, stopLossP, botNumber) {
 
     let marketInfo;         //loop output
 
@@ -497,9 +500,9 @@ async function bot(symbol, ticker, strategy, stopLossP, botNumber) {
     }
     const m = modul();
 
-    loop(symbol, strategy);
-    botNo[botNumber] = setInterval(function () { loop(symbol, strategy) }, ticker);
-    async function loop(symbol, strategy) {
+    loop(symbol);
+    botNo[botNumber] = setInterval(function () { loop(symbol) }, ticker);
+    async function loop(symbol) {
 
         let orderType = false;  //loop output
 
