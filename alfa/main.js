@@ -563,7 +563,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             //rang = await globalRang(MAVol, symbol, botNumber, 2);
             rang = await globalRang(change1hP, symbol, botNumber, 1, change24hP);
-            rang2 = await globalRang2(MAVol, symbol, botNumber, 1)
+            rang2 = await globalRang2(MAVol, symbol, botNumber, 2)
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -699,7 +699,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             uppers_: indicator.uppers,
             downers: indicator.downers,
             downSignal_: downSignal,
-            indicators: indicator.all,
+            //indicators: indicator.all,
             sellConditions: {
                 sale: sale,
                 hold: hold,
