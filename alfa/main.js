@@ -36,8 +36,9 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
+    //"BTC/USDT",
     //cripto base/fiat quote
-    //"BNB/USDT", "BTC/USDT", "ETH/USDT", "XRP/USDT", 
+    //"BNB/USDT",  "ETH/USDT", "XRP/USDT", 
     //crypto/fiat backings
     "BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC",
     //"BNB/ETH", "XRP/ETH",
@@ -632,7 +633,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
-            if (purchase && !sale && upSignal && !hold && !stopLoss) {    // buy 
+            if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = price;
                 enableOrders ? orderType = ret.orderType : orderType = "bougth";
