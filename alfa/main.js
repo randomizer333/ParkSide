@@ -38,9 +38,9 @@ async function init() {
 let quotes = [    //trading portofio
     //"BTC/USDT",   //in setings
     //cripto base/fiat quote
-    //"BNB/USDT",  "ETH/USDT", "XRP/USDT", 
+    //"BNB/USDT", "ETH/USDT", "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
     //crypto/fiat backings
-    //"BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC",
+    "BNB/BTC", "ETH/BTC", "XRP/BTC", "BCC/BTC", "LTC/BTC", "EOS/BTC"
     //"BNB/ETH", "XRP/ETH",
     //"XRP/BNB",
     /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
@@ -90,10 +90,10 @@ async function setup() {    //runs once at the begining of the program
 
 async function setBots(quotes) {
     if (s.strategy == "crypto") {
-        f.cs("Strategy: "+s.strategy)
+        f.cs("Strategy: " + s.strategy)
     }
     else if (s.strategy == "fiat") {
-        f.cs("Strategy: "+s.strategy)
+        f.cs("Strategy: " + s.strategy)
         quotes.unshift(s.fiatMarket)
     }
 
@@ -564,8 +564,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             //rang = await globalRang(MAVol, symbol, botNumber, 2);
             //rang = await globalRang(change1hP, symbol, botNumber, 10);
-            rang = await globalRang(MAVol, symbol, botNumber, 20)
-            rang2 = await globalRang2(MACD, symbol, botNumber, 5 )
+            rang = await globalRang(MAVol, symbol, botNumber, 4)
+            rang2 = await globalRang2(MACD, symbol, botNumber, 4)
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -577,7 +577,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     MACD: MACD,
                     change1hP: change1hP,
                     rank: rang,
-                    
+
                 },
                 downers: {
                     MA3: MA3,
