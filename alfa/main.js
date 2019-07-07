@@ -36,11 +36,11 @@ async function init() {
 }
 
 let quotes = [    //trading portofio
-    //"BTC/USDT",
+    //"BTC/USDT",   //in setings
     //cripto base/fiat quote
     //"BNB/USDT",  "ETH/USDT", "XRP/USDT", 
     //crypto/fiat backings
-    "BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC",
+    //"BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC",
     //"BNB/ETH", "XRP/ETH",
     //"XRP/BNB",
     /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
@@ -57,16 +57,15 @@ let quotes = [    //trading portofio
    "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
 ]
 
+//  main setup
 let numOfBots
 let delay
 
 let botNo = [];
 let bestBuy = [];
 
-//  main setup
 let exInfo;
 let wallet;
-//setup();
 async function setup() {    //runs once at the begining of the program
     exInfo = a.exInfos;
     tradingFeeP = exInfo.feeMaker * 100;
@@ -75,13 +74,14 @@ async function setup() {    //runs once at the begining of the program
     markets = await a.markets();
     await f.cs(markets);
     await f.cs("Number of markets: " + markets.length)
-    markets = await a.filterAll(markets, "BTC");
-    //await f.cs("Ms: " + markets.length)
+    markets = await a.filterAll(markets, s.markets);
+    await f.cs("Ms: " + markets.length)
+    await f.cs(markets);
     wallet = await a.wallet();
     await f.cs("Wallet:");
     await f.cs(wallet);
     f.sendMail("Restart", "RUN! at " + f.getTime() + "\n")
-    s.markets == ("all" || "ALL") ? quotes = markets : ""
+    s.markets == ("BTC" || "BNB" || "ETH") ? quotes = markets : ""
     firstLogToFile()
     await setBots(quotes);
 }
@@ -89,11 +89,11 @@ async function setup() {    //runs once at the begining of the program
 // set bots
 
 async function setBots(quotes) {
-    if (s.startegy == "crypto") {
-        f.cs("Strategy: "+s.startegy)
+    if (s.strategy == "crypto") {
+        f.cs("Strategy: "+s.strategy)
     }
-    else if (s.startegy == "fiat") {
-        f.cs("Strategy: "+s.startegy)
+    else if (s.strategy == "fiat") {
+        f.cs("Strategy: "+s.strategy)
         quotes.unshift(s.fiatMarket)
     }
 
@@ -152,7 +152,7 @@ function firstLogToFile() {
 // global indicator
 
 let history = []
-async function globalRang(value, symbol, botN, awards, change24hP) {
+async function globalRang(value, symbol, botN, awards) {
     rang = 0
     history[botN] = await { value, symbol, botN, rang }
 
@@ -187,7 +187,7 @@ async function globalRang(value, symbol, botN, awards, change24hP) {
             let awarded = await toAward.slice().sort();
             if (toAward.length < N) {
                 for (i = 0; i < toAward.length; i++) {   //give rangr award
-                    if ((toAward[i].value <= 0) && (change24hP >= 0)) {
+                    if (toAward[i].value <= 0) {
                         awarded[i].rang = 0
                     } else if (toAward[i].value > 0) {
                         awarded[i].rang = 1
@@ -537,7 +537,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //market data colection
             logAll = await m.loger(price, 555, logAll);
             log24hP = await m.loger(change24hP, 3, log24hP);
-            logVol = await m.loger(volume, 3, logVol);
+            logVol = await m.loger(volume, 10, logVol);
             logMA3 = await m.loger(price, 3, logMA3);
             logMA30 = await m.loger(price, 30, logMA30)
 
@@ -563,8 +563,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             MAVol = await TI.ma(logVol);    //MA of last 5 Volumes
 
             //rang = await globalRang(MAVol, symbol, botNumber, 2);
-            rang = await globalRang(change1hP, symbol, botNumber, 1, change24hP);
-            rang2 = await globalRang2(MAVol, symbol, botNumber, 2)
+            //rang = await globalRang(change1hP, symbol, botNumber, 10);
+            rang = await globalRang(MAVol, symbol, botNumber, 20)
+            rang2 = await globalRang2(MACD, symbol, botNumber, 5 )
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -575,6 +576,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     MA30: MA30,
                     MACD: MACD,
                     change1hP: change1hP,
+                    rank: rang,
+                    
                 },
                 downers: {
                     MA3: MA3,
@@ -599,8 +602,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
-        function startegy(startegy, indicators) {
-            switch (startegy) {
+        /*
+        function strategy(strategy, indicators) {
+            switch (strategy) {
                 case "fiat":
                     return indicators.all
                     break
@@ -609,6 +613,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     break
             }
         }
+        */
 
         //confirm signals above 0 with AND
         upSignal = await up(indicator.uppers);
@@ -700,7 +705,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             uppers_: indicator.uppers,
             downers: indicator.downers,
             downSignal_: downSignal,
-            //indicators: indicator.all,
+            indicators: indicator.all,
             sellConditions: {
                 sale: sale,
                 hold: hold,
