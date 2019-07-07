@@ -323,6 +323,10 @@ async function markets() {                   //load all available markets on exc
 }
 
 async function filterAll(markets, qus) {
+    
+    r = await filter(qus, markets)
+
+    /*
     qus = ["USDT", "BTC", "BNB", "ETH", "PAX", "USDC", "TUSD", "USDS","XRP"]
     r1 = await filter(qus[0], markets)  //USDT
     r2 = await filter(qus[1], markets)   //BTC
@@ -336,13 +340,13 @@ async function filterAll(markets, qus) {
     r8 = await filter(qus[7], markets)  //USDS
 
     //r = r1                      //USDT
-    let f = ["BTC/USDT"]
+    //let f = ["BTC/USDT"]
     r = f.concat(r2)
     //r = r1.concat(r2);        //USDT BTC
     //r = r1.concat(r2,r3);     //USDT BTC BNB
     //r = r1.concat(r2,r3,r4);  //USDT BTC BNB ETH
     //r = r1.concat(r5,r6,r7,r8);  //USDT PAX USDC TUSD USDS
-
+*/
     return await r;
 }
 
