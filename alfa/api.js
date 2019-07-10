@@ -237,7 +237,7 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         return price = 0
     }
 }
-async function cancel(orderId, symbol) {                 //cancels order with id
+async function cancel(orderId, symbol) {    //cancels order with id
     try {
         r = await exchange.cancelOrder(orderId, symbol);
         //order was NOT filled
