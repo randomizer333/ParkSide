@@ -38,7 +38,7 @@ async function init() {
 let quotes = [    //trading portofio
     //"BTC/USDT",   //in setings
     //cripto base/fiat quote
-    "BNB/USDT", "ETH/USDT", "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
+    //"BNB/USDT", "ETH/USDT", "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
     //crypto/fiat backings
     "BNB/BTC", "ETH/BTC", "XRP/BTC", "BCC/BTC", "LTC/BTC", "EOS/BTC"
     //"BNB/ETH", "XRP/ETH",
@@ -370,7 +370,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalanceInBase > minAmount)) {    //can buy
                 sale = await false;
                 f.cs("sale is false")
-                more = await false;
+                more = await false;     //more funds reset
                 purchase = await true;
             } else {
                 f.cs("sale is undef")
