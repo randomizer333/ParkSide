@@ -40,7 +40,7 @@ let quotes = [    //trading portofio
     //cripto base/fiat quote
     //"BNB/USDT", "ETH/USDT", "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
     //crypto/fiat backings
-    "BNB/BTC", "ETH/BTC", "XRP/BTC", "BCC/BTC", "LTC/BTC", "EOS/BTC"
+    "BNB/BTC", "ETH/BTC", "XRP/BTC", "BCC/BTC", "LTC/BTC", "EOS/BTC", "BCH/BTC"
     //"BNB/ETH", "XRP/ETH",
     //"XRP/BNB",
     /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
@@ -413,9 +413,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 bougthPrice = price;
             } else if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
-                    bougthPrice = price;
+                    //bougthPrice = price;  //!!!BOugth price not updated
                     more = true;
-                    console.log("Bougth price updated: " + symbol);
+                    //console.log("Bougth price updated: " + symbol);
+                    f.sendMail("Price updated", "price would be updated at: "+f.getTime)
                 }
             }
             return bougthPrice;
@@ -564,8 +565,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             //rang = await globalRang(MAVol, symbol, botNumber, 2);
             //rang = await globalRang(change1hP, symbol, botNumber, 10);
-            rang = await globalRang(MAVol, symbol, botNumber, 10)
-            rang2 = await globalRang2(MACD, symbol, botNumber, 10)
+            rang2 = await globalRang(MAVol, symbol, botNumber, 10)
+            rang = await globalRang2(MACD, symbol, botNumber, 2)
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -576,7 +577,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     MA30: MA30,
                     MACD: MACD,
                     change1hP: change1hP,
-                    //rank: rang,
+                    rank: rang,
 
                 },
                 downers: {
@@ -642,7 +643,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = price;
                 enableOrders ? orderType = ret.orderType : orderType = "bougth";
-                ;
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 enableOrders ? orderType = ret.orderType : orderType = "sold";
@@ -662,7 +662,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
 
-        // dinamic stoploss
+        // dinamic stoploss //dev
         function dinamicStopLoss(startValue) {
             aProfit = f.part(relativeProfit, startValue);
             return profit;//stopLoss
@@ -704,7 +704,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             upSignal___: upSignal,
             uppers_: indicator.uppers,
             downers: indicator.downers,
-            downSignal_: downSignal,
+            downSignal: downSignal,
             indicators: indicator.all,
             sellConditions: {
                 sale: sale,
