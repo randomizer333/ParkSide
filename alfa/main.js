@@ -416,7 +416,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //bougthPrice = price;  //!!!BOugth price not updated
                     more = true;
                     //console.log("Bougth price updated: " + symbol);
-                    f.sendMail("Price updated", "price would be updated at: "+f.getTime)
+                    f.sendMail("Price updated", JSON.stringify("price would be updated at: "+f.getTime+" on simbol: "+symbol))
                 }
             }
             return bougthPrice;
