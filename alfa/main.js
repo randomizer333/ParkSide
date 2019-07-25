@@ -40,10 +40,10 @@ let quotes = [    //trading portofio
     //cripto base/fiat quote
     //"BNB/USDT", "ETH/USDT", "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
     //crypto/fiat backings
-    "BNB/BTC", "ETH/BTC", "XRP/BTC", "BCC/BTC", "LTC/BTC", "EOS/BTC", "BCH/BTC"
+    "BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC", "EOS/BTC", "BCH/BTC"
     //"BNB/ETH", "XRP/ETH",
     //"XRP/BNB",
-    /*"LTC/USDT", "BNB/USDT", "BCH/USDT",
+    //"LTC/USDT", "BNB/USDT", "BCH/USDT",
     //"BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
     //"BNB/ETH","LTC/ETH","XRP/ETH",
     //"LTC/BNB", "XRP/BNB",
@@ -416,7 +416,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //bougthPrice = price;  //!!!BOugth price not updated
                     more = true;
                     //console.log("Bougth price updated: " + symbol);
-                    f.sendMail("Price updated", JSON.stringify("price would be updated at: "+f.getTime+" on simbol: "+symbol))
+                    time = f.getTime
+                    f.sendMail("Price updated", JSON.stringify("price would be updated at: "+time+" on market: "+symbol));
                 }
             }
             return bougthPrice;
@@ -662,7 +663,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
 
-        // dinamic stoploss //dev
+        // dinamic stoploss dev
         function dinamicStopLoss(startValue) {
             aProfit = f.part(relativeProfit, startValue);
             return profit;//stopLoss
