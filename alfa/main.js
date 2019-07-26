@@ -416,7 +416,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //bougthPrice = price;  //!!!BOugth price not updated
                     more = true;
                     //console.log("Bougth price updated: " + symbol);
-                    time = f.getTime
+                    time = f.getTime()
                     f.sendMail("Price updated", JSON.stringify("price would be updated at: "+time+" on market: "+symbol));
                 }
             }
