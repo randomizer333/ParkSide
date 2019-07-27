@@ -566,8 +566,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             //rang = await globalRang(MAVol, symbol, botNumber, 2);
             //rang = await globalRang(change1hP, symbol, botNumber, 10);
-            rang2 = await globalRang(MAVol, symbol, botNumber, 10)
-            rang = await globalRang2(MACD, symbol, botNumber, 2)
+            //rang2 = await globalRang(MAVol, symbol, botNumber, 10)
+            rang = await globalRang2(change1hP, symbol, botNumber, 2)
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
@@ -577,7 +577,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     MA3: MA3,
                     MA30: MA30,
                     MACD: MACD,
-                    change1hP: change1hP,
+                    //change1hP: change1hP,
                     rank: rang,
 
                 },
@@ -599,7 +599,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     MAVol: MAVol,
                     MACDVol: MACDVol,
                     rank: rang,
-                    rank2: rang2,
+                    //rank2: rang2,
                 }
             }
         }
