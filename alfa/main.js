@@ -66,7 +66,7 @@ async function setup() {    //runs once at the begining of the program
     wallet = await a.wallet();
     await f.cs("Wallet:");
     await f.cs(wallet);
-    enableOrders?f.sendMail("Restart", "RUN! at " + f.getTime() + "\n"):"";
+    enableOrders ? f.sendMail("Restart", "RUN! at " + f.getTime() + "\n") : "";
     s.markets == ("BTC" || "BNB" || "ETH") ? quotes = markets : ""
     firstLogToFile()
     await setBots(quotes);
@@ -450,8 +450,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
         function balanceChanged(baseBalanceInQuote, quoteBalance, botNumber) {
             if (bougthPrice == 0) {
-                //bougthPrice = price;
-                read(botNumber)
+                enableOrders ? read(botNumber) : bougthPrice = price;
                 async function read(botNumber) {
                     let baza = await readJSON();
                     switch (botNumber) {
@@ -480,7 +479,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                             bougthPrice = await baza.a7
                             break;
                         default:
-                        f.cs("nothing selected to read")
+                            f.cs("nothing selected to read")
                     }
                 }
 
@@ -703,9 +702,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = price;
+                enableOrders ? bougthPrice = await ret.bougthPrice : bougthPrice = await price;
 
-                enableOrders ? await shrani(botNumber, await ret.bougthPrice) : bougthPrice = price;
+                enableOrders ? await shrani(botNumber, await ret.bougthPrice) : "";
 
                 enableOrders ? orderType = ret.orderType : orderType = "bougth";
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
@@ -816,7 +815,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
         await console.dir(marketInfo);
         //await f.cs(marketInfo)
-        await shrani(botNumber, bougthPrice)
+        await shrani(await botNumber, await bougthPrice)  //dev
         return await marketInfo;
     }
     return await marketInfo;
