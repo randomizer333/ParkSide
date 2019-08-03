@@ -41,20 +41,6 @@ let quotes = [    //trading portofio
     //"BNB/USDT", "ETH/USDT", "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
     //crypto/fiat backings
     "BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC", "EOS/BTC", "BCH/BTC"
-    //"BNB/ETH", "XRP/ETH",
-    //"XRP/BNB",
-    //"LTC/USDT", "BNB/USDT", "BCH/USDT",
-    //"BNB/ETH","BCH/BTC","BNB/BTC","ETH/BTC","LTC/BTC","XRP/BTC",
-    //"BNB/ETH","LTC/ETH","XRP/ETH",
-    //"LTC/BNB", "XRP/BNB",
-
-   /*"ADA/USDT", "BCH/USDT", "BNB/USDT", "BTC/USDT", "DASH/USDT", "EOS/USDT", "ETC/USDT", "ETH/USDT", "IOTA/USDT", "LTC/USDT", "NEO/USDT", "TRX/USDT", "XLM/USDT", "XMR/USDT", "XRP/USDT",
-
-   "ADA/BTC", "BCH/BTC", "BNB/BTC", "DASH/BTC", "EOS/BTC", "ETC/BTC", "ETH/BTC", "IOTA/BTC", "LTC/BTC", "NEO/BTC", "TRX/BTC", "XLM/BTC", "XMR/BTC", "XRP/BTC",
-
-   "ADA/ETH", "BNB/ETH", "DASH/ETH", "EOS/ETH", "ETC/ETH", "IOTA/ETH", "LTC/ETH", "NEO/ETH", "TRX/ETH", "XLM/ETH", "XMR/ETH", "XRP/ETH",
-
-   "ADA/BNB", "DASH/BNB", "EOS/BNB", "ETC/BNB", "IOTA/BNB", "LTC/BNB", "NEO/BNB", "TRX/BNB", "XLM/BNB", "XMR/BNB", "XRP/BNB"*/
 ]
 
 //  main setup
@@ -80,7 +66,7 @@ async function setup() {    //runs once at the begining of the program
     wallet = await a.wallet();
     await f.cs("Wallet:");
     await f.cs(wallet);
-    f.sendMail("Restart", "RUN! at " + f.getTime() + "\n")
+    enableOrders ? f.sendMail("Restart", "RUN! at " + f.getTime() + "\n") : "";
     s.markets == ("BTC" || "BNB" || "ETH") ? quotes = markets : ""
     firstLogToFile()
     await setBots(quotes);
@@ -135,14 +121,68 @@ function clear() {
     }
 }
 
-function logToFile(message) {
+//store data
+
+async function shrani(botNumber, bougthPrice) {
+    let baza = await readJSON();
+    f.cs("writing")
+    switch (botNumber) {
+        case "0":
+            baza.a0 = bougthPrice
+            writeJSON(baza)
+            f.cs("writing to first cell")
+            break;
+        case "1":
+            baza.a1 = bougthPrice
+            writeJSON(baza)
+            break;
+        case "2":
+            baza.a2 = bougthPrice
+            writeJSON(baza)
+            break;
+        case "3":
+            baza.a3 = bougthPrice
+            writeJSON(baza)
+            break;
+        case "4":
+            baza.a4 = bougthPrice
+            writeJSON(baza)
+            break;
+        case "5":
+            baza.a5 = bougthPrice
+            writeJSON(baza)
+            break;
+        case "6":
+            baza.a6 = bougthPrice
+            writeJSON(baza)
+            break;
+        case "7":
+            baza.a7 = bougthPrice
+            writeJSON(baza)
+            break;
+        default:
+            f.cs("nothing has been writen")
+    }
+}
+function writeJSON(inputJSON) {
+    input = JSON.stringify(inputJSON);
+    fs.writeFile("./storage.json", input, function (err) {
+        if (err) throw err;
+    });
+}
+function readJSON() {
+    let data = fs.readFileSync('storage.json');
+    let json = JSON.parse(data);
+    return json
+}
+
+function logToFile(message) {   //writes to existing file
     fs.appendFile('../log.txt', JSON.stringify(message), function (err) {
         if (err) throw err;
         //console.log('Saved!');
     });
 }
-
-function firstLogToFile() {
+function firstLogToFile() { //creates a file and writes to it
     fs.writeFile('../log.txt', "Started log", function (err) {
         if (err) throw err;
         console.log("Started log");
@@ -408,16 +448,48 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             array.unshift(value);
             return await array;
         }
-        function balanceChanged(baseBalanceInQuote, quoteBalance, price) {
+        function balanceChanged(baseBalanceInQuote, quoteBalance, botNumber) {
             if (bougthPrice == 0) {
-                bougthPrice = price;
+                enableOrders ? read(botNumber) : bougthPrice = price;
+                async function read(botNumber) {
+                    let baza = await readJSON();
+                    switch (botNumber) {
+                        case "0":
+                            bougthPrice = await baza.a0
+                            break;
+                        case "1":
+                            bougthPrice = await baza.a1
+                            break;
+                        case "2":
+                            bougthPrice = await baza.a2
+                            break;
+                        case "3":
+                            bougthPrice = await baza.a3
+                            break;
+                        case "4":
+                            bougthPrice = await baza.a4
+                            break;
+                        case "5":
+                            bougthPrice = await baza.a5
+                            break;
+                        case "6":
+                            bougthPrice = await baza.a6
+                            break;
+                        case "7":
+                            bougthPrice = await baza.a7
+                            break;
+                        default:
+                            f.cs("nothing selected to read")
+                    }
+                }
+
             } else if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
-                    //bougthPrice = price;  //!!!BOugth price not updated
+                    //bougthPrice = price;  //!!!Bougth price not updated
                     more = true;
                     //console.log("Bougth price updated: " + symbol);
                     time = f.getTime()
-                    f.sendMail("Price updated", JSON.stringify("price would be updated at: "+time+" on market: "+symbol));
+                    f.sendMail("Price updated", JSON.stringify("price would be updated at: " + time + " on market: " + symbol));
                 }
             }
             return bougthPrice;
@@ -523,7 +595,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
-        bougthPrice = await m.balanceChanged(baseBalanceInQuote, quoteBalance, price);
+        bougthPrice = await m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
         //purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
         let conds = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
         purchase = await conds.purchase
@@ -578,6 +650,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     MA30: MA30,
                     MACD: MACD,
                     //change1hP: change1hP,
+                    //MACDMA: MACDMA,
                     rank: rang,
 
                 },
@@ -604,19 +677,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
-        /*
-        function strategy(strategy, indicators) {
-            switch (strategy) {
-                case "fiat":
-                    return indicators.all
-                    break
-                case "crypto":
-                    return indicators.uppers
-                    break
-            }
-        }
-        */
-
         //confirm signals above 0 with AND
         upSignal = await up(indicator.uppers);
         async function up(uppers) {
@@ -642,7 +702,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                enableOrders ? bougthPrice = ret.bougthPrice : bougthPrice = price;
+                enableOrders ? bougthPrice = await ret.bougthPrice : bougthPrice = await price;
+
+                enableOrders ? await shrani(botNumber, await ret.bougthPrice) : "";
+
                 enableOrders ? orderType = ret.orderType : orderType = "bougth";
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
@@ -738,21 +801,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
-        //f.cs(db.data[0])
-        //writeToDB(await marketInfo)
-        function writeToDB(input) {
-
-            function logToFile(message) {
-                fs.appendFile('./db.json', JSON.stringify(message), function (err) {
-                    if (err) throw err;
-                    //console.log('Saved!');
-                });
-            }
-
-            db.data[botNo] = input
-            return f.cs("writen")
-        }
-
         await logHistory(marketInfo, 10)
         function logHistory(toLog, length) {
             //f.cs(dol)
@@ -765,9 +813,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 dol++
             }
         }
-
         await console.dir(marketInfo);
         //await f.cs(marketInfo)
+        await shrani(await botNumber, await bougthPrice)  //dev
         return await marketInfo;
     }
     return await marketInfo;
