@@ -164,6 +164,38 @@ async function shrani(botNumber, bougthPrice) {
             f.cs("nothing has been writen")
     }
 }
+async function read(botNumber) {
+    let baza = await readJSON();
+    switch (botNumber) {
+        case "0":
+            bougthPrice = await baza.a0
+            break;
+        case "1":
+            bougthPrice = await baza.a1
+            break;
+        case "2":
+            bougthPrice = await baza.a2
+            break;
+        case "3":
+            bougthPrice = await baza.a3
+            break;
+        case "4":
+            bougthPrice = await baza.a4
+            break;
+        case "5":
+            bougthPrice = await baza.a5
+            break;
+        case "6":
+            bougthPrice = await baza.a6
+            break;
+        case "7":
+            bougthPrice = await baza.a7
+            break;
+        default:
+            f.cs("nothing selected to read")
+    }
+    return await bougthPrice;
+}
 function writeJSON(inputJSON) {
     input = JSON.stringify(inputJSON);
     fs.writeFile("./storage.json", input, function (err) {
@@ -379,7 +411,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
     let price;      //balanceChanged
     let bid
-    let bougthPrice = 0;//balanceChanged
+    let bougthPrice = await read(botNumber);//balanceChanged
 
     let sellPrice;  //safeSale
     let hold;       //safeSale
@@ -448,51 +480,35 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             array.unshift(value);
             return await array;
         }
-        function balanceChanged(baseBalanceInQuote, quoteBalance, botNumber) {
+        async function checkBougthPrice(botNumber) {
             if (bougthPrice == 0) {
-                enableOrders ? read(botNumber) : bougthPrice = price;
-                async function read(botNumber) {
-                    let baza = await readJSON();
-                    switch (botNumber) {
-                        case "0":
-                            bougthPrice = await baza.a0
-                            break;
-                        case "1":
-                            bougthPrice = await baza.a1
-                            break;
-                        case "2":
-                            bougthPrice = await baza.a2
-                            break;
-                        case "3":
-                            bougthPrice = await baza.a3
-                            break;
-                        case "4":
-                            bougthPrice = await baza.a4
-                            break;
-                        case "5":
-                            bougthPrice = await baza.a5
-                            break;
-                        case "6":
-                            bougthPrice = await baza.a6
-                            break;
-                        case "7":
-                            bougthPrice = await baza.a7
-                            break;
-                        default:
-                            f.cs("nothing selected to read")
-                    }
-                }
+                //f.cs("BP was 0")
+                bougthPrice = await price
+                await shrani(await botNumber, await bougthPrice)
+                return await bougthPrice
 
-            } else if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
+            } else{
+                //f.cs("BP was read")
+                return bougthPrice = await read(botNumber)
+            }
+        }
+
+        async function balanceChanged(baseBalanceInQuote, quoteBalance, botNumber) {
+            if (bougthPrice == 0) {
+                f.cs("BP was 0")
+                bougthPrice = await price
+                await shrani(await botNumber, await bougthPrice)
+                return await bougthPrice
+
+            } else if (baseBalanceInQuote > quoteBalance ) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
                     //bougthPrice = price;  //!!!Bougth price not updated
                     more = true;
                     //console.log("Bougth price updated: " + symbol);
-                    time = f.getTime()
+                    time = await f.getTime()
                     f.sendMail("Price updated", JSON.stringify("price would be updated at: " + time + " on market: " + symbol));
                 }
             }
-            return bougthPrice;
         }
 
         let tradingFeeAbs;
@@ -570,7 +586,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             loger: loger,
             balanceChanged: balanceChanged,
             change1h: change1h,
-            selectCurrencyNew: selectCurrencyNew
+            selectCurrencyNew: selectCurrencyNew,
+            checkBougthPrice: checkBougthPrice
         }
     }
     const m = modul();
@@ -595,7 +612,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
-        bougthPrice = await m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
+        //bougthPrice = await read(botNumber)
+        bougthPrice = await m.checkBougthPrice(botNumber);
+        //bougthPrice = await m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
         //purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
         let conds = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
         purchase = await conds.purchase
@@ -702,14 +721,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                enableOrders ? bougthPrice = await ret.bougthPrice : bougthPrice = await price;
+                enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');;
 
-                enableOrders ? await shrani(botNumber, await ret.bougthPrice) : "";
+                enableOrders ? await shrani(botNumber, await ret.bougthPrice) :"";
 
                 enableOrders ? orderType = ret.orderType : orderType = "bougth";
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
-                enableOrders ? orderType = ret.orderType : orderType = "sold";
+                enableOrders ? orderType = await ret.orderType : orderType = "sold";
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
@@ -815,7 +834,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
         await console.dir(marketInfo);
         //await f.cs(marketInfo)
-        await shrani(await botNumber, await bougthPrice)  //dev
+        //enableOrders ? "" : await shrani(await botNumber, await bougthPrice)  //dev
         return await marketInfo;
     }
     return await marketInfo;
