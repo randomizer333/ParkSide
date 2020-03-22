@@ -35,7 +35,7 @@ function sendMail(subject, message, to) {
 }
 
 
-async function loger(value, length, array) {        //log FILO to array
+async function loger(value, length, array) {        //log FIFO to array, newest in oldest out
         while (array.length >= length) {
             array.pop();
         }
