@@ -38,10 +38,24 @@ async function init() {
 let quotes = [    //trading portofio
     //"BTC/USDT",   //in setings
     //cripto base/fiat quote
-    //"BNB/USDT", "ETH/USDT", "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
+    "BNB/USDT", 
+    "ETH/USDT"//, "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
     //crypto/fiat backings
-    "BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC", "EOS/BTC", "BCH/BTC"
+    //"BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC", "EOS/BTC", "BCH/BTC"
 ]
+
+let alts = [    //alt markets 21+3=24
+    
+    "XRP/BNB",	"XRP/BTC",	"XRP/ETH",
+    "LTC/BNB",	"LTC/BTC",	"LTC/ETH",
+    "EOS/BNB",	"EOS/BTC",	"EOS/ETH",
+    "ADA/BNB",	"ADA/BTC",	"ADA/ETH",
+    "XLM/BNB",	"XLM/BTC",	"XLM/ETH",
+    "XMR/BNB",  "XMR/BTC",	"XMR/ETH",
+    "TRX/BNB",	"TRX/BTC",	"TRX/ETH"   
+    //add old markets
+]
+
 
 //  main setup
 let numOfBots
@@ -75,12 +89,13 @@ async function setup() {    //runs once at the begining of the program
 // set bots
 
 async function setBots(quotes) {
-    if (s.strategy == "crypto") {
-        f.cs("Strategy: " + s.strategy)
-    }
-    else if (s.strategy == "fiat") {
+    if (s.strategy == "fiat") {
         f.cs("Strategy: " + s.strategy)
         quotes.unshift(s.fiatMarket)
+    }else if (s.strategy == "alt") {
+        f.cs("Strategy: " + s.strategy)
+        quotes.unshift(s.fiatMarket)
+        quotes.push(...alts)      
     }
 
     numOfBots = await quotes.length;
@@ -96,21 +111,32 @@ async function setBots(quotes) {
         return r;
     }
 
-    f.cs("Runing markets: " + quotes)
+    
 
-    for (let i in await quotes) {
-        await setTimeout(function () { bot(quotes[i], ticker, stopLossP, i) }, setStartTime());
-        /*runner()
-        async function runner() {   //for websocket
-            r = await bot(quotes[cur], ticker, stopLossP, cur)
-            if (await r) {
-                runner()
-            }
-        }*/
+    runCryptos(quotes)
+    async function runCryptos(quotes){
+        f.cs("Runing markets: " + quotes)
+        for (let i in await quotes) {
+            await setTimeout(function () { bot(quotes[i], ticker, stopLossP, i) }, setStartTime());
+        }
+        //await runAlts(alts);
     }
 
-
+    async function runAlts(ms){ //run markets
+        f.cs("Runing markets: " + ms)
+        for (let i in await ms) {
+            await setTimeout(function () { bot(ms[i], ticker, stopLossP, i) }, setStartTime());
+        } 
+    }
 }
+
+            /*runner()
+            async function runner() {   //for websocket
+                r = await bot(quotes[cur], ticker, stopLossP, cur)
+                if (await r) {
+                    runner()
+                }
+            }*/
 
 // stop bots
 
@@ -128,7 +154,7 @@ async function shrani(botNumber, bougthPrice) {
     f.cs("writing")
     switch (botNumber) {
         case "0":
-            baza.a0 = bougthPrice
+            baza.a0 = bougthPrice   //dev
             writeJSON(baza)
             f.cs("writing to first cell")
             break;
@@ -159,7 +185,59 @@ async function shrani(botNumber, bougthPrice) {
         case "7":
             baza.a7 = bougthPrice
             writeJSON(baza)
-            break;
+        break;
+        case "8":
+            baza.a8 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "9":
+            baza.a9 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "10":
+            baza.a10 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "11":
+            baza.a11 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "12":
+            baza.a12 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "13":
+            baza.a13 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "14":
+            baza.a14 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "15":
+            baza.a15 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "16":
+            baza.a16 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "17":
+            baza.a17 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "18":
+            baza.a18 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "19":
+            baza.a19 = bougthPrice
+            writeJSON(baza)
+        break;
+        case "20":
+            baza.a20 = bougthPrice
+            writeJSON(baza)
+        break;
         default:
             f.cs("nothing has been writen")
     }
@@ -610,6 +688,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         change24hP = await a.change(symbol);
         volume = await a.volume(symbol);
 
+        
+
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
         //bougthPrice = await read(botNumber)
@@ -675,6 +755,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 },
                 downers: {
                     MA3: MA3,
+                    //MA200: MA200
                 },
                 all: {
                     MA3: MA3,
