@@ -153,6 +153,7 @@ function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second 
                         break;
         }
 }
+
 function boolToInitial(bool) {	//returns initial of string|bool
         var bool;
         var a = bool.toString();
