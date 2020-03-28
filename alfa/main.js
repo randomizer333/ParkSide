@@ -17,7 +17,6 @@ async function req() {
     return await init()
 }
 
-
 // init
 let tickerMinutes,
     stopLossP,
@@ -40,18 +39,19 @@ let quotes = [    //trading portofio
     //cripto base/fiat quote
     "BNB/USDT", "ETH/USDT",// "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
     //crypto/fiat backings
-    "BNB/BTC", "ETH/BTC", "XRP/BTC", "LTC/BTC", "EOS/BTC", "BCH/BTC"
+    "BNB/BTC", "ETH/BTC",
+    "BCH/BTC"
 ]
 
 let alts = [    //alt markets 21+3=24
-    
-    "XRP/BNB",	"XRP/BTC",	"XRP/ETH",
-    "LTC/BNB",	"LTC/BTC",	"LTC/ETH",
-    "EOS/BNB",	"EOS/BTC",	"EOS/ETH",
-    "ADA/BNB",	"ADA/BTC",	"ADA/ETH",
-    "XLM/BNB",	"XLM/BTC",	"XLM/ETH",
-    "XMR/BNB",  "XMR/BTC",	"XMR/ETH",
-    "TRX/BNB",	"TRX/BTC",	"TRX/ETH"   
+
+    "XRP/BNB", "XRP/BTC", "XRP/ETH",
+    "LTC/BNB", "LTC/BTC", "LTC/ETH",
+    "EOS/BNB", "EOS/BTC", "EOS/ETH",
+    "ADA/BNB", "ADA/BTC", "ADA/ETH",
+    "XLM/BNB", "XLM/BTC", "XLM/ETH",
+    "XMR/BNB", "XMR/BTC", "XMR/ETH",
+    "TRX/BNB", "TRX/BTC", "TRX/ETH"
     //add old markets
 ]
 
@@ -91,10 +91,10 @@ async function setBots(quotes) {
     if (s.strategy == "fiat") {
         f.cs("Strategy: " + s.strategy)
         quotes.unshift(s.fiatMarket)
-    }else if (s.strategy == "alt") {
+    } else if (s.strategy == "alt") {
         f.cs("Strategy: " + s.strategy)
         quotes.unshift(s.fiatMarket)
-        quotes.push(...alts)      
+        quotes.push(...alts)
     }
 
     numOfBots = await quotes.length;
@@ -110,10 +110,10 @@ async function setBots(quotes) {
         return r;
     }
 
-    
+
 
     runCryptos(quotes)
-    async function runCryptos(quotes){
+    async function runCryptos(quotes) {
         f.cs("Runing markets: " + quotes)
         for (let i in await quotes) {
             await setTimeout(function () { bot(quotes[i], ticker, stopLossP, i) }, setStartTime());
@@ -121,21 +121,21 @@ async function setBots(quotes) {
         //await runAlts(alts);
     }
 
-    async function runAlts(ms){ //run markets
+    async function runAlts(ms) { //run markets
         f.cs("Runing markets: " + ms)
         for (let i in await ms) {
             await setTimeout(function () { bot(ms[i], ticker, stopLossP, i) }, setStartTime());
-        } 
+        }
     }
 }
 
-            /*runner()
-            async function runner() {   //for websocket
-                r = await bot(quotes[cur], ticker, stopLossP, cur)
-                if (await r) {
-                    runner()
-                }
-            }*/
+/*runner()
+async function runner() {   //for websocket
+    r = await bot(quotes[cur], ticker, stopLossP, cur)
+    if (await r) {
+        runner()
+    }
+}*/
 
 // stop bots
 
@@ -149,85 +149,17 @@ function clear() {
 //store data
 
 async function shrani(symbol, bougthPrice) {
-    let baza = await readJSON();
-    f.cs("writing")
-    switch (symbol) {
-        case "BTC/USDT":
-            baza.btcusdt = bougthPrice   //dev
-            writeJSON(baza)
-            f.cs("writing to first cell")
-            break;
-        case "BNB/USDT":
-            baza.bnbusdt = bougthPrice
-            writeJSON(baza)
-            break;
-        case "ETH/USDT":
-            baza.ethusdt = bougthPrice
-            writeJSON(baza)
-            break;
-        case "BNB/BTC":
-            baza.bnbbtc = bougthPrice
-            writeJSON(baza)
-            break;
-        case "ETH/BTC":
-            baza.ethbtc = bougthPrice
-            writeJSON(baza)
-            break;
-        case "XRP/BTC":
-            baza.xrpbtc = bougthPrice
-            writeJSON(baza)
-            break;
-        case "LTC/BTC":
-            baza.ltcbtc = bougthPrice
-            writeJSON(baza)
-            break;
-        case "EOS/BTC":
-            baza.eosbtc = bougthPrice
-            writeJSON(baza)
-            break;
-        case "BCH/BTC":
-            baza.bchbtc = bougthPrice
-            writeJSON(baza)
-            break;
-        default:
-            f.cs("nothing has been writen")
-    }
+    let baza = await readJSON()
+    baza[symbol] = await bougthPrice
+    f.cs("writing "+symbol)
+    writeJSON(baza)
 }
 async function read(symbol) {
     let baza = await readJSON();
-    switch (symbol) {
-        case "BTC/USDT":
-            bougthPrice = await baza.btcusdt
-            break;
-        case "BNB/USDT":
-            bougthPrice = await baza.bnbusdt
-            break;
-        case "ETH/USDT":
-            bougthPrice = await baza.ethusdt
-            break;
-        case "BNB/BTC":
-            bougthPrice = await baza.bnbbtc
-            break;
-        case "ETH/BTC":
-            bougthPrice = await baza.ethbtc
-            break;
-        case "XRP/BTC":
-            bougthPrice = await baza.xrpbtc
-            break;
-        case "LTC/BTC":
-            bougthPrice = await baza.ltcbtc
-            break;
-        case "EOS/BTC":
-            bougthPrice = await baza.eosbtc
-            break;
-        case "BCH/BTC":
-            bougthPrice = await baza.bchbtc
-            break;
-        default:
-            f.cs("nothing selected to read")
-    }
+    bougthPrice = await baza[symbol] 
     return await bougthPrice;
 }
+
 function writeJSON(inputJSON) {
     input = JSON.stringify(inputJSON);
     fs.writeFile("./storage.json", input, function (err) {
@@ -519,7 +451,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 await shrani(await symbol, await bougthPrice)
                 return await bougthPrice
 
-            } else{
+            } else {
                 //f.cs("BP was read")
                 return bougthPrice = await read(symbol)
             }
@@ -532,7 +464,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 await shrani(await symbol, await bougthPrice)
                 return await bougthPrice
 
-            } else if (baseBalanceInQuote > quoteBalance ) {   //quoteBalance 0.0001 0.001 = 5 EUR
+            } else if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
                     //bougthPrice = price;  //!!!Bougth price not updated
                     more = true;
@@ -757,7 +689,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');;
 
-                enableOrders ? await shrani(symbol, await ret.bougthPrice) :"";
+                enableOrders ? await shrani(symbol, await ret.bougthPrice) : "";
 
                 enableOrders ? orderType = ret.orderType : orderType = "bougth";
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
