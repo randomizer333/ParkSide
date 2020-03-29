@@ -150,13 +150,15 @@ function clear() {
 
 async function shrani(symbol, bougthPrice) {
     let baza = await readJSON()
-    baza[symbol] = await bougthPrice
+    baza[symbol].bougthPrice = await bougthPrice
+    baza[symbol].timeDate = await f.getTime()
+
     f.cs("writing "+symbol)
     writeJSON(baza)
 }
 async function read(symbol) {
     let baza = await readJSON();
-    bougthPrice = await baza[symbol] 
+    bougthPrice = await baza[symbol].bougthPrice 
     return await bougthPrice;
 }
 
@@ -623,7 +625,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //rang = await globalRang(MAVol, symbol, botNumber, 2);
             //rang = await globalRang(change1hP, symbol, botNumber, 10);
             //rang2 = await globalRang(MAVol, symbol, botNumber, 10)
-            rang = await globalRang2(change1hP, symbol, botNumber, 2)
+            rang = await globalRang2(change1hP, symbol, botNumber, 3)
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5

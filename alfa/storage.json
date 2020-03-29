@@ -1,34 +1,135 @@
 {
-    "BTC/USDT": 9410,
-    "BNB/USDT": 11.56815,
-    "ETH/USDT": 126.17,
+    "BTC/USDT": {
+        "bougthPrice": 6153.21,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "BNB/USDT": {
+        "bougthPrice": 11.56815,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "ETH/USDT": {
+        "bougthPrice": 126.17,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "XRP/USDT": {
+        "bougthPrice": 0,
+        "timeDate": 0
+    },
+    "BCH/USDT": {
+        "bougthPrice": 0,
+        "timeDate": 0
+    },
+    "LTC/USDT": {
+        "bougthPrice": 0,
+        "timeDate": 0
+    },
+    "EOS/USDT": {
+        "bougthPrice": 0,
+        "timeDate": 0
+    },
     "---fiats---": 0,
-    "BNB/BTC": 0.0024111000000000002,
-    "ETH/BTC": 0.0281835,
+    "BNB/BTC": {
+        "bougthPrice": 0.0024111000000000002,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "ETH/BTC": {
+        "bougthPrice": 0.0281835,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
     "---quotes---": 0,
-    "XRP/BTC": 0.000037434999999999996,
-    "LTC/BTC": 0.007633,
-    "EOS/BTC": 0.00046015,
-    "BCH/BTC": 0.047719,
-    "ADA/BTC": 0.000004705,
-    "XLM/BTC": 0.000006405,
-    "XMR/BTC": 0.007622,
-    "TRX/BTC": 0.000001805,
+    "XRP/BTC": {
+        "bougthPrice": 0.000037434999999999996,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "LTC/BTC": {
+        "bougthPrice": 0.007633,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "EOS/BTC": {
+        "bougthPrice": 0.00046015,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "BCH/BTC": {
+        "bougthPrice": 0.047719,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "ADA/BTC": {
+        "bougthPrice": 0.000004705,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "XLM/BTC": {
+        "bougthPrice": 0.000006405,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "XMR/BTC": {
+        "bougthPrice": 0.007622,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "TRX/BTC": {
+        "bougthPrice": 0.000001805,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
     "---btc---": 0,
-    "XRP/ETH": 0.001364625,
-    "LTC/ETH": 0.29888499999999996,
-    "EOS/ETH": 0.016751500000000002,
-    "ADA/ETH": 0.00022744,
-    "XLM/ETH": 0.000309845,
-    "XMR/ETH": 0.36944,
-    "TRX/ETH": 0.00008724500000000001,
+    "BNB/ETH": {
+        "bougthPrice": 0,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "XRP/ETH": {
+        "bougthPrice": 0.001364625,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "LTC/ETH": {
+        "bougthPrice": 0.29888499999999996,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "EOS/ETH": {
+        "bougthPrice": 0.016751500000000002,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "ADA/ETH": {
+        "bougthPrice": 0.00022744,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "XLM/ETH": {
+        "bougthPrice": 0.000309845,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "XMR/ETH": {
+        "bougthPrice": 0.36944,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "TRX/ETH": {
+        "bougthPrice": 0.00008724500000000001,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
     "---eth---": 0,
-    "XRP/BNB": 0.014530000000000001,
-    "LTC/BNB": 3.1845,
-    "EOS/BNB": 0.1784,
-    "ADA/BNB": 0.0024225,
-    "XLM/BNB": 0.0033025,
-    "XMR/BNB": 3.9335,
-    "TRX/BNB": 0.0009305,
+    "XRP/BNB": {
+        "bougthPrice": 0.014530000000000001,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "LTC/BNB": {
+        "bougthPrice": 3.1845,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "EOS/BNB": {
+        "bougthPrice": 0.1784,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "ADA/BNB": {
+        "bougthPrice": 0.0024225,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "XLM/BNB": {
+        "bougthPrice": 0.0033025,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "XMR/BNB": {
+        "bougthPrice": 3.9335,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
+    "TRX/BNB": {
+        "bougthPrice": 0.0009305,
+        "timeDate": "2020.03.29 22:34:09.599"
+    },
     "---bnb---": 0
 }
