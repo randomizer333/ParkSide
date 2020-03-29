@@ -9,9 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ccxt": "^1.18.615",
+    "ccxt": "^1.24.79",
     "nodemailer": "^4.7.0",
     "technicalindicators": "^1.1.13",
-    "websocket": "^1.0.28"
+    "websocket": "^1.0.31"
   }
 }

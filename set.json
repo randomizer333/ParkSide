@@ -1,11 +1,11 @@
 {
     "exchange": "binance",
     "fiatMarket": "BTC/USDT",
-    "strategy": "fiat",
+    "strategy": "alt",
     "enableOrders": false,
-    "tickerMinutes": 3,
+    "tickerMinutes": 5,
     "stopLossP": 99,
-    "portion": 0.99,
+    "portion": 0.77,
     "minProfitP": 0.1,
     "startValue": 100,
     "markets": ""
