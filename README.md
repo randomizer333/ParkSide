@@ -30,6 +30,7 @@ additional Node packages:
 - letter case: drinking camel
 - formating same as in VSCode
 - use suffix insted of prefix
+- indent 1 TAB
 - 4 space TAB
 
 ### Trading slang
