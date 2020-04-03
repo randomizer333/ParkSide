@@ -34,25 +34,65 @@ async function init() {
     return await setup();
 }
 
-let quotes = [    //trading portofio
+let quotes = [    //fiat strategy trading portofio
     //"BTC/USDT",   //in setings
     //cripto base/fiat quote
-    "BNB/USDT", "ETH/USDT",// "XRP/USDT", "BCC/USDT", "LTC/USDT", "EOS/USDT",
-    //crypto/fiat backings
-    "BNB/BTC", "ETH/BTC",
-    "BCH/BTC"
+    "BNB/USDT", 
+    "ETH/USDT",
+
+    "XRP/USDT", 
+    "LTC/USDT", 
+    "EOS/USDT",
+    "ADA/USDT",
+    "XLM/USDT",
+    "XMR/USDT",
+    "TRX/USDT", 
+    
+    "BCH/USDT", 
 ]
 
 let alts = [    //alt markets 21+3=24
-
+/*
     "XRP/BNB", "XRP/BTC", "XRP/ETH",
     "LTC/BNB", "LTC/BTC", "LTC/ETH",
     "EOS/BNB", "EOS/BTC", "EOS/ETH",
     "ADA/BNB", "ADA/BTC", "ADA/ETH",
     "XLM/BNB", "XLM/BTC", "XLM/ETH",
     "XMR/BNB", "XMR/BTC", "XMR/ETH",
-    "TRX/BNB", "TRX/BTC", "TRX/ETH"
+    "TRX/BNB", "TRX/BTC", "TRX/ETH",*/
     //add old markets
+
+    //crypto/fiat backings
+    "BNB/BTC", 
+    "ETH/BTC",
+
+    "XRP/BTC",
+    "LTC/BTC",
+    "EOS/BTC",
+    "ADA/BTC",
+    "XLM/BTC",
+    "XMR/BTC",
+    "TRX/BTC", 
+
+    "BCH/BTC",
+
+    /*
+    "XRP/BNB",  
+    "LTC/BNB",  
+    "EOS/BNB",  
+    "ADA/BNB",  
+    "XLM/BNB",  
+    "XMR/BNB",  
+    "TRX/BNB", 
+
+    "XRP/ETH",
+    "LTC/ETH",
+    "EOS/ETH",
+    "ADA/ETH",
+    "XLM/ETH",
+    "XMR/ETH",
+    "TRX/ETH",*/
+
 ]
 
 
@@ -112,21 +152,23 @@ async function setBots(quotes) {
 
 
 
-    runCryptos(quotes)
-    async function runCryptos(quotes) {
+    runBots(quotes)
+    async function runBots(quotes) {
+        //makeBase(baza)
+        /*function makeBase(b){
+            for(quotes in b){
+                b.[quotes].bougthPrice = 0
+                b.[quotes].timeDate = 0
+                b.[quotes].quoteBalance = 0
+                b.[quotes].baseBalance = 0
+            }
+        }*/
         f.cs("Runing markets: " + quotes)
         for (let i in await quotes) {
             await setTimeout(function () { bot(quotes[i], ticker, stopLossP, i) }, setStartTime());
         }
-        //await runAlts(alts);
     }
 
-    async function runAlts(ms) { //run markets
-        f.cs("Runing markets: " + ms)
-        for (let i in await ms) {
-            await setTimeout(function () { bot(ms[i], ticker, stopLossP, i) }, setStartTime());
-        }
-    }
 }
 
 /*runner()
@@ -148,17 +190,19 @@ function clear() {
 
 //store data
 
-async function shrani(symbol, bougthPrice) {
+async function shrani(symbol, bougthPrice, quoteBalance, baseBalance) {
     let baza = await readJSON()
     baza[symbol].bougthPrice = await bougthPrice
     baza[symbol].timeDate = await f.getTime()
+    baza[symbol].quoteBalance = await quoteBalance
+    baza[symbol].baseBalance = await baseBalance
 
-    f.cs("writing "+symbol)
+    f.cs("writing " + symbol)
     writeJSON(baza)
 }
 async function read(symbol) {
     let baza = await readJSON();
-    bougthPrice = await baza[symbol].bougthPrice 
+    bougthPrice = await baza[symbol].bougthPrice
     return await bougthPrice;
 }
 
@@ -418,6 +462,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
             return await purchase;
         }
+
         async function selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
                 return await {
@@ -446,13 +491,13 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             array.unshift(value);
             return await array;
         }
-        async function checkBougthPrice(botNumber) {
+
+        async function checkBougthPrice(bougthPrice) {  //check if bougthPrice exists
             if (bougthPrice == 0) {
                 //f.cs("BP was 0")
                 bougthPrice = await price
-                await shrani(await symbol, await bougthPrice)
+                await shrani(symbol, bougthPrice, quoteBalance, baseBalance)
                 return await bougthPrice
-
             } else {
                 //f.cs("BP was read")
                 return bougthPrice = await read(symbol)
@@ -460,17 +505,19 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         async function balanceChanged(baseBalanceInQuote, quoteBalance, botNumber) {
-            if (bougthPrice == 0) {
+            /*if (bougthPrice == 0) {
                 f.cs("BP was 0")
                 bougthPrice = await price
                 await shrani(await symbol, await bougthPrice)
                 return await bougthPrice
 
-            } else if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
+            } else*/ if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
                     //bougthPrice = price;  //!!!Bougth price not updated
                     more = true;
-                    //console.log("Bougth price updated: " + symbol);
+                    bougthPrice = await price
+                    await shrani(symbol, bougthPrice, quoteBalance, baseBalance)
+                    console.log("Bougth price updated: " + symbol);
                     time = await f.getTime()
                     f.sendMail("Price updated", JSON.stringify("price would be updated at: " + time + " on market: " + symbol));
                 }
@@ -580,8 +627,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
         //bougthPrice = await read(symbol)
-        bougthPrice = await m.checkBougthPrice(botNumber);
-        //bougthPrice = await m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
+        bougthPrice = await m.checkBougthPrice(bougthPrice);
+        m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
         //purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
         let conds = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
         purchase = await conds.purchase

@@ -3,7 +3,7 @@
     "fiatMarket": "BTC/USDT",
     "strategy": "alt",
     "enableOrders": false,
-    "tickerMinutes": 5,
+    "tickerMinutes": 1,
     "stopLossP": 99,
     "portion": 0.77,
     "minProfitP": 0.1,
