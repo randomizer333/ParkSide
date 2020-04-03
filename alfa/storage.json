@@ -1,135 +1,229 @@
 {
     "BTC/USDT": {
-        "bougthPrice": 6153.21,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 6209.945,
+        "timeDate": "2020.04.01 20:28:27.031",
+        "quoteBalance": 5.63079538,
+        "baseBalance": 0.042718
     },
     "BNB/USDT": {
-        "bougthPrice": 11.56815,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 12.07015,
+        "timeDate": "2020.04.01 20:28:37.614",
+        "quoteBalance": 5.63079538,
+        "baseBalance": 0.12280171
     },
     "ETH/USDT": {
-        "bougthPrice": 126.17,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 141.865,
+        "timeDate": "2020.04.03 22:38:39.970",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 0.37703717
     },
     "XRP/USDT": {
-        "bougthPrice": 0,
-        "timeDate": 0
+        "bougthPrice": 0.178905,
+        "timeDate": "2020.04.03 22:38:42.775",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 155.625437
     },
     "BCH/USDT": {
-        "bougthPrice": 0,
-        "timeDate": 0
+        "bougthPrice": 238.195,
+        "timeDate": "2020.04.03 22:04:56.076",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 0.000185
     },
     "LTC/USDT": {
-        "bougthPrice": 0,
-        "timeDate": 0
+        "bougthPrice": 40.5,
+        "timeDate": "2020.04.03 22:38:45.703",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 0.91066
     },
     "EOS/USDT": {
+        "bougthPrice": 2.33725,
+        "timeDate": "2020.04.03 22:05:22.998",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 1.91222
+    },
+    "ADA/USDT": {
+        "bougthPrice": 0.032295000000000004,
+        "timeDate": "2020.04.03 22:46:50.864",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 1408.298
+    },
+    "XLM/USDT": {
+        "bougthPrice": 0.041135,
+        "timeDate": "2020.04.03 22:38:53.739",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 602
+    },
+    "XMR/USDT": {
+        "bougthPrice": 53.46,
+        "timeDate": "2020.04.03 22:29:59.848",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 0.128
+    },
+    "TRX/USDT": {
+        "bougthPrice": 0.01188,
+        "timeDate": "2020.04.03 22:38:59.917",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 19410
+    },
+    "BSV/USDT": {
         "bougthPrice": 0,
-        "timeDate": 0
+        "timeDate": "2020.04.03 22:36:03.412",
+        "quoteBalance": 22.8557044,
+        "baseBalance": 0
     },
     "---fiats---": 0,
     "BNB/BTC": {
-        "bougthPrice": 0.0024111000000000002,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.0019255,
+        "timeDate": "2020.04.02 22:59:30.710",
+        "quoteBalance": 0.00011238,
+        "baseBalance": 2.52668489
     },
     "ETH/BTC": {
-        "bougthPrice": 0.0281835,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.020992999999999998,
+        "timeDate": "2020.04.03 22:51:07.559",
+        "quoteBalance": 0.00072419,
+        "baseBalance": 0.08691871
     },
     "---quotes---": 0,
     "XRP/BTC": {
-        "bougthPrice": 0.000037434999999999996,
-        "timeDate": "2020.03.29 22:34:09.599"
-    },
-    "LTC/BTC": {
-        "bougthPrice": 0.007633,
-        "timeDate": "2020.03.29 22:34:09.599"
-    },
-    "EOS/BTC": {
-        "bougthPrice": 0.00046015,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.000026475,
+        "timeDate": "2020.04.03 22:39:10.347",
+        "quoteBalance": 0.00313513,
+        "baseBalance": 155.625437
     },
     "BCH/BTC": {
-        "bougthPrice": 0.047719,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.034348000000000004,
+        "timeDate": "2020.04.02 23:00:18.361",
+        "quoteBalance": 0.00011238,
+        "baseBalance": 0.456185
+    },
+    "LTC/BTC": {
+        "bougthPrice": 0.0059915,
+        "timeDate": "2020.04.03 22:39:13.250",
+        "quoteBalance": 0.00313513,
+        "baseBalance": 0.91066
+    },
+    "EOS/BTC": {
+        "bougthPrice": 0.0003466,
+        "timeDate": "2020.04.03 22:51:16.187",
+        "quoteBalance": 0.00072419,
+        "baseBalance": 8.86526
     },
     "ADA/BTC": {
-        "bougthPrice": 0.000004705,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.000004785,
+        "timeDate": "2020.04.03 22:47:18.976",
+        "quoteBalance": 0.00313513,
+        "baseBalance": 1408.298
     },
     "XLM/BTC": {
-        "bougthPrice": 0.000006405,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.000006085,
+        "timeDate": "2020.04.03 22:39:21.767",
+        "quoteBalance": 0.00313513,
+        "baseBalance": 602
     },
     "XMR/BTC": {
-        "bougthPrice": 0.007622,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.0078815,
+        "timeDate": "2020.04.03 22:51:26.190",
+        "quoteBalance": 0.00072419,
+        "baseBalance": 0.128
     },
     "TRX/BTC": {
-        "bougthPrice": 0.000001805,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.0000017550000000000001,
+        "timeDate": "2020.04.03 22:39:29.463",
+        "quoteBalance": 0.00313513,
+        "baseBalance": 19410
     },
     "---btc---": 0,
     "BNB/ETH": {
         "bougthPrice": 0,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "timeDate": "2020.03.29 22:34:09.599",
+        "quoteBalance": 0,
+        "baseBalance": 0
     },
     "XRP/ETH": {
-        "bougthPrice": 0.001364625,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.001304895,
+        "timeDate": "2020.04.01 20:29:55.400",
+        "quoteBalance": 0.11772685,
+        "baseBalance": 535.925437
     },
     "LTC/ETH": {
-        "bougthPrice": 0.29888499999999996,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.28932,
+        "timeDate": "2020.04.01 20:30:28.245",
+        "quoteBalance": 0.11772685,
+        "baseBalance": 0.14266
     },
     "EOS/ETH": {
-        "bougthPrice": 0.016751500000000002,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.01669,
+        "timeDate": "2020.04.01 20:31:02.588",
+        "quoteBalance": 0.11772685,
+        "baseBalance": 1.06467
     },
     "ADA/ETH": {
-        "bougthPrice": 0.00022744,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.00022832,
+        "timeDate": "2020.04.01 20:31:34.887",
+        "quoteBalance": 0.11772685,
+        "baseBalance": 198.9
     },
     "XLM/ETH": {
-        "bougthPrice": 0.000309845,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.00030151,
+        "timeDate": "2020.04.01 20:32:09.828",
+        "quoteBalance": 0.11772685,
+        "baseBalance": 0
     },
     "XMR/ETH": {
-        "bougthPrice": 0.36944,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.362885,
+        "timeDate": "2020.04.01 20:32:42.179",
+        "quoteBalance": 0.11772685,
+        "baseBalance": 0
     },
     "TRX/ETH": {
-        "bougthPrice": 0.00008724500000000001,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.00008622999999999999,
+        "timeDate": "2020.04.01 20:48:15.05",
+        "quoteBalance": 0.11772685,
+        "baseBalance": 19410
     },
     "---eth---": 0,
     "XRP/BNB": {
-        "bougthPrice": 0.014530000000000001,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.014025,
+        "timeDate": "2020.04.01 20:29:32.686",
+        "quoteBalance": 0.12280171,
+        "baseBalance": 535.925437
     },
     "LTC/BNB": {
-        "bougthPrice": 3.1845,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 3.107,
+        "timeDate": "2020.04.01 20:30:07.461",
+        "quoteBalance": 0.12280171,
+        "baseBalance": 0.14266
     },
     "EOS/BNB": {
-        "bougthPrice": 0.1784,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.17930000000000001,
+        "timeDate": "2020.04.01 20:30:39.379",
+        "quoteBalance": 0.12280171,
+        "baseBalance": 1.06467
     },
     "ADA/BNB": {
-        "bougthPrice": 0.0024225,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.002452,
+        "timeDate": "2020.04.01 20:31:13.268",
+        "quoteBalance": 0.12280171,
+        "baseBalance": 198.9
     },
     "XLM/BNB": {
-        "bougthPrice": 0.0033025,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.0032405,
+        "timeDate": "2020.04.01 20:31:46.714",
+        "quoteBalance": 0.12280171,
+        "baseBalance": 0
     },
     "XMR/BNB": {
-        "bougthPrice": 3.9335,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 3.9005,
+        "timeDate": "2020.04.01 20:32:19.866",
+        "quoteBalance": 0.12280171,
+        "baseBalance": 0
     },
     "TRX/BNB": {
-        "bougthPrice": 0.0009305,
-        "timeDate": "2020.03.29 22:34:09.599"
+        "bougthPrice": 0.0009215,
+        "timeDate": "2020.04.02 23:02:59.387",
+        "quoteBalance": 2.52668489,
+        "baseBalance": 19410
     },
     "---bnb---": 0
 }
