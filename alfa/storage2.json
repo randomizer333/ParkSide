@@ -1,21 +1,21 @@
 {
     "tableName": {
-        "column header": "rowData"
+        "columnHeader": "rowData"
     },
     "table1": {
         "column1": "rowData",
         "column2": "rowData",
         "column3": "rowData",
         "column4": "rowData"
-    }
+    },
     "table2": {
         "column1": "rowData",
         "column2": "rowData",
         "column3": "rowData",
         "column4": "rowData"
-    }
+    },
     "table3": {
-        "id": 03156551,
+        "id": 3156551,
         "privateKey": "rowData",
         "column3": "rowData",
         "publicKey": "rowData",
