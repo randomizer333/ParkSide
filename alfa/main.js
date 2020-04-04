@@ -628,7 +628,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
         //bougthPrice = await read(symbol)
         bougthPrice = await m.checkBougthPrice(bougthPrice);
-        m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
+        //m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
         //purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
         let conds = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
         purchase = await conds.purchase
@@ -803,7 +803,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             uppers_: indicator.uppers,
             downers: indicator.downers,
             downSignal: downSignal,
-            indicators: indicator.all,
+            //indicators: indicator.all,
             sellConditions: {
                 sale: sale,
                 hold: hold,
