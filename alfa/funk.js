@@ -4,7 +4,7 @@ is a js module for generic comonly used simple functions that should be aplicabl
 */
 
 function sendMail(subject, message, to) {
-        
+
         // email account data
         let nodemailer = require('nodemailer');
         let transporter = nodemailer.createTransport({
@@ -37,11 +37,11 @@ function sendMail(subject, message, to) {
 
 async function loger(value, length, array) {        //log FIFO to array, newest in oldest out
         while (array.length >= length) {
-            array.pop();
+                array.pop();
         }
         array.unshift(value);
         return await array;
-    }
+}
 
 function cs(object) {    //console logs with json.stringify for console wraping
         console.log(JSON.stringify(object));
@@ -96,10 +96,10 @@ async function whole(part, percent) {  //whole is part divided by percentage
         return await part / (percent / 100);
 }
 async function percent(part, whole) {  //percent is part divided by whole
-        return await (part / whole) * 100;
+        return (part / whole) * 100;
 }
 async function part(percent, whole) {  //part is percent multiplied by whole
-        return await (percent / 100) * whole;
+        return (percent / 100) * whole;
 }
 function cutArray(arr, num) {     //cuts array to length
         let result = new Array();
@@ -163,9 +163,8 @@ function boolToInitial(bool) {	//returns initial of string|bool
 
 function jsonToArray(json, attribute) {
         for (i = 0; i < length; i++) {
-
+                arr[i] = json.attribute
         }
-        arr[i] = json.attribute
         return arr;
 }
 
