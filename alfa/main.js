@@ -74,7 +74,7 @@ let alts = [    //alt markets 21+3=24
     "XMR/BTC",
     "TRX/BTC",
 
-    "BCH/BTC",
+    "BCH/BTC"
 
     /*
     "XRP/BNB",  
@@ -705,12 +705,12 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             //CCW
             let value1CCW = 100
-            await f.cs("value1CCW: " + value1CCW)
+            //await f.cs("value1CCW: " + value1CCW)
             let value2CCW = value1CCW / await market12a
-            await f.cs("value2CCW: " + value2CCW)
+            //await f.cs("value2CCW: " + value2CCW)
             let value3CCW = value2CCW / await market23b
-            await f.cs("value3CCW: " + value3CCW)
-            
+            //await f.cs("value3CCW: " + value3CCW)
+
             let valueFinalCCW = value3CCW * await market13b
             await f.cs("valueFinalCCW: " + valueFinalCCW)
             profitCCW = valueFinalCCW - value1CCW
