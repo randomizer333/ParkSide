@@ -231,7 +231,7 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 
         //price = high    //market price
         
-        return await price;
+        return price;
     } catch (error) {
         console.log("EEE: ", error);
         return price = 0
