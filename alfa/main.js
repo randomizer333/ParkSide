@@ -37,7 +37,7 @@ async function init() {
 let quotes = [    //fiat strategy trading portofio
     //"BTC/USDT",   //in setings
     //cripto base/fiat quote
-    "BNB/USDT",
+    /*"BNB/USDT",
     "ETH/USDT",
 
     "XRP/USDT",
@@ -48,7 +48,7 @@ let quotes = [    //fiat strategy trading portofio
     "XMR/USDT",
     "TRX/USDT",
 
-    "BCH/USDT",
+    "BCH/USDT",*/
 ]
 
 let alts = [    //alt markets 21+3=24
