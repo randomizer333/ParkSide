@@ -4,6 +4,7 @@
 3.intracrypto trading trader
 */
 
+
 //requirements
 let s, a, f, TI, fs, db
 req();
@@ -59,7 +60,9 @@ let alts = [    //alt markets 21+3=24
         "ADA/BNB", "ADA/BTC", "ADA/ETH",
         "XLM/BNB", "XLM/BTC", "XLM/ETH",
         "XMR/BNB", "XMR/BTC", "XMR/ETH",
-        "TRX/BNB", "TRX/BTC", "TRX/ETH",*/
+        "TRX/BNB", "TRX/BTC", "TRX/ETH",
+            "BNB/BTC",  "ETH/BTC"
+        */
     //add old markets
 
     //crypto/fiat backings
@@ -171,14 +174,6 @@ async function setBots(quotes) {
 
 }
 
-/*runner()
-async function runner() {   //for websocket
-    r = await bot(quotes[cur], ticker, stopLossP, cur)
-    if (await r) {
-        runner()
-    }
-}*/
-
 // stop bots
 
 function clear() {
@@ -272,9 +267,12 @@ async function read(symbol) {
     return await bougthPrice;
 }
 
-function writeJSON(inputJSON) {
+async function writeJSON(inputJSON) {
     input = JSON.stringify(inputJSON);
-    fs.writeFile("./storage.json", input, function (err) {
+    await fs.writeFile("./storage.json", "", function (err) {
+        if (err) throw err;
+    });
+    await fs.writeFile("./storage.json", input, function (err) {
         if (err) throw err;
     });
 }
@@ -895,7 +893,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //confirm signals above 0 with AND
         upSignal = await up(indicator.uppers);
         async function up(uppers) {
-            conds = await Object.values(uppers);
+            conds = Object.values(uppers);
             function condition(currentValue) {
                 return currentValue > 0;    //set condition
             }
@@ -905,7 +903,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //confirm signals below 0 with AND
         downSignal = await down(indicator.downers);
         async function down(downers) {
-            conds = await Object.values(downers);
+            conds = Object.values(downers);
             function condition(currentValue) {
                 return currentValue < 0;    //set condition
             }
@@ -1036,9 +1034,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //enableOrders ? "" : await shrani(await symbol, await bougthPrice)  //dev
         return marketInfo;
     }
-    return await marketInfo;
+    return marketInfo;
 }
 
 //constants and variables
-exports.ticker = ticker;
-exports.enableOrders = enableOrders;
+exports.ticker = ticker
+exports.enableOrders = enableOrders

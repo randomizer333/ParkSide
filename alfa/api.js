@@ -12,12 +12,7 @@ const set = require("../set.json");
 
 let m;
 let ticker;
-req();
-async function req() {
-    m = await require("./main.js");
-    ticker = m.ticker;
-    //f.cs("Ticker time: " + ticker);
-}
+ticker = f.minToMs(set.tickerMinutes);
 
 //  Init
 
@@ -199,7 +194,11 @@ async function bid(symbol) {                //reurns Array of Objects bid,ask
         r = await exchange.fetchOrderBook(symbol);
         return re = await r.bids[0][0];
     } catch (error) {
+        if(error.name = 'BadSymbol'){
+            console.log("Ni "+symbol +" marketa!!!")
+        }else{
         console.log("EEE: ", error);
+        }
     }
 }
 async function ask(symbol) {                //reurns Array of Objects bid,ask
@@ -207,7 +206,11 @@ async function ask(symbol) {                //reurns Array of Objects bid,ask
         r2 = await exchange.fetchOrderBook(symbol);
         return await r2.asks[0][0];
     } catch (error) {
+        if(error.name = 'BadSymbol'){
+            console.log("Ni "+symbol +" marketa!!!")
+        }else{
         console.log("EEE: ", error);
+        }
     }
 }
 async function price(symbol) {                //reurns Array of Objects bid,ask
