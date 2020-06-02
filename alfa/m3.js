@@ -2,18 +2,21 @@
 1.crypto to fiat trader
 2.high ranking catcher trader
 3.intracrypto trading trader
+4.triple arbitrage
 */
+
+console.log("runin 333")
 
 //requirements
 let s, a, f, TI, fs, db
 req();
 async function req() {
-    s = await require("../set.json")
-    a = await require("./api.js")
-    f = await require("./funk.js")
-    TI = await require("./ti.js")
-    fs = await require('fs') //node.js native
-    db = await require("./db.json")
+    s = require("../set.json")
+    a = require("./api.js")
+    f = require("./funk.js")
+    TI = require("./ti.js")
+    fs = require('fs') //node.js native
+    db = require("./db.json")
     return await init()
 }
 
@@ -37,29 +40,35 @@ async function init() {
 let quotes = [    //fiat strategy trading portofio
     //"BTC/USDT",   //in setings
     //cripto base/fiat quote
-    /* "BNB/USDT", 
-     "ETH/USDT",
- 
-     "XRP/USDT", 
-     "LTC/USDT", 
-     "EOS/USDT",
-     "ADA/USDT",
-     "XLM/USDT",
-     "XMR/USDT",
-     "TRX/USDT", 
-     
-     "BCH/USDT", */
+    "BNB/USDT",
+    "ETH/USDT",
+
+    "XRP/USDT",
+    "LTC/USDT",
+    "EOS/USDT",
+    "ADA/USDT",
+    "XLM/USDT",
+    "XMR/USDT",
+    "TRX/USDT",
+
+    "BCH/USDT",
 ]
 
 let alts = [    //alt markets 21+3=24
     /*
+    valuta1 = "BTC"
+    vsluta2 = "BNB","ETH"
+    valuta3 = "ALTs"
+
         "XRP/BNB", "XRP/BTC", "XRP/ETH",
         "LTC/BNB", "LTC/BTC", "LTC/ETH",
         "EOS/BNB", "EOS/BTC", "EOS/ETH",
         "ADA/BNB", "ADA/BTC", "ADA/ETH",
         "XLM/BNB", "XLM/BTC", "XLM/ETH",
         "XMR/BNB", "XMR/BTC", "XMR/ETH",
-        "TRX/BNB", "TRX/BTC", "TRX/ETH",*/
+        "TRX/BNB", "TRX/BTC", "TRX/ETH",
+            "BNB/BTC",  "ETH/BTC"
+        */
     //add old markets
 
     //crypto/fiat backings
@@ -74,7 +83,7 @@ let alts = [    //alt markets 21+3=24
     "XMR/BTC",
     "TRX/BTC",
 
-    "BCH/BTC",
+    "BCH/BTC"
 
     /*
     "XRP/BNB",  
@@ -96,7 +105,7 @@ let alts = [    //alt markets 21+3=24
 ]
 
 
-//  main setup
+// main setup
 let numOfBots
 let delay
 
@@ -150,7 +159,7 @@ async function setBots(quotes) {
         return r;
     }
 
-
+    //createDB(quotes)
 
     runBots(quotes)
     async function runBots(quotes) {
@@ -165,19 +174,11 @@ async function setBots(quotes) {
         }*/
         f.cs("Runing markets: " + quotes)
         for (let i in await quotes) {
-            await setTimeout(function () { bot(quotes[i], ticker, stopLossP, i) }, setStartTime());
+            setTimeout(function () { bot(quotes[i], ticker, stopLossP, i) }, setStartTime());
         }
     }
 
 }
-
-/*runner()
-async function runner() {   //for websocket
-    r = await bot(quotes[cur], ticker, stopLossP, cur)
-    if (await r) {
-        runner()
-    }
-}*/
 
 // stop bots
 
@@ -200,20 +201,89 @@ async function shrani(symbol, bougthPrice, quoteBalance, baseBalance) {
     f.cs("writing " + symbol)
     writeJSON(baza)
 }
+async function shraniDB(symbol, data) {
+    let baza = await readJSON()
+    baza[symbol] = await data
+    f.cs("saving " + symbol)
+    writeJSON(baza)
+}
+
+async function createDB(quotes) {
+    let baza = await readJSON()
+    f.cs("Creating: " + quotes)
+    for (let i in await quotes) {
+        baza[quotes[i]] = {
+            No: 0,
+            fiatMarket: "",
+            fiatPrice: 0,
+            fiatProfit: 0,
+            fiatProfit2: 0,
+            symbol: "symbol",
+            base: "baseCurrency",
+            quote: "quoteCurrency",
+            relativeProfit: 0,
+            absoluteProfit: 0,
+            absoluteProfit2: 0,
+            DeusGroup: "__________________________________",
+            fiatPrice: 0,
+            fiatProfit: 0,
+            fiatProfit2: 0,
+            minAmount: 0,
+            baseBalance: 0,
+            baseBalanceInQuote: 0,
+            quoteBalance: 0,
+            quoteBalanceInBase: 0,
+            enabled: "",
+            time: 0,
+            ticker: 0,
+            stopLossP: 0,
+            MrPrice: "____________________________________",
+            sellPrice: 0,
+            price: 0,
+            bid: 0,
+            bougthPrice: 0,
+            lossPrice: 0,
+            FSociety: "____________________________________",
+            purchase: "purchase",
+            more: "more",
+            upSignal: "upSignal",
+            uppers: "indicator.uppers",
+            downers: "indicator.downers",
+            downSignal: "downSignal",
+            //indicators: indicator.all,
+            sellConditions: {
+                sale: "sale",
+                hold: "hold",
+                stopLoss: "stopLoss",
+            },
+            logLength: "logMA200.length",
+            orderType: "orderType",
+            //quoteMarkets: JSON.stringify(quotes),
+            //wallet: JSON.stringify(wallet)
+            //bestBuy: JSON.stringify(bestBuy),
+        }
+        writeJSON(baza)
+    }
+}
+
+
 async function read(symbol) {
     let baza = await readJSON();
     bougthPrice = await baza[symbol].bougthPrice
     return await bougthPrice;
 }
 
-function writeJSON(inputJSON) {
+async function writeJSON(inputJSON) {
     input = JSON.stringify(inputJSON);
-    fs.writeFile("./storage.json", input, function (err) {
+    await fs.writeFile("./storage.json", "", function (err) {
+        if (err) throw err;
+    });
+    await fs.writeFile("./storage.json", input, function (err) {
         if (err) throw err;
     });
 }
 function readJSON() {
-    let data = fs.readFileSync('storage.json');
+    let data = fs.readFileSync("storage.json");
     let json = JSON.parse(data);
     return json
 }
@@ -446,18 +516,18 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
         async function selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
-                sale = await true;
+                sale = true;
                 f.cs("sale is true")
-                purchase = await false;
+                purchase = false;
             } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalanceInBase > minAmount)) {    //can buy
-                sale = await false;
+                sale = false;
                 f.cs("sale is false")
-                more = await false;     //more funds reset
-                purchase = await true;
+                more = false;     //more funds reset
+                purchase = true;
             } else {
                 f.cs("sale is undef")
-                sale = await false;
-                purchase = await false;
+                sale = false;
+                purchase = false;
                 //f.cs("Too low!");
             }
             return await purchase;
@@ -491,37 +561,38 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             array.unshift(value);
             return await array;
         }
-
-
-        async function checkBougthPrice(bougthPrice) {  //check if bougthPrice exists
-            lastBPrice1 = await read(symbol)
-            let lastBPrice 
-            lastBPrice = await intify(lastBPrice1)
-            async function intify(string) {
-                let char = string.search(" ")
-                first = string.slice(0, char)
-                r = parseInt(first)
-                return await r
+        function logHistory(toLog, length) {
+            //f.cs(dol)
+            if (dol >= length) {
+                firstLogToFile()
+                logToFile(toLog)
+                dol = 0
+            } else {
+                logToFile(toLog)
+                dol++
             }
+        }
 
-            if (bougthPrice == 0) {
+        async function checkBougthPrice(bougthPrice, price) {  //check if bougthPrice exists
+            lastBPrice = await read(symbol)
+
+            f.cs("lastBPrice: " + lastBPrice)
+            f.cs("price: " + price)
+
+            if ((bougthPrice == 0) && (price < lastBPrice)) {
                 f.cs("BP was 0")
-                bougthPrice = await price
-                await shrani(symbol, bougthPrice, quoteBalance, baseBalance)
-                return await bougthPrice
-            } else if (price < lastBPrice) {
-                f.cs("BP was NOT updated!coz its lower wich is good")
-                await shrani(symbol, lastBPrice, quoteBalance, baseBalance)
-                return await lastBPrice
-            } else if (price > lastBPrice) {
-                f.cs("BP was NOT updated!coz its higher wich is bad")
                 //await shrani(symbol, price, quoteBalance, baseBalance)
+                return await bougthPrice
+            } else if (price > lastBPrice) {    //dev  new price is higher so it is the new bougthPrice
+                //await shrani(symbol, price, quoteBalance, baseBalance)
+                f.cs("BP was updated!")
+                return await price
+            } else if (price < lastBPrice) {    //dev
+                f.cs("BP was NOT updated!")
                 return await lastBPrice
             } else {
                 f.cs("BP was read")
-                f.cs("BP was read: " + lastBPrice)
                 return bougthPrice = await read(symbol)
-                //return bougthPrice = 0
             }
         }
 
@@ -550,11 +621,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             feeDouble = tradingFeeP * 2;
             //f.cs("FeeDouble:" + feeDouble);
             tradingFeeAbs = await f.part(feeDouble, bougthPrice);
-            f.cs("tradingFeeAbs:" + tradingFeeAbs);
+            //f.cs("tradingFeeAbs:" + tradingFeeAbs);
             minProfitAbs = await f.part(minProfitP, bougthPrice);
-            f.cs("minProfitAbs:" + minProfitAbs);
+            //f.cs("minProfitAbs:" + minProfitAbs);
             sellPrice = await bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
-            f.cs("sellPrice: " + sellPrice);
+            //f.cs("sellPrice:" + sellPrice);
             if (sellPrice > price) {      //if bougthPrice is not high enough
                 r = true;    	//dont allow sell force holding
             } else {
@@ -611,6 +682,96 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
+        async function triArb(currency1, currency2, currency3) {
+            f.cs("checking:" + currency1 + "/" + currency2 + "/" + currency3)
+            price21a = a.ask(f.mergeSymbol(currency2, currency1))  //CW
+            price32a = a.ask(f.mergeSymbol(currency3, currency2))  //CW
+            price31a = a.ask(f.mergeSymbol(currency3, currency1))  //CCW
+            price21b = a.bid(f.mergeSymbol(currency2, currency1))  //CCW
+            price32b = a.bid(f.mergeSymbol(currency3, currency2))  //CCW
+            price31b = a.bid(f.mergeSymbol(currency3, currency1))  //CW
+
+            //CW
+            let value1CW = 100
+            let value2CW = value1CW / await price21a
+            let value3CW = value2CW / await price32a
+            let valueFinalCW = value3CW * await price31b
+            profitCW = valueFinalCW - value1CW
+
+            //CCW
+            let value1CCW = 100
+            let value2CCW = value1CCW / await price21b
+            let value3CCW = value2CCW / await price32b
+            let valueFinalCCW = value3CCW * await price31a
+            profitCCW = valueFinalCCW - value1CCW
+
+            profit(profitCW, profitCCW)
+            function profit(profitCW, profitCCW) {
+                if ((profitCW > 0.3) && (profitCW > profitCCW)) {
+                    f.cs("profitCW: " + profitCW)
+                    f.cs("go clock wise")
+                    triArbOrderType = "CW"
+                    logHistory(triArbOrderType + " " + currency1 + " " + currency2 + " " + currency3 + " " + (profitCW - 0.3), 100)
+                    triArbOrder(triArbOrderType, currency1, currency2, currency3)
+                    return triArbOrderType
+                } else if ((profitCCW > 0.3) && (profitCCW > profitCW)) {
+                    f.cs("profitCCW: " + profitCCW)
+                    f.cs("go counter clock wise")
+                    triArbOrderType = "CCW"
+                    logHistory(triArbOrderType + " " + currency1 + " " + currency2 + " " + currency3 + " " + (profitCCW - 0.3), 100)
+                    triArbOrder(triArbOrderType, currency1, currency2, currency3)
+                    return triArbOrderType
+                } else {
+                    f.cs("no profit")
+                    return triArbOrderType = "none"
+                }
+            }
+
+
+            async function triArbOrder(triArbOrderType, currency1, currency2, currency3) {
+
+                // check for balances 
+
+                cur1bal = await a.balance(currency1)
+                cur2bal = await a.balance(currency2)
+                cur3bal = await a.balance(currency3)
+                f.cs(cur1bal+"----------------"+currency1)
+                f.cs(cur2bal+"----------------"+currency2)
+                f.cs(cur3bal+"----------------"+currency3)
+                f.cs("order type:------------ "+triArbOrderType)
+/*
+                switch (triArbOrderType) {
+                    case "CW":
+
+                    
+                        done12a = await a.buy(f.mergeSymbol(currency2, currency1), quoteBalanceInBase * portion, market12a)
+
+                        done12a ? done23a = await a.buy(f.mergeSymbol(currency3, currency2), quoteBalanceInBase * portion, market23a) : ""
+
+                        done23a ? done13b = await a.buy(f.mergeSymbol(currency3, currency1), quoteBalanceInBase * portion, market13b) : ""
+
+                        brake;
+                    case "CCW":
+
+                        done13a = await a.buy(f.mergeSymbol(currency2, currency1), quoteBalanceInBase * portion, market13a)
+
+                        done32a ? done32a = await a.buy(f.mergeSymbol(currency3, currency2), quoteBalanceInBase * portion, market32a) : ""
+
+                        done23a ? done13b = await a.buy(f.mergeSymbol(currency3, currency1), quoteBalanceInBase * portion, market13b) : ""
+
+                        brake;
+                    case "none":
+                        f.cs("No TriArb")
+                        brake;
+
+                }*/
+            }
+
+        }
+
+
+
+
         return {
             checkStopLoss: checkStopLoss,
             safeSale: safeSale,
@@ -621,7 +782,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             balanceChanged: balanceChanged,
             change1h: change1h,
             selectCurrencyNew: selectCurrencyNew,
-            checkBougthPrice: checkBougthPrice
+            checkBougthPrice: checkBougthPrice,
+            triArb: triArb,
+            //triArbOrder: triArbOrder,
+            logHistory: logHistory
         }
     }
     const m = modul();
@@ -640,21 +804,24 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         price = await a.price(symbol);  //price for analysis
         bid = await a.bid(symbol)   //price for buying
         priceFiat = await a.price(s.fiatMarket)
+
+        //priceAltFiat = await a.price(f.mergeSymbol(baseCurrency, s.quoteCurrency))
+        //f.cs(priceAltFiat + " " + f.mergeSymbol(baseCurrency, s.quoteCurrency))
+
         wallet = await a.wallet();
         change24hP = await a.change(symbol);
         volume = await a.volume(symbol);
 
-
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
+        bougthPrice = await m.checkBougthPrice(bougthPrice, price);
         //bougthPrice = await read(symbol)
-        bougthPrice = await m.checkBougthPrice(bougthPrice);
         //m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
         //purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
         let conds = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
-        purchase = await conds.purchase
-        sale = await conds.sale
-        more = await conds.more
+        purchase = conds.purchase
+        sale = conds.sale
+        more = conds.more
 
         //sellPrice;  //safeSale() returns
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
@@ -698,7 +865,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
 
-            return await {
+            return {
                 uppers: {
                     MA3: MA3,
                     MA30: MA30,
@@ -735,7 +902,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //confirm signals above 0 with AND
         upSignal = await up(indicator.uppers);
         async function up(uppers) {
-            conds = await Object.values(uppers);
+            conds = Object.values(uppers);
             function condition(currentValue) {
                 return currentValue > 0;    //set condition
             }
@@ -745,12 +912,19 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //confirm signals below 0 with AND
         downSignal = await down(indicator.downers);
         async function down(downers) {
-            conds = await Object.values(downers);
+            conds = Object.values(downers);
             function condition(currentValue) {
                 return currentValue < 0;    //set condition
             }
             return conds.every(condition)
         }
+
+        triUSDT = await m.triArb("USDT", "BTC", baseCurrency)
+        triUSDT = await m.triArb("USDT", "ETH", baseCurrency)
+        triUSDT = await m.triArb("USDT", "BNB", baseCurrency)
+        triETH = await m.triArb("BTC", "ETH", baseCurrency)
+        triBNB = await m.triArb("BTC", "BNB", baseCurrency)
+
 
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
@@ -758,6 +932,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');;
+
+                //bougthPrice = await m.checkBougthPrice(bougthPrice, price);
 
                 enableOrders ? await shrani(symbol, await ret.bougthPrice) : "";
 
@@ -777,7 +953,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else {
                 orderType = "still none";
             }
-            return await orderType;
+            return orderType;
         }
 
 
@@ -792,36 +968,44 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         let absoluteProfit2 = await f.part(relativeProfit, baseBalanceInQuote);
 
         //main console output
-        marketInfo = await {
+        marketInfo = {
             No: botNumber,
-            fiatPrice: priceFiat + " " + s.fiatMarket,
-            fiatProfit: (absoluteProfit * priceFiat).toFixed(8) + " " + "USDT",
-            fiatProfit2: (absoluteProfit2 * priceFiat).toFixed(8) + " " + "USDT",
+            fiatMarket: s.fiatMarket,
+            fiatPrice: priceFiat,
+            fiatProfit: (absoluteProfit * priceFiat),
+            fiatProfit2: (absoluteProfit2 * priceFiat),
             symbol: symbol,
-            relativeProfit_: (relativeProfit + minProfitP).toFixed(3) + " %",
-            absoluteProfit_: absoluteProfit.toFixed(8) + " " + quoteCurrency,
-            absoluteProfit2: absoluteProfit2.toFixed(8) + " " + quoteCurrency,
-            fiatPrice: priceFiat + " " + s.fiatMarket,
-            fiatProfit: (absoluteProfit * priceFiat).toFixed(8) + " " + "USDT",
-            fiatProfit2: (absoluteProfit2 * priceFiat).toFixed(8) + " " + "USDT",
-            minAmount_________: minAmount + " " + baseCurrency,
-            baseBalance_______: baseBalance + " " + baseCurrency,
-            baseBalanceInQuote: baseBalanceInQuote.toFixed(8) + " " + quoteCurrency,
-            quoteBalance______: quoteBalance + " " + quoteCurrency,
-            quoteBalanceInBase: quoteBalanceInBase.toFixed(8) + " " + baseCurrency,
-            enabled__: enableOrders,
-            time_____: f.getTime(),
-            ticker___: tickerMinutes + " min",
-            stopLossP: stopLossP + " %",
-            sellPrice__: sellPrice.toFixed(8) + " " + symbol,
-            price______: price.toFixed(8) + " " + symbol,
-            bid________: bid.toFixed(8) + " " + symbol,
-            bougthPrice: bougthPrice.toFixed(8) + " " + symbol,
-            lossPrice__: lossPrice.toFixed(8) + " " + symbol,
-            purchase___: purchase,
-            more_______: more,
-            upSignal___: upSignal,
-            uppers_: indicator.uppers,
+            base: baseCurrency,
+            quote: quoteCurrency,
+            relativeProfit: (relativeProfit + minProfitP),
+            absoluteProfit: absoluteProfit,
+            absoluteProfit2: absoluteProfit2,
+            DeusGroup: "__________________________________",
+            fiatPrice: priceFiat,
+            fiatProfit: (absoluteProfit * priceFiat),
+            fiatProfit2: (absoluteProfit2 * priceFiat),
+            minAmount: minAmount,
+            baseBalance: baseBalance,
+            baseBalanceInQuote: baseBalanceInQuote,
+            quoteBalance: quoteBalance,
+            quoteBalanceInBase: quoteBalanceInBase,
+            enabled: enableOrders,
+            time: f.getTime(),
+            ticker: tickerMinutes,
+            stopLossP: stopLossP,
+            MrPrice: "____________________________________",
+            sellPrice: sellPrice,
+            price: price,
+            bid: bid,
+            bougthPrice: bougthPrice,
+            lossPrice: lossPrice,
+            FSociety: "____________________________________",
+            purchase: purchase,
+            more: more,
+            triETH: triETH,
+            triBNB: triBNB,
+            upSignal: upSignal,
+            //uppers: indicator.uppers,
             downers: indicator.downers,
             downSignal: downSignal,
             //indicators: indicator.all,
@@ -856,24 +1040,15 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
-        await logHistory(marketInfo, 10)
-        function logHistory(toLog, length) {
-            //f.cs(dol)
-            if (dol >= length) {
-                firstLogToFile()
-                logToFile(toLog)
-                dol = 0
-            } else {
-                logToFile(toLog)
-                dol++
-            }
-        }
-        await console.dir(marketInfo);
+        await shraniDB(symbol, marketInfo)
+
+        //m.logHistory(marketInfo, 10)
+        console.dir(marketInfo);
         //await f.cs(marketInfo)
         //enableOrders ? "" : await shrani(await symbol, await bougthPrice)  //dev
-        return await marketInfo;
+        return marketInfo;
     }
-    return await marketInfo;
+    return marketInfo;
 }
 
 //constants and variables
