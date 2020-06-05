@@ -436,7 +436,7 @@ async function globalRang2(value, symbol, botN, awards) {
     }
 
     for (i = 1; i < 6; i++) {  //display top n
-        f.cs(arr4[i])
+        //f.cs(arr4[i])
     }
 
     ris = await ex(arr4, botN);
@@ -705,8 +705,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             let valueFinalCCW = value3CCW * await price31a
             profitCCW = valueFinalCCW - value1CCW
 
-            profit(profitCW, profitCCW)
-            function profit(profitCW, profitCCW) {
+            triArbCheck(profitCW, profitCCW)
+            function triArbCheck(profitCW, profitCCW) { //r: CW/CCW/none
                 if ((profitCW > 0.3) && (profitCW > profitCCW)) {
                     f.cs("profitCW: " + profitCW)
                     f.cs("go clock wise")
