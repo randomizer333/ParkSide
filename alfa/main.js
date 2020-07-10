@@ -430,7 +430,7 @@ async function globalRang2(value, symbol, botN, awards) {
     }
 
     for (i = 1; i < 6; i++) {  //display top n
-        f.cs(arr4[i])
+        //f.cs(arr4[i])
     }
 
     ris = await ex(arr4, botN);
@@ -485,7 +485,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
     let price;      //balanceChanged
     let bid
-    let bougthPrice = await read(symbol);//balanceChanged
+    let bougthPrice = 0 // await read(symbol);//balanceChanged
 
     let sellPrice;  //safeSale
     let hold;       //safeSale
@@ -566,18 +566,24 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 dol++
             }
         }
+        let lastBPrice
+        async function checkBougthPrice(symbol, price) {  //check if bougthPrice exists
 
-        async function checkBougthPrice(bougthPrice, price) {  //check if bougthPrice exists
             lastBPrice = await read(symbol)
 
-            f.cs("lastBPrice: " + lastBPrice)
+            f.cs("lastBPrice: " + await lastBPrice)
             f.cs("price: " + price)
 
-            if ((bougthPrice == 0) && (price < lastBPrice)) {
+            if ((lastBPrice == 0) || (lastBPrice == undefined)) {
                 f.cs("BP was 0")
                 //await shrani(symbol, price, quoteBalance, baseBalance)
-                return await bougthPrice
-            } else if (price > lastBPrice) {    //dev  new price is higher so it is the new bougthPrice
+                return await price
+            } else {
+                return await price
+            }
+
+
+            /*else if (price > lastBPrice) {    //dev  new price is higher so it is the new bougthPrice
                 //await shrani(symbol, price, quoteBalance, baseBalance)
                 f.cs("BP was updated!")
                 return await price
@@ -587,6 +593,22 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else {
                 f.cs("BP was read")
                 return bougthPrice = await read(symbol)
+            }*/
+
+        }
+
+        //if new bougth price is higher than old one its OK you can update it
+        //if new bougth price is lower you MUST NOT update it
+        async function checkNewBougthPrice(symbol, price) {
+
+            lastBPrice = await read(symbol)
+
+            if (await lastBPrice < price) {
+                f.cs("Last bougth price was smaller than current NOT Updated: " + lastBPrice)
+                return lastBPrice
+            } else if (await lastBPrice > price) {
+                f.cs("Last bougth price was bigger than current IS Updated: " + price)
+                return price
             }
         }
 
@@ -648,13 +670,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else {
                 return await false;  //hodl
             }*/
-        }
-
-        function mainMarketCap(fiatPrice, fiatVol) {
-            let BTCsupply = 17696250;
-            let marketCap = fiatPrice * BTCsupply;        //BTC supply 17,696,250 BTC
-
-            return MCapMA;
         }
 
         async function change1h(priceLog, tickerInMs, price, durationInMinutes) {
@@ -748,9 +763,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                     done12a = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market12a)
 
-                    done12a ? done23a = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market23a):""
+                    done12a ? done23a = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market23a) : ""
 
-                    done23a ? done13b = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market13b):""
+                    done23a ? done13b = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market13b) : ""
 
                     brake;
                 case "CCW":
@@ -776,7 +791,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             selectCurrencyNew: selectCurrencyNew,
             checkBougthPrice: checkBougthPrice,
             triArb: triArb,
-            logHistory: logHistory
+            logHistory: logHistory,
+            checkNewBougthPrice: checkNewBougthPrice
         }
     }
     const m = modul();
@@ -804,17 +820,13 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         volume = await a.volume(symbol);
 
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
-        quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
-        bougthPrice = await m.checkBougthPrice(bougthPrice, price);
-        //bougthPrice = await read(symbol)
-        //m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
-        //purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
-        let conds = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
-        purchase = conds.purchase
-        sale = conds.sale
-        more = conds.more
 
-        //sellPrice;  //safeSale() returns
+        quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
+        //bougthPrice = await m.checkBougthPrice(symbol, price);
+        bougthPrice = await read(symbol)
+
+        //bougthPrice = await m.checkNewBougthPrice(symbol, price)  //used in makeOrder
+
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
 
@@ -856,7 +868,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
 
-            return await {
+            return {
                 uppers: {
                     MA3: MA3,
                     MA30: MA30,
@@ -919,13 +931,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');;
+                enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');
+
+                await ret.bougthPrice ? bougthPrice = await m.checkNewBougthPrice(symbol, ret.bougthPrice) : "";
 
                 //bougthPrice = await m.checkBougthPrice(bougthPrice, price);
 
                 enableOrders ? await shrani(symbol, await ret.bougthPrice) : "";
-
-                enableOrders ? orderType = ret.orderType : orderType = "bougth";
+                enableOrders ? orderType = await ret.orderType : orderType = "bougth";
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 enableOrders ? orderType = await ret.orderType : orderType = "sold";
