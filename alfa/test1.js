@@ -1,24 +1,21 @@
+
 /* 
 1.crypto to fiat trader
 2.high ranking catcher trader
 3.intracrypto trading trader
-4.triple arbitrage
 */
 
-const { isNumber } = require("util");
-
-console.log("runin 333")
 
 //requirements
 let s, a, f, TI, fs, db
 req();
 async function req() {
-    s = require("../set.json")
-    a = require("./api.js")
-    f = require("./funk.js")
-    TI = require("./ti.js")
-    fs = require('fs') //node.js native
-    db = require("./db.json")
+    s = await require("../set.json")
+    a = await require("./api.js")
+    f = await require("./funk.js")
+    TI = await require("./ti.js")
+    fs = await require('fs') //node.js native
+    db = await require("./db.json")
     return await init()
 }
 
@@ -44,7 +41,6 @@ let quotes = [    //fiat strategy trading portofio
     //cripto base/fiat quote
     /*"BNB/USDT",
     "ETH/USDT",
-
     "XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
@@ -52,16 +48,11 @@ let quotes = [    //fiat strategy trading portofio
     "XLM/USDT",
     "XMR/USDT",
     "TRX/USDT",
-
     "BCH/USDT",*/
 ]
 
 let alts = [    //alt markets 21+3=24
     /*
-    valuta1 = "BTC"
-    valuta2 = "BNB","ETH"
-    valuta3 = "ALTs"
-
         "XRP/BNB", "XRP/BTC", "XRP/ETH",
         "LTC/BNB", "LTC/BTC", "LTC/ETH",
         "EOS/BNB", "EOS/BTC", "EOS/ETH",
@@ -95,7 +86,6 @@ let alts = [    //alt markets 21+3=24
     "XLM/BNB",  
     "XMR/BNB",  
     "TRX/BNB", 
-
     "XRP/ETH",
     "LTC/ETH",
     "EOS/ETH",
@@ -438,7 +428,7 @@ async function globalRang2(value, symbol, botN, awards) {
     }
 
     for (i = 1; i < 6; i++) {  //display top n
-        //f.cs(arr4[i])
+        f.cs(arr4[i])
     }
 
     ris = await ex(arr4, botN);
@@ -575,7 +565,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
-        async function checkBougthPrice(bougthPrice, price) {  //check if bougthPrice exists
+        async function checkBougthPrice(symbol, price) {  //check if bougthPrice exists
             lastBPrice = await read(symbol)
 
             f.cs("lastBPrice: " + lastBPrice)
@@ -604,7 +594,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 bougthPrice = await price
                 await shrani(await symbol, await bougthPrice)
                 return await bougthPrice
-
             } else*/ if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
                     //bougthPrice = price;  //!!!Bougth price not updated
@@ -685,97 +674,92 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         async function triArb(currency1, currency2, currency3) {
-            f.cs("checking:" + currency1 + "/" + currency2 + "/" + currency3)
-            price21a = a.ask(f.mergeSymbol(currency2, currency1))  //CW
-            price32a = a.ask(f.mergeSymbol(currency3, currency2))  //CW
-            price31a = a.ask(f.mergeSymbol(currency3, currency1))  //CCW
-            price21b = a.bid(f.mergeSymbol(currency2, currency1))  //CCW
-            price32b = a.bid(f.mergeSymbol(currency3, currency2))  //CCW
-            price31b = a.bid(f.mergeSymbol(currency3, currency1))  //CW
+            market12a = a.ask(f.mergeSymbol(currency2, currency1))  //CW
+            market23a = a.ask(f.mergeSymbol(currency3, currency2))  //CW
+            market13a = a.ask(f.mergeSymbol(currency3, currency1))  //CCW
+            market12b = a.bid(f.mergeSymbol(currency2, currency1))  //CCW
+            market23b = a.bid(f.mergeSymbol(currency3, currency2))  //CCW
+            market13b = a.bid(f.mergeSymbol(currency3, currency1))  //CW
+            f.cs("market12a: " + await market12a)
+            f.cs("market23a: " + await market23a)
+            f.cs("market13a: " + await market13a)
+            f.cs("market12b: " + await market12b)
+            f.cs("market23b: " + await market23b)
+            f.cs("market13b: " + await market13b)
 
             //CW
             let value1CW = 100
-            let value2CW = value1CW / await price21a
-            let value3CW = value2CW / await price32a
-            let valueFinalCW = value3CW * await price31b
+            await f.cs("value1CW: " + value1CW)
+            let value2CW = value1CW / await market12a
+            await f.cs("value2CW: " + value2CW)
+            let value3CW = value2CW / await market23a
+            await f.cs("value3CW: " + value3CW)
+            let valueFinalCW = value3CW * await market13b
+            await f.cs("valueFinalCW: " + valueFinalCW)
             profitCW = valueFinalCW - value1CW
 
             //CCW
             let value1CCW = 100
-            let value2CCW = value1CCW / await price21b
-            let value3CCW = value2CCW * await price32b
-            let valueFinalCCW = value3CCW * await price31a
+            await f.cs("value1CCW: " + value1CCW)
+            let value2CCW = value1CCW / await market12a
+            await f.cs("value2CCW: " + value2CCW)
+            let value3CCW = value2CCW / await market23b
+            await f.cs("value3CCW: " + value3CCW)
+
+            let valueFinalCCW = value3CCW * await market13b
+            await f.cs("valueFinalCCW: " + valueFinalCCW)
             profitCCW = valueFinalCCW - value1CCW
 
-            triArbCheck(profitCW, profitCCW)
-            function triArbCheck(profitCW, profitCCW) { //r: CW/CCW/none
-                if ((profitCW > 0.3) && (profitCW > profitCCW)) {
+            if ((profitCW && profitCCW) > 0.3) {
+                if (valueFinalCW > valueFinalCCW) {
                     f.cs("profitCW: " + profitCW)
                     f.cs("go clock wise")
                     triArbOrderType = "CW"
                     logHistory(triArbOrderType + " " + currency1 + " " + currency2 + " " + currency3 + " " + (profitCW - 0.3), 100)
-                    //triArbOrder(triArbOrderType, currency1, currency2, currency3)
                     return triArbOrderType
-                } else if ((profitCCW > 0.3) && (profitCCW > profitCW)) {
+                } else {
                     f.cs("profitCCW: " + profitCCW)
                     f.cs("go counter clock wise")
                     triArbOrderType = "CCW"
                     logHistory(triArbOrderType + " " + currency1 + " " + currency2 + " " + currency3 + " " + (profitCCW - 0.3), 100)
-                    //triArbOrder(triArbOrderType, currency1, currency2, currency3)
                     return triArbOrderType
-                } else {
-                    f.cs("no profit")
-                    return triArbOrderType = "none"
                 }
+            } else {
+                f.cs("no profit")
+                triArbOrderType = "none"
             }
-
-
-            async function triArbOrder(triArbOrderType, currency1, currency2, currency3) {
-
-                // check for balances 
-
-                cur1bal = await a.balance(currency1)
-                cur2bal = await a.balance(currency2)
-                cur3bal = await a.balance(currency3)
-                f.cs(cur1bal + "----------------" + currency1)
-                f.cs(cur2bal + "----------------" + currency2)
-                f.cs(cur3bal + "----------------" + currency3)
-                f.cs("order type:------------ " + triArbOrderType)
-                
-                                switch (triArbOrderType) {
-                                    case "CW":
-                
-                                
-                                        done12a = await a.buy(f.mergeSymbol(currency2, currency1), quoteBalanceInBase * portion, market12a)
-                                        if(done12a){
-                                            done23a = await a.buy(f.mergeSymbol(currency3, currency2), quoteBalanceInBase * portion, market23a)
-                                            if(done23a){
-                                                done13b = await a.buy(f.mergeSymbol(currency3, currency1), quoteBalanceInBase * portion, market13b)
-                                            }
-                                        }
-                                        /*
-                                        done12a ? done23a = await a.buy(f.mergeSymbol(currency3, currency2), quoteBalanceInBase * portion, market23a) : ""
-                
-                                        done23a ? done13b = await a.buy(f.mergeSymbol(currency3, currency1), quoteBalanceInBase * portion, market13b) : ""
-                                        */
-                                        brake;
-                                    case "CCW":
-                
-                                        done13a = await a.buy(f.mergeSymbol(currency2, currency1), quoteBalanceInBase * portion, market13a)
-                
-                                        done32a ? done32a = await a.buy(f.mergeSymbol(currency3, currency2), quoteBalanceInBase * portion, market32a) : ""
-                
-                                        done23a ? done13b = await a.buy(f.mergeSymbol(currency3, currency1), quoteBalanceInBase * portion, market13b) : ""
-                
-                                        brake;
-                                    case "none":
-                                        f.cs("No TriArb")
-                                        brake;
-                
-                                }
-            }
-
+            return triArbOrderType
         }
+
+        async function triArbOrder(triArbOrderType, currency1, currency2, currency3) {
+
+            market12a = a.ask(f.mergeSymbol(currency2, currency1))  //CW
+            market23a = a.ask(f.mergeSymbol(currency3, currency2))  //CW
+            market13a = a.ask(f.mergeSymbol(currency3, currency1))  //CCW
+            market12b = a.bid(f.mergeSymbol(currency2, currency1))  //CCW
+            market23b = a.bid(f.mergeSymbol(currency3, currency2))  //CCW
+            market13b = a.bid(f.mergeSymbol(currency3, currency1))  //CW
+
+            switch (triArbOrderType) {
+                case "CW":
+
+                    done12a = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market12a)
+
+                    done12a ? done23a = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market23a):""
+
+                    done23a ? done13b = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market13b):""
+
+                    brake;
+                case "CCW":
+                    //code
+                    brake;
+                case "none":
+                    f.cs("No TriArb")
+                    brake;
+
+            }
+        }
+
 
         return {
             checkStopLoss: checkStopLoss,
@@ -789,7 +773,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             selectCurrencyNew: selectCurrencyNew,
             checkBougthPrice: checkBougthPrice,
             triArb: triArb,
-            //triArbOrder: triArbOrder,
             logHistory: logHistory
         }
     }
@@ -819,7 +802,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
-        bougthPrice = await m.checkBougthPrice(bougthPrice, price);
+        bougthPrice = await m.checkBougthPrice(symbol, price );
         //bougthPrice = await read(symbol)
         //m.balanceChanged(baseBalanceInQuote, quoteBalance, botNumber);
         //purchase = await m.selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote);
@@ -870,7 +853,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
 
-            return {
+            return await {
                 uppers: {
                     MA3: MA3,
                     MA30: MA30,
@@ -924,44 +907,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             return conds.every(condition)
         }
 
-        let triUSDTBTC,
-            triUSDTETH,
-            triUSDTBNB,
-            triETH,
-            triBNB
-/*
-        setTimeout(function () { triUSDTBTC = m.triArb("USDT", "BTC", baseCurrency) }, 1000)
-        setTimeout(function () { triUSDTETH = m.triArb("USDT", "ETH", baseCurrency) }, 3000)
-        setTimeout(function () { triUSDTBNB = m.triArb("USDT", "BNB", baseCurrency) }, 5000)
-        setTimeout(function () { triETH = m.triArb("BTC", "ETH", baseCurrency) }, 7000)
-        setTimeout(function () { triBNB = m.triArb("BTC", "BNB", baseCurrency) }, 9000)*/
-
-        triUSDTBTC = m.triArb("USDT", "BTC", baseCurrency)
-        if (triUSDTBTC){
-            f.cs("triUSDTBTC___OK "+triUSDTBTC)
-            triUSDTETH = m.triArb("USDT", "ETH", baseCurrency)
-            if(triUSDTETH){
-                f.cs("triUSDTETH____OK")
-                triUSDTBNB = m.triArb("USDT", "BNB", baseCurrency)
-                if(triUSDTBNB){
-                    f.cs("triUSDTBNB____OK")
-                    triETH = m.triArb("BTC", "ETH", baseCurrency)
-                    if(triETH){
-                        f.cs("triETH____OK")
-                        triBNB = m.triArb("BTC", "BNB", baseCurrency)
-                    }
-                }
-            }
-        }else{
-            f.cs("not a number: "+await triUSDTBTC)
-        }
-
-        /*
-                triUSDTBTC = await m.triArb("USDT", "BTC", baseCurrency)
-                triUSDTETH = await m.triArb("USDT", "ETH", baseCurrency)
-                triUSDTBNB = await m.triArb("USDT", "BNB", baseCurrency)
-                triETH = await m.triArb("BTC", "ETH", baseCurrency)
-                triBNB = await m.triArb("BTC", "BNB", baseCurrency)*/
+        //triArbOrderType = await m.triArb(s.fiatCurrency, s.quoteCurrency, baseCurrency)
+        //triArbOrder(triArbOrderType, currency1, currency2, currency3)
 
 
         // make strategic decision about order type
@@ -1040,10 +987,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             FSociety: "____________________________________",
             purchase: purchase,
             more: more,
-            triETH: triETH,
-            triBNB: triBNB,
             upSignal: upSignal,
-            //uppers: indicator.uppers,
+            uppers: indicator.uppers,
             downers: indicator.downers,
             downSignal: downSignal,
             //indicators: indicator.all,
@@ -1081,8 +1026,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         await shraniDB(symbol, marketInfo)
 
         //m.logHistory(marketInfo, 10)
-        //console.dir(marketInfo);
-        f.cs("NEXT")
+        console.dir(marketInfo);
         //await f.cs(marketInfo)
         //enableOrders ? "" : await shrani(await symbol, await bougthPrice)  //dev
         return marketInfo;
@@ -1091,5 +1035,5 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 }
 
 //constants and variables
-exports.ticker = ticker;
-exports.enableOrders = enableOrders;
+exports.ticker = ticker
+exports.enableOrders = enableOrders
