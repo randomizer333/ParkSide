@@ -527,27 +527,28 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             return await purchase;
         }
 
-        async function selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds
+        async function selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds returns: sale,more,purchase
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
-                return await {
+                return {
                     sale: true,
                     more: true,
                     purchase: false
                 }
             } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalanceInBase > minAmount)) {    //can buy
-                return await {
+                return {
                     sale: false,
                     more: false,
                     purchase: true
                 }
             } else {
-                return await {
+                return {
                     sale: false,
                     more: true,
                     purchase: false
                 }
             }
         }
+
         async function loger(value, length, array) {        //log FILO to array
             while (array.length >= length) {
                 array.pop();
@@ -822,9 +823,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
 
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
+
+        let ret1 = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote)
+        sale = ret1.sale
+        more = ret1.more
+        purchase = ret1.purchase
+
         //bougthPrice = await m.checkBougthPrice(symbol, price);
         bougthPrice = await read(symbol)
-
         //bougthPrice = await m.checkNewBougthPrice(symbol, price)  //used in makeOrder
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
@@ -928,6 +934,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
+
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
