@@ -61,7 +61,15 @@ let alts = [    //alt markets 21+3=24
         "XLM/BNB", "XLM/BTC", "XLM/ETH",
         "XMR/BNB", "XMR/BTC", "XMR/ETH",
         "TRX/BNB", "TRX/BTC", "TRX/ETH",
-            "BNB/BTC",  "ETH/BTC"
+            "BNB/BTC",  "ETH/BTC",
+            "BNB/USDT", "ETH/USDT",
+                "XRP/USDT",
+                "LTC/USDT",
+                "EOS/USDT",
+                "ADA/USDT",
+                "XLM/USDT",
+                "XMR/USDT",
+                "TRX/USDT",
         */
     //add old markets
 
@@ -269,10 +277,10 @@ async function read(symbol) {
 
 async function writeJSON(inputJSON) {
     input = JSON.stringify(inputJSON);
-    await fs.writeFile("./storage.json", "", function (err) {
+    await fs.writeFile("./storage.json", "", function (err) {   //clear file
         if (err) throw err;
     });
-    await fs.writeFile("./storage.json", input, function (err) {
+    await fs.writeFile("./storage.json", input, function (err) {    //save data
         if (err) throw err;
     });
 }
@@ -724,7 +732,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             await f.cs("value2CCW: " + value2CCW)
             let value3CCW = value2CCW / await market23b
             await f.cs("value3CCW: " + value3CCW)
-
             let valueFinalCCW = value3CCW * await market13b
             await f.cs("valueFinalCCW: " + valueFinalCCW)
             profitCCW = valueFinalCCW - value1CCW
@@ -779,7 +786,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
-
         return {
             checkStopLoss: checkStopLoss,
             safeSale: safeSale,
@@ -824,10 +830,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
 
-        let ret1 = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote)
-        sale = ret1.sale
-        more = ret1.more
-        purchase = ret1.purchase
+        let r1 = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote)
+        sale = r1.sale
+        more = r1.more
+        purchase = r1.purchase
 
         //bougthPrice = await m.checkBougthPrice(symbol, price);
         bougthPrice = await read(symbol)
@@ -958,6 +964,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 orderType = "holding good";
             } else if (purchase) {
                 orderType = "parked";
+                bougthPrice = 0000         //reset price to almost zero
             } else {
                 orderType = "still none";
             }

@@ -146,10 +146,10 @@ async function wallet() {                   //returns Array of Objects balances 
             }*/
             for (i = 0; i < curs.length; i++) {
                 if (vals[i] > 0) {
-                    balances[j] = await { currency: curs[i+1], balance: vals[i] };
+                    balances[j] = await { currency: curs[i + 1], balance: vals[i] };
                     j++
                 }
-}
+            }
             return await balances
         }
         //await f.cs(balances);
@@ -194,10 +194,10 @@ async function bid(symbol) {                //reurns Array of Objects bid,ask
         r = await exchange.fetchOrderBook(symbol);
         return re = await r.bids[0][0];
     } catch (error) {
-        if(error.name = 'BadSymbol'){
-            console.log("Ni "+symbol +" marketa!!!")
-        }else{
-        console.log("EEE: ", error);
+        if (error.name = 'BadSymbol') {
+            console.log("Ni " + symbol + " marketa!!!")
+        } else {
+            console.log("EEE: ", error);
         }
     }
 }
@@ -206,10 +206,10 @@ async function ask(symbol) {                //reurns Array of Objects bid,ask
         r2 = await exchange.fetchOrderBook(symbol);
         return await r2.asks[0][0];
     } catch (error) {
-        if(error.name = 'BadSymbol'){
-            console.log("Ni "+symbol +" marketa!!!")
-        }else{
-        console.log("EEE: ", error);
+        if (error.name = 'BadSymbol') {
+            console.log("Ni " + symbol + " marketa!!!")
+        } else {
+            console.log("EEE: ", error);
         }
     }
 }
@@ -233,7 +233,7 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         //price = higher - (spread / 2); //ask spread
 
         //price = high    //market price
-        
+
         return price;
     } catch (error) {
         console.log("EEE: ", error);
@@ -326,7 +326,7 @@ async function markets() {                   //load all available markets on exc
 }
 
 async function filterAll(markets, qus) {
-    
+
     r = await filter(qus, markets)
 
     /*
