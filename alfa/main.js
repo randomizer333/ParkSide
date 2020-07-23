@@ -610,14 +610,19 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //if new bougth price is lower you MUST NOT update it
         async function checkNewBougthPrice(symbol, price) {
 
-            lastBPrice = await read(symbol)
-
-            if (await lastBPrice < price) {
-                f.cs("Last bougth price was smaller than current NOT Updated: " + lastBPrice)
-                return lastBPrice
-            } else if (await lastBPrice > price) {
-                f.cs("Last bougth price was bigger than current IS Updated: " + price)
-                return price
+            lastBPrice = await read(await symbol)
+            if (!lastBPrice) {
+                return 0;
+            } else {
+                if (await lastBPrice < price) {
+                    f.cs("Last bougth price was smaller than current NOT Updated: " + lastBPrice)
+                    return lastBPrice;
+                } else if (await lastBPrice > price) {
+                    f.cs("Last bougth price was bigger than current IS Updated: " + price)
+                    return price;
+                } else {
+                    return lastBPrice;
+                }
             }
         }
 
@@ -651,10 +656,15 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //f.cs("minProfitAbs:" + minProfitAbs);
             sellPrice = await bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
             //f.cs("sellPrice:" + sellPrice);
-            if (sellPrice > price) {      //if bougthPrice is not high enough
-                r = true;    	//dont allow sell force holding
+            if (!bougthPrice) {
+                return true
             } else {
-                r = false;           //allow sale of holding to parked
+                if (sellPrice > price) {      //if bougthPrice is not high enough
+                    r = true;    	//dont allow sell force holding
+                } else {
+                    r = false;           //allow sale of holding to parked
+                }
+
             }
             return await r;
         }
@@ -668,11 +678,16 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             f.cs("absStopLoss: " + absStopLoss);
             f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
             f.cs("lossPrice: " + lossPrice);*/
-            if (price <= lossPrice) {
-                return await true   //sell ASAP!!!
+            if (!lossPrice) {
+                return false
             } else {
-                return await false  //hodl
+                if (await price <= lossPrice) {
+                    return true   //sell ASAP!!!
+                } else {
+                    return false  //hodl
+                }
             }
+
             /*
             if (loss > absStopLoss) {
                 return await true;   //sell ASAP!!!      
@@ -728,11 +743,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //CCW
             let value1CCW = 100
             await f.cs("value1CCW: " + value1CCW)
-            let value2CCW = value1CCW / await market12a
+            let value2CCW = value1CCW * await market12a
             await f.cs("value2CCW: " + value2CCW)
-            let value3CCW = value2CCW / await market23b
+            let value3CCW = value2CCW * await market23a
             await f.cs("value3CCW: " + value3CCW)
-            let valueFinalCCW = value3CCW * await market13b
+            let valueFinalCCW = value3CCW / await market13b
             await f.cs("valueFinalCCW: " + valueFinalCCW)
             profitCCW = valueFinalCCW - value1CCW
 
@@ -777,7 +792,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                     brake;
                 case "CCW":
-                    //code
+                    done13a = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market13a)
+
+                    done13a ? done23b = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market23b) : ""
+
+                    done23b ? done12b = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market12b) : ""
                     brake;
                 case "none":
                     f.cs("No TriArb")
@@ -819,15 +838,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         bid = await a.bid(symbol)   //price for buying
         priceFiat = await a.price(s.fiatMarket)
 
-        //priceAltFiat = await a.price(f.mergeSymbol(baseCurrency, s.quoteCurrency))
-        //f.cs(priceAltFiat + " " + f.mergeSymbol(baseCurrency, s.quoteCurrency))
-
         wallet = await a.wallet();
         change24hP = await a.change(symbol);
         volume = await a.volume(symbol);
 
         baseBalanceInQuote = await m.baseToQuote(baseBalance, price);
-
         quoteBalanceInBase = await m.quoteToBase(quoteBalance, price);
 
         let r1 = await m.selectCurrencyNew(baseBalance, quoteBalance, minAmount, baseBalanceInQuote)
@@ -836,8 +851,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         purchase = r1.purchase
 
         //bougthPrice = await m.checkBougthPrice(symbol, price);
-        bougthPrice = await read(symbol)
-        //bougthPrice = await m.checkNewBougthPrice(symbol, price)  //used in makeOrder
+        //bougthPrice = await read(symbol)
+        bougthPrice = await m.checkNewBougthPrice(symbol, price)  //used in makeOrder
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
@@ -937,6 +952,37 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //triArbOrderType = await m.triArb(s.fiatCurrency, s.quoteCurrency, baseCurrency)
         //triArbOrder(triArbOrderType, currency1, currency2, currency3)
 
+        let triUSDTBTC,
+            triUSDTETH,
+            triUSDTBNB,
+            triETH,
+            triBNB
+
+        //runTri()
+        async function runTri() {
+            triUSDTBTC = await m.triArb("USDT", "BTC", baseCurrency)
+            if (await triUSDTBTC) {
+                f.cs("triUSDTBTC___OK: " + triUSDTBTC)
+                triUSDTETH = await m.triArb("USDT", "ETH", baseCurrency)
+                if (await triUSDTETH) {
+                    f.cs("triUSDTETH____OK: " + triUSDTETH)
+                    triUSDTBNB = await m.triArb("USDT", "BNB", baseCurrency)
+                    if (await triUSDTBNB) {
+                        f.cs("triUSDTBNB____OK: " + triUSDTBNB)
+                        triETH = await m.triArb("BTC", "ETH", baseCurrency)
+                        if (await triETH) {
+                            f.cs("triETH____OK: " + triETH)
+                            triBNB = await m.triArb("BTC", "BNB", baseCurrency)
+                            if (await triBNB) {
+                                f.cs("triETH____OK: " + triBNB)
+                            }
+                        }
+                    }
+                }
+            } else {
+                f.cs("not a number: " + await triUSDTBTC)
+            }
+        }
 
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
@@ -947,7 +993,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');
 
                 await ret.bougthPrice ? bougthPrice = await m.checkNewBougthPrice(symbol, ret.bougthPrice) : "";
-
                 //bougthPrice = await m.checkBougthPrice(bougthPrice, price);
 
                 enableOrders ? await shrani(symbol, await ret.bougthPrice) : "";
@@ -964,7 +1009,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 orderType = "holding good";
             } else if (purchase) {
                 orderType = "parked";
-                bougthPrice = 0000         //reset price to almost zero
+                bougthPrice = 0;         //reset price to almost zero
             } else {
                 orderType = "still none";
             }
