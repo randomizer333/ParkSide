@@ -269,8 +269,8 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
             //order was canceled
             orderType = "canceled";
         }
-        ret = await {
-            orderId: r.id,
+        ret = {
+            orderId: await r.id,
             orderStatus: r.status,
             orderType: orderType,
             filled: filled,
