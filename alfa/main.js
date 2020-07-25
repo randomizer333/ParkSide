@@ -980,10 +980,17 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
 
-                enableOrders ? orderType = await ret.orderType : orderType = "sold";
+                //enableOrders ? orderType = await ret.orderType : orderType = "sold";
 
-                if ((orderType == "sold")   && enableOrders     ) {
-                    bougthPrice = 0;         //reset price to zero
+                if (enableOrders) {
+                    orderType = await ret.orderType
+                    if (orderType == "sold") {
+                        bougthPrice = 0;         //reset bougthPrice to zero
+                    }else{
+                        orderType = "canceled"
+                    }
+                } else {
+                    orderType = "sold"      //sim
                 }
 
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
