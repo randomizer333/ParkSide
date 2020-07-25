@@ -598,16 +598,17 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             lastBPrice = await read(await symbol)
             if (!lastBPrice) {
-                return 0;
+                f.cs("bad value of Last Bougth Price!!!")
+                return await price;
             } else {
-                if (await lastBPrice < price) {
-                    f.cs("Last bougth price was smaller than current NOT Updated: " + lastBPrice)
-                    return lastBPrice;
-                } else if (await lastBPrice > price) {
-                    f.cs("Last bougth price was bigger than current IS Updated: " + price)
-                    return price;
+                if (await lastBPrice < await price) {
+                    f.cs("Last bougth price was smaller than current NOT Updated: " + await lastBPrice)
+                    return await lastBPrice;
+                } else if (await lastBPrice > await price) {
+                    f.cs("Last bougth price was bigger than current IS Updated: " + await price)
+                    return await price;
                 } else {
-                    return lastBPrice;
+                    return await lastBPrice;
                 }
             }
         }
@@ -979,10 +980,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
 
-
                 enableOrders ? orderType = await ret.orderType : orderType = "sold";
 
-                if ((orderType == "sold") && enableOrders) {
+                if ((orderType == "sold")   && enableOrders     ) {
                     bougthPrice = 0;         //reset price to zero
                 }
 
