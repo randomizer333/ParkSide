@@ -590,20 +590,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else {
                 return await price
             }
-
-
-            /*else if (price > lastBPrice) {    //dev  new price is higher so it is the new bougthPrice
-                //await shrani(symbol, price, quoteBalance, baseBalance)
-                f.cs("BP was updated!")
-                return await price
-            } else if (price < lastBPrice) {    //dev
-                f.cs("BP was NOT updated!")
-                return await lastBPrice
-            } else {
-                f.cs("BP was read")
-                return bougthPrice = await read(symbol)
-            }*/
-
         }
 
         //if new bougth price is higher than old one its OK you can update it
@@ -627,15 +613,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         async function balanceChanged(baseBalanceInQuote, quoteBalance, botNumber) {
-            /*if (bougthPrice == 0) {
-                f.cs("BP was 0")
-                bougthPrice = await price
-                await shrani(await symbol, await bougthPrice)
-                return await bougthPrice
-
-            } else*/ if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
+            if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
-                    //bougthPrice = price;  //!!!Bougth price not updated
                     more = true;
                     bougthPrice = await price
                     await shrani(symbol, bougthPrice, quoteBalance, baseBalance)
@@ -851,8 +830,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         purchase = r1.purchase
 
         //bougthPrice = await m.checkBougthPrice(symbol, price);
-        //bougthPrice = await read(symbol)
-        bougthPrice = await m.checkNewBougthPrice(symbol, price)  //used in makeOrder
+        bougthPrice = await read(symbol)
+        //bougthPrice = await m.checkNewBougthPrice(symbol, price)  //used in makeOrder
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
@@ -999,7 +978,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 enableOrders ? orderType = await ret.orderType : orderType = "bougth";
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
+
+
                 enableOrders ? orderType = await ret.orderType : orderType = "sold";
+
+                if ((orderType == "sold") && enableOrders) {
+                    bougthPrice = 0;         //reset price to zero
+                }
+
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
@@ -1009,7 +995,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 orderType = "holding good";
             } else if (purchase) {
                 orderType = "parked";
-                bougthPrice = 0;         //reset price to almost zero
             } else {
                 orderType = "still none";
             }
