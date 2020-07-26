@@ -601,10 +601,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("bad value of Last Bougth Price!!!")
                 return await price;
             } else {
-                if (await lastBPrice < await price) {
+                if (await lastBPrice > await price) {
                     f.cs("Last bougth price was smaller than current NOT Updated: " + await lastBPrice)
                     return await lastBPrice;
-                } else if (await lastBPrice > await price) {
+                } else if (await lastBPrice < await price) {
                     f.cs("Last bougth price was bigger than current IS Updated: " + await price)
                     return await price;
                 } else {
@@ -972,7 +972,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');
 
-                await ret.bougthPrice ? bougthPrice = await m.checkNewBougthPrice(symbol, ret.bougthPrice) : "";
+                await ret.bougthPrice ? bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice) : "";
                 //bougthPrice = await m.checkBougthPrice(bougthPrice, price);
 
                 enableOrders ? await shrani(symbol, await ret.bougthPrice) : "";
