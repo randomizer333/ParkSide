@@ -245,29 +245,42 @@ async function cancel(orderId, symbol) {    //cancels order with id
         r = await exchange.cancelOrder(orderId, symbol);
         //order was NOT filled
         filled = false;
-        //f.sendMail("Canceled", JSON.stringify(r));
-        return await filled;
+        f.sendMail("Canceled", JSON.stringify(r));
+        return false;
     } catch (error) {
         //order was filled
         filled = true;
         console.log("EEE: ", error);
+        return true;
     }
 }
+
+test()
+async function test() {
+    let orderback = await sell("LTC/BTC", 0.3, 0.007)
+    console.log("returned: ")
+    console.dir(await orderback)
+}
+
 async function sell(symbol, amount, price) {// symbol, amount, ask 
     try {
         r = await exchange.createLimitSellOrder(symbol, amount, price);
         orderId = r.id;
         //f.sendMail("sold", JSON.stringify(r));
+        console.log("sent order!!!")
+
+        let filled
         setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.9);
 
-        if (await filled) {
+        if (filled) {
             //order was filled
-            //f.sendMail("sold2", JSON.stringify(r));
+            f.sendMail("filled and sold", JSON.stringify(r));
             filled = true;
             orderType = "sold";
         } else {
             //order was canceled
             orderType = "canceled";
+            //filled = false;
         }
         ret = {
             orderId: await r.id,
@@ -281,7 +294,9 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         console.log("EEE in sell: ", error);
     }
 }
+
 let c;
+
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
         r = await exchange.createLimitBuyOrder(symbol, amount, price);

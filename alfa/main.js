@@ -595,20 +595,20 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //if new bougth price is higher than old one its OK you can update it
         //if new bougth price is lower you MUST NOT update it
         async function checkNewBougthPrice(symbol, price) {
-
             lastBPrice = await read(await symbol)
             if (!lastBPrice) {
                 f.cs("bad value of Last Bougth Price!!!")
-                return await price;
+                return price;
             } else {
-                if (await lastBPrice > await price) {
-                    f.cs("Last bougth price was smaller than current NOT Updated: " + await lastBPrice)
-                    return await lastBPrice;
-                } else if (await lastBPrice < await price) {
-                    f.cs("Last bougth price was bigger than current IS Updated: " + await price)
-                    return await price;
+                if (lastBPrice > price) {
+                    f.cs("Last bougth price was smaller than current NOT Updated: " + astBPrice)
+                    r = lastBPrice
+                    return r;
+                } else if (lastBPrice < price) {
+                    f.cs("Last bougth price was bigger than current IS Updated: " + price)
+                    return price;
                 } else {
-                    return await lastBPrice;
+                    return lastBPrice;
                 }
             }
         }
@@ -972,7 +972,13 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
                 enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');
 
-                await ret.bougthPrice ? bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice) : "";
+                if (enableOrders) {
+
+                } else {
+
+                }
+
+                await ret.bougthPrice ? bougthPrice = await m.checkNewBougthPrice(symbol, bougthPrice) : "";
                 //bougthPrice = await m.checkBougthPrice(bougthPrice, price);
 
                 enableOrders ? await shrani(symbol, await ret.bougthPrice) : "";
@@ -986,7 +992,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     orderType = await ret.orderType
                     if (orderType == "sold") {
                         bougthPrice = 0;         //reset bougthPrice to zero
-                    }else{
+                    } else {
                         orderType = "canceled"
                     }
                 } else {
