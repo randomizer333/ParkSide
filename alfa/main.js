@@ -35,6 +35,16 @@ async function init() {
     return await setup();
 }
 
+//dev
+
+//await test()
+async function test() {
+    let orderback = await a.sell("LTC/BTC", 0.3, 0.007)
+    console.log("returned: ")
+    console.dir(await orderback)
+}
+
+
 let quotes = [    //fiat strategy trading portofio
     //"BTC/USDT",   //in setings
     //cripto base/fiat quote
@@ -105,6 +115,9 @@ let alts = [    //alt markets 21+3=24
     "TRX/ETH",*/
 
 ]
+
+
+
 
 
 // main setup
@@ -595,20 +608,20 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //if new bougth price is higher than old one its OK you can update it
         //if new bougth price is lower you MUST NOT update it
         async function checkNewBougthPrice(symbol, price) {
-
             lastBPrice = await read(await symbol)
             if (!lastBPrice) {
                 f.cs("bad value of Last Bougth Price!!!")
-                return await price;
+                return price;
             } else {
-                if (await lastBPrice > await price) {
-                    f.cs("Last bougth price was smaller than current NOT Updated: " + await lastBPrice)
-                    return await lastBPrice;
-                } else if (await lastBPrice < await price) {
-                    f.cs("Last bougth price was bigger than current IS Updated: " + await price)
-                    return await price;
+                if (lastBPrice > price) {
+                    f.cs("Last bougth price was smaller than current NOT Updated: " + astBPrice)
+                    r = lastBPrice
+                    return r;
+                } else if (lastBPrice < price) {
+                    f.cs("Last bougth price was bigger than current IS Updated: " + price)
+                    return price;
                 } else {
-                    return await lastBPrice;
+                    return lastBPrice;
                 }
             }
         }
@@ -967,30 +980,57 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
 
+
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
-                enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');
 
-                await ret.bougthPrice ? bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice) : "";
+                //enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
+                //enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');
+                //bougthPrice = await m.checkNewBougthPrice(symbol, bougthPrice)
+
+                if (enableOrders) { //run for real
+                    ret = await a.buy(symbol, quoteBalanceInBase * portion, price)
+                    fil = await ret.filled
+                    if (await fil) {
+                        bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)    //check bougthPrice
+                        
+                        orderType = "bougth"
+                    } else {
+                        orderType = "canceled"
+                    }
+
+                    //bougthPrice = await ret.bougthPrice
+                    //bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                    //orderType = await ret.orderType
+
+                    await shrani(symbol, await ret.bougthPrice)
+                } else {            //simulate
+                    orderType = "bougth"
+                    console.log('buy orders disabled')
+                }
+
+                //await ret.bougthPrice ? bougthPrice = await m.checkNewBougthPrice(symbol, bougthPrice) : "";
                 //bougthPrice = await m.checkBougthPrice(bougthPrice, price);
 
-                enableOrders ? await shrani(symbol, await ret.bougthPrice) : "";
-                enableOrders ? orderType = await ret.orderType : orderType = "bougth";
+                //enableOrders ? await shrani(symbol, await ret.bougthPrice) : "";
+                //enableOrders ? orderType = await ret.orderType : orderType = "bougth";
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
-                enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
 
+                //enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
                 //enableOrders ? orderType = await ret.orderType : orderType = "sold";
 
-                if (enableOrders) {
-                    orderType = await ret.orderType
-                    if (orderType == "sold") {
+                if (enableOrders) {     //real
+                    ret = await a.sell(symbol, baseBalance, price)
+                    fil = await ret.filled
+                    if (await fil) {
                         bougthPrice = 0;         //reset bougthPrice to zero
-                    }else{
+                        orderType = "sold" 
+                    } else {
                         orderType = "canceled"
                     }
                 } else {
                     orderType = "sold"      //sim
+                    console.log('sell orders disabled')
                 }
 
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
