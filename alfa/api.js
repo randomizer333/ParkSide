@@ -240,97 +240,76 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         return price = 0
     }
 }
-async function cancel(orderId, symbol) {    //cancels order with id
-    try {
-        r = await exchange.cancelOrder(orderId, symbol);
-        //order was NOT filled
-        filled = false;
-        f.sendMail("Canceled", JSON.stringify(r));
-        return false;
-    } catch (error) {
-        //order was filled
-        filled = true;
-        console.log("EEE: ", error);
-        return true;
-    }
-}
 
-test()
+//test()
 async function test() {
     let orderback = await sell("LTC/BTC", 0.3, 0.007)
     console.log("returned: ")
     console.dir(await orderback)
 }
 
-async function sell(symbol, amount, price) {// symbol, amount, ask 
-    try {
-        r = await exchange.createLimitSellOrder(symbol, amount, price);
-        orderId = r.id;
-        //f.sendMail("sold", JSON.stringify(r));
-        console.log("sent order!!!")
-
-        let filled
-        setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.9);
-
-        if (filled) {
-            //order was filled
-            f.sendMail("filled and sold", JSON.stringify(r));
-            filled = true;
-            orderType = "sold";
-        } else {
-            //order was canceled
-            orderType = "canceled";
-            //filled = false;
+async function cancel(orderId, symbol, ordertype) {    //cancels order with id
+    try {//order was NOT filled
+        r = await exchange.cancelOrder(orderId, symbol);
+        orderStatus = await r.info.status
+        side = await r.info.side
+        f.cs(r)
+        //f.sendMail("Canceled", JSON.stringify(r));
+        return {
+            orderId: orderId,
+            orderStatus: await orderStatus,
+            orderType: ordertype,
+            side: side,
+            filled: false,
+            bougthPrice: bougthPrice,
         }
-        ret = {
-            orderId: await r.id,
-            orderStatus: r.status,
-            orderType: orderType,
-            filled: filled,
-            bougthPrice: price,
+    } catch (error) {//order was filled
+        console.log("EEE: ", error);
+        return {
+            orderId: orderId,
+            orderStatus: await orderStatus,
+            orderType: ordertype,
+            side: side,
+            filled: true,
+            bougthPrice: bougthPrice,
         }
-        return await ret;
-    } catch (error) {
-        console.log("EEE in sell: ", error);
     }
 }
-
-let c;
 
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
         r = await exchange.createLimitBuyOrder(symbol, amount, price);
-        orderId = r.id;
-        setTimeout(function () { c = cancel(orderId, symbol) }, ticker * 0.9);
-        //f.sendMail("bougth", JSON.stringify(r));
-        if (await filled) {//order was filled
-            //f.sendMail("sold2", JSON.stringify(r));
-            filled = true;
-            orderType = "bougth";
-        } else {
-            //order was canceled
-            orderType = "canceled";
-        }
-        ret = {
-            orderId: r.id,
-            orderStatus: r.status,
-            orderType: orderType,
-            filled: filled,
-            bougthPrice: price,
-        }
-        return await ret;
+        orderId = await r.id;
+        console.log("sent order!!!")
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve(
+                    cancel(orderId, symbol, "bougth")
+                );
+            }, ticker * 0.9);//delay to cancel
+        });
     } catch (error) {
-        console.log("EEE in buy: ", error);
-        ret = await {
-            orderId: r.id,
-            orderStatus: r.status,
-            orderType: "invalid order: " + error.message,
-            filled: false,
-            bougthPrice: price,
-        }
-        return await ret;
+        console.log("EEE in buy: ", error)
     }
 }
+
+async function sell(symbol, amount, price) {// symbol, amount, ask 
+    try {
+        r = await exchange.createLimitSellOrder(symbol, amount, price);
+        orderId = await r.id;
+        console.log("sent order!!!")
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve(
+                    cancel(orderId, symbol, "sold")
+                );
+            }, ticker * 0.9);//delay to cancel
+        });
+    } catch (error) {
+        console.log("EEE in sell: ", error)
+    }
+}
+
 async function markets() {                   //load all available markets on exchange
     try {
         r = await exchange.loadMarkets();
