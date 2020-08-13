@@ -98,7 +98,7 @@ let alts = [    //alt markets 21+3=24
     "XLM/BTC",
     "XMR/BTC",
     "TRX/BTC",
-
+    "MKR/BTC",
 
     /*
     "XRP/BNB",  

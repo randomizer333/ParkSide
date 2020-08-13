@@ -1,0 +1,50 @@
+{
+    "No": "6",
+    "fiatMarket": "BTC/USDT",
+    "fiatPrice": 11539.455,
+    "fiatProfit": -16.210870207426733,
+    "fiatProfit2": -54.35080347246695,
+    "symbol": "ADA/BTC",
+    "base": "ADA",
+    "quote": "BTC",
+    "relativeProfit": -99.1098311130851,
+    "absoluteProfit": -0.0014048211295443964,
+    "absoluteProfit2": -0.004709997436834491,
+    "DeusGroup": "__________________________________",
+    "minAmount": 0.1,
+    "baseBalance": 399.454,
+    "baseBalanceInQuote": 0.004747510789999999,
+    "quoteBalance": 0.00141601,
+    "quoteBalanceInBase": 119.14261674379472,
+    "enabled": true,
+    "time": "2020.08.13 16:36:56.679",
+    "ticker": 3,
+    "stopLossP": 99,
+    "MrPrice": "____________________________________",
+    "sellPrice": 0.00150410883,
+    "price": 0.000011884999999999999,
+    "bid": 0.00001188,
+    "bougthPrice": 0.00149961,
+    "lossPrice": 0.00001504108830000005,
+    "FSociety": "____________________________________",
+    "purchase": false,
+    "more": true,
+    "upSignal": false,
+    "uppers": {
+        "MA3": -0.02804655728509774,
+        "MA30": 0.5721497686159169,
+        "MACD": 6.5420572997327975e-9,
+        "rank": 1
+    },
+    "downers": {
+        "MA3": -0.02804655728509774
+    },
+    "downSignal": true,
+    "sellConditions": {
+        "sale": true,
+        "hold": true,
+        "stopLoss": true
+    },
+    "logLength": 38,
+    "orderType": "lossed"
+}
