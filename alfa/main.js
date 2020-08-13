@@ -88,14 +88,17 @@ let alts = [    //alt markets 21+3=24
     "ETH/BTC",
 
     "XRP/BTC",
-    "LTC/BTC",
-    "EOS/BTC",
+    "LINK/BTC",
+    "BCH/BTC",
+    //"BSV/BTC",
     "ADA/BTC",
+    "LTC/BTC",
+    "XTZ/BTC",
+    "EOS/BTC",
     "XLM/BTC",
     "XMR/BTC",
     "TRX/BTC",
 
-    "BCH/BTC"
 
     /*
     "XRP/BNB",  
@@ -115,10 +118,6 @@ let alts = [    //alt markets 21+3=24
     "TRX/ETH",*/
 
 ]
-
-
-
-
 
 // main setup
 let numOfBots
