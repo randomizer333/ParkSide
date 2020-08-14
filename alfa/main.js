@@ -280,7 +280,6 @@ async function createDB(quotes) {
     }
 }
 
-
 async function read(symbol) {
     let baza = await readJSON();
     bougthPrice = await baza[symbol].bougthPrice
@@ -595,33 +594,23 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             f.cs("lastBPrice: " + await lastBPrice)
             f.cs("price: " + price)
 
-            if ((lastBPrice == 0) || (lastBPrice == undefined)) {
-                f.cs("BP was 0")
-                //await shrani(symbol, price, quoteBalance, baseBalance)
-                return await price
-            } else {
-                return await price
+            if (!lastBPrice) {  //if value is 0 or bad
+                f.cs("bad value of Last Bougth Price!!!")
+                return price;
             }
         }
 
-        //if new bougth price is higher than old one its OK you can update it
-        //if new bougth price is lower you MUST NOT update it
-        async function checkNewBougthPrice(symbol, price) {
+        async function checkNewBougthPrice(symbol, price) {     //if new bougth price is higher than old one its OK you can update it IF new bougth price is lower you MUST NOT update it
+
             lastBPrice = await read(await symbol)
-            if (!lastBPrice) {
-                f.cs("bad value of Last Bougth Price!!!")
+            f.cs("lastBPrice: " + lastBPrice)
+
+            if (lastBPrice > price) {
+                f.cs("Last bougth price was smaller than current NOT Updated: " + astBPrice)
+                return lastBPrice;
+            } else if (lastBPrice < price) {
+                f.cs("Last bougth price was bigger than current IS Updated: " + price)
                 return price;
-            } else {
-                if (lastBPrice > price) {
-                    f.cs("Last bougth price was smaller than current NOT Updated: " + astBPrice)
-                    r = lastBPrice
-                    return r;
-                } else if (lastBPrice < price) {
-                    f.cs("Last bougth price was bigger than current IS Updated: " + price)
-                    return price;
-                } else {
-                    return lastBPrice;
-                }
             }
         }
 
@@ -992,7 +981,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     fil = await ret.filled
                     if (await fil) {
                         bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)    //check bougthPrice
-                        
+
                         orderType = "bougth"
                     } else {
                         orderType = "canceled"
@@ -1023,7 +1012,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     fil = await ret.filled
                     if (await fil) {
                         bougthPrice = 0;         //reset bougthPrice to zero
-                        orderType = "sold" 
+                        orderType = "sold"
                     } else {
                         orderType = "canceled"
                     }
