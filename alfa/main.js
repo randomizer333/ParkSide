@@ -124,7 +124,8 @@ let numOfBots
 let delay
 
 let botNo = [];
-let bestBuy = [];
+
+let bougthPriceWait = []    //price waiting in makeOrder
 
 let exInfo;
 let wallet;
@@ -162,7 +163,7 @@ async function setBots(quotes) {
 
     numOfBots = await quotes.length;
     //f.cs("numOfBots"+numOfBots)
-    delay = await (ticker / numOfBots);
+    delay = (ticker / numOfBots);
     //f.cs("delay"+delay)
 
     cleared = false;
@@ -177,15 +178,14 @@ async function setBots(quotes) {
 
     runBots(quotes)
     async function runBots(quotes) {
-        //makeBase(baza)
-        /*function makeBase(b){
-            for(quotes in b){
-                b.[quotes].bougthPrice = 0
-                b.[quotes].timeDate = 0
-                b.[quotes].quoteBalance = 0
-                b.[quotes].baseBalance = 0
-            }
-        }*/
+        f.cs("Runing markets: " + quotes)
+        for (let i in await quotes) {
+            setTimeout(function () { bot(quotes[i], ticker, stopLossP, i) }, setStartTime());
+        }
+    }
+
+    //runBots1(quotes)
+    async function runBots1(quotes) {
         f.cs("Runing markets: " + quotes)
         for (let i in await quotes) {
             setTimeout(function () { bot(quotes[i], ticker, stopLossP, i) }, setStartTime());
@@ -205,9 +205,9 @@ function clear() {
 
 //store data
 
-async function shrani(symbol, bougthPrice, quoteBalance, baseBalance) {
+async function shrani(symbol, writePrice, quoteBalance, baseBalance) {
     let baza = await readJSON()
-    baza[symbol].bougthPrice = await bougthPrice
+    baza[symbol].bougthPrice = await writePrice
     baza[symbol].timeDate = await f.getTime()
     baza[symbol].quoteBalance = await quoteBalance
     baza[symbol].baseBalance = await baseBalance
@@ -218,7 +218,7 @@ async function shrani(symbol, bougthPrice, quoteBalance, baseBalance) {
 async function shraniDB(symbol, data) {
     let baza = await readJSON()
     baza[symbol] = await data
-    f.cs("saving " + symbol)
+    //f.cs("saving " + symbol)
     writeJSON(baza)
 }
 
@@ -282,8 +282,8 @@ async function createDB(quotes) {
 
 async function read(symbol) {
     let baza = await readJSON();
-    bougthPrice = await baza[symbol].bougthPrice
-    return await bougthPrice;
+    readPrice = await baza[symbol].bougthPrice
+    return await readPrice;
 }
 
 async function writeJSON(inputJSON) {
@@ -504,7 +504,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
     let price;      //balanceChanged
     let bid
-    let bougthPrice = 0 // await read(symbol);//balanceChanged
+    let bougthPrice // await read(symbol);//balanceChanged
 
     let sellPrice;  //safeSale
     let hold;       //safeSale
@@ -521,11 +521,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
     function modul() {
         async function baseToQuote(amountBase, price) {
             amountQuote = amountBase * price;
-            return await amountQuote;
+            return amountQuote;
         }
         async function quoteToBase(amountQuote, price) {
             amountBase = amountQuote / price;
-            return await amountBase;
+            return amountBase;
         }
         async function selectCurrency(baseBalance, quoteBalance, minAmount, baseBalanceInQuote) {        // check currency from pair that has more funds
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
@@ -696,6 +696,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
+        let market12a, market23a, market13a, market12b, market23b, market13b
+
         async function triArb(currency1, currency2, currency3) {
             market12a = a.ask(f.mergeSymbol(currency2, currency1))  //CW
             market23a = a.ask(f.mergeSymbol(currency3, currency2))  //CW
@@ -703,85 +705,145 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             market12b = a.bid(f.mergeSymbol(currency2, currency1))  //CCW
             market23b = a.bid(f.mergeSymbol(currency3, currency2))  //CCW
             market13b = a.bid(f.mergeSymbol(currency3, currency1))  //CW
-            f.cs("market12a: " + await market12a)
+            /*f.cs("market12a: " + await market12a)
             f.cs("market23a: " + await market23a)
             f.cs("market13a: " + await market13a)
             f.cs("market12b: " + await market12b)
             f.cs("market23b: " + await market23b)
-            f.cs("market13b: " + await market13b)
+            f.cs("market13b: " + await market13b)*/
+
+            f.cs("curencies: " + currency1 + " " + currency2 + " " + currency3)
 
             //CW
             let value1CW = 100
-            await f.cs("value1CW: " + value1CW)
             let value2CW = value1CW / await market12a
-            await f.cs("value2CW: " + value2CW)
             let value3CW = value2CW / await market23a
-            await f.cs("value3CW: " + value3CW)
             let valueFinalCW = value3CW * await market13b
-            await f.cs("valueFinalCW: " + valueFinalCW)
             profitCW = valueFinalCW - value1CW
+            /*
+                        await f.cs("value1CW: " + value1CW)
+                        await f.cs("value2CW: " + value2CW)
+                        await f.cs("value3CW: " + value3CW)
+                        await f.cs("valueFinalCW: " + valueFinalCW)
+                        */
 
             //CCW
             let value1CCW = 100
-            await f.cs("value1CCW: " + value1CCW)
             let value2CCW = value1CCW * await market12a
-            await f.cs("value2CCW: " + value2CCW)
             let value3CCW = value2CCW * await market23a
-            await f.cs("value3CCW: " + value3CCW)
             let valueFinalCCW = value3CCW / await market13b
-            await f.cs("valueFinalCCW: " + valueFinalCCW)
             profitCCW = valueFinalCCW - value1CCW
-
+            /*
+            await f.cs("value1CCW: " + value1CCW)
+            await f.cs("value2CCW: " + value2CCW)
+            await f.cs("value3CCW: " + value3CCW)
+            await f.cs("valueFinalCCW: " + valueFinalCCW)
+*/
             if ((profitCW && profitCCW) > 0.3) {
                 if (valueFinalCW > valueFinalCCW) {
                     f.cs("profitCW: " + profitCW)
                     f.cs("go clock wise")
                     triArbOrderType = "CW"
                     logHistory(triArbOrderType + " " + currency1 + " " + currency2 + " " + currency3 + " " + (profitCW - 0.3), 100)
-                    return triArbOrderType
+                    return triArbOrder(triArbOrderType, currency1, currency2, currency3, market12a, market13a)
                 } else {
                     f.cs("profitCCW: " + profitCCW)
                     f.cs("go counter clock wise")
                     triArbOrderType = "CCW"
                     logHistory(triArbOrderType + " " + currency1 + " " + currency2 + " " + currency3 + " " + (profitCCW - 0.3), 100)
-                    return triArbOrderType
+                    return triArbOrder(triArbOrderType, currency1, currency2, currency3, market12a, market13a)
                 }
             } else {
                 f.cs("no profit")
                 triArbOrderType = "none"
             }
-            return triArbOrderType
+            return triArbOrder(triArbOrderType, currency1, currency2, currency3, market12a, market13a)
         }
 
-        async function triArbOrder(triArbOrderType, currency1, currency2, currency3) {
+        //let bal1, bal2, bal3
 
-            market12a = a.ask(f.mergeSymbol(currency2, currency1))  //CW
-            market23a = a.ask(f.mergeSymbol(currency3, currency2))  //CW
-            market13a = a.ask(f.mergeSymbol(currency3, currency1))  //CCW
-            market12b = a.bid(f.mergeSymbol(currency2, currency1))  //CCW
-            market23b = a.bid(f.mergeSymbol(currency3, currency2))  //CCW
-            market13b = a.bid(f.mergeSymbol(currency3, currency1))  //CW
+        //triArbOrder("CW", "USDT", "BTC", "TRX", market12a, market13a)
+        async function triArbOrder(triArbOrderType, currency1, currency2, currency3, m12a, m13a) {
+
+            //f.cs("M1: " + await m12a)
+            //f.cs("M2: " + await m13a)
+            // check for balances 
+
+            bal1 = await a.balance(currency1)
+            bal2 = await a.balance(currency2)
+            bal3 = await a.balance(currency3)
+            f.cs(bal1 + "----------------" + currency1)
+            f.cs(bal2 + "----------------" + currency2)
+            f.cs(bal3 + "----------------" + currency3)
+            f.cs("order type:------------ " + triArbOrderType)
+
+            let starter = getMax(bal1, bal2, bal3, await m12a, await m13a)
+            f.cs("starter: " + starter)
+            function getMax(value1, value2, value3, m12a, m13a) {
+                f.cs("B1: " + value1)
+                f.cs("B2: " + value2)
+                f.cs("B3: " + value3)
+
+
+                value2Q = value2 / m12a
+                value3Q = value3 / m13a
+                f.cs("VALUE2: " + value2Q)
+                f.cs("VALUE3: " + value3Q)
+
+
+                if (value1 > (value2Q || value3Q)) { // start with first currency
+                    r = 1
+                } else if (value2Q > (value1 || value3Q)) {
+                    r = 2
+                } else if (value3Q > (value1 || value2Q)) {
+                    r = 3
+                }
+                return r
+            }
+
+
+
 
             switch (triArbOrderType) {
                 case "CW":
+                    //o1 = await a.buy(f.mergeSymbol(currency2, currency1), quoteBalanceInBase * portion, market12a)
 
-                    done12a = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market12a)
-
-                    done12a ? done23a = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market23a) : ""
-
-                    done23a ? done13b = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market13b) : ""
-
-                    brake;
+                    o1 = await m.fOrder(bal1)
+                    f.cs("o1:")
+                    f.cs(o1)
+                    if (o1.filled) {
+                        bal2 = await a.balance(currency2)
+                        o2 = await m.fOrder(bal2)
+                        f.cs("o2:")
+                        f.cs(o2)
+                        if (o2.filled) {
+                            bal3 = await a.balance(currency3)
+                            o3 = await m.fOrder(bal3)
+                            f.cs("o3:")
+                            f.cs(o3)
+                        }
+                    }
+                    break;
                 case "CCW":
-                    done13a = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market13a)
 
-                    done13a ? done23b = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market23b) : ""
+                    done12a = await a.buy(f.mergeSymbol(currency2, currency1), quoteBalanceInBase * portion, market12a)
+                    if (done12a) {
+                        done23a = await a.buy(f.mergeSymbol(currency3, currency2), quoteBalanceInBase * portion, market23a)
+                        if (done23a) {
+                            done13b = await a.buy(f.mergeSymbol(currency3, currency1), quoteBalanceInBase * portion, market13b)
+                        }
+                    }
 
-                    done23b ? done12b = await a.buy(f.mergeSymbol(s.fiatCurrency, s.quoteCurrency), quoteBalanceInBase * portion, market12b) : ""
-                    brake;
-                case "none":
+                    done13a = await a.buy(f.mergeSymbol(currency2, currency1), quoteBalanceInBase * portion, market13a)
+
+                    done32a ? done32a = await a.buy(f.mergeSymbol(currency3, currency2), quoteBalanceInBase * portion, market32a) : ""
+
+                    done23a ? done13b = await a.buy(f.mergeSymbol(currency3, currency1), quoteBalanceInBase * portion, market13b) : ""
+
+                    break;
+                default:
                     f.cs("No TriArb")
-                    brake;
+                    break;
 
             }
         }
@@ -799,7 +861,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             checkBougthPrice: checkBougthPrice,
             triArb: triArb,
             logHistory: logHistory,
-            checkNewBougthPrice: checkNewBougthPrice
+            checkNewBougthPrice: checkNewBougthPrice,
         }
     }
     const m = modul();
@@ -831,8 +893,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         more = r1.more
         purchase = r1.purchase
 
-        //bougthPrice = await m.checkBougthPrice(symbol, price);
+        //bougthPrice = await m.checkBougthPrice(symbol, 0)
         bougthPrice = await read(symbol)
+        //bougthPrice = await m.checkBougthPrice(symbol, await price);
         //bougthPrice = await m.checkNewBougthPrice(symbol, price)  //used in makeOrder
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
@@ -933,6 +996,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //triArbOrderType = await m.triArb(s.fiatCurrency, s.quoteCurrency, baseCurrency)
         //triArbOrder(triArbOrderType, currency1, currency2, currency3)
 
+        let fil = false;
         let triUSDTBTC,
             triUSDTETH,
             triUSDTBNB,
@@ -942,6 +1006,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //runTri()
         async function runTri() {
             triUSDTBTC = await m.triArb("USDT", "BTC", baseCurrency)
+            f.cs(triUSDTBTC)
             if (await triUSDTBTC) {
                 f.cs("triUSDTBTC___OK: " + triUSDTBTC)
                 triUSDTETH = await m.triArb("USDT", "ETH", baseCurrency)
@@ -961,7 +1026,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     }
                 }
             } else {
-                f.cs("not a number: " + await triUSDTBTC)
+                await f.cs("not a number: " + triUSDTBTC)
             }
         }
 
@@ -971,48 +1036,27 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
-
-                //enableOrders ? ret = await a.buy(symbol, quoteBalanceInBase * portion, price) : console.log('buy orders disabled');
-                //enableOrders ? bougthPrice = await ret.bougthPrice : console.log('buy orders disabled');
-                //bougthPrice = await m.checkNewBougthPrice(symbol, bougthPrice)
-
                 if (enableOrders) { //run for real
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price)
                     fil = await ret.filled
-                    if (await fil) {
-                        bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)    //check bougthPrice
-
-                        orderType = "bougth"
+                    if (fil) {
+                        bougthPriceWait[botNumber] = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                        orderType = await ret.orderType     //returns "bougth"
                     } else {
                         orderType = "canceled"
                     }
-
-                    //bougthPrice = await ret.bougthPrice
-                    //bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
-                    //orderType = await ret.orderType
-
-                    await shrani(symbol, await ret.bougthPrice)
                 } else {            //simulate
                     orderType = "bougth"
                     console.log('buy orders disabled')
                 }
-
-                //await ret.bougthPrice ? bougthPrice = await m.checkNewBougthPrice(symbol, bougthPrice) : "";
-                //bougthPrice = await m.checkBougthPrice(bougthPrice, price);
-
-                //enableOrders ? await shrani(symbol, await ret.bougthPrice) : "";
-                //enableOrders ? orderType = await ret.orderType : orderType = "bougth";
+                await shrani(await ret.symbol, await bougthPriceWait[botNumber])
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
-
-                //enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('sell orders disabled');
-                //enableOrders ? orderType = await ret.orderType : orderType = "sold";
-
                 if (enableOrders) {     //real
                     ret = await a.sell(symbol, baseBalance, price)
                     fil = await ret.filled
-                    if (await fil) {
-                        bougthPrice = 0;         //reset bougthPrice to zero
+                    if (fil) {
                         orderType = "sold"
+                        bougthPriceWait[botNumber] = 0;         //reset bougthPrice to zero
                     } else {
                         orderType = "canceled"
                     }
@@ -1020,27 +1064,35 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     orderType = "sold"      //sim
                     console.log('sell orders disabled')
                 }
-
+                await shrani(await ret.symbol, await bougthPriceWait[botNumber])
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
+
+                /*
+                ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)   //sim
+                fil = await ret.filled
+                
+                await f.cs(await symbol)
+                await f.cs(await ret)*/
+
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
                 orderType = "holding good";
             } else if (purchase) {
+
+                /*
+                ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)   //sim
+                fil = await ret.filled
+                await f.cs(await symbol)
+                await f.cs(await ret)*/
+
                 orderType = "parked";
             } else {
                 orderType = "still none";
             }
             return orderType;
-        }
-
-
-        // dinamic stoploss dev
-        function dinamicStopLoss(startValue) {
-            aProfit = f.part(relativeProfit, startValue);
-            return profit;//stopLoss
         }
 
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
@@ -1082,6 +1134,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             FSociety: "____________________________________",
             purchase: purchase,
             more: more,
+            filled: fil,
             upSignal: upSignal,
             uppers: indicator.uppers,
             downers: indicator.downers,
@@ -1103,18 +1156,18 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         async function mailInfo(orderType) {
             if (await orderType == "sold") {
                 f.sendMail("Sold Info", JSON.stringify(marketInfo));
-                return await true;
+                return true;
             } else if (await orderType == "bougth") {
                 f.sendMail("Bougth Info", JSON.stringify(marketInfo));
-                return await true;
+                return true;
             } else if (await orderType == "lossed") {
                 f.sendMail("Lossed Info", JSON.stringify(marketInfo));
-                return await true;
+                return true;
             } else if (await orderType == "canceled") {
-                //f.sendMail("Canceled Info", JSON.stringify(marketInfo));
-                return await true;
+                f.sendMail("Canceled Info", JSON.stringify(marketInfo));
+                return true;
             } else {
-                return await false;
+                return false;
             }
         }
 

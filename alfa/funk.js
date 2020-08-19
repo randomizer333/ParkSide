@@ -3,6 +3,9 @@ funk.js
 is a js module for generic comonly used simple functions that should be aplicable to any data 
 */
 
+const set = require("../set.json");     //only for fOrder
+ticker = minToMs(set.tickerMinutes);    //only for fOrder
+
 function sendMail(subject, message, to) {
 
         // email account data
@@ -45,6 +48,11 @@ async function loger(value, length, array) {        //log FIFO to array, newest 
 
 function cs(object) {    //console logs with json.stringify for console wraping
         console.log(JSON.stringify(object));
+}
+
+function csD(object) {
+        text = JSON.stringify(object)
+        console.log(JSON.stringify(text + " :" + object));
 }
 function csL(object, length) {
         for (i = 0; i <= length; i++) {  //display top 5
@@ -168,6 +176,28 @@ function jsonToArray(json, attribute) {
         return arr;
 }
 
+async function fOrder(symbol, amount, price) {
+
+
+        return new Promise(resolve => {
+            setTimeout(
+                () => {
+                    resolve(
+                        {
+                            orderId: 1235342,
+                            orderStatus: "done",
+                            orderType: "fake oreder",
+                            side: "fake side",
+                            filled: true,
+                            bougthPrice: price,
+                            symbol: symbol,
+                        }
+                    );
+                }, 2000);//ticker * 0.9);
+        });
+}
+
+
 exports.loger = loger;
 exports.cleanArray = cleanArray;
 exports.sendMail = sendMail;
@@ -187,3 +217,5 @@ exports.getAvgOfArray = getAvgOfArray;
 exports.mergeSymbol = mergeSymbol;
 exports.splitSymbol = splitSymbol;
 exports.boolToInitial = boolToInitial;
+exports.csD = csD;
+exports.fOrder = fOrder;
