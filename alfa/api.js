@@ -204,7 +204,8 @@ async function bid(symbol) {                //reurns Array of Objects bid,ask
 async function ask(symbol) {                //reurns Array of Objects bid,ask
     try {
         r2 = await exchange.fetchOrderBook(symbol);
-        return await r2.asks[0][0];
+        r22 = r2.asks[0][0]
+        return parseFloat(r22) ;
     } catch (error) {
         if (error.name = 'BadSymbol') {
             console.log("Ni " + symbol + " marketa!!!")
@@ -227,14 +228,14 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
         //price = low - (spread / 2); //bid spread
 
         spread = await high - low;        //real spread
-        price = await high - (spread / 2);//real spread
+        cena = await high - (spread / 2);//real spread
 
         //spread = higher - high;   //ask spread
         //price = higher - (spread / 2); //ask spread
 
         //price = high    //market price
 
-        return price;
+        return parseFloat(cena);
     } catch (error) {
         console.log("EEE: ", error);
         return price = 0
@@ -254,11 +255,11 @@ async function cancel(orderId, symbol, ordertype) {    //cancels order with id
         orderStatus = await r.info.status
         side = await r.info.side
         f.cs(r)
-        //f.sendMail("Canceled", JSON.stringify(r));
         return {
             orderId: orderId,
+            symbol: symbol,
             orderStatus: await orderStatus,
-            orderType: ordertype,
+            orderType: "canceled",
             side: side,
             filled: false,
             bougthPrice: bougthPrice,
@@ -267,6 +268,7 @@ async function cancel(orderId, symbol, ordertype) {    //cancels order with id
         console.log("EEE: ", error);
         return {
             orderId: orderId,
+            symbol: symbol,
             orderStatus: await orderStatus,
             orderType: ordertype,
             side: side,
