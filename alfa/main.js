@@ -280,8 +280,9 @@ async function createDB(quotes) {
     }
 }
 
+let baza
 async function read(symbol) {
-    let baza = await readJSON();
+    baza = await readJSON();
     readPrice = await baza[symbol].bougthPrice
     return await readPrice;
 }
@@ -504,7 +505,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
     let price;      //balanceChanged
     let bid
-    let bougthPrice // await read(symbol);//balanceChanged
+    let bougthPrice// await read(symbol);//balanceChanged
 
     let sellPrice;  //safeSale
     let hold;       //safeSale
@@ -517,6 +518,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
     let downSignal;
 
     let dol = 0 //logHistory
+
+    let lastBPrice  //checkBougthPrice
 
     function modul() {
         async function baseToQuote(amountBase, price) {
@@ -586,7 +589,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 dol++
             }
         }
-        let lastBPrice
         async function checkBougthPrice(symbol, price) {  //check if bougthPrice exists
 
             lastBPrice = await read(symbol)
@@ -594,9 +596,12 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             f.cs("lastBPrice: " + await lastBPrice)
             f.cs("price: " + price)
 
-            if (!lastBPrice) {  //if value is 0 or bad
-                f.cs("bad value of Last Bougth Price!!!")
-                return price;
+            if (lastBPrice == 0) {  //if value is 0 or bad
+                f.cs("bad 0 value of Last Bougth Price!!!")
+                return price
+                //return parseInt(price);
+            } else {
+                return lastBPrice
             }
         }
 
@@ -1038,9 +1043,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 if (enableOrders) { //run for real
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price)
+
                     fil = await ret.filled
                     if (fil) {
                         bougthPriceWait[botNumber] = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                        await shrani(await ret.symbol, await bougthPriceWait[botNumber])
                         orderType = await ret.orderType     //returns "bougth"
                     } else {
                         orderType = "canceled"
@@ -1049,14 +1056,16 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     orderType = "bougth"
                     console.log('buy orders disabled')
                 }
-                await shrani(await ret.symbol, await bougthPriceWait[botNumber])
+
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 if (enableOrders) {     //real
                     ret = await a.sell(symbol, baseBalance, price)
+
                     fil = await ret.filled
                     if (fil) {
                         orderType = "sold"
                         bougthPriceWait[botNumber] = 0;         //reset bougthPrice to zero
+                        await shrani(await ret.symbol, await bougthPriceWait[botNumber])
                     } else {
                         orderType = "canceled"
                     }
@@ -1064,11 +1073,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     orderType = "sold"      //sim
                     console.log('sell orders disabled')
                 }
-                await shrani(await ret.symbol, await bougthPriceWait[botNumber])
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
+
+                bougthPrice = await m.checkBougthPrice(symbol, price)    //dev
+                //bougthPrice= price
+                //await shrani(symbol, bougthPrice)
 
                 /*
                 ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)   //sim
@@ -1079,6 +1091,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
+
+                //bougthPrice = await m.checkBougthPrice(symbol, price)    //dev
                 orderType = "holding good";
             } else if (purchase) {
 
@@ -1088,6 +1102,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 await f.cs(await symbol)
                 await f.cs(await ret)*/
 
+                bougthPrice = 0
                 orderType = "parked";
             } else {
                 orderType = "still none";
