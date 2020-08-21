@@ -186,7 +186,7 @@ async function fOrder(symbol, amount, price) {
                         {
                             orderId: 1235342,
                             orderStatus: "done",
-                            orderType: "fake oreder",
+                            orderType: "canceled",
                             side: "fake side",
                             filled: true,
                             bougthPrice: price,
