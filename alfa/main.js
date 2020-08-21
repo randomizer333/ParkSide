@@ -595,7 +595,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             f.cs("lastBPrice: " + await lastBPrice)
             f.cs("price: " + price)
 
-            if (lastBPrice == 0) {  //if value is 0 or bad
+            if (!lastBPrice) {  //if value is 0 or bad
                 f.cs("bad 0 value of Last Bougth Price!!!")
                 return price
                 //return parseInt(price);
@@ -874,7 +874,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
     botNo[botNumber] = setInterval(function () { loop(symbol) }, ticker);
     async function loop(symbol) {
 
-        let orderType = false;  //loop output
+        let orderType;  //loop output
 
         minAmount = await a.minAmount(symbol);
         baseCurrency = await f.splitSymbol(symbol, "first");
@@ -1076,7 +1076,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
-                
+
                 /*
                 ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
                 fil = await ret.filled
@@ -1092,12 +1092,13 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: " + orderType)
                 f.cs("NEWbougthPrice: " + bougthPrice)
                 */
-
+                bougthPrice = m.checkBougthPrice(symbol,price)
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
+                bougthPrice = m.checkBougthPrice(symbol,price)
                 orderType = "holding good";
             } else if (purchase) {
-                bougthPrice = 0
+                //bougthPrice = 0
                 orderType = "parked";
             } else {
                 orderType = "still none";
