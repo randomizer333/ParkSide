@@ -262,7 +262,7 @@ async function cancel(orderId, symbol, ordertype) {    //cancels order with id
             orderType: "canceled",
             side: side,
             filled: false,
-            bougthPrice: bougthPrice,
+            bougthPrice: await bougthPrice,
         }
     } catch (error) {//order was filled
         console.log("EEE: ", error);
@@ -270,10 +270,10 @@ async function cancel(orderId, symbol, ordertype) {    //cancels order with id
             orderId: orderId,
             symbol: symbol,
             orderStatus: await orderStatus,
-            orderType: ordertype,
+            orderType: await ordertype,
             side: side,
             filled: true,
-            bougthPrice: bougthPrice,
+            bougthPrice: await bougthPrice,
         }
     }
 }

@@ -4,7 +4,7 @@ const ccxt = require('ccxt');             //api module
 const set = require("../set.json");
 
 
-run()
+//run()
 async function run() {
     t1 = f.getTime()
     console.log("časzačetka: " + t1)
@@ -47,51 +47,17 @@ function cancl() {
     }
 }
 
-/* old
-async function cancel(orderId, symbol) {    //cancels order with id
-    try {//order was NOT filled
-        r = await exchange.cancelOrder(orderId, symbol);
-        filled = false;
-        f.sendMail("Canceled", JSON.stringify(r));
-        return false;
-    } catch (error) {//order was filled
-        filled = true;
-        console.log("EEE: ", error);
-        return true;
-    }
-}
 
-
-
-async function sell(symbol, amount, price) {// symbol, amount, ask 
+check(1)
+async function check(inport) {// false: 0
     try {
-        r = await exchange.createLimitSellOrder(symbol, amount, price);
-        orderId = r.id;
-        console.log("sent order!!!")
-
-        let filled
-        setTimeout(function () { cancel(orderId, symbol); }, ticker * 0.9);
-
-        if (filled) {
-            //order was filled
-            f.sendMail("filled and sold", JSON.stringify(r));
-            filled = true;
-            orderType = "sold";
+        console.log("Input: "+inport)
+        if (inport) {
+            console.log("input is true")
         } else {
-            //order was canceled
-            orderType = "canceled";
-            //filled = false;
+            console.log("input is false")
         }
-        ret = {
-            orderId: await r.id,
-            orderStatus: r.status,
-            orderType: orderType,
-            filled: filled,
-            bougthPrice: price,
-        }
-        return await ret;
     } catch (error) {
         console.log("EEE in sell: ", error);
     }
-}  
-old    */ 
+}
