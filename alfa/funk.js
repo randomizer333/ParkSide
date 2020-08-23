@@ -178,7 +178,6 @@ function jsonToArray(json, attribute) {
 
 async function fOrder(symbol, amount, price) {
 
-
         return new Promise(resolve => {
             setTimeout(
                 () => {
@@ -193,7 +192,7 @@ async function fOrder(symbol, amount, price) {
                             symbol: symbol,
                         }
                     );
-                }, 2000);//ticker * 0.9);
+                }, 100000);//ticker * 0.9);
         });
 }
 
