@@ -1116,6 +1116,13 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
 
+                bougthPrice = m.checkBougthPrice(symbol, price)
+                orderType = "holding";
+            } else if (sale && !hold && !stopLoss) {//holding fee covered
+                bougthPrice = m.checkBougthPrice(symbol, price)
+                orderType = "holding good";
+            } else if (purchase) {
+
                 /*
                 if (enableOrders) {     //real
                     ret = await a.sell(symbol, baseBalance, price)
@@ -1134,7 +1141,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     f.cs(ret)
                     fil = await ret.filled
                     f.cs("filled: "+fil)
-                    if (await fil) {
+                    if (fil) {
 
                         orderType = await ret.orderType
                         bougthPrice = 0         //reset bougthPrice to zero
@@ -1148,12 +1155,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 }
                 */
 
-                bougthPrice = m.checkBougthPrice(symbol, price)
-                orderType = "holding";
-            } else if (sale && !hold && !stopLoss) {//holding fee covered
-                bougthPrice = m.checkBougthPrice(symbol, price)
-                orderType = "holding good";
-            } else if (purchase) {
                 //bougthPrice = 0
                 orderType = "parked";
             } else {

@@ -205,7 +205,7 @@ async function ask(symbol) {                //reurns Array of Objects bid,ask
     try {
         r2 = await exchange.fetchOrderBook(symbol);
         r22 = r2.asks[0][0]
-        return parseFloat(r22) ;
+        return parseFloat(r22);
     } catch (error) {
         if (error.name = 'BadSymbol') {
             console.log("Ni " + symbol + " marketa!!!")
@@ -242,41 +242,44 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
     }
 }
 
+
 //test()
 async function test() {
-    let orderback = await sell("LTC/BTC", 0.3, 0.007)
-    console.log("returned: ")
-    console.dir(await orderback)
+    let rel = await buy("MKR/USDT", 0.05, 300)
+    console.log(rel)    
 }
 
 async function cancel(orderId, symbol, ordertype) {    //cancels order with id
-    try {//order was NOT filled
+    try {   //order was NOT filled
         r = await exchange.cancelOrder(orderId, symbol);
-        orderStatus = await r.info.status
-        side = await r.info.side
-        f.cs(r)
+        //orderStatus = await r.status
+        //side = await r.side
+        //price1 = await r.info.price
+        console.log(r)
         return {
             orderId: orderId,
             symbol: symbol,
-            orderStatus: await orderStatus,
+            orderStatus: r.status,
             orderType: "canceled",
-            side: side,
+            side: r.side,
             filled: false,
-            bougthPrice: await bougthPrice,
+            bougthPrice: r.info.price,
         }
-    } catch (error) {//order was filled
+    } catch (error) {   //order was filled
         console.log("EEE: ", error);
         return {
             orderId: orderId,
             symbol: symbol,
-            orderStatus: await orderStatus,
-            orderType: await ordertype,
-            side: side,
+            orderStatus: r.status,
+            orderType: ordertype,
+            side: r.side,
             filled: true,
-            bougthPrice: await bougthPrice,
+            bougthPrice: r.info.price,
         }
     }
 }
+
+
 
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
