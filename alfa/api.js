@@ -295,6 +295,12 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         });
     } catch (error) {
         console.log("EEE in buy: ", error)
+        return {
+            symbol: symbol,
+            orderType: "failed",
+            filled: false,
+            bougthPrice: price,
+        }
     }
 }
 

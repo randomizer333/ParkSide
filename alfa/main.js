@@ -611,10 +611,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //f.cs("lastBPrice: " + lastBPrice)
 
             if (lastBPrice > price) {
-                f.cs("Last bougth price was bigger than current NOT Updated: " + lastBPrice)
+                f.cs("Last bougth price: "+price+" was bigger than current NOT Updated: " + lastBPrice)
                 return lastBPrice;
             } else if (lastBPrice < price) {
-                f.cs("Last bougth price was smaller than current IS Updated: " + price)
+                f.cs("Last bougth price: "+lastBPrice+" was smaller than current IS Updated: " + price)
                 return price;
             }
         }
@@ -807,10 +807,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 return r
             }
 
-            function spin (start){
-                for(x = start;i>3; i++){
+            function spin(start) {
+                for (x = start; i > 3; i++) {
 
-                } 
+                }
             }
 
             switch (triArbOrderType) {
@@ -1069,6 +1069,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                         orderType = await ret.orderType     //returns "bougth"
                     } else {
                         orderType = await ret.orderType
+                        bougthprice = await read(symbol)
                     }
 
                 } else {            //simulate
@@ -1096,6 +1097,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                     } else {
                         orderType = await ret.orderType
+                        bougthprice = await read(symbol)
                     }
                 } else {
                     ret = await f.fOrder(symbol, baseBalance, price)
@@ -1116,42 +1118,26 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
 
-                bougthPrice = m.checkBougthPrice(symbol, price)
+                bougthPrice = await m.checkBougthPrice(symbol, price)
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
-                bougthPrice = m.checkBougthPrice(symbol, price)
+                bougthPrice = await m.checkBougthPrice(symbol, price)
                 orderType = "holding good";
             } else if (purchase) {
 
+
                 /*
-                if (enableOrders) {     //real
-                    ret = await a.sell(symbol, baseBalance, price)
-                    fil = await ret.filled
-                    if (fil) {
+                ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2)  //sim
+                //ret = await a.buy(symbol, quoteBalanceInBase * portion, price)
+                fil = await ret.filled
 
-                        orderType = await ret.orderType
-                        bougthPrice = 0         //reset bougthPrice to zero
-
-                    } else {
-                        orderType = await ret.orderType
-                    }
+                if (fil) {
+                    bougthPrice = await m.checkNewBougthPrice(symbol, price)    //sim
+                    //bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                    orderType = await ret.orderType     //returns "bougth"
                 } else {
-                    ret = await f.fOrder(symbol, baseBalance, price)
-                    f.cs("returns from "+symbol+":")
-                    f.cs(ret)
-                    fil = await ret.filled
-                    f.cs("filled: "+fil)
-                    if (fil) {
-
-                        orderType = await ret.orderType
-                        bougthPrice = 0         //reset bougthPrice to zero
-
-                    } else {
-                        orderType = await ret.orderType
-                    }
-                    f.cs("order type: "+orderType)
-                    //orderType = "sold"      //sim
-                    console.log('sell orders disabled')
+                    bougthPrice = await m.checkNewBougthPrice(symbol, price)    //sim
+                    orderType = await ret.orderType
                 }
                 */
 
@@ -1168,56 +1154,59 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         let absoluteProfit2 = await f.part(relativeProfit, baseBalanceInQuote);
 
         //main console output
-        marketInfo = {
-            No: botNumber,
-            fiatMarket: s.fiatMarket,
-            fiatPrice: priceFiat,
-            fiatProfit: (absoluteProfit * priceFiat),
-            fiatProfit2: (absoluteProfit2 * priceFiat),
-            symbol: symbol,
-            base: baseCurrency,
-            quote: quoteCurrency,
-            relativeProfit: (relativeProfit + minProfitP),
-            absoluteProfit: absoluteProfit,
-            absoluteProfit2: absoluteProfit2,
-            DeusGroup: "__________________________________",
-            fiatPrice: priceFiat,
-            fiatProfit: (absoluteProfit * priceFiat),
-            fiatProfit2: (absoluteProfit2 * priceFiat),
-            minAmount: minAmount,
-            baseBalance: baseBalance,
-            baseBalanceInQuote: baseBalanceInQuote,
-            quoteBalance: quoteBalance,
-            quoteBalanceInBase: quoteBalanceInBase,
-            enabled: enableOrders,
-            time: f.getTime(),
-            ticker: tickerMinutes,
-            stopLossP: stopLossP,
-            MrPrice: "____________________________________",
-            sellPrice: sellPrice,
-            price: price,
-            bid: bid,
-            bougthPrice: await bougthPrice,
-            lossPrice: lossPrice,
-            FSociety: "____________________________________",
-            purchase: purchase,
-            more: more,
-            filled: fil,
-            upSignal: upSignal,
-            uppers: indicator.uppers,
-            downers: indicator.downers,
-            downSignal: downSignal,
-            //indicators: indicator.all,
-            sellConditions: {
-                sale: sale,
-                hold: hold,
-                stopLoss: stopLoss,
-            },
-            logLength: logMA200.length,
-            orderType: orderType,
-            //quoteMarkets: JSON.stringify(quotes),
-            //wallet: JSON.stringify(wallet)
-            //bestBuy: JSON.stringify(bestBuy),
+        marketInfo = await makeInfo()
+        async function makeInfo() {
+            return {
+                No: botNumber,
+                fiatMarket: s.fiatMarket,
+                fiatPrice: priceFiat,
+                fiatProfit: (absoluteProfit * priceFiat),
+                fiatProfit2: (absoluteProfit2 * priceFiat),
+                symbol: symbol,
+                base: baseCurrency,
+                quote: quoteCurrency,
+                relativeProfit: (relativeProfit + minProfitP),
+                absoluteProfit: absoluteProfit,
+                absoluteProfit2: absoluteProfit2,
+                DeusGroup: "__________________________________",
+                fiatPrice: priceFiat,
+                fiatProfit: (absoluteProfit * priceFiat),
+                fiatProfit2: (absoluteProfit2 * priceFiat),
+                minAmount: minAmount,
+                baseBalance: baseBalance,
+                baseBalanceInQuote: baseBalanceInQuote,
+                quoteBalance: quoteBalance,
+                quoteBalanceInBase: quoteBalanceInBase,
+                enabled: enableOrders,
+                time: f.getTime(),
+                ticker: tickerMinutes,
+                stopLossP: stopLossP,
+                MrPrice: "____________________________________",
+                sellPrice: sellPrice,
+                price: price,
+                bid: bid,
+                bougthPrice: bougthPrice,
+                lossPrice: lossPrice,
+                FSociety: "____________________________________",
+                purchase: purchase,
+                more: more,
+                filled: fil,
+                upSignal: upSignal,
+                uppers: indicator.uppers,
+                downers: indicator.downers,
+                downSignal: downSignal,
+                //indicators: indicator.all,
+                sellConditions: {
+                    sale: sale,
+                    hold: hold,
+                    stopLoss: stopLoss,
+                },
+                logLength: logMA200.length,
+                orderType: orderType,
+                //quoteMarkets: JSON.stringify(quotes),
+                //wallet: JSON.stringify(wallet)
+                //bestBuy: JSON.stringify(bestBuy),
+            }
         }
         //mailer
         await mailInfo(orderType);
