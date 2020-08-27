@@ -17,7 +17,7 @@ ticker = f.minToMs(set.tickerMinutes);
 //  Init
 
 let filled;
-let orderId = 0;
+//let orderId = 0;
 let exchange = "binance";
 switch (exchange) {     //Select exchange
     case "bitstamp":
@@ -246,50 +246,46 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 //test()
 async function test() {
     let rel = await buy("MKR/USDT", 0.05, 300)
-    console.log(rel)    
+    console.log(rel)
 }
 
-async function cancel(orderId, symbol, ordertype) {    //cancels order with id
+async function cancel(orderId, symbol) {    //cancels order with id
     try {   //order was NOT filled
         r = await exchange.cancelOrder(orderId, symbol);
         //orderStatus = await r.status
         //side = await r.side
         //price1 = await r.info.price
-        console.log(r)
-        return {
-            orderId: orderId,
-            symbol: symbol,
-            orderStatus: r.status,
-            orderType: "canceled",
-            side: r.side,
-            filled: false,
-            bougthPrice: r.info.price,
-        }
+        /*console.log(orderId)
+        console.log(symbol)
+        console.log(r)*/
+        return false
     } catch (error) {   //order was filled
-        console.log("EEE: ", error);
-        return {
-            orderId: orderId,
-            symbol: symbol,
-            orderStatus: r.status,
-            orderType: ordertype,
-            side: r.side,
-            filled: true,
-            bougthPrice: r.info.price,
-        }
+        console.log("EEE in cancel: ", error);
+        //console.log(orderId)   
+        //console.log(symbol) 
+        return true
     }
 }
 
-
-
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
-        r = await exchange.createLimitBuyOrder(symbol, amount, price);
-        orderId = await r.id;
-        console.log("sent order!!!")
+        let r = exchange.createLimitBuyOrder(symbol, amount, price);
+        let orderId = await r.id;
+        console.log("sent order: "+orderId+" on: "+symbol)
+        //console.log(r)
         return new Promise(resolve => {
-            setTimeout(() => {
+            setTimeout(async () => {
                 resolve(
-                    cancel(orderId, symbol, "bougth")
+                    {
+                        filled: await cancel(orderId, symbol),
+                        orderId: orderId,
+                        orderType: "bougth",
+                        bougthPrice: price,
+                        symbol: symbol,
+                        orderStatus: r.status,
+                        side: r.side,
+
+                    }
                 );
             }, ticker * 0.9);//delay to cancel
         });
@@ -307,17 +303,36 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
 async function sell(symbol, amount, price) {// symbol, amount, ask 
     try {
         r = await exchange.createLimitSellOrder(symbol, amount, price);
-        orderId = await r.id;
+        //console.log(r)
+        let orderId = await r.info.orderId;
+        console.log(orderId)
+        console.log(symbol)
         console.log("sent order!!!")
         return new Promise(resolve => {
-            setTimeout(() => {
+            setTimeout(async () => {
                 resolve(
-                    cancel(orderId, symbol, "sold")
+                    {
+                        filled: await cancel(orderId, symbol),
+                        orderId: orderId,
+                        orderType: "sold",
+                        bougthPrice: price,
+                        symbol: symbol,
+                        orderStatus: r.status,
+                        side: r.side,
+
+                    },
+                    console.log(orderId)
                 );
             }, ticker * 0.9);//delay to cancel
         });
     } catch (error) {
         console.log("EEE in sell: ", error)
+        return {
+            symbol: symbol,
+            orderType: "failed",
+            filled: false,
+            bougthPrice: price,
+        }
     }
 }
 

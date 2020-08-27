@@ -611,10 +611,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //f.cs("lastBPrice: " + lastBPrice)
 
             if (lastBPrice > price) {
-                f.cs("Last bougth price: "+price+" was bigger than current NOT Updated: " + lastBPrice)
+                f.cs("Last bougth price: " + price + " was bigger than current NOT Updated: " + lastBPrice)
                 return lastBPrice;
-            } else if (lastBPrice < price) {
-                f.cs("Last bougth price: "+lastBPrice+" was smaller than current IS Updated: " + price)
+            } else if (lastBPrice <= price) {
+                f.cs("Last bougth price: " + lastBPrice + " was smaller than current IS Updated: " + price)
                 return price;
             }
         }
@@ -1056,67 +1056,75 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
-
-
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 if (enableOrders) { //run for real
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price)
                     fil = await ret.filled
-
                     if (fil) {
                         bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                         orderType = await ret.orderType     //returns "bougth"
                     } else {
-                        orderType = await ret.orderType
                         bougthprice = await read(symbol)
+                        orderType = "canceled"
                     }
-
                 } else {            //simulate
                     ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
                     fil = await ret.filled
-
                     if (fil) {
                         bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                         orderType = await ret.orderType     //returns "bougth"
                     } else {
-                        orderType = await ret.orderType
+                        bougthprice = await read(symbol)
+                        orderType = "canceled"
                     }
-                    //orderType = "bougth"
                     console.log('buy orders disabled')
                 }
-
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 if (enableOrders) {     //real
                     ret = await a.sell(symbol, baseBalance, price)
                     fil = await ret.filled
                     if (fil) {
-
-                        orderType = await ret.orderType
                         bougthPrice = 0         //reset bougthPrice to zero
-
+                        orderType = await ret.orderType     //returns "sold"
                     } else {
-                        orderType = await ret.orderType
                         bougthprice = await read(symbol)
+                        orderType = "canceled"
                     }
                 } else {
                     ret = await f.fOrder(symbol, baseBalance, price)
                     fil = await ret.filled
                     if (fil) {
-
-                        orderType = await ret.orderType
                         bougthPrice = 0         //reset bougthPrice to zero
-
+                        orderType = await ret.orderType     //returns "sold"
                     } else {
-                        orderType = await ret.orderType
+                        bougthprice = await read(symbol)
+                        orderType = "canceled"
                     }
-                    //orderType = "sold"      //sim
                     console.log('sell orders disabled')
                 }
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
                 enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
+
+                /*
+                ret = await a.sell(symbol, baseBalance, price * 2)         //sim
+                //ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
+                fil = await ret.filled
+                //f.cs(ret)
+
+                if (fil) {
+                    bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                    orderType = "sold"     //returns "bougth"
+                    f.cs("order filled")
+                } else {
+                    bougthprice = await read(symbol)
+                    orderType = fil ? "" : "canceled"
+                    f.cs("order NOT filled")
+                }
+                //orderType = "sold"
+                console.log('sim end')          //sim end*/
 
                 bougthPrice = await m.checkBougthPrice(symbol, price)
                 orderType = "holding";
@@ -1125,23 +1133,22 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 orderType = "holding good";
             } else if (purchase) {
 
-
                 /*
-                ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2)  //sim
-                //ret = await a.buy(symbol, quoteBalanceInBase * portion, price)
+                ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2)         //sim
+                //ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
                 fil = await ret.filled
 
                 if (fil) {
-                    bougthPrice = await m.checkNewBougthPrice(symbol, price)    //sim
-                    //bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                    bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                     orderType = await ret.orderType     //returns "bougth"
                 } else {
-                    bougthPrice = await m.checkNewBougthPrice(symbol, price)    //sim
+                    bougthprice = await read(symbol)
                     orderType = await ret.orderType
                 }
-                */
+                //orderType = "bougth"
+                console.log('buy orders disabled')          //sim end*/
 
-                //bougthPrice = 0
+                //bougthPrice = 0   //dev
                 orderType = "parked";
             } else {
                 orderType = "still none";
@@ -1213,18 +1220,22 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         async function mailInfo(orderType) {
             if (await orderType == "sold") {
                 f.sendMail("Sold Info", JSON.stringify(marketInfo));
-                return true;
             } else if (await orderType == "bougth") {
                 f.sendMail("Bougth Info", JSON.stringify(marketInfo));
-                return true;
             } else if (await orderType == "lossed") {
                 f.sendMail("Lossed Info", JSON.stringify(marketInfo));
-                return true;
             } else if (await orderType == "canceled") {
-                f.sendMail("Canceled Info", JSON.stringify(marketInfo));
-                return true;
+                f.sendMail("Canceled", JSON.stringify(marketInfo));
+            } else if (await orderType == "failed") {
+                f.sendMail("failed", JSON.stringify(marketInfo));
+            } else if (await orderType == "holding") {
+                return 0
+            } else if (await orderType == "parked") {
+                return 0
+            } else if (await orderType == "still none") {
+                return 0
             } else {
-                return false;
+                f.sendMail("mail error", JSON.stringify(marketInfo));
             }
         }
 
