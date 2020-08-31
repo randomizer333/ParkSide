@@ -146,7 +146,7 @@ async function wallet() {                   //returns Array of Objects balances 
             }*/
             for (i = 0; i < curs.length; i++) {
                 if (vals[i] > 0) {
-                    balances[j] = await { currency: curs[i + 1], balance: vals[i] };
+                    balances[j] = { currency: curs[i + 1], balance: vals[i] };
                     j++
                 }
             }
@@ -245,33 +245,50 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 
 //test()
 async function test() {
-    let rel = await buy("MKR/USDT", 0.05, 300)
+    //let rel = await buy("MKR/USDT", 0.05, 300)
+    //let rel = await orderInfo(3062164674, "ETH/BTC")
+    let rel = await checker(891329072, "ETH/BTC")
     console.log(rel)
 }
 
-async function cancel(orderId, symbol) {    //cancels order with id
-    try {   //order was NOT filled
-        r = await exchange.cancelOrder(orderId, symbol);
-        //orderStatus = await r.status
-        //side = await r.side
-        //price1 = await r.info.price
-        /*console.log(orderId)
-        console.log(symbol)
-        console.log(r)*/
-        return false
-    } catch (error) {   //order was filled
-        console.log("EEE in cancel: ", error);
-        //console.log(orderId)   
-        //console.log(symbol) 
-        return true
+async function checker(orderId, symbol) {
+    let count = 0
+    async function isOpen(orderId, symbol) {
+        r = await orderInfo(orderId, symbol)    // 'open', 'closed', 'canceled'
+        const freq = 3000
+        let rounds = (ticker * 0.85) / freq
+        if (r == "open") {
+            console.log("still open")
+            count++
+            console.log("rounds: " + rounds)
+            console.log("count: " + count)
+            if (count > rounds) {
+                
+                return cancel(orderId, symbol)
+            } else {
+                return new Promise(resolve => {
+                    setTimeout(
+                        async () => {
+                            resolve(
+                                await isOpen(orderId, symbol)
+                            );
+                        }, freq);   //set frequenci
+                });
+            }
+        } else if (r == "closed") {
+            return r
+        } else if (r == 'canceled') {
+            return r
+        }
     }
+    return await isOpen(orderId, symbol)
 }
 
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
         let r = exchange.createLimitBuyOrder(symbol, amount, price);
         let orderId = await r.id;
-        console.log("sent order: "+orderId+" on: "+symbol)
+        console.log("sent order: " + orderId + " on: " + symbol)
         //console.log(r)
         return new Promise(resolve => {
             setTimeout(async () => {
@@ -305,34 +322,59 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         r = await exchange.createLimitSellOrder(symbol, amount, price);
         //console.log(r)
         let orderId = await r.info.orderId;
+        console.log("sent order!!!")
         console.log(orderId)
         console.log(symbol)
-        console.log("sent order!!!")
+        //r1 = await checker(orderId, symbol)
+        //console.log("returning order")
+        //console.log(r1)
         return new Promise(resolve => {
-            setTimeout(async () => {
-                resolve(
-                    {
-                        filled: await cancel(orderId, symbol),
-                        orderId: orderId,
-                        orderType: "sold",
-                        bougthPrice: price,
-                        symbol: symbol,
-                        orderStatus: r.status,
-                        side: r.side,
-
-                    },
-                    console.log(orderId)
-                );
-            }, ticker * 0.9);//delay to cancel
+            setTimeout(
+                async () => {
+                    resolve(
+                        {
+                            status: await checker(orderId, symbol),
+                            orderId: orderId,
+                            orderType: "sold",
+                            bougthPrice: price,
+                            symbol: symbol,
+                            side: r.side,
+                        }
+                    );
+                }, 1000);   //set delay
         });
+
+
+
     } catch (error) {
         console.log("EEE in sell: ", error)
         return {
             symbol: symbol,
+            status: "failed",
             orderType: "failed",
             filled: false,
             bougthPrice: price,
         }
+    }
+}
+
+async function orderInfo(orderId, symbol) {  //only status returns 'open', 'closed', 'canceled'
+    try {
+        r = await exchange.fetchOrder(orderId, symbol)
+        return r.status
+    } catch (error) {
+        console.log("EEE in fetch: ", error);
+    }
+}
+
+async function cancel(orderId, symbol) {    //cancels order with id
+    try {   //order was NOT filled
+        r = await exchange.cancelOrder(orderId, symbol);
+        console.log("canceling: " + symbol + " " + orderId)
+        console.log(r)
+        return r.status
+    } catch (error) {   //order was filled
+        console.log("EEE in cancel: ", error);
     }
 }
 

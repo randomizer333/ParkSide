@@ -190,9 +190,10 @@ async function fOrder(symbol, amount, price) {
                             filled: true,
                             bougthPrice: price,
                             symbol: symbol,
+                            status: "canceled"
                         }
                     );
-                }, ticker * 0.9);
+                }, ticker * 0.1);
         });
 }
 

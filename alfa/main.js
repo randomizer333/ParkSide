@@ -44,7 +44,6 @@ async function test() {
     console.dir(await orderback)
 }
 
-
 let quotes = [    //fiat strategy trading portofio
     //"BTC/USDT",   //in setings
     //cripto base/fiat quote
@@ -98,7 +97,7 @@ let alts = [    //alt markets 21+3=24
     "XLM/BTC",
     "XMR/BTC",
     "TRX/BTC",
-    "MKR/BTC",
+    "MKR/BTC",//*/
 
     /*
     "XRP/BNB",  
@@ -932,6 +931,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             MACD = await TI.macd(logAll);   //standard MACD
             logMacd = await m.loger(MACD, 3, logMacd);
             MACDMA = await TI.ma(logMacd);  //MA of MACD
+            //rang = await globalRang2(MACDMA, symbol, botNumber, 3)
 
             DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
 
@@ -952,10 +952,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             return {
                 uppers: {
                     MA3: MA3,
-                    MA30: MA30,
-                    MACD: MACD,
+                    //MA30: MA30,
+                    //MACD: MACD,
                     //change1hP: change1hP,
-                    //MACDMA: MACDMA,
+                    MACDMA: MACDMA,
                     rank: rang,
 
                 },
@@ -1006,7 +1006,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //triArbOrderType = await m.triArb(s.fiatCurrency, s.quoteCurrency, baseCurrency)
         //triArbOrder(triArbOrderType, currency1, currency2, currency3)
 
-        let fil = false;
+        let sts = "none";
         let triUSDTBTC,
             triUSDTETH,
             triUSDTBNB,
@@ -1060,46 +1060,42 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 if (enableOrders) { //run for real
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price)
-                    fil = await ret.filled
-                    if (fil) {
+                    sts = await ret.filled
+                    if (sts == "closed") {
                         bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
-                        orderType = await ret.orderType     //returns "bougth"
-                    } else {
-                        bougthprice = await read(symbol)
-                        orderType = "canceled"
+                        orderType = "bougth"
+                    } else if (sts == "canceled") {
+                        orderType = "parked"
                     }
                 } else {            //simulate
                     ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
-                    fil = await ret.filled
-                    if (fil) {
+                    sts = await ret.filled
+                    if (sts == "closed") {
                         bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
-                        orderType = await ret.orderType     //returns "bougth"
-                    } else {
-                        bougthprice = await read(symbol)
-                        orderType = "canceled"
+                        orderType = "bougth"
+                    } else if (sts == "canceled") {
+                        orderType = "parked"
                     }
                     console.log('buy orders disabled')
                 }
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 if (enableOrders) {     //real
                     ret = await a.sell(symbol, baseBalance, price)
-                    fil = await ret.filled
-                    if (fil) {
-                        bougthPrice = 0         //reset bougthPrice to zero
-                        orderType = await ret.orderType     //returns "sold"
-                    } else {
-                        bougthprice = await read(symbol)
-                        orderType = "canceled"
+                    sts = await ret.filled
+                    if (sts == "closed") {
+                        bougthPrice = 0
+                        orderType = "sold"
+                    } else if (sts == "canceled") {
+                        orderType = "holding"
                     }
                 } else {
                     ret = await f.fOrder(symbol, baseBalance, price)
-                    fil = await ret.filled
-                    if (fil) {
-                        bougthPrice = 0         //reset bougthPrice to zero
-                        orderType = await ret.orderType     //returns "sold"
-                    } else {
-                        bougthprice = await read(symbol)
-                        orderType = "canceled"
+                    sts = await ret.filled
+                    if (sts == "closed") {
+                        bougthPrice = 0
+                        orderType = "sold"
+                    } else if (sts == "canceled") {
+                        orderType = "holding"
                     }
                     console.log('sell orders disabled')
                 }
@@ -1109,36 +1105,47 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
 
                 /*
-                ret = await a.sell(symbol, baseBalance, price * 2)         //sim
-                //ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
-                fil = await ret.filled
-                //f.cs(ret)
-
-                if (fil) {
-                    bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
-                    orderType = "sold"     //returns "bougth"
-                    f.cs("order filled")
+                if (enableOrders) {     //real
+                    ret = await a.sell(symbol, baseBalance, price * 2)  //sim
+                    sts = await ret.status  //order finished
+                    if (sts == "closed") {
+                        f.cs("order filled")
+                        bougthPrice = 0
+                        orderType = "sold"
+                    } else if (sts == "canceled") {
+                        f.cs("order canceled")
+                        //bougthprice = await read(symbol)
+                        orderType = "holding"
+                    }
                 } else {
-                    bougthprice = await read(symbol)
-                    orderType = fil ? "" : "canceled"
-                    f.cs("order NOT filled")
+                    ret = await f.fOrder(symbol, baseBalance, price)
+                    sts = await ret.status
+                    if (sts == "closed") {
+                        f.cs("order filled")
+                        bougthPrice = 0
+                        orderType = "sold"
+                    } else if (sts == "canceled") {
+                        f.cs("order canceled")
+                        //bougthprice = await read(symbol)
+                        orderType = "holding"
+                    }
+                    console.log('sell orders disabled')
                 }
-                //orderType = "sold"
                 console.log('sim end')          //sim end*/
 
-                bougthPrice = await m.checkBougthPrice(symbol, price)
+                //bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
-                bougthPrice = await m.checkBougthPrice(symbol, price)
+                //bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding good";
             } else if (purchase) {
 
                 /*
                 ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2)         //sim
                 //ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
-                fil = await ret.filled
+                sts = await ret.filled
 
-                if (fil) {
+                if (sts) {
                     bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                     orderType = await ret.orderType     //returns "bougth"
                 } else {
@@ -1197,7 +1204,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 FSociety: "____________________________________",
                 purchase: purchase,
                 more: more,
-                filled: fil,
+                status: sts,
                 upSignal: upSignal,
                 uppers: indicator.uppers,
                 downers: indicator.downers,
@@ -1232,7 +1239,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 return 0
             } else if (await orderType == "parked") {
                 return 0
-            } else if (await orderType == "still none") {
+            } else if (await orderType == "still none" || "holding good") {
                 return 0
             } else {
                 f.sendMail("mail error", JSON.stringify(marketInfo));

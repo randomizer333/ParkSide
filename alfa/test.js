@@ -148,3 +148,68 @@ cancelReturn = {
     fee: undefined,
     trades: undefined
   }
+
+fetchOrder = {
+    info: {
+      symbol: 'ETHBTC',
+      orderId: 888266351,
+      orderListId: -1,
+      clientOrderId: '9FlLuZ6urr7zfD7rAfVykz',
+      price: '0.06832500',
+      origQty: '0.21600000',
+      executedQty: '0.00000000',
+      cummulativeQuoteQty: '0.00000000',
+      status: 'NEW',
+      timeInForce: 'GTC',
+      type: 'LIMIT',
+      side: 'SELL',
+      stopPrice: '0.00000000',
+      icebergQty: '0.00000000',
+      time: 1598609853071,
+      updateTime: 1598609853071,
+      isWorking: true,
+      origQuoteOrderQty: '0.00000000'
+    },
+    id: '888266351',
+    clientOrderId: '9FlLuZ6urr7zfD7rAfVykz',
+    timestamp: 1598609853071,
+    datetime: '2020-08-28T10:17:33.071Z',
+    lastTradeTimestamp: undefined,
+    symbol: 'ETH/BTC',
+    type: 'limit',
+    side: 'sell',
+    price: 0.068325,
+    amount: 0.216,
+    cost: 0,
+    average: undefined,
+    filled: 0,
+    remaining: 0.216,
+    status: 'open',
+    fee: undefined,
+    trades: undefined
+  }
+
+  {
+    'id':                '12345-67890:09876/54321', // string
+    'clientOrderId':     'abcdef-ghijklmnop-qrstuvwxyz', // a user-defined clientOrderId, if any
+    'datetime':          '2017-08-17 12:42:48.000', // ISO8601 datetime of 'timestamp' with milliseconds
+    'timestamp':          1502962946216, // order placing/opening Unix timestamp in milliseconds
+    'lastTradeTimestamp': 1502962956216, // Unix timestamp of the most recent trade on this order
+    'status':     'open',         // 'open', 'closed', 'canceled'
+    'symbol':     'ETH/BTC',      // symbol
+    'type':       'limit',        // 'market', 'limit'
+    'side':       'buy',          // 'buy', 'sell'
+    'price':       0.06917684,    // float price in quote currency (may be empty for market orders)
+    'average':     0.06917684,    // float average filling price
+    'amount':      1.5,           // ordered amount of base currency
+    'filled':      1.1,           // filled amount of base currency
+    'remaining':   0.4,           // remaining amount to fill
+    'cost':        0.076094524,   // 'filled' * 'price' (filling price used where available)
+    'trades':    [ ... ],         // a list of order trades/executions
+    'fee': {                      // fee info, if available
+        'currency': 'BTC',        // which currency the fee is (usually quote)
+        'cost': 0.0009,           // the fee amount in that currency
+        'rate': 0.002,            // the fee rate (if available)
+    },
+    'info': { ... },              // the original unparsed order structure as is
+}
