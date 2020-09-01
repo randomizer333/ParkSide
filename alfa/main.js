@@ -879,7 +879,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
     botNo[botNumber] = setInterval(function () { loop(symbol) }, ticker);
     async function loop(symbol) {
 
-        let orderType;  //loop output
+        let orderType = "none";  //loop output
 
         minAmount = await a.minAmount(symbol);
         baseCurrency = await f.splitSymbol(symbol, "first");
@@ -1058,79 +1058,49 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
-                if (enableOrders) { //run for real
-                    ret = await a.buy(symbol, quoteBalanceInBase * portion, price)
-                    sts = await ret.status
-                    if (sts == "closed") {
-                        bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
-                        orderType = "bougth"
-                    } else if (sts == "canceled") {
-                        orderType = "parked"
-                    }
-                } else {            //simulate
-                    ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
-                    sts = await ret.status
-                    if (sts == "closed") {
-                        bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
-                        orderType = "bougth"
-                    } else if (sts == "canceled") {
-                        orderType = "parked"
-                    }
-                    console.log('buy orders disabled')
+                enableOrders ?
+                    ret = await a.buy(symbol, quoteBalanceInBase * portion, price) :    //real
+                    ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)   //sim
+                sts = await ret.status
+                if (sts == "closed") {
+                    f.cs("order filled")
+                    bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                    orderType = "bougth"
+                } else {
+                    f.cs("order canceled")
+                    orderType = "parked"
                 }
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
-                if (enableOrders) {     //real
-                    ret = await a.sell(symbol, baseBalance, price)
-                    sts = await ret.status
-                    if (sts == "closed") {
-                        bougthPrice = 0
-                        orderType = "sold"
-                    } else if (sts == "canceled") {
-                        orderType = "holding"
-                    }
+                enableOrders ?
+                    ret = await a.sell(symbol, baseBalance, price) :    //real
+                    ret = await f.fOrder(symbol, baseBalance, price)    //sim
+                sts = await ret.status
+                if (sts == "closed") {
+                    f.cs("order filled")
+                    bougthPrice = 0
+                    orderType = "sold"
                 } else {
-                    ret = await f.fOrder(symbol, baseBalance, price)
-                    sts = await ret.status
-                    if (sts == "closed") {
-                        bougthPrice = 0
-                        orderType = "sold"
-                    } else if (sts == "canceled") {
-                        orderType = "holding"
-                    }
-                    console.log('sell orders disabled')
+                    f.cs("order canceled")
+                    orderType = "holding"
                 }
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
-                enableOrders ? ret = await a.sell(symbol, baseBalance, price) : console.log('loss sell orders disabled');
+                enableOrders ?
+                    ret = await a.sell(symbol, baseBalance, price) :
+                    console.log('loss sell orders disabled');
                 orderType = "lossed";
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
 
                 /*
-                if (enableOrders) {     //real
-                    ret = await a.sell(symbol, baseBalance, price * 2)  //sim
-                    sts = await ret.status  //order finished
-                    if (sts == "closed") {
-                        f.cs("order filled")
-                        bougthPrice = 0
-                        orderType = "sold"
-                    } else if (sts == "canceled") {
-                        f.cs("order canceled")
-                        //bougthprice = await read(symbol)
-                        orderType = "holding"
-                    }
+                ret = await a.sell(symbol, baseBalance, price * 2) //sim
+                sts = await ret.status  //order finished
+                if (sts == "closed") {
+                    f.cs("order filled")
+                    bougthPrice = 0
+                    orderType = "sold"
                 } else {
-                    ret = await f.fOrder(symbol, baseBalance, price)
-                    sts = await ret.status
-                    if (sts == "closed") {
-                        f.cs("order filled")
-                        bougthPrice = 0
-                        orderType = "sold"
-                    } else if (sts == "canceled") {
-                        f.cs("order canceled")
-                        //bougthprice = await read(symbol)
-                        orderType = "holding"
-                    }
-                    console.log('sell orders disabled')
-                }
+                    f.cs("order canceled")
+                    orderType = "holding"
+                }                           
                 console.log('sim end')          //sim end*/
 
                 //bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
@@ -1141,26 +1111,24 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else if (purchase) {
 
                 /*
-                ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2)         //sim
-                //ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
-                sts = await ret.filled
-
-                if (sts) {
+                ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2) //sim
+                sts = await ret.status  //order finished
+                if (sts == "closed") {
+                    f.cs("order filled")
                     bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
-                    orderType = await ret.orderType     //returns "bougth"
+                    orderType = "sold"
                 } else {
-                    bougthprice = await read(symbol)
-                    orderType = await ret.orderType
-                }
-                //orderType = "bougth"
-                console.log('buy orders disabled')          //sim end*/
+                    f.cs("order canceled")
+                    orderType = "holding"
+                }                             
+                console.log('sim end')          //sim end*/
 
                 //bougthPrice = 0   //dev
                 orderType = "parked";
             } else {
                 orderType = "still none";
             }
-            return await orderType;
+            return orderType;
         }
 
         let relativeProfit = await f.percent(price - sellPrice, sellPrice);
@@ -1199,7 +1167,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 sellPrice: sellPrice,
                 price: price,
                 bid: bid,
-                bougthPrice: await bougthPrice,
+                bougthPrice: bougthPrice,
                 lossPrice: lossPrice,
                 FSociety: "____________________________________",
                 purchase: purchase,
@@ -1216,7 +1184,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     stopLoss: stopLoss,
                 },
                 logLength: logMA200.length,
-                orderType: await orderType,
+                orderType: orderType,
                 //quoteMarkets: JSON.stringify(quotes),
                 //wallet: JSON.stringify(wallet)
                 //bestBuy: JSON.stringify(bestBuy),
@@ -1239,7 +1207,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 return 0
             } else if (await orderType == "parked") {
                 return 0
-            } else if (await orderType == "still none" || "holding good") {
+            } else if (await orderType == "still none" || "holding good" || "none") {
                 return 0
             } else {
                 f.sendMail("mail error", JSON.stringify(marketInfo));
