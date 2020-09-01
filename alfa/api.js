@@ -285,7 +285,7 @@ async function checker(orderId, symbol) {
 
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
-        let r = exchange.createLimitBuyOrder(symbol, amount, price);
+        let r = await exchange.createLimitBuyOrder(symbol, amount, price);
         let orderId = await r.id;
         console.log("sent order: " + orderId + " on: " + symbol)
         return new Promise(resolve => {

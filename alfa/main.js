@@ -1093,34 +1093,61 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 /*
                 ret = await a.sell(symbol, baseBalance, price * 2) //sim
                 sts = await ret.status  //order finished
+                f.cs("sts: "+sts)
                 if (sts == "closed") {
                     f.cs("order filled")
+                    f.cs("bougthPrice: "+await ret.bougthPrice)
                     bougthPrice = 0
+                    f.cs("bougthPrice: "+bougthPrice)
                     orderType = "sold"
                 } else {
+                    f.cs("bougthPrice: "+await ret.bougthPrice)
                     f.cs("order canceled")
                     orderType = "holding"
-                }                           
+                }                         
+                f.cs("orderType: "+orderType)  
                 console.log('sim end')          //sim end*/
 
                 //bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
+
+                /*
+                ret = await a.sell(symbol, baseBalance, price * 2) //sim
+                sts = await ret.status  //order finished
+                f.cs("sts: "+sts)
+                if (sts == "closed") {
+                    f.cs("order filled")
+                    f.cs("bougthPrice: "+await ret.bougthPrice)
+                    bougthPrice = 0
+                    f.cs("bougthPrice: "+bougthPrice)
+                    orderType = "sold"
+                } else {
+                    f.cs("bougthPrice: "+await ret.bougthPrice)
+                    f.cs("order canceled")
+                    //orderType = "holding"
+                }                         
+                f.cs("orderType: "+orderType)  
+                console.log('sim end')          //sim end*/
+
                 //bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding good";
             } else if (purchase) {
-
-                /*
+/*
                 ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2) //sim
                 sts = await ret.status  //order finished
+                f.cs("sts: "+sts)
                 if (sts == "closed") {
                     f.cs("order filled")
+                    f.cs("bougthPrice: "+await ret.bougthPrice)
                     bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                    f.cs("bougthPrice: "+bougthPrice)
                     orderType = "sold"
                 } else {
                     f.cs("order canceled")
                     orderType = "holding"
                 }                             
+                f.cs("orderType: "+orderType)
                 console.log('sim end')          //sim end*/
 
                 //bougthPrice = 0   //dev
@@ -1204,10 +1231,12 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else if (await orderType == "failed") {
                 f.sendMail("failed", JSON.stringify(marketInfo));
             } else if (await orderType == "holding") {
-                return 0
-            } else if (await orderType == "parked") {
-                return 0
-            } else if (await orderType == "still none" || "holding good" || "none") {
+                //f.sendMail("holding", JSON.stringify(marketInfo));
+            } else if (await orderType == "holding good") {
+                //f.sendMail("holding good", JSON.stringify(marketInfo));
+            }else if (await orderType == "parked") {
+                //f.sendMail("parked", JSON.stringify(marketInfo));
+            } else if (await orderType == "still none" || "none") {
                 return 0
             } else {
                 f.sendMail("mail error", JSON.stringify(marketInfo));
