@@ -137,8 +137,8 @@ async function setup() {    //runs once at the begining of the program
     await f.cs(markets);
     await f.cs("Number of markets: " + markets.length)
     markets = await a.filterAll(markets, s.markets);
-    await f.cs("Ms: " + markets.length)
-    await f.cs(markets);
+    //await f.cs("Ms: " + markets.length)
+    //await f.cs(markets);
     wallet = await a.wallet();
     await f.cs("Wallet:");
     await f.cs(wallet);
@@ -1060,7 +1060,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
                 if (enableOrders) { //run for real
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price)
-                    sts = await ret.filled
+                    sts = await ret.status
                     if (sts == "closed") {
                         bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                         orderType = "bougth"
@@ -1069,7 +1069,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     }
                 } else {            //simulate
                     ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)
-                    sts = await ret.filled
+                    sts = await ret.status
                     if (sts == "closed") {
                         bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                         orderType = "bougth"
@@ -1081,7 +1081,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 if (enableOrders) {     //real
                     ret = await a.sell(symbol, baseBalance, price)
-                    sts = await ret.filled
+                    sts = await ret.status
                     if (sts == "closed") {
                         bougthPrice = 0
                         orderType = "sold"
@@ -1090,7 +1090,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     }
                 } else {
                     ret = await f.fOrder(symbol, baseBalance, price)
-                    sts = await ret.filled
+                    sts = await ret.status
                     if (sts == "closed") {
                         bougthPrice = 0
                         orderType = "sold"
@@ -1199,7 +1199,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 sellPrice: sellPrice,
                 price: price,
                 bid: bid,
-                bougthPrice: bougthPrice,
+                bougthPrice: await bougthPrice,
                 lossPrice: lossPrice,
                 FSociety: "____________________________________",
                 purchase: purchase,
@@ -1216,7 +1216,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     stopLoss: stopLoss,
                 },
                 logLength: logMA200.length,
-                orderType: orderType,
+                orderType: await orderType,
                 //quoteMarkets: JSON.stringify(quotes),
                 //wallet: JSON.stringify(wallet)
                 //bestBuy: JSON.stringify(bestBuy),
