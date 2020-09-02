@@ -551,20 +551,20 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             if ((baseBalanceInQuote > quoteBalance) && (baseBalance > minAmount)) {   //can sell
                 return {
                     sale: true,
+                    purchase: false,
                     more: true,
-                    purchase: false
                 }
             } else if ((baseBalanceInQuote < quoteBalance) && (quoteBalanceInBase > minAmount)) {    //can buy
                 return {
                     sale: false,
+                    purchase: true,
                     more: false,
-                    purchase: true
                 }
             } else {
                 return {
                     sale: false,
+                    purchase: false,
                     more: true,
-                    purchase: false
                 }
             }
         }
