@@ -247,16 +247,20 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 async function test() {
     //let rel = await buy("MKR/USDT", 0.05, 300)
     //let rel = await orderInfo(3062164674, "ETH/BTC")
-    let rel = await checker(891329072, "ETH/BTC")
+    let rel = await checker(471196826, "BNB/BTC")
     console.log(rel)
 }
 
 async function checker(orderId, symbol) {
     let count = 0
     async function isOpen(orderId, symbol) {
+        
+        console.log("sent checking: " + orderId + " on: " + symbol)
+
         r = await orderInfo(orderId, symbol)    // 'open', 'closed', 'canceled'
+        console.log(r)
         const freq = 3000
-        let rounds = (ticker * 0.85) / freq
+        let rounds = (ticker * 0.5) / freq
         if (r == "open") {
             console.log("still open")
             count++
@@ -278,6 +282,9 @@ async function checker(orderId, symbol) {
             return r
         } else if (r == 'canceled') {
             return r
+        } else {
+            console.log("checker fail")
+            return "failed"
         }
     }
     return await isOpen(orderId, symbol)
@@ -298,13 +305,13 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
                             orderType: "bougth",
                             bougthPrice: price,
                             symbol: symbol,
-                            side: r.side,
+                            side: "buy",
                         }
                     );
-                }, 2000);   //set delay
+                }, 500);   //set delay
         });
     } catch (error) {
-        console.log("EEE in buy: ", error)
+        console.log("EEE in buy: ", error.name)
         return {
             status: "failed",
             orderId: 0,
@@ -331,13 +338,13 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
                             orderType: "sold",
                             bougthPrice: price,
                             symbol: symbol,
-                            side: r.side,
+                            side: "sell",
                         }
                     );
-                }, 2000);   //set delay
+                }, 500);   //set delay
         });
     } catch (error) {
-        console.log("EEE in sell: ", error)
+        console.log("EEE in sell: ", error.name)
         return {
             status: "failed",
             orderId: 0,
@@ -351,21 +358,26 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
 
 async function orderInfo(orderId, symbol) {  //only status returns 'open', 'closed', 'canceled'
     try {
+        
+        console.log("sent fetch: " + orderId + " on: " + symbol)
         r = await exchange.fetchOrder(orderId, symbol)
         return r.status
     } catch (error) {
+        console.log("sent fetch: " + orderId + " on: " + symbol)
         console.log("EEE in fetch: ", error);
+        return "failed"
     }
 }
 
 async function cancel(orderId, symbol) {    //cancels order with id
-    try {   //order was NOT filled
+    try {   //order was canceled
         r = await exchange.cancelOrder(orderId, symbol);
         console.log("canceling: " + symbol + " " + orderId)
         console.log(r)
         return r.status
-    } catch (error) {   //order was filled
+    } catch (error) {   //could not cancel
         console.log("EEE in cancel: ", error);
+        return "failed"
     }
 }
 
