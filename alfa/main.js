@@ -25,6 +25,7 @@ let tickerMinutes,
     minProfitP,
     enableOrders,
     ticker
+
 async function init() {
     tickerMinutes = await s.tickerMinutes;    //1,3,5, for all 10,60,120
     stopLossP = await s.stopLossP//2;   //stoploss for fiat and quote markets, 99% for hodlers, 1% for gamblers
@@ -132,7 +133,7 @@ async function setup() {    //runs once at the begining of the program
     exInfo = a.exInfos;
     tradingFeeP = exInfo.feeMaker * 100;
     await f.cs(exInfo);
-    await f.cs("Exchange: " + s.exchange)
+    //await f.cs("Exchange: " + s.exchange)
     markets = await a.markets();
     await f.cs(markets);
     await f.cs("Number of markets: " + markets.length)
@@ -952,10 +953,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             return {
                 uppers: {
                     MA3: MA3,
-                    //MA30: MA30,
-                    //MACD: MACD,
+                    MA30: MA30,
+                    MACD: MACD,
                     //change1hP: change1hP,
-                    MACDMA: MACDMA,
+                    //MACDMA: MACDMA,
                     rank: rang,
 
                 },
@@ -1063,11 +1064,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)   //sim
                 sts = await ret.status
                 if (sts == "closed") {
-                    f.cs("order filled")
                     bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                     orderType = "bougth"
                 } else {
-                    f.cs("order canceled")
                     orderType = "parked"
                 }
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
@@ -1076,11 +1075,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     ret = await f.fOrder(symbol, baseBalance, price)    //sim
                 sts = await ret.status
                 if (sts == "closed") {
-                    f.cs("order filled")
                     bougthPrice = 0
                     orderType = "sold"
                 } else {
-                    f.cs("order canceled")
                     orderType = "holding"
                 }
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
@@ -1133,7 +1130,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 //bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding good";
             } else if (purchase) {
-/*
+                /*
                 ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2) //sim
                 sts = await ret.status  //order finished
                 f.cs("sts: "+sts)

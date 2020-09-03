@@ -247,25 +247,31 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 async function test() {
     //let rel = await buy("MKR/USDT", 0.05, 300)
     //let rel = await orderInfo(3062164674, "ETH/BTC")
-    let rel = await checker(471196826, "BNB/BTC")
+    let rel = await checker(401016118, "XRP/BTC")
     console.log(rel)
 }
 
 async function checker(orderId, symbol) {
     let count = 0
     async function isOpen(orderId, symbol) {
-        
+
         console.log("sent checking: " + orderId + " on: " + symbol)
 
         r = await orderInfo(orderId, symbol)    // 'open', 'closed', 'canceled'
         console.log(r)
         const freq = 3000
-        let rounds = (ticker * 0.5) / freq
+        let rounds = (ticker * 0.9) / freq
         if (r == "open") {
             console.log("still open")
             count++
-            console.log("rounds: " + rounds)
-            console.log("count: " + count)
+            /*console.log("checking order")
+            console.log(orderId)
+            console.log("symbol")
+            console.log(symbol)
+            console.log("rounds:")
+            console.log(rounds)
+            console.log("count:")
+            console.log(count)*/
             if (count > rounds) {
                 return cancel(orderId, symbol)
             } else {
@@ -284,6 +290,14 @@ async function checker(orderId, symbol) {
             return r
         } else {
             console.log("checker fail")
+            return new Promise(resolve => {
+                setTimeout(
+                    async () => {
+                        resolve(
+                            await isOpen(orderId, symbol)
+                        );
+                    }, freq);   //set frequenci
+            });
             return "failed"
         }
     }
@@ -294,24 +308,20 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
     try {
         let r = await exchange.createLimitBuyOrder(symbol, amount, price);
         let orderId = await r.id;
-        console.log("sent order: " + orderId + " on: " + symbol)
-        return new Promise(resolve => {
-            setTimeout(
-                async () => {
-                    resolve(
-                        {
-                            status: await checker(orderId, symbol),
-                            orderId: orderId,
-                            orderType: "bougth",
-                            bougthPrice: price,
-                            symbol: symbol,
-                            side: "buy",
-                        }
-                    );
-                }, 500);   //set delay
-        });
+        console.log("buy order")
+        console.log(orderId)
+        console.log("symbol")
+        console.log(symbol)
+        return {
+            status: await checker(orderId, symbol),
+            orderId: orderId,
+            orderType: "bougth",
+            bougthPrice: price,
+            symbol: symbol,
+            side: "buy",
+        }
     } catch (error) {
-        console.log("EEE in buy: ", error.name)
+        console.log("EEE in buy: ", error)
         return {
             status: "failed",
             orderId: 0,
@@ -328,21 +338,14 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         r = await exchange.createLimitSellOrder(symbol, amount, price);
         let orderId = await r.info.orderId;
         console.log("sent order: " + orderId + " on: " + symbol)
-        return new Promise(resolve => {
-            setTimeout(
-                async () => {
-                    resolve(
-                        {
-                            status: await checker(orderId, symbol),
-                            orderId: orderId,
-                            orderType: "sold",
-                            bougthPrice: price,
-                            symbol: symbol,
-                            side: "sell",
-                        }
-                    );
-                }, 500);   //set delay
-        });
+        return {
+            status: await checker(orderId, symbol),
+            orderId: orderId,
+            orderType: "sold",
+            bougthPrice: price,
+            symbol: symbol,
+            side: "sell",
+        }
     } catch (error) {
         console.log("EEE in sell: ", error.name)
         return {
@@ -358,8 +361,12 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
 
 async function orderInfo(orderId, symbol) {  //only status returns 'open', 'closed', 'canceled'
     try {
-        
-        console.log("sent fetch: " + orderId + " on: " + symbol)
+
+        console.log("fetching order")
+        console.log(orderId)
+        console.log("symbol")
+        console.log(symbol)
+
         r = await exchange.fetchOrder(orderId, symbol)
         return r.status
     } catch (error) {
@@ -372,7 +379,12 @@ async function orderInfo(orderId, symbol) {  //only status returns 'open', 'clos
 async function cancel(orderId, symbol) {    //cancels order with id
     try {   //order was canceled
         r = await exchange.cancelOrder(orderId, symbol);
-        console.log("canceling: " + symbol + " " + orderId)
+
+        console.log("canceling order")
+        console.log(orderId)
+        console.log("symbol")
+        console.log(symbol)
+
         console.log(r)
         return r.status
     } catch (error) {   //could not cancel
