@@ -1,22 +1,38 @@
 {
-    "table1":{
-        "column1": [
-            "row1",
-            "row2"
-        ],
-        "column2": [
-            "row1",
-            "row2"
-        ]
+    "tableName": {
+        "columnHeader": {
+            "rowNumber": "cellData"
+        }
     },
-    "table2":{
-        "column1": [
-            "row1",
-            "row2"
-        ],
-        "column2": [
-            "row1",
-            "row2"
-        ]
+    "table1": {
+        "column1": {
+            "row1": "rowData",
+            "row2": "rowData",
+            "row3": "rowData",
+            "row4": "rowData"
+        },
+        "column2": {
+            "row1": "rowData",
+            "row2": "rowData",
+            "row3": "rowData",
+            "row4": "rowData"
+        },
+        "column3": {
+            "row1": "rowData",
+            "row2": "rowData",
+            "row3": "rowData",
+            "row4": "rowData"
+        },
+        "column4": {
+            "row1": "rowData",
+            "row2": "rowData",
+            "row3": "rowData",
+            "row4": "rowData",
+            "id": 3156551,
+            "privateKey": "rowData",
+            "column3": "rowData",
+            "publicKey": "rowData",
+            "publicKey2": "rowData"
+        }
     }
 }
