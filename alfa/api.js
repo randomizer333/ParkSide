@@ -237,8 +237,8 @@ async function price(symbol) {                //reurns Array of Objects bid,ask
 
         return parseFloat(cena);
     } catch (error) {
-        console.log("EEE: ", error);
-        return price = 0
+        console.log("EEE: ", error.name);
+        return false
     }
 }
 
@@ -261,9 +261,9 @@ async function checker(orderId, symbol) {
         console.log(r)
         const freq = 3000
         let rounds = (ticker * 0.9) / freq
+        count++
         if (r == "open") {
             console.log("still open")
-            count++
             /*console.log("checking order")
             console.log(orderId)
             console.log("symbol")
@@ -361,11 +361,11 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
 
 async function orderInfo(orderId, symbol) {  //only status returns 'open', 'closed', 'canceled'
     try {
-
+/*
         console.log("fetching order")
         console.log(orderId)
         console.log("symbol")
-        console.log(symbol)
+        console.log(symbol)*/
 
         r = await exchange.fetchOrder(orderId, symbol)
         return r.status
@@ -379,11 +379,11 @@ async function orderInfo(orderId, symbol) {  //only status returns 'open', 'clos
 async function cancel(orderId, symbol) {    //cancels order with id
     try {   //order was canceled
         r = await exchange.cancelOrder(orderId, symbol);
-
+/*
         console.log("canceling order")
         console.log(orderId)
         console.log("symbol")
-        console.log(symbol)
+        console.log(symbol)*/
 
         console.log(r)
         return r.status
