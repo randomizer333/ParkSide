@@ -66,7 +66,7 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 21+3=24
 
-        "BTC/USDT", "ETH/USDT", "BNB/USDT",
+        /*"BTC/USDT", "ETH/USDT", "BNB/USDT",
         "XRP/USDT",
         "LTC/USDT",
         "EOS/USDT",
@@ -75,7 +75,7 @@ let alts = [    //alt markets 21+3=24
         "XMR/USDT",
         "TRX/USDT",
         "LINK/USDT",
-                    "ETH/BTC",  "BNB/BTC", 
+                    //"ETH/BTC",  "BNB/BTC", 
     "XRP/BTC",  "XRP/ETH",  "XRP/BNB",
     "LTC/BTC",  "LTC/ETH",  "LTC/BNB",
     "EOS/BTC",  "EOS/ETH",  "EOS/BNB",
@@ -92,7 +92,7 @@ let alts = [    //alt markets 21+3=24
                 
 
     //crypto/fiat backings
-    /*"BNB/BTC",
+    "BNB/BTC",
     "ETH/BTC",
 
     "XRP/BTC",
@@ -211,7 +211,7 @@ function clear() {
 }
 
 //store data
-async function shrani(symbol, writePrice) {
+async function saveBougthPrice(symbol, writePrice) {
 
     //f.cs("writing symbol " + symbol)
     //f.cs("writing data " + writePrice)
@@ -713,7 +713,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 if (!more) {
                     more = true;
                     bougthPrice = await price
-                    //await shrani(symbol, bougthPrice, quoteBalance, baseBalance)
+                    //await saveBougthPrice(symbol, bougthPrice, quoteBalance, baseBalance)
                     console.log("Bougth price updated: " + symbol);
                     time = await f.getTime()
                     f.sendMail("Price updated", JSON.stringify("price would be updated at: " + time + " on market: " + symbol));
@@ -811,7 +811,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             bpq0 = await a.price(s0)
             if (bpq0) {
                 bpq0 = await m.checkNewBougthPrice(s0, bpq0)
-                await shrani(s0, bpq0)
+                await saveBougthPrice(s0, bpq0)
                 console.log(await s0 + ":" + await bpq0)
             } else {
                 f.cs("fail: " + bpq0)
@@ -820,7 +820,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             bpq1 = await a.price(s1)
             if (bpq1) {
                 bpq1 = await m.checkNewBougthPrice(s1, bpq1)
-                await shrani(s1, bpq1)
+                await saveBougthPrice(s1, bpq1)
                 console.log(await s1 + ":" + await bpq1)
             } else {
                 f.cs("fail: " + bpq1)
@@ -829,7 +829,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             bpq2 = await a.price(s2)
             if (bpq2) {
                 bpq2 = await m.checkNewBougthPrice(s2, bpq2)
-                await shrani(s2, bpq2)
+                await saveBougthPrice(s2, bpq2)
                 console.log(await s2 + ":" + await bpq2)
             } else {
                 f.cs("fail: " + bpq2)
@@ -838,7 +838,46 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             bpq3 = await a.price(s3)
             if (bpq3) {
                 bpq3 = await m.checkNewBougthPrice(s3, bpq3)
-                await shrani(s3, bpq3)
+                await saveBougthPrice(s3, bpq3)
+                console.log(await s3 + ":" + await bpq3)
+            } else {
+                f.cs("fail: " + bpq3)
+            }//*/
+        }
+
+        async function resetAllBougthPrice(baseCurrency) {
+            s0 = f.mergeSymbol(baseCurrency, q0)
+            s1 = f.mergeSymbol(baseCurrency, q1)
+            s2 = f.mergeSymbol(baseCurrency, q2)
+            s3 = f.mergeSymbol(baseCurrency, q3)
+
+            bpq0 = await a.price(s0)    //check if market exists
+            if (bpq0) {
+                await saveBougthPrice(s0, 0)
+                console.log(await s0 + ":" + await bpq0)
+            } else {
+                f.cs("fail: " + bpq0)
+            }
+
+            bpq1 = await a.price(s1)
+            if (bpq1) {
+                await saveBougthPrice(s1, 0)
+                console.log(await s1 + ":" + await bpq1)
+            } else {
+                f.cs("fail: " + bpq1)
+            }
+
+            bpq2 = await a.price(s2)
+            if (bpq2) {
+                await saveBougthPrice(s2, 0)
+                console.log(await s2 + ":" + await bpq2)
+            } else {
+                f.cs("fail: " + bpq2)
+            }
+
+            bpq3 = await a.price(s3)
+            if (bpq3) {
+                await saveBougthPrice(s3, 0)
                 console.log(await s3 + ":" + await bpq3)
             } else {
                 f.cs("fail: " + bpq3)
@@ -1058,6 +1097,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             checkNewBougthPrice: checkNewBougthPrice,
             updateAllBougthPrice: updateAllBougthPrice,
             determinePrice: determinePrice,
+            resetAllBougthPrice:resetAllBougthPrice,
         }
     }
     const m = modul();
@@ -1227,9 +1267,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                     orderType = "bougth"
 
-                    
                     m.updateAllBougthPrice(baseCurrency)
-
 
                 } else {
                     orderType = "parked"
@@ -1241,6 +1279,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 sts = await ret.status
                 if (sts == "closed") {
                     bougthPrice = 0
+                    m.resetAllBougthPrice(baseCurrency)
                     orderType = "sold"
                 } else {
                     orderType = "holding"
@@ -1270,9 +1309,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)  
                 console.log('sim end')          //sim end*/
 
-
                 //m.updateAllBougthPrice(baseCurrency)
-
 
                 //bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding";
@@ -1316,6 +1353,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)
                 console.log('sim end')          //sim end*/
 
+                //m.resetAllBougthPrice(baseCurrency)
                 //bougthPrice = 0   //dev
                 orderType = "parked";
             } else {
