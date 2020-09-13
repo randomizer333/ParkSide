@@ -4,7 +4,7 @@
 3.intracrypto trading trader
 */
 
-const { table } = require("console");
+//const { table } = require("console");
 
 //const { mergeSymbol } = require("./funk");
 
@@ -66,7 +66,7 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 21+3=24
 
-        /*"BTC/USDT", "ETH/USDT", "BNB/USDT",
+        /*"BTC/USDT",*/ "ETH/USDT", "BNB/USDT",
         "XRP/USDT",
         "LTC/USDT",
         "EOS/USDT",
@@ -75,7 +75,8 @@ let alts = [    //alt markets 21+3=24
         "XMR/USDT",
         "TRX/USDT",
         "LINK/USDT",
-                    //"ETH/BTC",  "BNB/BTC", 
+        "BCH/USDT",
+                    "ETH/BTC",  "BNB/BTC", 
     "XRP/BTC",  "XRP/ETH",  "XRP/BNB",
     "LTC/BTC",  "LTC/ETH",  "LTC/BNB",
     "EOS/BTC",  "EOS/ETH",  "EOS/BNB",
@@ -83,16 +84,20 @@ let alts = [    //alt markets 21+3=24
     "XLM/BTC",  "XLM/ETH",  "XLM/BNB",
     "XMR/BTC",  "XMR/ETH",  "XMR/BNB",
     "TRX/BTC",  "TRX/ETH",  "TRX/BNB",   
-
+    "BCH/BTC",  "BCH/BNB",
     "LINK/BTC", "LINK/ETH",
 
-    "BCH/BNB","BCH/BTC","BCH/USDT",
 
+    "YFI/BTC","YFI/USDT",
+    "XTZ/BNB","XTZ/BTC","XTZ/USDT",
+    "DOT/BNB","DOT/BTC","DOT/USDT",
+    "QTUM/BTC","QTUM/ETH","QTUM/USDT",
     //database format*/
                 
+    //"BSV/BTC","BSV/USDT",
 
     //crypto/fiat backings
-    "BNB/BTC",
+    /*"BNB/BTC",
     "ETH/BTC",
 
     "XRP/BTC",
@@ -1131,9 +1136,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         bougthPrice = await readBougthPrice(symbol)
 
         /*
-        if(!bougthPrice){
+        if(!bougthPrice){   //add bp to db
             bougthPrice = price
-        }*/
+        }//*/
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
@@ -1266,9 +1271,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 if (sts == "closed") {
                     bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                     orderType = "bougth"
-
                     m.updateAllBougthPrice(baseCurrency)
-
                 } else {
                     orderType = "parked"
                 }
@@ -1311,7 +1314,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                 //m.updateAllBougthPrice(baseCurrency)
 
-                //bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
+                //enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
 
@@ -1333,7 +1336,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)  
                 console.log('sim end')          //sim end*/
 
-                //bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
+                //enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding good";
             } else if (purchase) {
                 /*
@@ -1353,10 +1356,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)
                 console.log('sim end')          //sim end*/
 
-                //m.resetAllBougthPrice(baseCurrency)
+                //enableOrders?"":m.resetAllBougthPrice(baseCurrency)
                 //bougthPrice = 0   //dev
                 orderType = "parked";
             } else {
+                //enableOrders?"":m.resetAllBougthPrice(baseCurrency)
                 //bougthPrice = 0   //dev
                 orderType = "still none";
             }
