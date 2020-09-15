@@ -40,12 +40,11 @@ async function init() {
     return await setup();
 }
 
-
-
 let q0 = "USDT"
 let q1 = "BTC"
 let q2 = "ETH"
 let q3 = "BNB"
+let quo = ["USDT","BTC","ETH","BNB"]
 
 let quotes = [    //fiat strategy trading portofio
     //"BTC/USDT",   //in setings
@@ -238,7 +237,7 @@ async function saveBougthPrice(symbol, writePrice) {
 
 async function test(tableName, columnName) {
     //let orderback = await a.sell("LTC/BTC", 0.3, 0.007)
-    //await createDB(alts)
+    await createTable(alts)
     console.log("DB:")
     console.log(db.table1.column1)
 
@@ -294,7 +293,7 @@ async function createTable(quotes) {
     let baza = await readJSON()
     for (let i in await quotes) {
         baza[quotes[i]] = {
-            No: 0,
+            /*No: 0,
             fiatMarket: 0,
             fiatPrice: 0,
             fiatProfit: 0,
@@ -320,9 +319,9 @@ async function createTable(quotes) {
             stopLossP: 0,
             MrPrice: "____________________________________",
             sellPrice: 0,
-            price: 0,
+            price: 0,*/
             bougthPrice: 0,
-            lossPrice: "lossPrice",
+            /*lossPrice: "lossPrice",
             FSociety: "____________________________________",
             purchase: "purchase",
             more: "more",
@@ -337,7 +336,7 @@ async function createTable(quotes) {
                 hold: "hold",
                 stopLoss: "stopLoss",
             },
-            logLength: 0,
+            logLength: 0,*/
             orderType: "orderType",
             //quoteMarkets: JSON.stringify(quotes),
             //wallet: JSON.stringify(wallet)
@@ -1135,7 +1134,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         bougthPrice = await readBougthPrice(symbol)
 
-        /*
+        
         if(!bougthPrice){   //add bp to db
             bougthPrice = price
         }//*/
@@ -1314,7 +1313,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                 //m.updateAllBougthPrice(baseCurrency)
 
-                //enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
+                enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
 
@@ -1336,7 +1335,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)  
                 console.log('sim end')          //sim end*/
 
-                //enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
+                enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding good";
             } else if (purchase) {
                 /*
@@ -1357,11 +1356,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 console.log('sim end')          //sim end*/
 
                 //enableOrders?"":m.resetAllBougthPrice(baseCurrency)
-                //bougthPrice = 0   //dev
+                bougthPrice = 0   //dev
                 orderType = "parked";
             } else {
                 //enableOrders?"":m.resetAllBougthPrice(baseCurrency)
-                //bougthPrice = 0   //dev
+                bougthPrice = 0   //dev
                 orderType = "still none";
             }
             return orderType;
