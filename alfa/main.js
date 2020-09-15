@@ -44,7 +44,7 @@ let q0 = "USDT"
 let q1 = "BTC"
 let q2 = "ETH"
 let q3 = "BNB"
-let quo = ["USDT","BTC","ETH","BNB"]
+let quo = ["USDT", "BTC", "ETH", "BNB"]
 
 let quotes = [    //fiat strategy trading portofio
     //"BTC/USDT",   //in setings
@@ -63,36 +63,40 @@ let quotes = [    //fiat strategy trading portofio
     "BCH/USDT",*/
 ]
 
-let alts = [    //alt markets 21+3=24
+let alts = [    //alt markets 
 
         /*"BTC/USDT",*/ "ETH/USDT", "BNB/USDT",
-        "XRP/USDT",
-        "LTC/USDT",
-        "EOS/USDT",
-        "ADA/USDT",
-        "XLM/USDT",
-        "XMR/USDT",
-        "TRX/USDT",
-        "LINK/USDT",
-        "BCH/USDT",
-                    "ETH/BTC",  "BNB/BTC", 
+    /*"XRP/USDT",
+    "LTC/USDT",
+    "EOS/USDT",
+    "ADA/USDT",
+    "XLM/USDT",
+    "XMR/USDT",
+    "TRX/USDT",
+    "LINK/USDT",
+    "BCH/USDT",
+    "XTZ/USDT",
+    "DOT/USDT",
+    "QTUM/USDT",
+    */
+    "ETH/BTC",                "BNB/BTC",
     "XRP/BTC",  "XRP/ETH",  "XRP/BNB",
     "LTC/BTC",  "LTC/ETH",  "LTC/BNB",
     "EOS/BTC",  "EOS/ETH",  "EOS/BNB",
     "ADA/BTC",  "ADA/ETH",  "ADA/BNB",
     "XLM/BTC",  "XLM/ETH",  "XLM/BNB",
     "XMR/BTC",  "XMR/ETH",  "XMR/BNB",
-    "TRX/BTC",  "TRX/ETH",  "TRX/BNB",   
-    "BCH/BTC",  "BCH/BNB",
-    "LINK/BTC", "LINK/ETH",
+    "TRX/BTC",  "TRX/ETH",  "TRX/BNB",
+    "BCH/BTC",              "BCH/BNB",
+    "LINK/BTC","LINK/ETH",
 
 
-    "YFI/BTC","YFI/USDT",
-    "XTZ/BNB","XTZ/BTC","XTZ/USDT",
-    "DOT/BNB","DOT/BTC","DOT/USDT",
-    "QTUM/BTC","QTUM/ETH","QTUM/USDT",
+    "YFI/BTC", "YFI/USDT",
+    "XTZ/BNB", "XTZ/BTC", 
+    "DOT/BNB", "DOT/BTC", 
+    "QTUM/BTC", "QTUM/ETH", 
     //database format*/
-                
+
     //"BSV/BTC","BSV/USDT",
 
     //crypto/fiat backings
@@ -372,16 +376,20 @@ async function readJSON() {
         json = await JSON.parse(data);
     } catch (error) {
         console.log(error)
-        //json = false
+        json = false
     }
     return await json
 }
 
 async function saveTable(symbol, data) {
     let baza = await readJSON()
-    baza[symbol] = await data
-    //f.cs("saving " + symbol)
-    writeJSON(baza)
+    if (await baza) {
+        baza[symbol] = await data
+        //f.cs("saving " + symbol)
+        writeJSON(baza)
+    }else{
+        f.cs("baza corupted")
+    }
     async function writeJSON(inputJSON) {
         input = JSON.stringify(inputJSON);
         await fs.writeFile("./storage.json", "", function (err) {   //clear file
@@ -1101,7 +1109,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             checkNewBougthPrice: checkNewBougthPrice,
             updateAllBougthPrice: updateAllBougthPrice,
             determinePrice: determinePrice,
-            resetAllBougthPrice:resetAllBougthPrice,
+            resetAllBougthPrice: resetAllBougthPrice,
         }
     }
     const m = modul();
@@ -1134,8 +1142,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         bougthPrice = await readBougthPrice(symbol)
 
-        
-        if(!bougthPrice){   //add bp to db
+
+        /*if (!bougthPrice) {   //add bp to db
             bougthPrice = price
         }//*/
 
