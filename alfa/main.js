@@ -1313,7 +1313,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                 //m.updateAllBougthPrice(baseCurrency)
 
-                enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
+                //enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
 
@@ -1335,7 +1335,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)  
                 console.log('sim end')          //sim end*/
 
-                enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
+                //enableOrders?"":bougthPrice = await m.checkBougthPrice(symbol, price)     //dev
                 orderType = "holding good";
             } else if (purchase) {
                 /*
@@ -1356,11 +1356,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 console.log('sim end')          //sim end*/
 
                 //enableOrders?"":m.resetAllBougthPrice(baseCurrency)
-                bougthPrice = 0   //dev
+                //bougthPrice = 0   //dev
                 orderType = "parked";
             } else {
                 //enableOrders?"":m.resetAllBougthPrice(baseCurrency)
-                bougthPrice = 0   //dev
+                //bougthPrice = 0   //dev
                 orderType = "still none";
             }
             return orderType;
