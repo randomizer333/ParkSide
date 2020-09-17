@@ -67,7 +67,7 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 
 
-    /*"BTC/USDT",*/ "ETH/USDT", "BNB/USDT",//*/
+    /*"BTC/USDT", "ETH/USDT", "BNB/USDT",//*/
     /*"XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
@@ -86,7 +86,7 @@ let alts = [    //alt markets
     "UMA/USDT",
     "LEND/USDT",
     "MKR/USDT",*/
-    
+
     "ETH/BTC", "BNB/BTC",
     "XRP/BTC", "XRP/ETH", "XRP/BNB",
     "LTC/BTC", "LTC/ETH", "LTC/BNB",
@@ -187,7 +187,7 @@ async function setBots(quotes) {
         quotes.unshift(s.fiatMarket)
     } else if (s.strategy == "alt") {
         f.cs("Strategy: " + s.strategy)
-        quotes.unshift(s.fiatMarket)
+        //quotes.unshift(s.fiatMarket)
         quotes.push(...alts)
     }
 
@@ -1240,7 +1240,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 //f.sendMail("Bougth Info", JSON.stringify(marketInfo));
             } else if (await orderType == "lossed") {
                 f.sendMail("Lossed Info", JSON.stringify(marketInfo));
-            } else if (await orderType == "canceled") {
+            } else if (await orderType == "canceled") {     //never hapens
                 f.sendMail("Canceled", JSON.stringify(marketInfo));
             } else if (await orderType == "failed") {
                 f.sendMail("failed", JSON.stringify(marketInfo));
@@ -1258,7 +1258,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         await dbms.saveOrderType(symbol, marketInfo.orderType)
-        await dbms.saveBougthPrice(symbol, marketInfo.bougthPrice)
+        await dbms.saveBougthPrice(symbol, await marketInfo.bougthPrice)
 
         console.dir(marketInfo);
         //await f.cs(marketInfo)
