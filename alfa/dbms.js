@@ -21,12 +21,12 @@ let alts = [    //alt markets
     "QTUM/USDT",
     "YFI/USDT",     //DeFi
     "DOT/USDT",
-"COMP/USDT",
-"DAI/USDT",
-"UMA/USDT",
-"LEND/USDT",
-"MKR/USDT",
-    
+    "COMP/USDT",
+    "DAI/USDT",
+    "UMA/USDT",
+    "LEND/USDT",
+    "MKR/USDT",
+
     "ETH/BTC", "BNB/BTC",
     "XRP/BTC", "XRP/ETH", "XRP/BNB",
     "LTC/BTC", "LTC/ETH", "LTC/BNB",
@@ -71,7 +71,7 @@ async function createDB(data) {   //done
     f.cs(baza);
     await writeJSON(baza)
 }
-async function addTable(){
+async function addTable() {
 
 }
 async function writeJSON(inputJSON) {   //done
@@ -96,24 +96,25 @@ async function saveTable(symbol, data) {    //dev
     }
 }
 async function saveBougthPrice(symbol, write) {
-    if (write) {
-        let baza1 = db
-        if (baza1) {
-            baza1[symbol].bougthPrice = await write
-            saveTable(symbol, await baza1[symbol])
-        } else {
-            console.log("NO DATA")
-        }
+    //console.log("data:")
+    //console.log(write)
+    if (db && (write || write === 0)) {
+        db[symbol].timedate = f.getTime()
+        db[symbol].bougthPrice = await write
+        saveTable(symbol, await db[symbol])
+    } else {
+        console.log("NO DATA BP")
     }
 }
 async function saveOrderType(symbol, write) {
     if (write) {
         let baza1 = db
         if (baza1) {
+            //baza1[symbol].timedate = f.getTime()
             baza1[symbol].orderType = await write
             saveTable(symbol, await baza1[symbol])
         } else {
-            console.log("NO DATA")
+            console.log("NO DATA OT")
         }
     }
 }
@@ -130,10 +131,10 @@ async function readJSON() { //done
     return await json
 }
 
-async function readBougthPrice(symbol){
+async function readBougthPrice(symbol) {
     return db[symbol].bougthPrice
 }
-async function readOrderType(symbol){
+async function readOrderType(symbol) {
     return db[symbol].orderType
 }
 
