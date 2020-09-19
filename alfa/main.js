@@ -85,7 +85,8 @@ let alts = [    //alt markets
     "DAI/USDT",
     "UMA/USDT",
     "LEND/USDT",
-    "MKR/USDT",*/
+    "MKR/USDT",
+    "UNI/USDT",*/
 
     "ETH/BTC", "BNB/BTC",
     "XRP/BTC", "XRP/ETH", "XRP/BNB",
@@ -107,8 +108,13 @@ let alts = [    //alt markets
     "LEND/BTC", "LEND/ETH",
     "MKR/BTC", "MKR/BNB",
     "WBTC/BTC", "WBTC/ETH",
+    "UNI/BTC","UNI/BNB",
+
 
     /*database format
+
+
+    
 
     "BSV/BTC","BSV/USDT",
     
