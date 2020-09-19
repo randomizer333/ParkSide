@@ -213,3 +213,6 @@ fetchOrder = {
     },
     'info': { ... },              // the original unparsed order structure as is
 }
+
+
+"UNI/USDT":{"timedate":"2020.09.18 10:16:38.285","bougthPrice":0,"orderType":"parked"},"UNI/BTC":{"timedate":"2020.09.19 12:51:18.486","bougthPrice":0,"orderType":"still none"},"UNI/BNB":{"timedate":"2020.09.19 12:51:23.237","bougthPrice":0,"orderType":"still none"}}
