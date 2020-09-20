@@ -88,63 +88,43 @@ let alts = [    //alt markets
     "MKR/USDT",
     "UNI/USDT",*/
 
-    "ETH/BTC", "BNB/BTC",
-    "XRP/BTC", "XRP/ETH", "XRP/BNB",
-    "LTC/BTC", "LTC/ETH", "LTC/BNB",
-    "EOS/BTC", "EOS/ETH", "EOS/BNB",
-    "ADA/BTC", "ADA/ETH", "ADA/BNB",
-    "XLM/BTC", "XLM/ETH", "XLM/BNB",
-    "XMR/BTC", "XMR/ETH", "XMR/BNB",
-    "TRX/BTC", "TRX/ETH", "TRX/BNB",
-    "BCH/BTC", "BCH/BNB",
-    "LINK/BTC", "LINK/ETH",
-    "XTZ/BTC", "XTZ/BNB",
-    "QTUM/BTC", "QTUM/ETH",
-    "YFI/BTC",                          //DeFi 
-    "DOT/BTC", "DOT/BNB",
-    "COMP/BTC", "COMP/BNB",
-    //"DAI/BTC", "DAI/BNB",
-    "UMA/BTC",
-    "LEND/BTC", "LEND/ETH",
-    "MKR/BTC", "MKR/BNB",
-    "WBTC/BTC", "WBTC/ETH",
-    "UNI/BTC","UNI/BNB",
-
-
-    /*database format
-
-
-    
-
-    "BSV/BTC","BSV/USDT",
-    
-    //*/
-
-    //crypto/fiat backings
-    /*"BNB/BTC",
     "ETH/BTC",
-
+    "BNB/BTC",
     "XRP/BTC",
-    "LINK/BTC",
-    //"BCH/BTC",
-    //"BSV/BTC",
-    "ADA/BTC",
     "LTC/BTC",
-    //"XTZ/BTC",
     "EOS/BTC",
+    "ADA/BTC",
     "XLM/BTC",
     "XMR/BTC",
     "TRX/BTC",
-    //"MKR/BTC",//*/
-
-
-    /*"XRP/BNB",
+    "BCH/BTC",
+    "LINK/BTC",
+    "XTZ/BTC",
+    "QTUM/BTC",
+    "YFI/BTC",      //DeFi 
+    "DOT/BTC",
+    "COMP/BTC",
+    //"DAI/BTC", 
+    "UMA/BTC",
+    "LEND/BTC",
+    "MKR/BTC",
+    "WBTC/BTC",
+    "UNI/BTC",
+/*
+    "XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
     "ADA/BNB",
     "XLM/BNB",
     "XMR/BNB",
     "TRX/BNB",
+    "BCH/BNB",
+    "XTZ/BNB",
+    "DOT/BNB",
+    "COMP/BNB",
+    "DAI/BNB",
+    "MKR/BNB",
+    "UNI/BNB",
 
     "XRP/ETH",
     "LTC/ETH",
@@ -152,8 +132,18 @@ let alts = [    //alt markets
     "ADA/ETH",
     "XLM/ETH",
     "XMR/ETH",
-    "TRX/ETH",//*/
+    "TRX/ETH",
+    "LINK/ETH",
+    "QTUM/ETH",
+    "LEND/ETH",
+    "WBTC/ETH",
 
+    /*database format
+
+    "BSV/USDT",
+    "BSV/BTC",
+    
+    //*/
 ]
 
 // main setup
