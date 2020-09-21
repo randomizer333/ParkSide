@@ -67,7 +67,7 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 
 
-    /*"BTC/USDT", "ETH/USDT", "BNB/USDT",//*/
+    //"BTC/USDT", "ETH/USDT", "BNB/USDT",//*/
     /*"XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
@@ -110,7 +110,7 @@ let alts = [    //alt markets
     "MKR/BTC",
     "WBTC/BTC",
     "UNI/BTC",
-/*
+
     "XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
@@ -1254,7 +1254,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         await dbms.saveOrderType(symbol, marketInfo.orderType)
-        await dbms.saveBougthPrice(symbol, await marketInfo.bougthPrice)
+        //await dbms.saveBougthPrice(symbol, await marketInfo.bougthPrice)
 
         console.dir(marketInfo);
         //await f.cs(marketInfo)
