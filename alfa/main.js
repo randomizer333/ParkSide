@@ -67,7 +67,7 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 
 
-    //"BTC/USDT", "ETH/USDT", "BNB/USDT",//*/
+    //"BTC/USDT", "ETH/USDT", "BNB/USDT",//*/intra quote
     /*"XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
@@ -88,8 +88,8 @@ let alts = [    //alt markets
     "MKR/USDT",
     "UNI/USDT",*/
 
-    "ETH/BTC",
-    "BNB/BTC",
+    //"ETH/BTC",      //intra quote
+    //"BNB/BTC",      //intra quote
     "XRP/BTC",
     "LTC/BTC",
     "EOS/BTC",
@@ -98,18 +98,18 @@ let alts = [    //alt markets
     "XMR/BTC",
     "TRX/BTC",
     "BCH/BTC",
-    "LINK/BTC",
     "XTZ/BTC",
-    "QTUM/BTC",
-    "YFI/BTC",      //DeFi 
+    "LINK/BTC",//DeFi 
     "DOT/BTC",
-    "COMP/BTC",
+    /*"YFI/BTC",      
+    "UNI/BTC",
+    "QTUM/BTC",
+    /*"COMP/BTC",
     //"DAI/BTC", 
     "UMA/BTC",
     "LEND/BTC",
     "MKR/BTC",
-    "WBTC/BTC",
-    "UNI/BTC",
+    "WBTC/BTC",*/
 
     "XRP/BNB",
     "LTC/BNB",
@@ -121,10 +121,10 @@ let alts = [    //alt markets
     "BCH/BNB",
     "XTZ/BNB",
     "DOT/BNB",
-    "COMP/BNB",
+    /*"COMP/BNB",
     "DAI/BNB",
     "MKR/BNB",
-    "UNI/BNB",
+    "UNI/BNB",//*/
 
     "XRP/ETH",
     "LTC/ETH",
@@ -134,9 +134,9 @@ let alts = [    //alt markets
     "XMR/ETH",
     "TRX/ETH",
     "LINK/ETH",
-    "QTUM/ETH",
-    "LEND/ETH",
-    "WBTC/ETH",
+    //"QTUM/ETH",
+    //"LEND/ETH",
+    //"WBTC/ETH",
 
     /*database format
 
