@@ -99,7 +99,7 @@ async function saveBougthPrice(symbol, write) {
     //console.log("data:")
     //console.log(write)
     if (db && (write || write === 0)) {
-        db[symbol].timedate = f.getTime()
+        write == db[symbol].bougthPrice?"":db[symbol].timedate = f.getTime()    //dont update time if price hasnt changed
         db[symbol].bougthPrice = await write
         saveTable(symbol, await db[symbol])
     } else {
