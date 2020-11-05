@@ -67,7 +67,7 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 
 
-    //"BTC/USDT", "ETH/USDT", "BNB/USDT",//*/intra quote
+    "BTC/USDT", "ETH/USDT", "BNB/USDT",//*/intra quote
     /*"XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
@@ -1099,7 +1099,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else if (sale && !hold && !stopLoss && downSignal) {    //sell good
                 enableOrders ?
                     ret = await a.sell(symbol, baseBalance, price) :    //real
-                    ret = await f.fOrder(symbol, baseBalance, price)    //sim
+                    ret = await f.fOrder(symbol, baseBalance, price);   //sim
                 sts = await ret.status
                 if (sts == "closed") {
                     bougthPrice = 0
@@ -1109,10 +1109,19 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     orderType = "holding"
                 }
             } else if (sale && hold && stopLoss && downSignal) {    //sell bad stopLoss
-                enableOrders ?
-                    ret = await a.sell(symbol, baseBalance, price) :
+                enableOrders ? "" :
                     console.log('loss sell orders disabled');
-                orderType = "lossed";
+                enableOrders ?
+                    ret = await a.sell(symbol, baseBalance, price) :    //real
+                    ret = await f.fOrder(symbol, baseBalance, price);   //sim
+                sts = await ret.status
+                if (sts == "closed") {
+                    bougthPrice = 0
+                    m.resetAllBougthPrice(baseCurrency)
+                    orderType = "lossed";
+                } else {
+                    orderType = "holding"
+                }
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
 
                 /*
