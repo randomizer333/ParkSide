@@ -77,7 +77,7 @@ let alts = [    //alt markets
     "TRX/USDT",
     "BCH/USDT",
     "LINK/USDT",
-    "XTZ/USDT",
+    "XTZ/USDT",/*
     "QTUM/USDT",
     "YFI/USDT",     //DeFi
     "DOT/USDT",
