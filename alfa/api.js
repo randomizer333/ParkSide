@@ -175,7 +175,7 @@ async function priceAll() { //dev
         i++
         await f.cs(wal);
     }*/
-    await f.cs(wall);
+    f.cs(wall);
     return wal;
 }
 
@@ -316,7 +316,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
             status: await checker(orderId, symbol),
             orderId: orderId,
             orderType: "bougth",
-            bougthPrice: price,
+            bougthPrice: price,// = orderInfo(orderId)
             symbol: symbol,
             side: "buy",
         }
@@ -369,6 +369,23 @@ async function orderInfo(orderId, symbol) {  //only status returns 'open', 'clos
 
         r = await exchange.fetchOrder(orderId, symbol)
         return r.status
+    } catch (error) {
+        console.log("sent fetch: " + orderId + " on: " + symbol)
+        console.log("EEE in fetch: ", error);
+        return "failed"
+    }
+}
+
+async function orderInfoPrice(orderId, symbol) {  //returns price
+    try {
+/*
+        console.log("fetching order")
+        console.log(orderId)
+        console.log("symbol")
+        console.log(symbol)*/
+
+        r = await exchange.fetchOrder(orderId, symbol)
+        return r.price
     } catch (error) {
         console.log("sent fetch: " + orderId + " on: " + symbol)
         console.log("EEE in fetch: ", error);

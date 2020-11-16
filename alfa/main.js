@@ -67,8 +67,8 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 
 
-    "BTC/USDT", "ETH/USDT", "BNB/USDT",//*/intra quote
-    /*"XRP/USDT",
+    //"BTC/USDT", "ETH/USDT", "BNB/USDT",//*/intra quote
+    "XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
     "ADA/USDT",
@@ -630,15 +630,17 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         async function updateAllBougthPrice(baseCurrency) {
+            //make symbols
             s0 = f.mergeSymbol(baseCurrency, q0)
             s1 = f.mergeSymbol(baseCurrency, q1)
             s2 = f.mergeSymbol(baseCurrency, q2)
             s3 = f.mergeSymbol(baseCurrency, q3)
 
-            bpq0 = await a.price(s0)
+            //get prices check and store them
+            bpq0 = await a.price(s0)                            //get
             if (bpq0) {
-                bpq0 = await m.checkNewBougthPrice(s0, bpq0)
-                await dbms.saveBougthPrice(s0, bpq0)
+                bpq0 = await m.checkNewBougthPrice(s0, bpq0)    //check
+                await dbms.saveBougthPrice(s0, bpq0)            //store
                 console.log(await s0 + ":" + await bpq0)
             } else {
                 f.cs("fail: " + bpq0)
@@ -669,7 +671,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 console.log(await s3 + ":" + await bpq3)
             } else {
                 f.cs("fail: " + bpq3)
-            }//*/
+            }
         }
 
         async function resetAllBougthPrice(baseCurrency) {
