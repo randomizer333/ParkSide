@@ -88,8 +88,7 @@ let alts = [    //alt markets
     "MKR/USDT",
     "UNI/USDT",*/
 
-    //"ETH/BTC",      //intra quote
-    //"BNB/BTC",      //intra quote
+    //"ETH/BTC","BNB/BTC",      //intra quote
     "XRP/BTC",
     "LTC/BTC",
     "EOS/BTC",
