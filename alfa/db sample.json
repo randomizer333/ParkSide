@@ -1,1 +1,50 @@
-{"tableName":{"columnHeader":{"rowNumber":"cellData"}},"table1":{"column1":{"row1":"rowData","row2":"rowData","row3":"rowData","row4":"rowData"},"column2":{"row1":"rowData","row2":"rowData","row3":"rowData","row4":"rowData"},"column3":{"row1":"rowData","row2":"rowData","row3":"rowData","row4":"rowData"},"column4":{"row1":"rowData","row2":"rowData","row3":"rowData","row4":"rowData","id":3156551,"privateKey":"rowData","column3":"rowData","publicKey":"rowData","publicKey2":"rowData"}}}
+{
+    "tableName": {
+        "columnHeader": {
+            "rowNumber": "cellData"
+        }
+    },
+
+
+    "table1": {
+        "rowPrimaryKey": {  //unique name or id or row number
+            "columnHeader": "cellData",
+            "columnHeader1": "cellData",
+            "columnHeader2": "cellData",
+            "columnHeader3": "cellData",
+            "columnHeader4": "cellData",
+            "columnHeader5": "cellData",
+            "columnHeader8": "cellData"
+        },
+
+    "osebni_podatki": {
+        "13351656": {  //številka osebne
+            "ime": "Marko",
+            "priimek": "Šmid",
+            "pošta": "Bled"
+        },
+        "column2": {
+            "row1": "rowData",
+            "row2": "rowData",
+            "row3": "rowData",
+            "row4": "rowData"
+        },
+        "column3": {
+            "row1": "rowData",
+            "row2": "rowData",
+            "row3": "rowData",
+            "row4": "rowData"
+        },
+        "column4": {
+            "row1": "rowData",
+            "row2": "rowData",
+            "row3": "rowData",
+            "row4": "rowData",
+            "id": 3156551,
+            "privateKey": "rowData",
+            "column3": "rowData",
+            "publicKey": "rowData",
+            "publicKey2": "rowData"
+        }
+    }
+}
