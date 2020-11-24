@@ -67,8 +67,8 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 
 
-    //"BTC/USDT", "ETH/USDT", "BNB/USDT",//*/intra quote
-    "XRP/USDT",
+    "BTC/USDT", "ETH/USDT", "BNB/USDT",//*/intra quote
+    /*"XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
     "ADA/USDT",
@@ -88,8 +88,8 @@ let alts = [    //alt markets
     "MKR/USDT",
     "UNI/USDT",*/
 
-    //"ETH/BTC","BNB/BTC",      //intra quote
-    "XRP/BTC",
+    "ETH/BTC","BNB/BTC",      //intra quote
+    /*"XRP/BTC",
     "LTC/BTC",
     "EOS/BTC",
     "ADA/BTC",
@@ -110,7 +110,7 @@ let alts = [    //alt markets
     "MKR/BTC",
     "WBTC/BTC",*/
 
-    "XRP/BNB",
+    /*"XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
     "ADA/BNB",
@@ -125,7 +125,7 @@ let alts = [    //alt markets
     "MKR/BNB",
     "UNI/BNB",//*/
 
-    "XRP/ETH",
+    /*"XRP/ETH",
     "LTC/ETH",
     "EOS/ETH",
     "ADA/ETH",
@@ -1086,7 +1086,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
-                /*enableOrders ?
+                !pullOut && enableOrders ?
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price) :    //real
                     ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)   //sim*/
                 sts = await ret.status
