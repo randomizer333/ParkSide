@@ -4,37 +4,53 @@
             "rowNumber": "cellData"
         }
     },
-
-
     "table1": {
-        "rowPrimaryKey": {  //unique name or id or row number
+        "rowPrimaryKey": { //unique name or id or row number
             "columnHeader": "cellData",
             "columnHeader1": "cellData",
-            "columnHeader2": "cellData",
-            "columnHeader3": "cellData",
-            "columnHeader4": "cellData",
-            "columnHeader5": "cellData",
-            "columnHeader8": "cellData"
+            "columnHeader2": "cellData"
         },
-
-    "osebni_podatki": {
-        "13351656": {  //številka osebne
-            "ime": "Marko",
-            "priimek": "Šmid",
-            "pošta": "Bled"
+        "osebni_podatki": {
+            "13351656": { //številka osebne
+                "ime": "Marko",
+                "priimek": "Šmid",
+                "pošta": "Bled"
+            }
         },
-        "column2": {
-            "row1": "rowData",
-            "row2": "rowData",
-            "row3": "rowData",
-            "row4": "rowData"
+        "tableName": { //template
+            "id": { //številka osebne
+                "1": "ime",
+                "2": "priimek",
+                "3": "pošta"
+            }
         },
-        "column3": {
-            "row1": "rowData",
-            "row2": "rowData",
-            "row3": "rowData",
-            "row4": "rowData"
-        },
+        [
+            [
+                [
+                    "Marko",
+                    "Šmid",
+                    "Bled"
+                ],
+                [
+                    "Darko",
+                    "Šmid",
+                    "Bled"
+                ]
+            ],
+            [
+                [
+                    "Marko",
+                    "Šmid",
+                    "Kranj"
+                ],
+                [
+                    "Marko",
+                    "Šmid",
+                    "LJ"
+                ]
+            ]
+        ]
+            
         "column4": {
             "row1": "rowData",
             "row2": "rowData",
