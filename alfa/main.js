@@ -68,7 +68,7 @@ let quotes = [    //fiat strategy trading portofio
 let alts = [    //alt markets 
 
     "BTC/USDT", "ETH/USDT", "BNB/USDT",//*/intra quote
-    /*"XRP/USDT",
+    "XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
     "ADA/USDT",
@@ -88,8 +88,8 @@ let alts = [    //alt markets
     "MKR/USDT",
     "UNI/USDT",*/
 
-    "ETH/BTC","BNB/BTC",      //intra quote
-    /*"XRP/BTC",
+    //"ETH/BTC","BNB/BTC",      //intra quote
+    "XRP/BTC",
     "LTC/BTC",
     "EOS/BTC",
     "ADA/BTC",
@@ -110,7 +110,7 @@ let alts = [    //alt markets
     "MKR/BTC",
     "WBTC/BTC",*/
 
-    /*"XRP/BNB",
+    "XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
     "ADA/BNB",
@@ -125,7 +125,7 @@ let alts = [    //alt markets
     "MKR/BNB",
     "UNI/BNB",//*/
 
-    /*"XRP/ETH",
+    "XRP/ETH",
     "LTC/ETH",
     "EOS/ETH",
     "ADA/ETH",
@@ -1198,7 +1198,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 relativeProfit: (relativeProfit + minProfitP),
                 absoluteProfit: absoluteProfit,
                 absoluteProfit2: absoluteProfit2,
-                DeusGroup: "__________________________________",
+                DeusGroup: "___________________________",
                 fiatPrice: priceFiat,
                 fiatProfit: (absoluteProfit * priceFiat),
                 fiatProfit2: (absoluteProfit2 * priceFiat),
@@ -1211,12 +1211,12 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 time: f.getTime(),
                 ticker: tickerMinutes,
                 stopLossP: stopLossP,
-                MrPrice: "____________________________________",
+                MrPrice: "_____________________________",
                 sellPrice: sellPrice,
                 price: price,
                 bougthPrice: bougthPrice,
                 lossPrice: lossPrice,
-                FSociety: "____________________________________",
+                FSociety: "____________________________",
                 purchase: purchase,
                 more: more,
                 status: sts,
