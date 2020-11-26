@@ -1143,7 +1143,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)  
                 console.log('sim end')          //sim end*/
 
-                //m.updateAllBougthPrice(baseCurrency)
+                m.updateAllBougthPrice(baseCurrency)
 
                 //enableOrders?"":bougthPrice = await m.checkNewBougthPrice(symbol, price)     //dev
                 orderType = "holding";
