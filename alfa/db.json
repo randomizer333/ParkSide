@@ -1,1 +1,347 @@
-{"BTC/USDT":{"timedate":"2020.11.16 18:25:10.034","bougthPrice":16695.925,"orderType":"parked"},"ETH/USDT":{"timedate":"2020.11.16 17:33:03.711","bougthPrice":463.425,"orderType":"parked"},"BNB/USDT":{"timedate":"2020.11.07 13:05:53.627","bougthPrice":33,"orderType":"holding"},"XRP/USDT":{"timedate":"2020.11.24 6:55:27.741","bougthPrice":0.778395,"orderType":"parked"},"LTC/USDT":{"timedate":"2020.11.24 3:35:55.872","bougthPrice":90.85,"orderType":"parked"},"EOS/USDT":{"timedate":"2020.11.24 8:38:23.243","bougthPrice":3.6205499999999997,"orderType":"parked"},"ADA/USDT":{"timedate":"2020.11.24 3:27:51.165","bougthPrice":3.44435,"orderType":"parked"},"XLM/USDT":{"timedate":"2020.11.24 6:39:09.379","bougthPrice":0.18435,"orderType":"parked"},"XMR/USDT":{"timedate":"2020.11.24 10:19:00.372","bougthPrice":138.89,"orderType":"parked"},"TRX/USDT":{"timedate":"2020.11.24 8:54:18.671","bougthPrice":0.035945000000000005,"orderType":"parked"},"BCH/USDT":{"timedate":"2020.11.24 9:12:24.079","bougthPrice":348.405,"orderType":"parked"},"LINK/USDT":{"timedate":"2020.11.24 6:53:46.265","bougthPrice":16.205849999999998,"orderType":"parked"},"XTZ/USDT":{"timedate":"2020.11.24 5:51:32.505","bougthPrice":2.7874,"orderType":"parked"},"QTUM/USDT":{"timedate":"2020.09.19 4:07:09.301","bougthPrice":2.7255000000000003,"orderType":"none"},"YFI/USDT":{"timedate":"2020.09.16 11:59:30.973","bougthPrice":36200.490000000005,"orderType":"none"},"DOT/USDT":{"timedate":"2020.11.24 6:40:23.140","bougthPrice":6.0175,"orderType":"none"},"COMP/USDT":{"timedate":"2020.09.22 16:42:59.724","bougthPrice":0,"orderType":"none"},"DAI/USDT":{"timedate":"2020.09.16 11:59:30.973","bougthPrice":0,"orderType":"none"},"UMA/USDT":{"timedate":"2020.09.25 21:05:55.119","bougthPrice":11.252,"orderType":"none"},"LEND/USDT":{"timedate":"2020.09.25 1:12:03.393","bougthPrice":0.62939,"orderType":"none"},"MKR/USDT":{"timedate":"2020.09.30 10:19:25.465","bougthPrice":0,"orderType":"none"},"ETH/BTC":{"timedate":"2020.11.07 1:36:02.322","bougthPrice":0.029638499999999998,"orderType":"parked"},"BNB/BTC":{"timedate":"2020.11.07 13:05:54.031","bougthPrice":0,"orderType":"holding"},"XRP/BTC":{"timedate":"2020.11.24 6:55:28.109","bougthPrice":0.000042455,"orderType":"parked"},"XRP/ETH":{"timedate":"2020.11.24 6:55:28.493","bougthPrice":0.0012667300000000002,"orderType":"still none"},"XRP/BNB":{"timedate":"2020.11.24 6:55:28.884","bougthPrice":0.023289999999999998,"orderType":"parked"},"LTC/BTC":{"timedate":"2020.11.24 5:22:34.463","bougthPrice":0.0049405000000000004,"orderType":"parked"},"LTC/ETH":{"timedate":"2020.11.24 10:40:33.360","bougthPrice":0.147515,"orderType":"parked"},"LTC/BNB":{"timedate":"2020.11.24 3:35:57.032","bougthPrice":2.8275,"orderType":"parked"},"EOS/BTC":{"timedate":"2020.11.24 8:38:23.621","bougthPrice":0.0001968,"orderType":"parked"},"EOS/ETH":{"timedate":"2020.11.24 8:38:24.06","bougthPrice":0.005967999999999999,"orderType":"parked"},"EOS/BNB":{"timedate":"2020.11.24 8:57:47.405","bougthPrice":0.1086,"orderType":"parked"},"ADA/BTC":{"timedate":"2020.11.24 3:38:28.482","bougthPrice":0.000009455,"orderType":"parked"},"ADA/ETH":{"timedate":"2020.11.24 9:45:06.055","bougthPrice":0.00028237,"orderType":"parked"},"ADA/BNB":{"timedate":"2020.11.24 3:30:51.935","bougthPrice":0.005422,"orderType":"parked"},"XLM/BTC":{"timedate":"2020.11.24 6:39:09.750","bougthPrice":0.00001002,"orderType":"parked"},"XLM/ETH":{"timedate":"2020.11.24 6:39:10.125","bougthPrice":0.00029944,"orderType":"parked"},"XLM/BNB":{"timedate":"2020.11.24 6:39:10.504","bougthPrice":0.005487499999999999,"orderType":"parked"},"XMR/BTC":{"timedate":"2020.11.24 10:18:14.461","bougthPrice":0.0074545,"orderType":"parked"},"XMR/ETH":{"timedate":"2020.11.24 10:18:14.846","bougthPrice":0.22555999999999998,"orderType":"parked"},"XMR/BNB":{"timedate":"2020.11.24 6:19:01.347","bougthPrice":4.063000000000001,"orderType":"parked"},"TRX/BTC":{"timedate":"2020.11.24 8:54:19.040","bougthPrice":0.000001955,"orderType":"parked"},"TRX/ETH":{"timedate":"2020.11.24 8:54:19.441","bougthPrice":0.000059465,"orderType":"parked"},"TRX/BNB":{"timedate":"2020.11.24 8:54:19.823","bougthPrice":0.0010804,"orderType":"parked"},"BCH/BTC":{"timedate":"2020.11.24 9:10:09.810","bougthPrice":0.018888000000000002,"orderType":"parked"},"BCH/BNB":{"timedate":"2020.11.24 9:01:12.954","bougthPrice":10.395,"orderType":"parked"},"LINK/BTC":{"timedate":"2020.11.24 6:53:46.637","bougthPrice":0.000882725,"orderType":"parked"},"LINK/ETH":{"timedate":"2020.11.24 6:53:47.018","bougthPrice":0.0263265,"orderType":"parked"},"XTZ/BTC":{"timedate":"2020.11.24 5:51:32.875","bougthPrice":0.0001514,"orderType":"parked"},"XTZ/BNB":{"timedate":"2020.11.24 5:39:33.280","bougthPrice":0.08284,"orderType":"parked"},"QTUM/BTC":{"timedate":"2020.09.21 23:57:48.570","bougthPrice":0,"orderType":"holding"},"QTUM/ETH":{"timedate":"2020.09.20 12:48:57.085","bougthPrice":0,"orderType":"holding"},"YFI/BTC":{"timedate":"2020.09.21 23:57:57.099","bougthPrice":0,"orderType":"holding"},"DOT/BTC":{"timedate":"2020.11.24 6:40:23.518","bougthPrice":0.000327695,"orderType":"parked"},"DOT/BNB":{"timedate":"2020.11.24 7:20:10.176","bougthPrice":0.180935,"orderType":"parked"},"COMP/BTC":{"timedate":"2020.09.22 16:43:00.141","bougthPrice":0,"orderType":"parked"},"COMP/BNB":{"timedate":"2020.09.22 16:43:00.571","bougthPrice":0,"orderType":"still none"},"DAI/BTC":{"timedate":"2020.09.16 11:59:30.988","bougthPrice":0,"orderType":"still none"},"DAI/BNB":{"timedate":"2020.09.16 11:59:30.989","bougthPrice":0,"orderType":"still none"},"UMA/BTC":{"timedate":"2020.09.25 21:05:55.496","bougthPrice":0.001075,"orderType":"holding"},"LEND/BTC":{"timedate":"2020.09.25 1:12:03.780","bougthPrice":0.000056795,"orderType":"holding"},"LEND/ETH":{"timedate":"2020.09.25 1:12:04.196","bougthPrice":0.00163905,"orderType":"parked"},"MKR/BTC":{"timedate":"2020.09.30 10:19:25.795","bougthPrice":0,"orderType":"parked"},"MKR/BNB":{"timedate":"2020.09.30 10:19:26.138","bougthPrice":0,"orderType":"still none"},"WBTC/BTC":{"timedate":"2020.09.22 5:17:13.873","bougthPrice":0,"orderType":"still none"},"WBTC/ETH":{"timedate":"2020.09.22 5:17:14.257","bougthPrice":0,"orderType":"parked"},"UNI/USDT":{"timedate":"2020.09.28 2:15:55.990","bougthPrice":4.9441,"orderType":"parked"},"UNI/BTC":{"timedate":"2020.09.28 2:15:56.427","bougthPrice":0.00045464,"orderType":"still none"},"UNI/BNB":{"timedate":"2020.09.28 2:15:56.778","bougthPrice":0.18807000000000001,"orderType":"holding"}}
+{
+    "BTC/USDT": {
+        "timedate": "2020.11.16 18:25:10.034",
+        "bougthPrice": 0,
+        "orderType": "parked"
+    },
+    "ETH/USDT": {
+        "timedate": "2020.11.16 17:33:03.711",
+        "bougthPrice": 0,
+        "orderType": "parked"
+    },
+    "BNB/USDT": {
+        "timedate": "2020.11.07 13:05:53.627",
+        "bougthPrice": 33,
+        "orderType": "still none"
+    },
+    "XRP/USDT": {
+        "timedate": "2020.11.24 6:55:27.741",
+        "bougthPrice": 0,
+        "orderType": "parked"
+    },
+    "LTC/USDT": {
+        "timedate": "2020.11.24 3:35:55.872",
+        "bougthPrice": 0,
+        "orderType": "parked"
+    },
+    "EOS/USDT": {
+        "timedate": "2020.11.24 8:38:23.243",
+        "bougthPrice": 0,
+        "orderType": "parked"
+    },
+    "ADA/USDT": {
+        "timedate": "2020.11.24 3:27:51.165",
+        "bougthPrice": 3.44435,
+        "orderType": "parked"
+    },
+    "XLM/USDT": {
+        "timedate": "2020.11.24 6:39:09.379",
+        "bougthPrice": 0.18435,
+        "orderType": "parked"
+    },
+    "XMR/USDT": {
+        "timedate": "2020.11.24 10:19:00.372",
+        "bougthPrice": 138.89,
+        "orderType": "parked"
+    },
+    "TRX/USDT": {
+        "timedate": "2020.11.24 8:54:18.671",
+        "bougthPrice": 0.035945000000000005,
+        "orderType": "parked"
+    },
+    "BCH/USDT": {
+        "timedate": "2020.11.24 9:12:24.079",
+        "bougthPrice": 348.405,
+        "orderType": "parked"
+    },
+    "LINK/USDT": {
+        "timedate": "2020.11.24 6:53:46.265",
+        "bougthPrice": 16.205849999999998,
+        "orderType": "parked"
+    },
+    "XTZ/USDT": {
+        "timedate": "2020.11.24 5:51:32.505",
+        "bougthPrice": 2.7874,
+        "orderType": "parked"
+    },
+    "QTUM/USDT": {
+        "timedate": "2020.09.19 4:07:09.301",
+        "bougthPrice": 2.7255000000000003,
+        "orderType": "none"
+    },
+    "YFI/USDT": {
+        "timedate": "2020.09.16 11:59:30.973",
+        "bougthPrice": 36200.490000000005,
+        "orderType": "none"
+    },
+    "DOT/USDT": {
+        "timedate": "2020.11.24 6:40:23.140",
+        "bougthPrice": 6.0175,
+        "orderType": "none"
+    },
+    "COMP/USDT": {
+        "timedate": "2020.09.22 16:42:59.724",
+        "bougthPrice": 0,
+        "orderType": "none"
+    },
+    "DAI/USDT": {
+        "timedate": "2020.09.16 11:59:30.973",
+        "bougthPrice": 0,
+        "orderType": "none"
+    },
+    "UMA/USDT": {
+        "timedate": "2020.09.25 21:05:55.119",
+        "bougthPrice": 11.252,
+        "orderType": "none"
+    },
+    "LEND/USDT": {
+        "timedate": "2020.09.25 1:12:03.393",
+        "bougthPrice": 0.62939,
+        "orderType": "none"
+    },
+    "MKR/USDT": {
+        "timedate": "2020.09.30 10:19:25.465",
+        "bougthPrice": 0,
+        "orderType": "none"
+    },
+    "ETH/BTC": {
+        "timedate": "2020.11.07 1:36:02.322",
+        "bougthPrice": 0,
+        "orderType": "parked"
+    },
+    "BNB/BTC": {
+        "timedate": "2020.11.07 13:05:54.031",
+        "bougthPrice": 0.00165,
+        "orderType": "holding"
+    },
+    "XRP/BTC": {
+        "timedate": "2020.11.24 6:55:28.109",
+        "bougthPrice": 0.000042455,
+        "orderType": "parked"
+    },
+    "XRP/ETH": {
+        "timedate": "2020.11.24 6:55:28.493",
+        "bougthPrice": 0.0012667300000000002,
+        "orderType": "still none"
+    },
+    "XRP/BNB": {
+        "timedate": "2020.11.24 6:55:28.884",
+        "bougthPrice": 0.023289999999999998,
+        "orderType": "parked"
+    },
+    "LTC/BTC": {
+        "timedate": "2020.11.24 5:22:34.463",
+        "bougthPrice": 0.0049405000000000004,
+        "orderType": "parked"
+    },
+    "LTC/ETH": {
+        "timedate": "2020.11.24 10:40:33.360",
+        "bougthPrice": 0.147515,
+        "orderType": "parked"
+    },
+    "LTC/BNB": {
+        "timedate": "2020.11.24 3:35:57.032",
+        "bougthPrice": 2.8275,
+        "orderType": "parked"
+    },
+    "EOS/BTC": {
+        "timedate": "2020.11.24 8:38:23.621",
+        "bougthPrice": 0.0001968,
+        "orderType": "parked"
+    },
+    "EOS/ETH": {
+        "timedate": "2020.11.24 8:38:24.06",
+        "bougthPrice": 0.005967999999999999,
+        "orderType": "parked"
+    },
+    "EOS/BNB": {
+        "timedate": "2020.11.24 8:57:47.405",
+        "bougthPrice": 0.1086,
+        "orderType": "parked"
+    },
+    "ADA/BTC": {
+        "timedate": "2020.11.24 3:38:28.482",
+        "bougthPrice": 0.000009455,
+        "orderType": "parked"
+    },
+    "ADA/ETH": {
+        "timedate": "2020.11.24 9:45:06.055",
+        "bougthPrice": 0.00028237,
+        "orderType": "parked"
+    },
+    "ADA/BNB": {
+        "timedate": "2020.11.24 3:30:51.935",
+        "bougthPrice": 0.005422,
+        "orderType": "parked"
+    },
+    "XLM/BTC": {
+        "timedate": "2020.11.24 6:39:09.750",
+        "bougthPrice": 0.00001002,
+        "orderType": "parked"
+    },
+    "XLM/ETH": {
+        "timedate": "2020.11.24 6:39:10.125",
+        "bougthPrice": 0.00029944,
+        "orderType": "parked"
+    },
+    "XLM/BNB": {
+        "timedate": "2020.11.24 6:39:10.504",
+        "bougthPrice": 0.005487499999999999,
+        "orderType": "parked"
+    },
+    "XMR/BTC": {
+        "timedate": "2020.11.24 10:18:14.461",
+        "bougthPrice": 0.0074545,
+        "orderType": "parked"
+    },
+    "XMR/ETH": {
+        "timedate": "2020.11.24 10:18:14.846",
+        "bougthPrice": 0.22555999999999998,
+        "orderType": "parked"
+    },
+    "XMR/BNB": {
+        "timedate": "2020.11.24 6:19:01.347",
+        "bougthPrice": 4.063000000000001,
+        "orderType": "parked"
+    },
+    "TRX/BTC": {
+        "timedate": "2020.11.24 8:54:19.040",
+        "bougthPrice": 0.000001955,
+        "orderType": "parked"
+    },
+    "TRX/ETH": {
+        "timedate": "2020.11.24 8:54:19.441",
+        "bougthPrice": 0.000059465,
+        "orderType": "parked"
+    },
+    "TRX/BNB": {
+        "timedate": "2020.11.24 8:54:19.823",
+        "bougthPrice": 0.0010804,
+        "orderType": "parked"
+    },
+    "BCH/BTC": {
+        "timedate": "2020.11.24 9:10:09.810",
+        "bougthPrice": 0.018888000000000002,
+        "orderType": "parked"
+    },
+    "BCH/BNB": {
+        "timedate": "2020.11.24 9:01:12.954",
+        "bougthPrice": 10.395,
+        "orderType": "parked"
+    },
+    "LINK/BTC": {
+        "timedate": "2020.11.24 6:53:46.637",
+        "bougthPrice": 0.000882725,
+        "orderType": "parked"
+    },
+    "LINK/ETH": {
+        "timedate": "2020.11.24 6:53:47.018",
+        "bougthPrice": 0.0263265,
+        "orderType": "parked"
+    },
+    "XTZ/BTC": {
+        "timedate": "2020.11.24 5:51:32.875",
+        "bougthPrice": 0.0001514,
+        "orderType": "parked"
+    },
+    "XTZ/BNB": {
+        "timedate": "2020.11.24 5:39:33.280",
+        "bougthPrice": 0.08284,
+        "orderType": "parked"
+    },
+    "QTUM/BTC": {
+        "timedate": "2020.09.21 23:57:48.570",
+        "bougthPrice": 0,
+        "orderType": "holding"
+    },
+    "QTUM/ETH": {
+        "timedate": "2020.09.20 12:48:57.085",
+        "bougthPrice": 0,
+        "orderType": "holding"
+    },
+    "YFI/BTC": {
+        "timedate": "2020.09.21 23:57:57.099",
+        "bougthPrice": 0,
+        "orderType": "holding"
+    },
+    "DOT/BTC": {
+        "timedate": "2020.11.24 6:40:23.518",
+        "bougthPrice": 0.000327695,
+        "orderType": "parked"
+    },
+    "DOT/BNB": {
+        "timedate": "2020.11.24 7:20:10.176",
+        "bougthPrice": 0.180935,
+        "orderType": "parked"
+    },
+    "COMP/BTC": {
+        "timedate": "2020.09.22 16:43:00.141",
+        "bougthPrice": 0,
+        "orderType": "parked"
+    },
+    "COMP/BNB": {
+        "timedate": "2020.09.22 16:43:00.571",
+        "bougthPrice": 0,
+        "orderType": "still none"
+    },
+    "DAI/BTC": {
+        "timedate": "2020.09.16 11:59:30.988",
+        "bougthPrice": 0,
+        "orderType": "still none"
+    },
+    "DAI/BNB": {
+        "timedate": "2020.09.16 11:59:30.989",
+        "bougthPrice": 0,
+        "orderType": "still none"
+    },
+    "UMA/BTC": {
+        "timedate": "2020.09.25 21:05:55.496",
+        "bougthPrice": 0.001075,
+        "orderType": "holding"
+    },
+    "LEND/BTC": {
+        "timedate": "2020.09.25 1:12:03.780",
+        "bougthPrice": 0.000056795,
+        "orderType": "holding"
+    },
+    "LEND/ETH": {
+        "timedate": "2020.09.25 1:12:04.196",
+        "bougthPrice": 0.00163905,
+        "orderType": "parked"
+    },
+    "MKR/BTC": {
+        "timedate": "2020.09.30 10:19:25.795",
+        "bougthPrice": 0,
+        "orderType": "parked"
+    },
+    "MKR/BNB": {
+        "timedate": "2020.09.30 10:19:26.138",
+        "bougthPrice": 0,
+        "orderType": "still none"
+    },
+    "WBTC/BTC": {
+        "timedate": "2020.09.22 5:17:13.873",
+        "bougthPrice": 0,
+        "orderType": "still none"
+    },
+    "WBTC/ETH": {
+        "timedate": "2020.09.22 5:17:14.257",
+        "bougthPrice": 0,
+        "orderType": "parked"
+    },
+    "UNI/USDT": {
+        "timedate": "2020.09.28 2:15:55.990",
+        "bougthPrice": 4.9441,
+        "orderType": "parked"
+    },
+    "UNI/BTC": {
+        "timedate": "2020.09.28 2:15:56.427",
+        "bougthPrice": 0.00045464,
+        "orderType": "still none"
+    },
+    "UNI/BNB": {
+        "timedate": "2020.09.28 2:15:56.778",
+        "bougthPrice": 0.18807000000000001,
+        "orderType": "holding"
+    }
+}
