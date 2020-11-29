@@ -89,7 +89,7 @@ let alts = [    //alt markets
     "UNI/USDT",*/
 
     //"ETH/BTC","BNB/BTC",      //intra quote
-    "XRP/BTC",
+    /*"XRP/BTC",
     "LTC/BTC",
     "EOS/BTC",
     "ADA/BTC",
@@ -110,7 +110,7 @@ let alts = [    //alt markets
     "MKR/BTC",
     "WBTC/BTC",*/
 
-    "XRP/BNB",
+    /*"XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
     "ADA/BNB",
@@ -125,7 +125,7 @@ let alts = [    //alt markets
     "MKR/BNB",
     "UNI/BNB",//*/
 
-    "XRP/ETH",
+    /*"XRP/ETH",
     "LTC/ETH",
     "EOS/ETH",
     "ADA/ETH",
@@ -576,9 +576,15 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
             return await r;
         }
-        async function checkStopLoss(price, stopLossP, sellPrice) {      //force sale  price, bougthPrice, lossP
-            absStopLoss = await f.part(stopLossP, sellPrice);
-            lossPrice = await sellPrice - absStopLoss;
+        async function checkStopLoss(price, stopLossP, sellPrice, quoteCurrency) {      //force sale  price, bougthPrice, lossP
+            
+            if(s.fiatCurrency == quoteCurrency){//if marketis fiat use stoploss
+                absStopLoss = await f.part(stopLossP, sellPrice);
+            }else{
+                absStopLoss = await f.part(99, sellPrice);
+            }
+            
+            lossPrice = await sellPrice - await absStopLoss;
             loss = await sellPrice - price;     //default: loss = sellPrice - price;
             relativeLoss = await f.percent(loss, sellPrice);
             /*f.cs("loss       : " + loss);
@@ -963,7 +969,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }//*/
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
-        stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice);
+        stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice, quoteCurrency);
 
         indicator = await indicators(price, volume, change24hP)
         async function indicators(price, volume, change24hP) {
