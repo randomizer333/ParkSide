@@ -4,6 +4,8 @@
 3.intracrypto trading trader
 */
 
+const { db } = require("./dbms");
+
 //const { table } = require("console");
 
 //const { mergeSymbol } = require("./funk");
@@ -89,7 +91,7 @@ let alts = [    //alt markets
     "UNI/USDT",*/
 
     //"ETH/BTC","BNB/BTC",      //intra quote
-    /*"XRP/BTC",
+    "XRP/BTC",
     "LTC/BTC",
     "EOS/BTC",
     "ADA/BTC",
@@ -110,7 +112,7 @@ let alts = [    //alt markets
     "MKR/BTC",
     "WBTC/BTC",*/
 
-    /*"XRP/BNB",
+    "XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
     "ADA/BNB",
@@ -125,7 +127,7 @@ let alts = [    //alt markets
     "MKR/BNB",
     "UNI/BNB",//*/
 
-    /*"XRP/ETH",
+    "XRP/ETH",
     "LTC/ETH",
     "EOS/ETH",
     "ADA/ETH",
@@ -556,10 +558,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         let tradingFeeAbs;
-        async function safeSale(tradingFeeP, bougthPrice, price, minProfitP) {  //returns holding status
-            feeDouble = tradingFeeP * 2;
-            //f.cs("FeeDouble:" + feeDouble);
-            tradingFeeAbs = await f.part(feeDouble, bougthPrice);
+        async function safeSale(tradingFeeP, bougthPrice, price, minProfitP, buysN) {  //returns holding status
+            totalFees = tradingFeeP * (buysN + 1);
+            f.cs("totalFees:" + totalFees);
+            tradingFeeAbs = await f.part(totalFees, bougthPrice);
             //f.cs("tradingFeeAbs:" + tradingFeeAbs);
             minProfitAbs = await f.part(minProfitP, bougthPrice);
             //f.cs("minProfitAbs:" + minProfitAbs);
@@ -577,13 +579,13 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             return await r;
         }
         async function checkStopLoss(price, stopLossP, sellPrice, quoteCurrency) {      //force sale  price, bougthPrice, lossP
-            
-            if(s.fiatCurrency == quoteCurrency){//if marketis fiat use stoploss
+
+            if (s.fiatCurrency == quoteCurrency) {//if marketis fiat use stoploss
                 absStopLoss = await f.part(stopLossP, sellPrice);
-            }else{
+            } else {
                 absStopLoss = await f.part(99, sellPrice);
             }
-            
+
             lossPrice = await sellPrice - await absStopLoss;
             loss = await sellPrice - price;     //default: loss = sellPrice - price;
             relativeLoss = await f.percent(loss, sellPrice);
@@ -716,6 +718,86 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else {
                 f.cs("fail: " + bpq3)
             }//*/
+        }
+
+        async function updateAllBuys(baseCurrency, write) {
+            s0 = f.mergeSymbol(baseCurrency, q0)
+            s1 = f.mergeSymbol(baseCurrency, q1)
+            s2 = f.mergeSymbol(baseCurrency, q2)
+            s3 = f.mergeSymbol(baseCurrency, q3)
+
+            //let write = 0 //replace with this charachter
+
+            //f.cs("reseting Buys for base group: "+baseCurrency)
+
+            if (dbms.db[s0]) {
+                await dbms.saveBuys(s0, write)
+                f.cs("Buys for " + s0 + " saved")
+            } else {
+                f.cs("Cannot save buys for: " + s0)
+            }
+
+            if (dbms.db[s1]) {
+                await dbms.saveBuys(s1, write)
+                f.cs("Buys for " + s1 + " saved")
+            } else {
+                f.cs("Cannot save buys for: " + s1)
+            }
+
+            if (dbms.db[s2]) {
+                await dbms.saveBuys(s2, write)
+                f.cs("Buys for " + s2 + " saved")
+            } else {
+                f.cs("Cannot save buys for: " + s2)
+            }
+
+            if (dbms.db[s3]) {
+                await dbms.saveBuys(s3, write)
+                f.cs("Buys for " + s3 + " saved")
+            } else {
+                f.cs("Cannot save buys for: " + s3)
+            }
+
+        }
+
+        async function resetAllBuys(baseCurrency) {
+            s0 = f.mergeSymbol(baseCurrency, q0)
+            s1 = f.mergeSymbol(baseCurrency, q1)
+            s2 = f.mergeSymbol(baseCurrency, q2)
+            s3 = f.mergeSymbol(baseCurrency, q3)
+
+            let ch = 0 //replace with this charachter
+
+            //f.cs("reseting Buys for base group: "+baseCurrency)
+
+            if (dbms.db[s0]) {
+                await dbms.saveBuys(s0, ch)
+                f.cs("Buys for " + s0 + " saved")
+            } else {
+                f.cs("Cannot save buys for: " + s0)
+            }
+
+            if (dbms.db[s1]) {
+                await dbms.saveBuys(s1, ch)
+                f.cs("Buys for " + s1 + " saved")
+            } else {
+                f.cs("Cannot save buys for: " + s1)
+            }
+
+            if (dbms.db[s2]) {
+                await dbms.saveBuys(s2, ch)
+                f.cs("Buys for " + s2 + " saved")
+            } else {
+                f.cs("Cannot save buys for: " + s2)
+            }
+
+            if (dbms.db[s3]) {
+                await dbms.saveBuys(s3, ch)
+                f.cs("Buys for " + s3 + " saved")
+            } else {
+                f.cs("Cannot save buys for: " + s3)
+            }
+
         }
 
         let market21a, market32a, market31a, market21b, market32b, market31b
@@ -932,6 +1014,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             updateAllBougthPrice: updateAllBougthPrice,
             determinePrice: determinePrice,
             resetAllBougthPrice: resetAllBougthPrice,
+            resetAllBuys: resetAllBuys,
+            updateAllBuys: updateAllBuys
         }
     }
     const m = modul();
@@ -964,11 +1048,17 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         bougthPrice = await dbms.readBougthPrice(symbol)
 
+        let buys = await dbms.readBuys(symbol)
+        //f.cs("Buys for " + symbol + ": " + buys)
+        //m.resetAllBuys(baseCurrency)
+        //buys++
+        //await m.updateAllBuys(baseCurrency,buys)
+
         /*if (!bougthPrice) {   //add bp to db
             bougthPrice = price
         }//*/
 
-        hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP);
+        hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP, buys);
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice, quoteCurrency);
 
         indicator = await indicators(price, volume, change24hP)
@@ -1100,6 +1190,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                     orderType = "bougth"
                     m.updateAllBougthPrice(baseCurrency)
+
+                    buys++                                      //buys
+                    await m.updateAllBuys(baseCurrency, buys)   //buys
+
                 } else {
                     orderType = "parked"
                 }
@@ -1111,6 +1205,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 if (sts == "closed") {
                     bougthPrice = 0
                     m.resetAllBougthPrice(baseCurrency)
+                    m.resetAllBuys(baseCurrency)                //buys
                     orderType = "sold"
                 } else {
                     orderType = "holding"
@@ -1125,6 +1220,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 if (sts == "closed") {
                     bougthPrice = 0
                     m.resetAllBougthPrice(baseCurrency)
+                    m.resetAllBuys(baseCurrency)                //buys
                     orderType = "lossed";
                 } else {
                     orderType = "holding"
@@ -1222,6 +1318,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 price: price,
                 bougthPrice: bougthPrice,
                 lossPrice: lossPrice,
+                buys: buys,
                 FSociety: "____________________________",
                 purchase: purchase,
                 more: more,

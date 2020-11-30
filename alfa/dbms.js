@@ -118,6 +118,14 @@ async function saveOrderType(symbol, write) {
         }
     }
 }
+async function saveBuys(symbol, write) {
+    if (db && (write || write === 0)) {
+        db[symbol].buys = await write
+        saveTable(symbol, await db[symbol])
+    } else {
+        console.log("NO DATA BP")
+    }
+}
 
 //read data
 async function readJSON() { //done
@@ -137,6 +145,11 @@ async function readBougthPrice(symbol) {
 async function readOrderType(symbol) {
     return db[symbol].orderType
 }
+async function readBuys(symbol) {
+    return db[symbol].buys
+}
+
+
 
 //exports
 exports.db = db
@@ -145,4 +158,6 @@ exports.saveBougthPrice = saveBougthPrice
 exports.saveOrderType = saveOrderType
 exports.readBougthPrice = readBougthPrice
 exports.readOrderType = readOrderType
+exports.readBuys = readBuys
+exports.saveBuys = saveBuys
 
