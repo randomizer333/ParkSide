@@ -560,7 +560,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         let tradingFeeAbs;
         async function safeSale(tradingFeeP, bougthPrice, price, minProfitP, buysN) {  //returns holding status
             totalFees = tradingFeeP * (buysN + 1);
-            f.cs("totalFees:" + totalFees);
+            //f.cs("totalFees:" + totalFees);
             tradingFeeAbs = await f.part(totalFees, bougthPrice);
             //f.cs("tradingFeeAbs:" + tradingFeeAbs);
             minProfitAbs = await f.part(minProfitP, bougthPrice);
@@ -1054,6 +1054,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //buys++
         //await m.updateAllBuys(baseCurrency,buys)
 
+        //f.cs("pulot variable is: "+s.pullOut)
+
         /*if (!bougthPrice) {   //add bp to db
             bougthPrice = price
         }//*/
@@ -1182,7 +1184,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
-                !pullOut && enableOrders ?
+                !s.pullOut && enableOrders ?
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price) :    //real
                     ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)   //sim*/
                 sts = await ret.status
