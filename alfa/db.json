@@ -73,7 +73,7 @@
     },
     "XTZ/USDT": {
         "timedate": "2020.12.02 22:59:59.272",
-        "bougthPrice": 0,
+        "bougthPrice": 2.3327,
         "orderType": "parked",
         "buys": 1
     },
@@ -86,7 +86,7 @@
     "YFI/USDT": {
         "timedate": "2020.09.16 11:59:30.973",
         "bougthPrice": 0,
-        "orderType": "parked",
+        "orderType": "still none",
         "buys": 0
     },
     "DOT/USDT": {
@@ -146,7 +146,7 @@
     "XRP/BTC": {
         "timedate": "2020.12.02 22:37:33.980",
         "bougthPrice": 0.000032315000000000005,
-        "orderType": "still none",
+        "orderType": "holding",
         "buys": 0
     },
     "XRP/ETH": {
@@ -170,7 +170,7 @@
     "LTC/ETH": {
         "timedate": "2020.12.01 19:13:42.291",
         "bougthPrice": 0,
-        "orderType": "parked",
+        "orderType": "still none",
         "buys": 0
     },
     "LTC/BNB": {
@@ -180,27 +180,27 @@
         "buys": 0
     },
     "EOS/BTC": {
-        "timedate": "2020.12.02 22:36:55.980",
-        "bougthPrice": 0.0001589,
-        "orderType": "holding",
+        "timedate": "2020.12.02 23:32:28.490",
+        "bougthPrice": 0,
+        "orderType": "still none",
         "buys": 0
     },
     "EOS/ETH": {
-        "timedate": "2020.12.02 22:36:56.805",
-        "bougthPrice": 0.005084,
-        "orderType": "holding",
+        "timedate": "2020.12.02 23:32:29.094",
+        "bougthPrice": 0,
+        "orderType": "parked",
         "buys": 0
     },
     "EOS/BNB": {
-        "timedate": "2020.12.02 22:36:57.797",
-        "bougthPrice": 0.09985,
-        "orderType": "holding good",
+        "timedate": "2020.12.02 23:32:30.221",
+        "bougthPrice": 0,
+        "orderType": "still none",
         "buys": 0
     },
     "ADA/BTC": {
         "timedate": "2020.12.02 21:23:55.586",
         "bougthPrice": 0,
-        "orderType": "still none",
+        "orderType": "holding",
         "buys": 0
     },
     "ADA/ETH": {
@@ -302,7 +302,7 @@
     "XTZ/BNB": {
         "timedate": "2020.12.02 22:38:11.624",
         "bougthPrice": 0.07873,
-        "orderType": "holding",
+        "orderType": "holding good",
         "buys": 1
     },
     "QTUM/BTC": {
@@ -326,7 +326,7 @@
     "DOT/BTC": {
         "timedate": "2020.12.02 19:06:42.120",
         "bougthPrice": 0,
-        "orderType": "holding",
+        "orderType": "still none",
         "buys": 0
     },
     "DOT/BNB": {
