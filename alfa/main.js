@@ -4,7 +4,7 @@
 3.intracrypto trading trader
 */
 
-const { db } = require("./dbms");
+//const { db } = require("./dbms");
 
 //const { table } = require("console");
 
@@ -79,10 +79,10 @@ let alts = [    //alt markets
     "TRX/USDT",
     "BCH/USDT",
     "LINK/USDT",
-    "XTZ/USDT",/*
-    "QTUM/USDT",
+    "XTZ/USDT",
     "YFI/USDT",     //DeFi
     "DOT/USDT",
+    /*"QTUM/USDT",
     "COMP/USDT",
     "DAI/USDT",
     "UMA/USDT",
@@ -90,7 +90,7 @@ let alts = [    //alt markets
     "MKR/USDT",
     "UNI/USDT",*/
 
-    "ETH/BTC","BNB/BTC",      //intra quote
+    //"ETH/BTC","BNB/BTC",      //intra quote
     "XRP/BTC",
     "LTC/BTC",
     "EOS/BTC",
@@ -102,8 +102,8 @@ let alts = [    //alt markets
     "XTZ/BTC",
     "LINK/BTC",//DeFi 
     "DOT/BTC",
-    /*"YFI/BTC",      
-    "UNI/BTC",
+    "YFI/BTC",      
+    /*"UNI/BTC",
     "QTUM/BTC",
     /*"COMP/BTC",
     //"DAI/BTC", 
@@ -111,7 +111,7 @@ let alts = [    //alt markets
     "LEND/BTC",
     "MKR/BTC",
     "WBTC/BTC",*/
-
+    
     "XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
@@ -127,6 +127,7 @@ let alts = [    //alt markets
     "MKR/BNB",
     "UNI/BNB",//*/
 
+    //"BNB/ETH",   //intra quote
     "XRP/ETH",
     "LTC/ETH",
     "EOS/ETH",
@@ -643,6 +644,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             s2 = f.mergeSymbol(baseCurrency, q2)
             s3 = f.mergeSymbol(baseCurrency, q3)
 
+            f.cs("Updating all bougth prices!")
+
             //get prices check and store them
             bpq0 = await a.price(s0)                            //get
             if (bpq0) {
@@ -687,36 +690,36 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             s2 = f.mergeSymbol(baseCurrency, q2)
             s3 = f.mergeSymbol(baseCurrency, q3)
 
-            bpq0 = await a.price(s0)    //check if market exists
+            bpq0 = await a.price(s0)    //only check if market exists
             if (bpq0) {
                 await dbms.saveBougthPrice(s0, 0)
-                console.log(await s0 + ":" + await bpq0)
+                console.log(await s0 + ": bougthPrice reset to 0")
             } else {
-                f.cs("fail: " + bpq0)
+                f.cs("no such marketno such market: " + bpq0)
             }
 
             bpq1 = await a.price(s1)
             if (bpq1) {
                 await dbms.saveBougthPrice(s1, 0)
-                console.log(await s1 + ":" + await bpq1)
+                console.log(await s1 + ": bougthPrice reset to 0")
             } else {
-                f.cs("fail: " + bpq1)
+                f.cs("no such market: " + bpq1)
             }
 
             bpq2 = await a.price(s2)
             if (bpq2) {
                 await dbms.saveBougthPrice(s2, 0)
-                console.log(await s2 + ":" + await bpq2)
+                console.log(await s2 + ": bougthPrice reset to 0")
             } else {
-                f.cs("fail: " + bpq2)
+                f.cs("no such market: " + bpq2)
             }
 
             bpq3 = await a.price(s3)
             if (bpq3) {
                 await dbms.saveBougthPrice(s3, 0)
-                console.log(await s3 + ":" + await bpq3)
+                console.log(await s3 + ": bougthPrice reset to 0")
             } else {
-                f.cs("fail: " + bpq3)
+                f.cs("no such market: " + bpq3)
             }//*/
         }
 
@@ -772,28 +775,28 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             if (dbms.db[s0]) {
                 await dbms.saveBuys(s0, ch)
-                f.cs("Buys for " + s0 + " saved")
+                f.cs("Buys for " + s0 + " reset")
             } else {
                 f.cs("Cannot save buys for: " + s0)
             }
 
             if (dbms.db[s1]) {
                 await dbms.saveBuys(s1, ch)
-                f.cs("Buys for " + s1 + " saved")
+                f.cs("Buys for " + s1 + " reset")
             } else {
                 f.cs("Cannot save buys for: " + s1)
             }
 
             if (dbms.db[s2]) {
                 await dbms.saveBuys(s2, ch)
-                f.cs("Buys for " + s2 + " saved")
+                f.cs("Buys for " + s2 + " reset")
             } else {
                 f.cs("Cannot save buys for: " + s2)
             }
 
             if (dbms.db[s3]) {
                 await dbms.saveBuys(s3, ch)
-                f.cs("Buys for " + s3 + " saved")
+                f.cs("Buys for " + s3 + " reset")
             } else {
                 f.cs("Cannot save buys for: " + s3)
             }
@@ -1183,7 +1186,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
-            if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {    // buy 
+            if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {// buy 
                 !s.pullOut && enableOrders ?
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price) :    //real
                     ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)   //sim*/
@@ -1247,9 +1250,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)  
                 console.log('sim end')          //sim end*/
 
-                m.updateAllBougthPrice(baseCurrency)
+                //m.updateAllBougthPrice(baseCurrency)  //dev
 
                 //enableOrders?"":bougthPrice = await m.checkNewBougthPrice(symbol, price)     //dev
+
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
                 //enableOrders?"":bougthPrice = await m.checkNewBougthPrice(symbol, price)     //dev
@@ -1272,8 +1276,12 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)
                 console.log('sim end')          //sim end*/
 
-                //enableOrders?"":m.resetAllBougthPrice(baseCurrency)
-                //bougthPrice = 0   //dev
+                //m.resetAllBougthPrice(baseCurrency)   //dev not good
+                //m.resetAllBuys(baseCurrency)                //dev buys
+
+                //bougthPrice = 0     //dev
+                //await dbms.saveBougthPrice(symbol, bougthPrice)
+
                 orderType = "parked";
             } else {
                 //enableOrders?"":m.resetAllBougthPrice(baseCurrency)
@@ -1369,7 +1377,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         await dbms.saveOrderType(symbol, marketInfo.orderType)
-        //await dbms.saveBougthPrice(symbol, await marketInfo.bougthPrice)
 
         console.dir(marketInfo);
         //await f.cs(marketInfo)
