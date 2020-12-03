@@ -155,10 +155,8 @@ function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second 
         switch (selectReturn) {
                 case "first":
                         return first;
-                        break;
                 case "second":
                         return second;
-                        break;
         }
 }
 
