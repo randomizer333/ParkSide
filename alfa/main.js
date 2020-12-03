@@ -102,7 +102,7 @@ let alts = [    //alt markets
     "XTZ/BTC",
     "LINK/BTC",//DeFi 
     "DOT/BTC",
-    "YFI/BTC",      
+    "YFI/BTC",
     /*"UNI/BTC",
     "QTUM/BTC",
     /*"COMP/BTC",
@@ -111,7 +111,7 @@ let alts = [    //alt markets
     "LEND/BTC",
     "MKR/BTC",
     "WBTC/BTC",*/
-    
+
     "XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
@@ -637,18 +637,37 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             return await price
         }
 
-        async function updateAllBougthPrice(baseCurrency) {
+        let b, q
+        async function updateAllBougthPrice(symbol) {
             //make symbols
-            s0 = f.mergeSymbol(baseCurrency, q0)
-            s1 = f.mergeSymbol(baseCurrency, q1)
-            s2 = f.mergeSymbol(baseCurrency, q2)
-            s3 = f.mergeSymbol(baseCurrency, q3)
 
-            f.cs("Updating all bougth prices!")
+            b = await f.splitSymbol(symbol, "first");
+            q = await f.splitSymbol(symbol, "second");
+            /*
+            await f.cs("curent base: " + b)
+            await f.cs("curent quote: " + q)
+            let d0, d1, d2, d3
+            d0 = (q == q0)
+            d1 = (q == q1)
+            d2 = (q == q2)
+            d3 = (q == q3)
+            f.cs("updating")*/
+            /*await f.cs("1: " + (q == q0))
+            await f.cs("2: " + (q == q1))
+            await f.cs("3: " + (q == q2))
+            await f.cs("4: " + (q == q3))//*/
+
+
+            s0 = f.mergeSymbol(b, q0)
+            s1 = f.mergeSymbol(b, q1)
+            s2 = f.mergeSymbol(b, q2)
+            s3 = f.mergeSymbol(b, q3)
+
+            f.cs("Updating almost all bougth prices!")
 
             //get prices check and store them
             bpq0 = await a.price(s0)                            //get
-            if (bpq0) {
+            if (bpq0 && !(q == q0)) {    //dont update on curent market
                 bpq0 = await m.checkNewBougthPrice(s0, bpq0)    //check
                 await dbms.saveBougthPrice(s0, bpq0)            //store
                 console.log(await s0 + ":" + await bpq0)
@@ -657,7 +676,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
 
             bpq1 = await a.price(s1)
-            if (bpq1) {
+            if (bpq1 && !(q == q1)) {
                 bpq1 = await m.checkNewBougthPrice(s1, bpq1)
                 await dbms.saveBougthPrice(s1, bpq1)
                 console.log(await s1 + ":" + await bpq1)
@@ -666,7 +685,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
 
             bpq2 = await a.price(s2)
-            if (bpq2) {
+            if (bpq2 && !(q == q2)) {
                 bpq2 = await m.checkNewBougthPrice(s2, bpq2)
                 await dbms.saveBougthPrice(s2, bpq2)
                 console.log(await s2 + ":" + await bpq2)
@@ -675,7 +694,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
 
             bpq3 = await a.price(s3)
-            if (bpq3) {
+            if (bpq3 && !(q == q3)) {
                 bpq3 = await m.checkNewBougthPrice(s3, bpq3)
                 await dbms.saveBougthPrice(s3, bpq3)
                 console.log(await s3 + ":" + await bpq3)
@@ -1250,7 +1269,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("orderType: "+orderType)  
                 console.log('sim end')          //sim end*/
 
-                //m.updateAllBougthPrice(baseCurrency)  //dev
+                //m.updateAllBougthPrice(symbol)  //dev
 
                 //enableOrders?"":bougthPrice = await m.checkNewBougthPrice(symbol, price)     //dev
 
