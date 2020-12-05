@@ -1212,6 +1212,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 sts = await ret.status
                 if (sts == "closed") {
                     bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                    await dbms.saveBougthPrice(symbol, bougthPrice)
                     orderType = "bougth"
                     m.updateAllBougthPrice(baseCurrency)
 
