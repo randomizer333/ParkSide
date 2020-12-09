@@ -546,6 +546,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
+        async function dcafix(bougthPrice, buys, amount){
+
+            return midPrice
+        }
+
         async function balanceChanged(baseBalanceInQuote, quoteBalance, botNumber) {
             if (baseBalanceInQuote > quoteBalance) {   //quoteBalance 0.0001 0.001 = 5 EUR
                 if (!more) {
@@ -659,10 +664,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             await f.cs("4: " + (q == q3))//*/
 
 
-            s0 = f.mergeSymbol(b, q0)
-            s1 = f.mergeSymbol(b, q1)
-            s2 = f.mergeSymbol(b, q2)
-            s3 = f.mergeSymbol(b, q3)
+            s0 = await f.mergeSymbol(b, q0)
+            s1 = await f.mergeSymbol(b, q1)
+            s2 = await f.mergeSymbol(b, q2)
+            s3 = await f.mergeSymbol(b, q3)
 
             f.cs("Updating almost all bougth prices!")
 
@@ -1205,7 +1210,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
-        async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal) { //trendMacdTrend, MAVol
+        async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal, baseCurrency) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {// buy 
                 !s.pullOut && enableOrders ?
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price) :    //real
@@ -1215,7 +1220,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
                     await dbms.saveBougthPrice(symbol, bougthPrice)
                     orderType = "bougth"
-                    m.updateAllBougthPrice(baseCurrency)
+                    await m.updateAllBougthPrice(symbol)
 
                     buys++                                      //buys
                     await m.updateAllBuys(baseCurrency, buys)   //buys
