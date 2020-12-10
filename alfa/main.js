@@ -789,10 +789,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         async function resetAllBuys(baseCurrency) {
-            s0 = f.mergeSymbol(baseCurrency, q0)
-            s1 = f.mergeSymbol(baseCurrency, q1)
-            s2 = f.mergeSymbol(baseCurrency, q2)
-            s3 = f.mergeSymbol(baseCurrency, q3)
+            s0 = await f.mergeSymbol(baseCurrency, q0)
+            s1 = await f.mergeSymbol(baseCurrency, q1)
+            s2 = await f.mergeSymbol(baseCurrency, q2)
+            s3 = await f.mergeSymbol(baseCurrency, q3)
 
             let ch = 0 //replace with this charachter
 
@@ -1209,8 +1209,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         // make strategic decision about order type
-        orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal);
-        async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal, baseCurrency) { //trendMacdTrend, MAVol
+        orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal, baseCurrency, buys);
+        async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal, baseCurrency, buys) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {// buy 
                 !s.pullOut && enableOrders ?
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price) :    //real
@@ -1235,8 +1235,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 sts = await ret.status
                 if (sts == "closed") {
                     bougthPrice = 0
-                    m.resetAllBougthPrice(baseCurrency)
-                    m.resetAllBuys(baseCurrency)                //buys
+                    await m.resetAllBougthPrice(baseCurrency)
+                    await m.resetAllBuys(baseCurrency)                //buys
                     orderType = "sold"
                 } else {
                     orderType = "holding"
@@ -1250,8 +1250,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 sts = await ret.status
                 if (sts == "closed") {
                     bougthPrice = 0
-                    m.resetAllBougthPrice(baseCurrency)
-                    m.resetAllBuys(baseCurrency)                //buys
+                    await m.resetAllBougthPrice(baseCurrency)
+                    await m.resetAllBuys(baseCurrency)                //buys
                     orderType = "lossed";
                 } else {
                     orderType = "holding"
