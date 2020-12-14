@@ -669,6 +669,12 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             s2 = await f.mergeSymbol(b, q2)
             s3 = await f.mergeSymbol(b, q3)
 
+            f.cs("q0: "+q0)
+            f.cs("q1: "+q1)
+            f.cs("q2: "+q2)
+            f.cs("q3: "+q3)
+
+
             f.cs("Updating almost all bougth prices!")
 
             //get prices check and store them
@@ -826,6 +832,17 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("Cannot save buys for: " + s3)
             }
 
+        }
+
+        async function updateDCA(bougthPrice, buys, amount, symbol){
+            
+            buys++
+            DCAprice[buys] = bougthPrice
+
+            DCAamount[buys] = amount 
+
+
+            return newBougthPrice
         }
 
         let market21a, market32a, market31a, market21b, market32b, market31b
@@ -1224,6 +1241,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                     buys++                                      //buys
                     await m.updateAllBuys(baseCurrency, buys)   //buys
+                    //bougthPrice = await m.updateDCA(bougthPrice, buys, amount)   //dca
 
                 } else {
                     orderType = "parked"

@@ -6,9 +6,9 @@
     "strategy": "alt",
     "enableOrders": false,
     "tickerMinutes": 3,
-    "stopLossP": 99,
-    "portion": 0.96,
-    "minProfitP": 0.11,
-    "startValue": 100,
-    "markets": ""
+    "portion": 0.55,
+    "minProfitP": 3.33,
+    "stopLossP": 8.8,
+    "pullOut": false,
+    "startValue": 100
 }
