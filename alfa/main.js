@@ -591,6 +591,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 absStopLoss = await f.part(stopLossP, sellPrice);
             } else {
                 absStopLoss = await f.part(99, sellPrice);
+                //absStopLoss = await f.part(stopLossP, sellPrice); //uc for special stoploss on alt markets
             }
 
             lossPrice = await sellPrice - await absStopLoss;
