@@ -1100,8 +1100,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         //buys++
         //await m.updateAllBuys(baseCurrency,buys)
 
-        //f.cs("pulot variable is: "+s.pullOut)
-
         /*if (!bougthPrice) {   //add bp to db
             bougthPrice = price
         }//*/
@@ -1226,11 +1224,18 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             f.cs("triBNB____OK: " + triBNB)//*/
         }
 
+        let pullOut
+        if (symbol == "BTC/USDT"){
+            pullOut = false
+        }else{
+            pullOut = s.pullOut
+        }
+
         // make strategic decision about order type
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal, baseCurrency, buys);
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, baseBalance, price, enableOrders, upSignal, downSignal, baseCurrency, buys) { //trendMacdTrend, MAVol
             if (purchase && !sale && upSignal /*&& !hold && !stopLoss*/) {// buy 
-                !s.pullOut && enableOrders ?
+                !pullOut && enableOrders ?
                     ret = await a.buy(symbol, quoteBalanceInBase * portion, price) :    //real
                     ret = await f.fOrder(symbol, quoteBalanceInBase * portion, price)   //sim*/
                 sts = await ret.status
