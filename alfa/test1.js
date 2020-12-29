@@ -1,18 +1,19 @@
 
-var send1 = 1;
-var send2 = 2;
+var delayTime = 5;
 
-let ret = console.log(test(send1))
-async function test(send1, send2){
-    console.log(countSeconds())
-    send1 = await delay(5)
-    console.log(send1)
-    return send1 + send2
+delayCount(delayTime)
+async function delayCount(time) {
+    send1 = await delay(time)
+    //console.log(await send1)
+    //console.log(await countSeconds())
+    return await send1
 }
 
 
-async function delay(durationInSeconds){
+async function delay(durationInSeconds) {
     timeMS = await durationInSeconds * 1000
+    countDown(10)
+
     return new Promise(resolve => {
         setTimeout(
             async () => {
@@ -23,14 +24,25 @@ async function delay(durationInSeconds){
     });
 }
 
-async function countSeconds(){
+let i = 0
+async function countDown(till) {
+    if (i < till) {
+        i++
+        console.log("T- " + i)
+        return await delay(1)
+    } else {
+        return i = 0
+    }
+}
+
+async function countSeconds() {
     let c = 1
     return new Promise(resolve => {
         setInterval(
             async () => {
                 resolve(
-                    console.log(c++),
-                    console.dir("jo")
+                    console.log("T- " + await c++),
+                    //console.dir("jo")
                 );
             }, 1000);   //set frequenci
     });
