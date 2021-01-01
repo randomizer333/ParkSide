@@ -4,13 +4,6 @@
 3.intracrypto trading trader
 */
 
-//const { db } = require("./dbms");
-
-//const { table } = require("console");
-
-//const { mergeSymbol } = require("./funk");
-
-
 //requirements
 let s, a, f, TI, fs, dbms
 req();
@@ -70,7 +63,7 @@ let quotes = [    //fiat strategy trading portofio
 let alts = [    //alt markets 
 
     "BTC/USDT", /*"ETH/USDT", "BNB/USDT",//intra quote*/
-    /*"XRP/USDT",
+    "XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
     "ADA/USDT",
@@ -90,7 +83,7 @@ let alts = [    //alt markets
     "MKR/USDT",
     "UNI/USDT",*/
 
-    "ETH/BTC","BNB/BTC",      //intra quote
+    /*"ETH/BTC","BNB/BTC",      //intra quote
     "XRP/BTC",
     "LTC/BTC",
     "EOS/BTC",
@@ -544,11 +537,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 f.cs("Last bougth price: " + lastBPrice + " was smaller than current IS Updated: " + price)
                 return price;
             }
-        }
-
-        async function dcafix(bougthPrice, buys, amount){
-
-            return midPrice
         }
 
         async function balanceChanged(baseBalanceInQuote, quoteBalance, botNumber) {
