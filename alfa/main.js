@@ -63,7 +63,7 @@ let quotes = [    //fiat strategy trading portofio
 let alts = [    //alt markets 
 
     "BTC/USDT", /*"ETH/USDT", "BNB/USDT",//intra quote*/
-    "XRP/USDT",
+    /*"XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
     "ADA/USDT",
@@ -1138,6 +1138,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 uppers: {
                     MA3: MA3,
                     MA30: MA30,
+                    MA200: MA200,
                     MACD: MACD,
                     //change1hP: change1hP,
                     //MACDMA: MACDMA,
@@ -1146,6 +1147,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 },
                 downers: {
                     MA3: MA3,
+                    //MA30: MA30,
                     //MA200: MA200
                 },
                 all: {
