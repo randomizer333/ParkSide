@@ -7,8 +7,8 @@
     "enableOrders": false,
     "tickerMinutes": 3,
     "portion": 0.55,
-    "minProfitP": 3.33,
-    "stopLossP": 8.8,
-    "pullOut": false,
+    "minProfitP": 0.22,
+    "stopLossP": 99.99, 
+    "pullOut": true,
     "startValue": 100
 }
