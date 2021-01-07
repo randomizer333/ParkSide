@@ -15,12 +15,13 @@ async function ma(arr) {     //trendMA between curent and last value
     stor[0] = value;
     let direction = await stor[0] - ma;
     let trendMA = await f.percent(direction,value);
+    
     if (trendMA > 0) {//goin UP buy coz rising
         return trendMA
     } else if(trendMA < 0){//going DOWN hold or park coz stationary
         return trendMA
     } else {    //all input data is the same
-        return trendMA = 0;
+        return trendMA = 0
     }
 }
 
