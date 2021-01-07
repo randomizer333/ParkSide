@@ -62,8 +62,8 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 
 
-    "BTC/USDT", /*"ETH/USDT", "BNB/USDT",//intra quote*/
-    /*"XRP/USDT",
+    "BTC/USDT", "ETH/USDT", "BNB/USDT",//intra quote*/
+    "XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
     "ADA/USDT",
@@ -83,7 +83,7 @@ let alts = [    //alt markets
     "MKR/USDT",
     "UNI/USDT",*/
 
-    /*"ETH/BTC","BNB/BTC",      //intra quote
+    "ETH/BTC","BNB/BTC",      //intra quote
     "XRP/BTC",
     "LTC/BTC",
     "EOS/BTC",
@@ -105,7 +105,7 @@ let alts = [    //alt markets
     "MKR/BTC",
     "WBTC/BTC",*/
 
-    /*"XRP/BNB",
+    "XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
     "ADA/BNB",
@@ -120,7 +120,7 @@ let alts = [    //alt markets
     "MKR/BNB",
     "UNI/BNB",//*/
 
-    /*"BNB/ETH",   //intra quote
+    "BNB/ETH",   //intra quote
     "XRP/ETH",
     "LTC/ETH",
     "EOS/ETH",
@@ -1093,6 +1093,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }//*/
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP, buys);
+
+        if (symbol == "BTC/USDT"){
+            //stopLossP = 1.11
+            //stopLossP = s.stopLossP
+        }else{
+            //stopLossP = s.stopLossP
+        }
+
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice, quoteCurrency);
 
         indicator = await indicators(price, volume, change24hP)
@@ -1139,9 +1147,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     MA3: MA3,
                     MA30: MA30,
                     MA200: MA200,
-                    MACD: MACD,
+                    //MACD: MACD,
+                    MACDMA: MACDMA,
                     //change1hP: change1hP,
-                    //MACDMA: MACDMA,
                     rank: rang,
 
                 },
@@ -1216,7 +1224,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         let pullOut
         if (symbol == "BTC/USDT"){
-            pullOut = false
+            //pullOut = false
+
+            pullOut = s.pullOut
         }else{
             pullOut = s.pullOut
         }
