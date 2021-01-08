@@ -62,7 +62,7 @@ let quotes = [    //fiat strategy trading portofio
 
 let alts = [    //alt markets 
 
-    "BTC/USDT", "ETH/USDT", "BNB/USDT",//intra quote*/
+    //"BTC/USDT", "ETH/USDT", "BNB/USDT",//intra quote*/
     /*"XRP/USDT",
     "LTC/USDT",
     "EOS/USDT",
@@ -105,7 +105,7 @@ let alts = [    //alt markets
     "MKR/BTC",
     "WBTC/BTC",*/
 
-    "XRP/BNB",
+    /*"XRP/BNB",
     "LTC/BNB",
     "EOS/BNB",
     "ADA/BNB",
@@ -120,7 +120,7 @@ let alts = [    //alt markets
     "MKR/BNB",
     "UNI/BNB",//*/
 
-    "BNB/ETH",   //intra quote
+    /*"BNB/ETH",   //intra quote
     "XRP/ETH",
     "LTC/ETH",
     "EOS/ETH",

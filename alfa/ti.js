@@ -62,9 +62,9 @@ async function macd(values) {     //log 70 should be bigger the better starts wo
         macdLine = lastMACD.MACD;
         signalLine = lastMACD.signal;
         macdHistogram = lastMACD.histogram;
-        f.cs("macdLine"+": "+macdLine)
-        f.cs("signalLine"+": "+signalLine)
-        f.cs("macdHistogram"+": "+macdHistogram)
+        //f.cs("macdLine"+": "+macdLine)
+        //f.cs("signalLine"+": "+signalLine)
+        //f.cs("macdHistogram"+": "+macdHistogram)
         if (!isNaN(macdHistogram)) {     //isNumber
             //f.sendMail("Started MACD", r);
             return await macdHistogram;
