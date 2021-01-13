@@ -830,7 +830,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             DCAamount[buys] = amount 
 
-
+            totalCost
             return newBougthPrice
         }
 
@@ -1082,6 +1082,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         bougthPrice = await dbms.readBougthPrice(symbol)
 
+        let bougthAmount
+
         let buys = await dbms.readBuys(symbol)
         //f.cs("Buys for " + symbol + ": " + buys)
         //m.resetAllBuys(baseCurrency)
@@ -1146,7 +1148,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 uppers: {
                     MA3: MA3,
                     MA30: MA30,
-                    MA200: MA200,
+                    //MA200: MA200,
                     //MACD: MACD,
                     MACDMA: MACDMA,
                     //change1hP: change1hP,
@@ -1244,6 +1246,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     await dbms.saveBougthPrice(symbol, bougthPrice)
                     orderType = "bougth"
                     await m.updateAllBougthPrice(symbol)
+
+
 
                     buys++                                      //buys
                     await m.updateAllBuys(baseCurrency, buys)   //buys
