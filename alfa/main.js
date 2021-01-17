@@ -5,7 +5,7 @@
 */
 
 //requirements
-let s, a, f, TI, fs, dbms
+let s, a, f, TI, fs, dbms, em
 req();
 async function req() {
     s = await require("../set.json")
@@ -13,8 +13,10 @@ async function req() {
     f = await require("./funk.js")
     TI = await require("./ti.js")
     dbms = require("./dbms.js")
+    em = require("./enabledMarkets.js")
+    
+    let alts = em.alts()
     fs = await require('fs') //node.js native
-    //db = await require("./db.json")
     return await init()
 }
 
@@ -59,6 +61,9 @@ let quotes = [    //fiat strategy trading portofio
 
     "BCH/USDT",*/
 ]
+
+//let alts = em.alts
+//console.log(alts)
 
 let alts = [    //alt markets 
 
@@ -141,6 +146,7 @@ let alts = [    //alt markets
     //*/
 ]
 
+//f.cs(alts)
 // main setup
 let numOfBots
 let delay
@@ -578,8 +584,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             if (s.fiatCurrency == quoteCurrency) {
                 absStopLoss = await f.part(stopLossP, sellPrice);
             } else {
-                absStopLoss = await f.part(99, sellPrice);
-                //absStopLoss = await f.part(stopLossP, sellPrice); //uc for special stoploss on alt markets
+                //absStopLoss = await f.part(99, sellPrice);
+                absStopLoss = await f.part(stopLossP, sellPrice); //uc for special stoploss on alt markets
             }
 
             lossPrice = await sellPrice - await absStopLoss;
@@ -1095,13 +1101,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }//*/
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP, buys);
-
-        if (symbol == "BTC/USDT"){
-            //stopLossP = 1.11
-            //stopLossP = s.stopLossP
-        }else{
-            //stopLossP = s.stopLossP
-        }
 
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice, quoteCurrency);
 

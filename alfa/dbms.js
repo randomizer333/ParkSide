@@ -1,5 +1,5 @@
 let fs = require("fs")      //node.js native
-let dataBase = "./db.json"  //define database location
+let dataBase = "../db.json"  //define database location
 let db = require(dataBase)
 
 let f = require("./funk.js")

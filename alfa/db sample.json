@@ -64,3 +64,20 @@
         }
     }
 }
+
+{
+    "BTC/USDT": {
+        "timedate": "2021.01.15 11:18:28.038",
+        "bougthPrice": 0,
+        "orderType": "holding",
+        "buys": 0,
+        "amount": [1243,214321,3425432],
+        "bp":[123,34543,3453]
+    },
+    "ETH/USDT": {
+        "timedate": "2021.01.15 11:18:28.038",
+        "bougthPrice": 0,
+        "orderType": "holding",
+        "buys": 0
+    }
+}
