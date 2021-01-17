@@ -580,8 +580,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
         async function checkStopLoss(price, stopLossP, sellPrice, quoteCurrency) {      //force sale  price, bougthPrice, lossP
 
-            //if market is fiat use stoploss
-            if (s.fiatCurrency == quoteCurrency) {
+            if (s.fiatCurrency == quoteCurrency) {//if market is fiat use this stoploss
                 absStopLoss = await f.part(stopLossP, sellPrice);
             } else {
                 //absStopLoss = await f.part(99, sellPrice);
