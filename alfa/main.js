@@ -5,7 +5,7 @@
 */
 
 //requirements
-let s, a, f, TI, fs, dbms, em
+let s, a, f, TI, fs, dbms, em, alts
 req();
 async function req() {
     s = await require("../set.json")
@@ -15,7 +15,8 @@ async function req() {
     dbms = require("./dbms.js")
     em = require("./enabledMarkets.js")
     
-    let alts = em.alts()
+    alts = em.alts()
+    
     fs = await require('fs') //node.js native
     return await init()
 }
@@ -62,94 +63,9 @@ let quotes = [    //fiat strategy trading portofio
     "BCH/USDT",*/
 ]
 
-//let alts = em.alts
-//console.log(alts)
-
-let alts = [    //alt markets 
-
-    "BTC/USDT",/* "ETH/USDT", "BNB/USDT",//intra quote*/
-    /*"XRP/USDT",
-    "LTC/USDT",
-    "EOS/USDT",
-    "ADA/USDT",
-    "XLM/USDT",
-    "XMR/USDT",
-    "TRX/USDT",
-    "BCH/USDT",
-    "LINK/USDT",
-    "XTZ/USDT",
-    "YFI/USDT",     //DeFi
-    "DOT/USDT",
-    /*"QTUM/USDT",
-    "COMP/USDT",
-    "DAI/USDT",
-    "UMA/USDT",
-    "LEND/USDT",
-    "MKR/USDT",
-    "UNI/USDT",*/
-
-    "ETH/BTC","BNB/BTC",      //intra quote
-    "XRP/BTC",
-    "LTC/BTC",
-    "EOS/BTC",
-    "ADA/BTC",
-    "XLM/BTC",
-    "XMR/BTC",
-    "TRX/BTC",
-    "BCH/BTC",
-    "XTZ/BTC",
-    "LINK/BTC",//DeFi 
-    "DOT/BTC",
-    "YFI/BTC",
-    /*"UNI/BTC",
-    "QTUM/BTC",
-    /*"COMP/BTC",
-    //"DAI/BTC", 
-    "UMA/BTC",
-    "LEND/BTC",
-    "MKR/BTC",
-    "WBTC/BTC",*/
-
-    /*"XRP/BNB",
-    "LTC/BNB",
-    "EOS/BNB",
-    "ADA/BNB",
-    "XLM/BNB",
-    "XMR/BNB",
-    "TRX/BNB",
-    "BCH/BNB",
-    "XTZ/BNB",
-    "DOT/BNB",
-    /*"COMP/BNB",
-    "DAI/BNB",
-    "MKR/BNB",
-    "UNI/BNB",//*/
-
-    /*"BNB/ETH",   //intra quote
-    "XRP/ETH",
-    "LTC/ETH",
-    "EOS/ETH",
-    "ADA/ETH",
-    "XLM/ETH",
-    "XMR/ETH",
-    "TRX/ETH",
-    "LINK/ETH",
-    //"QTUM/ETH",
-    //"LEND/ETH",
-    //"WBTC/ETH",
-
-    /*database format
-
-    "BSV/USDT",
-    "BSV/BTC",
-    
-    //*/
-]
-
-//f.cs(alts)
 // main setup
-let numOfBots
-let delay
+let numOfBots;
+let delay;
 
 let botNo = [];
 
