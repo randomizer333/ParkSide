@@ -113,7 +113,7 @@ async function change(symbol) {             //returns Variable change percentage
 async function minAmount(symbol) {          //returns minimum amount of base allowed to buy
     try {
         r = await exchange.loadMarkets();
-        re = r[symbol].limits.amount.min;
+        re = await r[symbol].limits.amount.min;
     } catch (error) {
         console.log("EEE: ", error);
     }
