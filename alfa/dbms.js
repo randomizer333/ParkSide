@@ -5,58 +5,14 @@ let db = require(dataBase)
 let f = require("./funk.js")
 f.cs("DBMS Loaded")
 
-let alts = [    //alt markets 
-
-    "BTC/USDT", "ETH/USDT", "BNB/USDT",//*/
-    "XRP/USDT",
-    "LTC/USDT",
-    "EOS/USDT",
-    "ADA/USDT",
-    "XLM/USDT",
-    "XMR/USDT",
-    "TRX/USDT",
-    "BCH/USDT",
-    "LINK/USDT",
-    "XTZ/USDT",
-    "QTUM/USDT",
-    "YFI/USDT",     //DeFi
-    "DOT/USDT",
-    "COMP/USDT",
-    "DAI/USDT",
-    "UMA/USDT",
-    "LEND/USDT",
-    "MKR/USDT",
-
-    "ETH/BTC", "BNB/BTC",
-    "XRP/BTC", "XRP/ETH", "XRP/BNB",
-    "LTC/BTC", "LTC/ETH", "LTC/BNB",
-    "EOS/BTC", "EOS/ETH", "EOS/BNB",
-    "ADA/BTC", "ADA/ETH", "ADA/BNB",
-    "XLM/BTC", "XLM/ETH", "XLM/BNB",
-    "XMR/BTC", "XMR/ETH", "XMR/BNB",
-    "TRX/BTC", "TRX/ETH", "TRX/BNB",
-    "BCH/BTC", "BCH/BNB",
-    "LINK/BTC", "LINK/ETH",
-    "XTZ/BTC", "XTZ/BNB",
-    "QTUM/BTC", "QTUM/ETH",
-    "YFI/BTC",                          //DeFi 
-    "DOT/BTC", "DOT/BNB",
-    "COMP/BTC", "COMP/BNB",
-    "DAI/BTC", "DAI/BNB",
-    "UMA/BTC",
-    "LEND/BTC", "LEND/ETH",
-    "MKR/BTC", "MKR/BNB",
-    "WBTC/BTC", "WBTC/ETH",
-
-    //database format*/
-
-    //"BSV/BTC","BSV/USDT",
-]
+em = require("./enabledMarkets.js")
+alts = em.alts()
 
 //create or add database,table,row
 
 //createDB(alts)
 async function createDB(data) {   //done   
+    f.cs(data)
     let baza = {}
     console.log("Creating DB: " + data)
     f.cs("hey")
@@ -64,7 +20,8 @@ async function createDB(data) {   //done
         baza[data[i]] = {
             "timedate": f.getTime(),
             "bougthPrice": 0,
-            "orderType": "none"
+            "orderType": "none",
+            "buys":0
         }
         f.cs("working");
     }
