@@ -5,7 +5,7 @@
     "fiatCurrency":"USDT",
     "strategy": "alt",
     "enableOrders": false,
-    "tickerMinutes": 1,
+    "tickerMinutes": 3,
     "portion": 0.99,
     "minProfitP": 0.11,
     "stopLossP": 0.66, 
