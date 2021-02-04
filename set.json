@@ -4,10 +4,10 @@
     "quoteCurrency":"BTC",
     "fiatCurrency":"USDT",
     "strategy": "alt",
-    "enableOrders": false,
+    "enableOrders": true,
     "tickerMinutes": 3,
     "portion": 0.99,
     "minProfitP": 0.11,
-    "stopLossP": 0.66, 
+    "stopLossP": 99, 
     "pullOut": false
 }

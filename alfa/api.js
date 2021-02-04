@@ -130,7 +130,7 @@ async function sellAll(array) {
 
 let curs;
 let balances = [];
-async function wallet() {                   //returns Array of Objects balances of an account
+async function wallet() {   //returns Array of Objects balances of an account
     try {
         r = await exchange.fetchBalance();
         curs = await Object.keys(r);

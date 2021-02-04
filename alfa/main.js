@@ -4,6 +4,8 @@
 3.intracrypto trading trader
 */
 
+const { db } = require("./dbms");
+
 //requirements
 let s, a, f, TI, fs, dbms, em, alts
 req();
@@ -636,7 +638,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 await dbms.saveBougthPrice(s0, 0)
                 console.log(await s0 + ": bougthPrice reset to 0")
             } else {
-                f.cs("no such marketno such market: " + bpq0)
+                f.cs("no such market: " + bpq0)
             }
 
             bpq1 = await a.price(s1)
@@ -1160,8 +1162,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     await dbms.saveBougthPrice(symbol, bougthPrice)
                     orderType = "bougth"
                     await m.updateAllBougthPrice(symbol)
-
-
 
                     buys++                                      //buys
                     await m.updateAllBuys(baseCurrency, buys)   //buys
