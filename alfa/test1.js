@@ -1,7 +1,8 @@
 
+let dbms = require("dbms")
 var delayTime = 5;
 
-delayCount(delayTime)
+//delayCount(delayTime)
 async function delayCount(time) {
     send1 = await delay(time)
     //console.log(await send1)
@@ -47,3 +48,11 @@ async function countSeconds() {
             }, 1000);   //set frequenci
     });
 }
+
+bpq3 = await a.price(s3)
+if (bpq3 && (s3 == dbms.db[s3])) {
+    await dbms.saveBougthPrice(s3, 0)
+    console.log(await s3 + ": bougthPrice reset to 0")
+} else {
+    f.cs("no such market: " + bpq3)
+}//*/
