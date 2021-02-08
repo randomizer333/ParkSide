@@ -76,6 +76,38 @@ async function macd(values) {     //log 70 should be bigger the better starts wo
     }
 }
 
+async function macdReverse(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
+    let MACD = TI.MACD;
+    let macdInput = {
+        values: values,   //34,70,140n of inputs - slowPeriod = n of outputs 
+        fastPeriod: 12,       //12,24,48
+        slowPeriod: 26,       //26,52,104      when this is full it putout
+        signalPeriod: 9,        //9,18,36
+        SimpleMAOscillator: false,
+        SimpleMASignal: false
+    };
+    let r = await MACD.calculate(macdInput);      //array with JSONs
+    let lastMACD;
+    r ? lastMACD = r[r.length - 1] : lastMACD = 0; //last JSON
+    let macdHistogram = 0;
+    if (lastMACD) {
+        macdLine = lastMACD.MACD;
+        signalLine = lastMACD.signal;
+        macdHistogram = lastMACD.histogram * (-1);
+        //f.cs("macdLine"+": "+macdLine)
+        //f.cs("signalLine"+": "+signalLine)
+        //f.cs("macdHistogram"+": "+macdHistogram)
+        if (!isNaN(macdHistogram)) {     //isNumber
+            //f.sendMail("Started MACD", r);
+            return await macdHistogram;
+        }else{
+            return 0;
+        }
+    } else {
+        return await macdHistogram;
+    }
+}
+
 async function doubleMacd(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
     let MACD = TI.MACD;
     let macdInput = {   // n of values = fastPeriod + slow period
@@ -155,5 +187,6 @@ function ic(values){  //ichimokuCloud(conversionLinePeriods, baseLinePeriods, le
 exports.ma = ma;
 exports.rsi = rsi;
 exports.macd = macd;
+exports.macdReverse = macdReverse;
 exports.doubleMacd = doubleMacd;
 exports.quadMacd = quadMacd;

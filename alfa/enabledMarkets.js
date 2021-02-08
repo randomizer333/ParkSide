@@ -4,7 +4,7 @@ function alts (){
 
         "BTC/USDT", "ETH/USDT", "BNB/USDT",//intra quote*/
         "DOT/USDT",
-        //"XRP/USDT",
+        "XRP/USDT",
         "ADA/USDT",
         "LTC/USDT",
         "BCH/USDT",
@@ -13,7 +13,7 @@ function alts (){
         "UNI/USDT",
         "DOGE/USDT",
     
-        //"ETH/BTC","BNB/BTC",      //intra quote
+        "ETH/BTC","BNB/BTC",      //intra quote
         "DOT/BTC",         
         "XRP/BTC",
         "ADA/BTC",
