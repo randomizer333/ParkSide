@@ -16,9 +16,9 @@ async function req() {
     TI = await require("./ti.js")
     dbms = require("./dbms.js")
     em = require("./enabledMarkets.js")
-    
+
     alts = em.alts()
-    
+
     fs = await require('fs') //node.js native
     return await init()
 }
@@ -496,39 +496,70 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
             return await r;
         }
-        async function checkStopLoss(price, stopLossP, sellPrice, quoteCurrency) {      //force sale  price, bougthPrice, lossP
+
+        async function checkStopLoss(price, stopLossP, sellPrice, quoteCurrency) {      //force sale
 
             if (s.fiatCurrency == quoteCurrency) {//if market is fiat use this stoploss
                 absStopLoss = await f.part(stopLossP, sellPrice);
             } else {
                 //absStopLoss = await f.part(99, sellPrice);
-                absStopLoss = await f.part(stopLossP, sellPrice); //uc for special stoploss on alt markets
+                absStopLoss = await f.part(stopLossP, sellPrice); //use for special stoploss on alt markets
             }
 
             lossPrice = await sellPrice - await absStopLoss;
-            loss = await sellPrice - price;     //default: loss = sellPrice - price;
+            loss = await sellPrice - price;
             relativeLoss = await f.percent(loss, sellPrice);
-            /*f.cs("loss       : " + loss);
-            f.cs(" > is biger than");
-            f.cs("absStopLoss: " + absStopLoss);
-            f.cs("relativeLoss: " + relativeLoss.toFixed(2) + " %");
-            f.cs("lossPrice: " + lossPrice);*/
             if (!lossPrice) {
-                return false
+                stoploss = false
             } else {
                 if (await price <= lossPrice) {
-                    return true   //sell ASAP!!!
+                    stoploss = true   //sell ASAP!!!
                 } else {
-                    return false  //hodl
+                    stoploss = false  //hodl
                 }
             }
 
-            /*
-            if (loss > absStopLoss) {
-                return await true;   //sell ASAP!!!      
-            } else {
-                return await false;  //hodl
-            }*/
+            globalStopLoss = await checkGlobalStopLoss(symbol, stoploss)
+            async function checkGlobalStopLoss(symbol, stopLoss) {
+                //make symbols
+    
+                b = await f.splitSymbol(symbol, "first");
+                q = await f.splitSymbol(symbol, "second");
+    
+                let s = []
+                let sls = []
+                let stetje = 0
+                for (i = 0; i < quo.length; i++) {
+                    s[i] = await f.mergeSymbol(b, quo[i])
+                    if (dbms.db[s[i]]) {
+                        if (q == quo[i]) {   //current market
+                            //f.cs("This "+ quo[i] +" is curent" )
+                            sls[stetje] = await stopLoss    //fresh stopLoss
+                            //f.cs("stoplos for " + s[i] + " is: " + sls[stetje])
+                            stetje++
+                        } else {
+                            sls[stetje] = await dbms.db[s[i]].stopLoss
+                            //f.cs("stoplos for " + s[i] + " is: " + sls[stetje])
+                            stetje++
+                        }
+                    } else {
+                        //f.cs("No such market or disabled: " + s[i])
+                    }
+                }
+    
+                gsl = await up(sls);
+                async function up(uppers) {
+                    conds = Object.values(uppers);
+                    function condition(currentValue) {
+                        return currentValue > 0;    //set condition
+                    }
+                    return conds.every(condition)
+                }
+                //f.cs("number of conectors for this market: " + sls.length)
+                return await gsl
+            }
+            //f.cs("globalStopLoss: " + globalStopLoss)
+            return await globalStopLoss //stoploss
         }
 
         async function change1h(priceLog, tickerInMs, price, durationInMinutes) {
@@ -561,33 +592,18 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             b = await f.splitSymbol(symbol, "first");
             q = await f.splitSymbol(symbol, "second");
-            /*
-            await f.cs("curent base: " + b)
-            await f.cs("curent quote: " + q)
-            let d0, d1, d2, d3
-            d0 = (q == q0)
-            d1 = (q == q1)
-            d2 = (q == q2)
-            d3 = (q == q3)
-            f.cs("updating")*/
-            /*await f.cs("1: " + (q == q0))
-            await f.cs("2: " + (q == q1))
-            await f.cs("3: " + (q == q2))
-            await f.cs("4: " + (q == q3))//*/
-
 
             s0 = await f.mergeSymbol(b, q0)
             s1 = await f.mergeSymbol(b, q1)
             s2 = await f.mergeSymbol(b, q2)
             s3 = await f.mergeSymbol(b, q3)
 
-            f.cs("q0: "+q0)
-            f.cs("q1: "+q1)
-            f.cs("q2: "+q2)
-            f.cs("q3: "+q3)
+            f.cs("q0: " + q0)
+            f.cs("q1: " + q1)
+            f.cs("q2: " + q2)
+            f.cs("q3: " + q3)
 
-
-            f.cs("Updating almost all bougth prices!")
+            f.cs("Updating all bougth prices except active market!")
 
             //get prices check and store them
             bpq0 = await a.price(s0)                            //get
@@ -746,12 +762,12 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         }
 
-        async function updateDCA(bougthPrice, buys, amount, symbol){
-            
+        async function updateDCA(bougthPrice, buys, amount, symbol) {
+
             buys++
             DCAprice[buys] = bougthPrice
 
-            DCAamount[buys] = amount 
+            DCAamount[buys] = amount
 
             totalCost
             return newBougthPrice
@@ -1020,6 +1036,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP, buys);
 
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice, quoteCurrency);
+        await dbms.saveStopLoss(symbol, await stopLoss)
 
         indicator = await indicators(price, volume, change24hP)
         async function indicators(price, volume, change24hP) {
@@ -1064,8 +1081,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 uppers: {
                     MA3: MA3,
                     MA30: MA30,
-                    //MA200: MA200,
-                    //MACD: MACD,
+                    MA200: MA200,
+                    MACD: !MACD,
                     MACDMA: MACDMA,
                     //change1hP: change1hP,
                     rank: rang,
@@ -1141,11 +1158,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         let pullOut
-        if (symbol == "BTC/USDT"){
+        if (symbol == "BTC/USDT") {
             //pullOut = false
 
             pullOut = s.pullOut
-        }else{
+        } else {
             pullOut = s.pullOut
         }
 
@@ -1187,6 +1204,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 enableOrders ? "" :
                     console.log('loss sell orders disabled');
                 enableOrders ?
+                    //ret = await a.sellMarket(symbol, baseBalance, price) :    //real
                     ret = await a.sell(symbol, baseBalance, price) :    //real
                     ret = await f.fOrder(symbol, baseBalance, price);   //sim
                 sts = await ret.status
@@ -1268,20 +1286,20 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         async function makeInfo() {
             return {
                 No: botNumber,
-                fiatMarket: s.fiatMarket,
+                //fiatMarket: s.fiatMarket,
                 fiatPrice: priceFiat,
-                fiatProfit: (absoluteProfit * priceFiat),
-                fiatProfit2: (absoluteProfit2 * priceFiat),
+                //fiatProfit: (absoluteProfit * priceFiat),
+                //fiatProfit2: (absoluteProfit2 * priceFiat),
                 symbol: symbol,
                 base: baseCurrency,
                 quote: quoteCurrency,
                 relativeProfit: (relativeProfit + minProfitP),
-                absoluteProfit: absoluteProfit,
-                absoluteProfit2: absoluteProfit2,
+                //absoluteProfit: absoluteProfit,
+                //absoluteProfit2: absoluteProfit2,
                 DeusGroup: "___________________________",
                 fiatPrice: priceFiat,
-                fiatProfit: (absoluteProfit * priceFiat),
-                fiatProfit2: (absoluteProfit2 * priceFiat),
+                //fiatProfit: (absoluteProfit * priceFiat),
+                //fiatProfit2: (absoluteProfit2 * priceFiat),
                 minAmount: minAmount,
                 baseBalance: baseBalance,
                 baseBalanceInQuote: baseBalanceInQuote,

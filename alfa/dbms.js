@@ -21,7 +21,8 @@ async function createDB(data) {   //done
             "timedate": f.getTime(),
             "bougthPrice": 0,
             "orderType": "none",
-            "buys":0
+            "buys":0,
+            "stopLoss": false
         }
         f.cs("working");
     }
@@ -84,6 +85,15 @@ async function saveBuys(symbol, write) {
     }
 }
 
+async function saveStopLoss(symbol, write) {
+    if (db) {
+        db[symbol].stopLoss = await write
+        saveTable(symbol, await db[symbol])
+    } else {
+        console.log("NO DATA BP")
+    }
+}
+
 //read data
 async function readJSON() { //done
     let data = fs.readFileSync("./db.json");
@@ -117,4 +127,5 @@ exports.readBougthPrice = readBougthPrice
 exports.readOrderType = readOrderType
 exports.readBuys = readBuys
 exports.saveBuys = saveBuys
+exports.saveStopLoss = saveStopLoss
 
