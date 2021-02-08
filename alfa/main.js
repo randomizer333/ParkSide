@@ -1302,7 +1302,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 fiatPrice: priceFiat,
                 //fiatProfit: (absoluteProfit * priceFiat),
                 //fiatProfit2: (absoluteProfit2 * priceFiat),
-                minAmount: minAmount,
+                //minAmount: minAmount,
                 baseBalance: baseBalance,
                 baseBalanceInQuote: baseBalanceInQuote,
                 quoteBalance: quoteBalance,
