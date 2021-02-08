@@ -1057,6 +1057,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             RSI = await TI.rsi(logAll); //RSI (30,70)
 
             MACD = await TI.macd(logAll);   //standard MACD
+            MACDRev = await TI.macdReverse(logAll);     //
             logMacd = await m.loger(MACD, 3, logMacd);
             MACDMA = await TI.ma(logMacd);  //MA of MACD
             //rang = await globalRang2(MACDMA, symbol, botNumber, 3)
@@ -1081,8 +1082,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 uppers: {
                     MA3: MA3,
                     MA30: MA30,
-                    MA200: MA200,
-                    MACD: !MACD,
+                    //MA200: MA200,
+                    //MACD: MACD,
+                    MACDRev: MACDRev,
                     MACDMA: MACDMA,
                     //change1hP: change1hP,
                     rank: rang,
@@ -1291,8 +1293,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 //fiatProfit: (absoluteProfit * priceFiat),
                 //fiatProfit2: (absoluteProfit2 * priceFiat),
                 symbol: symbol,
-                base: baseCurrency,
-                quote: quoteCurrency,
+                //base: baseCurrency,
+                //quote: quoteCurrency,
                 relativeProfit: (relativeProfit + minProfitP),
                 //absoluteProfit: absoluteProfit,
                 //absoluteProfit2: absoluteProfit2,
