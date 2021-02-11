@@ -4,7 +4,7 @@
 3.intracrypto trading trader
 */
 
-const { db } = require("./dbms");
+//const { db } = require("./dbms");
 
 //requirements
 let s, a, f, TI, fs, dbms, em, alts
@@ -522,10 +522,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             globalStopLoss = await checkGlobalStopLoss(symbol, stoploss)
             async function checkGlobalStopLoss(symbol, stopLoss) {
                 //make symbols
-    
+
                 b = await f.splitSymbol(symbol, "first");
                 q = await f.splitSymbol(symbol, "second");
-    
+
                 let s = []
                 let sls = []
                 let stetje = 0
@@ -535,6 +535,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                         if (q == quo[i]) {   //current market
                             //f.cs("This "+ quo[i] +" is curent" )
                             sls[stetje] = await stopLoss    //fresh stopLoss
+                            await dbms.saveStopLoss(symbol, await stopLoss)
                             //f.cs("stoplos for " + s[i] + " is: " + sls[stetje])
                             stetje++
                         } else {
@@ -546,7 +547,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                         //f.cs("No such market or disabled: " + s[i])
                     }
                 }
-    
+
                 gsl = await up(sls);
                 async function up(uppers) {
                     conds = Object.values(uppers);
@@ -556,6 +557,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     return conds.every(condition)
                 }
                 //f.cs("number of conectors for this market: " + sls.length)
+                //f.cs("raw: " + sls)
                 return await gsl
             }
             //f.cs("globalStopLoss: " + globalStopLoss)
@@ -770,6 +772,31 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             DCAamount[buys] = amount
 
             totalCost
+            DCAcost[buys] = 
+
+            walet = {
+                "BTC": {
+                    balance: 0.00000737,
+                    value: 0,
+                    buys: 5,
+                    DCAprice: [165, 145, 165, 154, 146],
+                    DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
+                },
+                "ETH": {
+                    balance: 0.00000737,
+                    value: 0,
+                    buys: 5,
+                    DCAprice: [165, 145, 165, 154, 146],
+                    DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
+                },
+                "BNB": {
+                    balance: 0.00000737,
+                    value: 0,
+                    buys: 5,
+                    DCAprice: [165, 145, 165, 154, 146],
+                    DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
+                },
+            }
             return newBougthPrice
         }
 
@@ -1036,7 +1063,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP, buys);
 
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice, quoteCurrency);
-        await dbms.saveStopLoss(symbol, await stopLoss)
 
         indicator = await indicators(price, volume, change24hP)
         async function indicators(price, volume, change24hP) {
