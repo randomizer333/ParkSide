@@ -1,24 +1,5 @@
-# README #
 
-This is a node.js app made to run in console, it has no intereface yet.
-Pull it from https://github.com/Randomizer333/ParkSide
-
-### What is this repository for?
-
-- development of a simple crypto currency trading bot
-- ccxt suporting 90 crypto exchanges
-- technicalIndicators supporting 20 trading indicators
-
-### How do I get set up? ###
-
-To run you need:
-- NodeJS runing 24/7 
-- PC, mac, server with runing:
-  - node.js
-  - npm (for installing packages)
-- cryptocurrency exhange account
-
-additional Node packages:
+### Node packages:
 - ccxt
 - technicalIndicators  
 - nodeMailer
