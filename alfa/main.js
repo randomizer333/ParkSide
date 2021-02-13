@@ -338,6 +338,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         logVol = [],
         logMacd = [],
         logMA3 = [],
+        logMA20 = [],
         logMA30 = [],
         logMA200 = [],
         logVolMACD = [],
@@ -592,23 +593,51 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         async function updateAllBougthPrice(symbol) {
             //make symbols
 
+            let bpq = []
+            let s = []
+
             b = await f.splitSymbol(symbol, "first");
             q = await f.splitSymbol(symbol, "second");
 
-            s0 = await f.mergeSymbol(b, q0)
-            s1 = await f.mergeSymbol(b, q1)
-            s2 = await f.mergeSymbol(b, q2)
-            s3 = await f.mergeSymbol(b, q3)
+            s[0] = await f.mergeSymbol(b, quo[0])
+            s[1] = await f.mergeSymbol(b, quo[1])
+            s[2] = await f.mergeSymbol(b, quo[2])
+            s[3] = await f.mergeSymbol(b, quo[3])
+
+            s[4] = await f.mergeSymbol(quo[1], quo[0])
+            s[5] = await f.mergeSymbol(quo[2], quo[0])
+            s[6] = await f.mergeSymbol(quo[3], quo[0])
+
 
             f.cs("q0: " + q0)
             f.cs("q1: " + q1)
             f.cs("q2: " + q2)
             f.cs("q3: " + q3)
 
+            f.cs("bpq: " + bpq)
+            f.cs("bpq.lengtgh: " + bpq.length)
+            f.cs("s: " + s)
+
             f.cs("Updating all bougth prices except active market!")
 
+
+            for (var i = 0; i < 6; i++) {
+                f.cs("q" + i + ":" + quo[i])
+                bpq[i] = await a.price(s[i])    //get
+                if (bpq[i] && !(q == quo[i])) { //dont update on curent market
+                    bpq4 = await m.checkNewBougthPrice(s[i], bpq[i])    //check
+                    await dbms.saveBougthPrice(s[i], bpq[i])    //store
+                    console.log(await s[i] + ":" + await bpq[i])
+                } else {
+                    f.cs("fail: " + bpq[i])
+                }
+            }
+
             //get prices check and store them
-            bpq0 = await a.price(s0)                            //get
+
+            /*
+
+            bpq0 = await a.price(s0)    //get
             if (bpq0 && !(q == q0)) {    //dont update on curent market
                 bpq0 = await m.checkNewBougthPrice(s0, bpq0)    //check
                 await dbms.saveBougthPrice(s0, bpq0)            //store
@@ -642,7 +671,20 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 console.log(await s3 + ":" + await bpq3)
             } else {
                 f.cs("fail: " + bpq3)
-            }
+            }*/
+
+
+            /*
+                        bpq4 = await a.price(s4)
+                        if (bpq4 && !(q == q4)) {
+                            bpq4 = await m.checkNewBougthPrice(s4, bpq4)
+                            await dbms.saveBougthPrice(s4, bpq4)
+                            console.log(await s4 + ":" + await bpq4)
+                        } else {
+                            f.cs("fail: " + bpq4)
+                        }*/
+
+
         }
 
         async function resetAllBougthPrice(baseCurrency) {
@@ -772,31 +814,31 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             DCAamount[buys] = amount
 
             totalCost
-            DCAcost[buys] = 
+            DCAcost[buys] =
 
-            walet = {
-                "BTC": {
-                    balance: 0.00000737,
-                    value: 0,
-                    buys: 5,
-                    DCAprice: [165, 145, 165, 154, 146],
-                    DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
-                },
-                "ETH": {
-                    balance: 0.00000737,
-                    value: 0,
-                    buys: 5,
-                    DCAprice: [165, 145, 165, 154, 146],
-                    DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
-                },
-                "BNB": {
-                    balance: 0.00000737,
-                    value: 0,
-                    buys: 5,
-                    DCAprice: [165, 145, 165, 154, 146],
-                    DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
-                },
-            }
+                walet = {
+                    "BTC": {
+                        balance: 0.00000737,
+                        value: 0,
+                        buys: 5,
+                        DCAprice: [165, 145, 165, 154, 146],
+                        DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
+                    },
+                    "ETH": {
+                        balance: 0.00000737,
+                        value: 0,
+                        buys: 5,
+                        DCAprice: [165, 145, 165, 154, 146],
+                        DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
+                    },
+                    "BNB": {
+                        balance: 0.00000737,
+                        value: 0,
+                        buys: 5,
+                        DCAprice: [165, 145, 165, 154, 146],
+                        DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
+                    },
+                }
             return newBougthPrice
         }
 
@@ -1071,12 +1113,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             log24hP = await m.loger(change24hP, 3, log24hP);
             logVol = await m.loger(volume, 10, logVol);
             logMA3 = await m.loger(price, 3, logMA3);
+            logMA20 = await m.loger(price, 20, logMA20)
             logMA30 = await m.loger(price, 30, logMA30)
 
             logMA200 = await m.loger(price, 200, logMA200);
 
             //technical analysis
             MA3 = await TI.ma(logMA3);   //MA of last 3 prices
+            MA20 = await TI.ma(logMA20) //MA of last 30 prices
             MA30 = await TI.ma(logMA30) //MA of last 30 prices
             MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
@@ -1107,14 +1151,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             return {
                 uppers: {
                     MA3: MA3,
-                    MA30: MA30,
+                    MA20: MA20,
+                    //MA30: MA30,
                     //MA200: MA200,
                     //MACD: MACD,
                     MACDRev: MACDRev,
                     MACDMA: MACDMA,
                     //change1hP: change1hP,
                     rank: rang,
-
                 },
                 downers: {
                     MA3: MA3,
@@ -1274,27 +1318,28 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 orderType = "holding good";
             } else if (purchase) {
                 /*
-                ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2) //sim
-                sts = await ret.status  //order finished
-                f.cs("sts: "+sts)
-                if (sts == "closed") {
-                    f.cs("order filled")
-                    f.cs("bougthPrice: "+await ret.bougthPrice)
-                    bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
-                    f.cs("bougthPrice: "+bougthPrice)
-                    orderType = "sold"
-                } else {
-                    f.cs("order canceled")
-                    orderType = "holding"
-                }                             
-                f.cs("orderType: "+orderType)
-                console.log('sim end')          //sim end*/
+                                ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2) //sim
+                                sts = await ret.status  //order finished
+                                f.cs("sts: " + sts)
+                                if (sts == "closed") {
+                                    f.cs("order filled")
+                                    f.cs("bougthPrice: " + await ret.bougthPrice)
+                                    bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                                    f.cs("bougthPrice: " + bougthPrice)
+                                    orderType = "sold"
+                                } else {
+                                    f.cs("order canceled")
+                                    orderType = "holding"
+                                }
+                                f.cs("orderType: " + orderType)
+                                console.log('sim end')          //sim end*/
 
                 //m.resetAllBougthPrice(baseCurrency)   //dev not good
                 //m.resetAllBuys(baseCurrency)                //dev buys
 
                 //bougthPrice = 0     //dev
                 //await dbms.saveBougthPrice(symbol, bougthPrice)
+                //await m.updateAllBougthPrice(symbol)    //dev
 
                 orderType = "parked";
             } else {
@@ -1328,7 +1373,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 fiatPrice: priceFiat,
                 //fiatProfit: (absoluteProfit * priceFiat),
                 //fiatProfit2: (absoluteProfit2 * priceFiat),
-                //minAmount: minAmount,
+                minAmount: minAmount,
                 baseBalance: baseBalance,
                 baseBalanceInQuote: baseBalanceInQuote,
                 quoteBalance: quoteBalance,

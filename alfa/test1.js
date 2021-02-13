@@ -1,10 +1,11 @@
 
-let dbms = require("dbms")
-var delayTime = 5;
+var delayTime = 1000;
 
-//delayCount(delayTime)
+delayCount(delayTime)
 async function delayCount(time) {
-    send1 = await delay(time)
+    //send1 = await delay(time)
+    send1 = await countDown(delayTime)
+    let dbms = require("./dbms.js")
     //console.log(await send1)
     //console.log(await countSeconds())
     return await send1
@@ -13,8 +14,6 @@ async function delayCount(time) {
 
 async function delay(durationInSeconds) {
     timeMS = await durationInSeconds * 1000
-    //countDown(10)
-
     return new Promise(resolve => {
         setTimeout(
             async () => {
@@ -25,14 +24,11 @@ async function delay(durationInSeconds) {
     });
 }
 
-let i = 0
-async function countDown(till) {
-    if (i < till) {
-        i++
-        console.log("T- " + i)
-        return await delay(5)
-    } else {
-        return i = 0
+//let i = 0
+async function countDown(to) {
+    for (i = 0; i < to; i++) {
+        console.log("T- " + (to - i))
+        await delay(1)
     }
 }
 
@@ -48,7 +44,7 @@ async function countSeconds() {
             }, 1000);   //set frequenci
     });
 }
-
+/*
 bpq3 = await a.price(s3)
 if (bpq3 && (s3 == dbms.db[s3])) {
     await dbms.saveBougthPrice(s3, 0)

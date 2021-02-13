@@ -6,7 +6,7 @@
     "strategy": "alt",
     "enableOrders": false,
     "tickerMinutes": 3,
-    "portion": 0.999,
+    "portion": 0.99,
     "minProfitP": 0.11,
     "stopLossP": 1.333, 
     "pullOut": false
