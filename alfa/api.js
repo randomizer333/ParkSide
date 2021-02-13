@@ -307,6 +307,7 @@ async function checker(orderId, symbol) {
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
         let r = await exchange.createLimitBuyOrder(symbol, amount, price);
+        //let r = await exchange.createOrder(symbol, 'market', 'buy', amount, price)
         let orderId = await r.id;
         console.log("buy order")
         console.log(orderId)
@@ -321,7 +322,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
             side: "buy",
         }
     } catch (error) {
-        console.log("EEE in buy: ", error)
+        console.log("EEE in buy: "+symbol, error)
         return {
             status: "failed",
             orderId: 0,
@@ -361,11 +362,11 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
 
 async function orderInfo(orderId, symbol) {  //only status returns 'open', 'closed', 'canceled'
     try {
-/*
-        console.log("fetching order")
-        console.log(orderId)
-        console.log("symbol")
-        console.log(symbol)*/
+        /*
+                console.log("fetching order")
+                console.log(orderId)
+                console.log("symbol")
+                console.log(symbol)*/
 
         r = await exchange.fetchOrder(orderId, symbol)
         return r.status
@@ -378,11 +379,11 @@ async function orderInfo(orderId, symbol) {  //only status returns 'open', 'clos
 
 async function orderInfoPrice(orderId, symbol) {  //returns price
     try {
-/*
-        console.log("fetching order")
-        console.log(orderId)
-        console.log("symbol")
-        console.log(symbol)*/
+        /*
+                console.log("fetching order")
+                console.log(orderId)
+                console.log("symbol")
+                console.log(symbol)*/
 
         r = await exchange.fetchOrder(orderId, symbol)
         return r.price
@@ -396,11 +397,11 @@ async function orderInfoPrice(orderId, symbol) {  //returns price
 async function cancel(orderId, symbol) {    //cancels order with id
     try {   //order was canceled
         r = await exchange.cancelOrder(orderId, symbol);
-/*
-        console.log("canceling order")
-        console.log(orderId)
-        console.log("symbol")
-        console.log(symbol)*/
+        /*
+                console.log("canceling order")
+                console.log(orderId)
+                console.log("symbol")
+                console.log(symbol)*/
 
         console.log(r)
         return r.status
