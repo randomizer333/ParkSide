@@ -506,8 +506,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             if (s.fiatCurrency == quoteCurrency) {//if market is fiat use this stoploss
                 absStopLoss = await f.part(stopLossP, sellPrice);
             } else {
-                absStopLoss = await f.part(99, sellPrice);
-                //absStopLoss = await f.part(stopLossP, sellPrice); //use for special stoploss on alt markets
+                //*DANGER!!!*/ absStopLoss = await f.part(99, sellPrice);    
+                absStopLoss = await f.part(stopLossP, sellPrice); //use for special stoploss on alt markets
             }
 
             lossPrice = await sellPrice - await absStopLoss;
