@@ -89,6 +89,7 @@ async function setup() {    //runs once at the begining of the program
     await f.cs(wallet);
     enableOrders ? f.sendMail("Restart", "RUN! at " + f.getTime() + "\n") : "";
     //s.markets == ("BTC" || "BNB" || "ETH") ? quotes = markets : ""
+    //await a.cap();
     firstLogToFile()
     //test()//dev
     await setBots(quotes);
@@ -498,13 +499,15 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             return await r;
         }
 
-        async function checkStopLoss(price, stopLossP, sellPrice, quoteCurrency) {      //force sale
+        async function checkStopLoss(price, stopLossP, sellPrice, quoteCurrency) {  //force sale
+
+            stopLossP += s.minProfitP   //stopLoss is calculated from sellPrice wich includes minProfit
 
             if (s.fiatCurrency == quoteCurrency) {//if market is fiat use this stoploss
                 absStopLoss = await f.part(stopLossP, sellPrice);
             } else {
-                //absStopLoss = await f.part(99, sellPrice);
-                absStopLoss = await f.part(stopLossP, sellPrice); //use for special stoploss on alt markets
+                absStopLoss = await f.part(99, sellPrice);
+                //absStopLoss = await f.part(stopLossP, sellPrice); //use for special stoploss on alt markets
             }
 
             lossPrice = await sellPrice - await absStopLoss;
@@ -527,6 +530,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 b = await f.splitSymbol(symbol, "first");
                 q = await f.splitSymbol(symbol, "second");
 
+                //check if all the stoploses are true
                 let s = []
                 let sls = []
                 let stetje = 0
