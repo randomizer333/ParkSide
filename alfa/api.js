@@ -16,6 +16,23 @@ ticker = f.minToMs(set.tickerMinutes);
 
 //  Init
 
+
+let exchange1 = new ccxt.coinmarketcap();
+//cap()
+async function cap() {                //reurns Array of Objects bid,ask
+    try {
+        r = await exchange1.fetchTickers ([ 'ETH/BTC', 'BTC/USDT' ]);
+        f.cs("X:::" + r)
+        console.log(r)
+        return r;
+    } catch (error) {
+        console.log("EEE: ", error.name);
+        return false
+    }
+}
+
+
+
 let filled;
 //let orderId = 0;
 let exchange = "binance";
@@ -322,7 +339,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
             side: "buy",
         }
     } catch (error) {
-        console.log("EEE in buy: "+symbol, error)
+        console.log("EEE in buy: " + symbol, error)
         return {
             status: "failed",
             orderId: 0,
@@ -619,6 +636,7 @@ exports.sell = sell;
 exports.buy = buy;
 exports.price = price;
 exports.markets = markets;
+exports.cap = cap;
 exports.filled = filled;
 ////exports.orderType = orderType;
 
