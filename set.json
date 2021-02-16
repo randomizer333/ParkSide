@@ -7,7 +7,7 @@
     "enableOrders": true,
     "tickerMinutes": 3,
     "portion": 0.99,
-    "minProfitP": 1.11,
+    "minProfitP": 0.11,
     "stopLossP": 1.11, 
     "pullOut": false
 }

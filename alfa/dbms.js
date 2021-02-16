@@ -34,10 +34,10 @@ async function addTable() {
 }
 async function writeJSON(inputJSON) {   //done
     input = JSON.stringify(inputJSON);
-    fs.writeFile(dataBase, "", function (err) {   //clear file
+    await fs.writeFile(dataBase, "{}", function (err) {   //clear file
         if (err) throw err;
     });
-    fs.writeFile(dataBase, input, function (err) {    //save data
+    await fs.writeFile(dataBase, input, function (err) {    //save data
         if (err) throw err;
     });
 }

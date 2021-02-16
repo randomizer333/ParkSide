@@ -565,8 +565,15 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 //f.cs("raw: " + sls)
                 return await gsl
             }
+
             //f.cs("globalStopLoss: " + globalStopLoss)
-            return await globalStopLoss //stoploss
+            if (s.fiatCurrency != quoteCurrency) {  //disable stopLoss on non fiat markets
+                globalStopLoss = false
+            }else{
+                globalStopLoss     //stoploss
+            }
+
+            return await globalStopLoss     //stoploss
         }
 
         async function change1h(priceLog, tickerInMs, price, durationInMinutes) {
@@ -623,7 +630,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             f.cs("s: " + s)
 
             f.cs("Updating all bougth prices except active market!")
-
 
             for (var i = 0; i < 6; i++) {
                 f.cs("q" + i + ":" + quo[i])
