@@ -569,8 +569,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //f.cs("globalStopLoss: " + globalStopLoss)
             if (s.fiatCurrency != quoteCurrency) {  //disable stopLoss on non fiat markets
                 globalStopLoss = false
-            }else{
-                globalStopLoss     //stoploss
             }
 
             return await globalStopLoss     //stoploss
