@@ -1,0 +1,37 @@
+{
+    "BTC": {
+        "balance": 0.00000737,
+        "value": 0,
+        "buys": 5,
+        "FCAprices": [],
+        "FCAamounts": [],
+        "FCAvalue": 15424,
+        "quotes": ["USDT"]
+    },
+    "ETH": {
+        "balance": 0.00000737,
+        "value": 0,
+        "buys": 5,
+        "FCAprices": [],
+        "FCAamounts": [],
+        "FCAvalue": 15424,
+        "quotes": ["USDT","BTC"]
+    },
+    "BNB": {
+        "balance": 0.00000737,
+        "value": 0,
+        "buys": 5,
+        "FCAprices": [],
+        "FCAamounts": [],
+        "FCAvalue": 15424,
+        "quotes": ["USDT","BTC","ETH"]
+    },
+    "DOT": {
+        "balance": 0.00000737,
+        "value": 0,
+        "buys": 5,
+        "FCAprices": [],
+        "FCAamounts": [],
+        "FCAvalue": 15424,
+        "quotes": ["USDT","BTC","ETH","BNB"]
+}
