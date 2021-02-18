@@ -503,12 +503,15 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             stopLossP += s.minProfitP   //stopLoss is calculated from sellPrice wich includes minProfit
 
+            absStopLoss = await f.part(stopLossP, sellPrice);
+
+            /*
             if (s.fiatCurrency == quoteCurrency) {//if market is fiat use this stoploss
                 absStopLoss = await f.part(stopLossP, sellPrice);
             } else {
-                //*DANGER!!!*/ absStopLoss = await f.part(99, sellPrice);    
+                //DANGER!!! absStopLoss = await f.part(99, sellPrice);    
                 absStopLoss = await f.part(stopLossP, sellPrice); //use for special stoploss on alt markets
-            }
+            }*/
 
             lossPrice = await sellPrice - await absStopLoss;
             loss = await sellPrice - price;
@@ -814,7 +817,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         }
 
-        async function updateDCA(bougthPrice, buys, amount, symbol) {
+        async function updateFCA(bougthPrice, buys, amount, symbol) {
 
             buys++
             DCAprice[buys] = bougthPrice
@@ -822,31 +825,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             DCAamount[buys] = amount
 
             totalCost
-            DCAcost[buys] =
+            DCAcost[buys] 
 
-                walet = {
-                    "BTC": {
-                        balance: 0.00000737,
-                        value: 0,
-                        buys: 5,
-                        DCAprice: [165, 145, 165, 154, 146],
-                        DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
-                    },
-                    "ETH": {
-                        balance: 0.00000737,
-                        value: 0,
-                        buys: 5,
-                        DCAprice: [165, 145, 165, 154, 146],
-                        DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
-                    },
-                    "BNB": {
-                        balance: 0.00000737,
-                        value: 0,
-                        buys: 5,
-                        DCAprice: [165, 145, 165, 154, 146],
-                        DCAamount: [0.02, 0.03, 0.04, 0.03, 0.02]
-                    },
-                }
             return newBougthPrice
         }
 
@@ -1161,7 +1141,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     MA3: MA3,
                     MA20: MA20,
                     //MA30: MA30,
-                    //MA200: MA200,
+                    MA200: MA200,
                     //MACD: MACD,
                     MACDRev: MACDRev,
                     MACDMA: MACDMA,
