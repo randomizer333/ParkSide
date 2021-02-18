@@ -351,7 +351,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         rang,
         RSI, DMACD,
         MA24hP, MAVol,
-        MACDMA, MACDVol
+        MACDMA, MACDVol, MA100
 
     let price;      //balanceChanged
     let bid
@@ -1110,6 +1110,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             MA3 = await TI.ma(logMA3);   //MA of last 3 prices
             MA20 = await TI.ma(logMA20) //MA of last 30 prices
             MA30 = await TI.ma(logMA30) //MA of last 30 prices
+            MA100 = await TI.ma(logMA200);  //MA of last 200 prices
             MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
             RSI = await TI.rsi(logAll); //RSI (30,70)
@@ -1139,12 +1140,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             return {
                 uppers: {
                     MA3: MA3,
-                    MA20: MA20,
-                    //MA30: MA30,
-                    MA200: MA200,
+                    //MA20: MA20,
+                    MA30: MA30,
+                    MA100: MA100,
+                    //MA200: MA200,
                     //MACD: MACD,
-                    MACDRev: MACDRev,
+                    //DMACD: DMACD,
                     MACDMA: MACDMA,
+                    MACDRev: MACDRev,
                     //change1hP: change1hP,
                     rank: rang,
                 },
@@ -1156,6 +1159,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 all: {
                     MA3: MA3,
                     MA30: MA30,
+                    MA100: MA100,
                     MA200: MA200,
                     change1hP: change1hP,
                     change6hP: change6hP,
@@ -1167,6 +1171,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     DMACD: DMACD,
                     MAVol: MAVol,
                     MACDVol: MACDVol,
+                    MACDRev: MACDRev,
                     rank: rang,
                     //rank2: rang2,
                 }
