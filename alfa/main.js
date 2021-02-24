@@ -1304,7 +1304,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                 //bougthPrice = 0     //dev
                 //await dbms.saveBougthPrice(symbol, bougthPrice)
-                await m.updateAllBougthPrice(symbol)    //dev
+                //await m.updateAllBougthPrice(symbol)    //dev
 
                 orderType = "parked";
             } else {
