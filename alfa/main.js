@@ -1195,10 +1195,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         let pullOut
-        if (symbol == "BTC/USDT") {
-            //pullOut = false
-
-            pullOut = s.pullOut
+        if (await indicator.uppers.MA100 <= 0) {
+            pullOut = true  //market goes down disable buy only pulout sale
+            //pullOut = s.pullOut
         } else {
             pullOut = s.pullOut
         }
@@ -1231,7 +1230,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 sts = await ret.status
                 if (sts == "closed") {
                     bougthPrice = 0
-                    await m.resetAllBougthPrice(symbol)
+                    //await m.resetAllBougthPrice(symbol)
                     await m.resetAllBuys(baseCurrency)                //buys
                     orderType = "sold"
                 } else {
@@ -1247,7 +1246,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 sts = await ret.status
                 if (sts == "closed") {
                     bougthPrice = 0
-                    await m.resetAllBougthPrice(symbol)
+                    //await m.resetAllBougthPrice(symbol)
                     await m.resetAllBuys(baseCurrency)                //buys
                     orderType = "lossed";
                 } else {
@@ -1329,6 +1328,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 //fiatProfit: (absoluteProfit * priceFiat),
                 //fiatProfit2: (absoluteProfit2 * priceFiat),
                 symbol: symbol,
+                time: f.getTime(),
                 //base: baseCurrency,
                 //quote: quoteCurrency,
                 relativeProfit: (relativeProfit + minProfitP),
@@ -1345,7 +1345,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 quoteBalance: quoteBalance,
                 quoteBalanceInBase: quoteBalanceInBase,
                 enabled: enableOrders,
-                time: f.getTime(),
+                pullOut: pullOut,
                 ticker: tickerMinutes,
                 stopLossP: stopLossP,
                 MrPrice: "_____________________________",
