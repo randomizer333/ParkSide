@@ -1,1 +1,254 @@
-{"BTC/USDT":{"timedate":"2021.02.24 21:49:15.108","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"ETH/USDT":{"timedate":"2021.02.24 21:49:15.122","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"BNB/USDT":{"timedate":"2021.02.24 21:49:15.123","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"DOT/USDT":{"timedate":"2021.02.24 21:49:15.123","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"XRP/USDT":{"timedate":"2021.02.24 21:49:15.124","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"ADA/USDT":{"timedate":"2021.02.24 21:49:15.124","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"LTC/USDT":{"timedate":"2021.02.24 21:49:15.125","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"BCH/USDT":{"timedate":"2021.02.24 21:49:15.125","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"LINK/USDT":{"timedate":"2021.02.24 21:49:15.126","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"XLM/USDT":{"timedate":"2021.02.24 21:49:15.133","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"UNI/USDT":{"timedate":"2021.02.24 21:49:15.140","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"DOGE/USDT":{"timedate":"2021.02.24 21:49:15.141","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"ETH/BTC":{"timedate":"2021.02.24 21:49:15.141","bougthPrice":0,"orderType":"still none","buys":0,"stopLoss":false},"BNB/BTC":{"timedate":"2021.02.24 21:49:15.142","bougthPrice":0,"orderType":"still none","buys":0,"stopLoss":false},"DOT/BTC":{"timedate":"2021.02.24 21:49:15.142","bougthPrice":0,"orderType":"still none","buys":0,"stopLoss":false},"XRP/BTC":{"timedate":"2021.02.24 21:49:15.143","bougthPrice":0,"orderType":"still none","buys":0,"stopLoss":false},"ADA/BTC":{"timedate":"2021.02.24 21:49:15.143","bougthPrice":0,"orderType":"still none","buys":0,"stopLoss":false},"LTC/BTC":{"timedate":"2021.02.24 21:49:15.143","bougthPrice":0,"orderType":"holding","buys":0,"stopLoss":false},"BCH/BTC":{"timedate":"2021.02.24 21:49:15.144","bougthPrice":0,"orderType":"still none","buys":0,"stopLoss":false},"LINK/BTC":{"timedate":"2021.02.24 21:49:15.144","bougthPrice":0,"orderType":"still none","buys":0,"stopLoss":false},"XLM/BTC":{"timedate":"2021.02.24 21:49:15.145","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"UNI/BTC":{"timedate":"2021.02.24 21:49:15.145","bougthPrice":0,"orderType":"still none","buys":0,"stopLoss":false},"DOGE/BTC":{"timedate":"2021.02.24 21:49:15.145","bougthPrice":0,"orderType":"parked","buys":0,"stopLoss":false},"BNB/ETH":{"timedate":"2021.02.24 21:49:15.146","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"XRP/ETH":{"timedate":"2021.02.24 21:49:15.146","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"ADA/ETH":{"timedate":"2021.02.24 21:49:15.146","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"LTC/ETH":{"timedate":"2021.02.24 21:49:15.146","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"LINK/ETH":{"timedate":"2021.02.24 21:49:15.147","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"XLM/ETH":{"timedate":"2021.02.24 21:49:15.153","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"DOT/BNB":{"timedate":"2021.02.24 21:49:15.160","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"XRP/BNB":{"timedate":"2021.02.24 21:49:15.160","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"ADA/BNB":{"timedate":"2021.02.24 21:49:15.161","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"LTC/BNB":{"timedate":"2021.02.24 21:49:15.167","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"BCH/BNB":{"timedate":"2021.02.24 21:49:15.167","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"XLM/BNB":{"timedate":"2021.02.24 21:49:15.167","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false},"UNI/BNB":{"timedate":"2021.02.24 21:49:15.174","bougthPrice":0,"orderType":"none","buys":0,"stopLoss":false}}
+{
+    "BTC/USDT": {
+        "timedate": "2021.02.25 2:30:52.223",
+        "bougthPrice": 50757.165,
+        "orderType": "parked",
+        "buys": 0,
+        "stopLoss": true
+    },
+    "ETH/USDT": {
+        "timedate": "2021.02.25 2:30:52.637",
+        "bougthPrice": 1651.0549999999998,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": true
+    },
+    "BNB/USDT": {
+        "timedate": "2021.02.25 2:30:50.528",
+        "bougthPrice": 260.0416,
+        "orderType": "holding",
+        "buys": 1,
+        "stopLoss": true
+    },
+    "DOT/USDT": {
+        "timedate": "2021.02.25 1:09:44.561",
+        "bougthPrice": 34.1511,
+        "orderType": "parked",
+        "buys": 0,
+        "stopLoss": true
+    },
+    "XRP/USDT": {
+        "timedate": "2021.02.24 21:49:15.124",
+        "bougthPrice": 0,
+        "orderType": "parked",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "ADA/USDT": {
+        "timedate": "2021.02.24 21:49:15.124",
+        "bougthPrice": 0,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "LTC/USDT": {
+        "timedate": "2021.02.25 1:04:18.968",
+        "bougthPrice": 181.75,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": true
+    },
+    "BCH/USDT": {
+        "timedate": "2021.02.25 2:25:26.282",
+        "bougthPrice": 543.88,
+        "orderType": "still none",
+        "buys": 1,
+        "stopLoss": true
+    },
+    "LINK/USDT": {
+        "timedate": "2021.02.25 1:47:01.636",
+        "bougthPrice": 28.458,
+        "orderType": "still none",
+        "buys": 1,
+        "stopLoss": true
+    },
+    "XLM/USDT": {
+        "timedate": "2021.02.24 21:49:15.133",
+        "bougthPrice": 0,
+        "orderType": "parked",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "UNI/USDT": {
+        "timedate": "2021.02.24 21:49:15.140",
+        "bougthPrice": 0,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "DOGE/USDT": {
+        "timedate": "2021.02.24 21:49:15.141",
+        "bougthPrice": 0,
+        "orderType": "parked",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "ETH/BTC": {
+        "timedate": "2021.02.24 21:49:15.141",
+        "bougthPrice": 0,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "BNB/BTC": {
+        "timedate": "2021.02.25 2:30:51.371",
+        "bougthPrice": 0.00511755,
+        "orderType": "holding",
+        "buys": 1,
+        "stopLoss": true
+    },
+    "DOT/BTC": {
+        "timedate": "2021.02.25 1:09:45.505",
+        "bougthPrice": 0.00068666,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": true
+    },
+    "XRP/BTC": {
+        "timedate": "2021.02.24 21:49:15.143",
+        "bougthPrice": 0,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "ADA/BTC": {
+        "timedate": "2021.02.24 21:49:15.143",
+        "bougthPrice": 0,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "LTC/BTC": {
+        "timedate": "2021.02.25 1:04:19.812",
+        "bougthPrice": 0.0036425,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "BCH/BTC": {
+        "timedate": "2021.02.25 2:25:27.181",
+        "bougthPrice": 0.010727,
+        "orderType": "holding",
+        "buys": 1,
+        "stopLoss": true
+    },
+    "LINK/BTC": {
+        "timedate": "2021.02.25 1:47:02.468",
+        "bougthPrice": 0.00056243,
+        "orderType": "holding",
+        "buys": 1,
+        "stopLoss": true
+    },
+    "XLM/BTC": {
+        "timedate": "2021.02.24 21:49:15.145",
+        "bougthPrice": 0,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "UNI/BTC": {
+        "timedate": "2021.02.24 21:49:15.145",
+        "bougthPrice": 0,
+        "orderType": "still none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "DOGE/BTC": {
+        "timedate": "2021.02.24 21:49:15.145",
+        "bougthPrice": 0,
+        "orderType": "parked",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "BNB/ETH": {
+        "timedate": "2021.02.25 2:30:51.800",
+        "bougthPrice": 0.157354,
+        "orderType": "none",
+        "buys": 1,
+        "stopLoss": false
+    },
+    "XRP/ETH": {
+        "timedate": "2021.02.24 21:49:15.146",
+        "bougthPrice": 0,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "ADA/ETH": {
+        "timedate": "2021.02.24 21:49:15.146",
+        "bougthPrice": 0,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "LTC/ETH": {
+        "timedate": "2021.02.25 1:04:20.223",
+        "bougthPrice": 0.11152000000000001,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "LINK/ETH": {
+        "timedate": "2021.02.25 1:47:02.947",
+        "bougthPrice": 0.017244,
+        "orderType": "none",
+        "buys": 1,
+        "stopLoss": false
+    },
+    "XLM/ETH": {
+        "timedate": "2021.02.24 21:49:15.153",
+        "bougthPrice": 0,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "DOT/BNB": {
+        "timedate": "2021.02.25 1:09:45.934",
+        "bougthPrice": 0.13482499999999997,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "XRP/BNB": {
+        "timedate": "2021.02.24 21:49:15.160",
+        "bougthPrice": 0,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "ADA/BNB": {
+        "timedate": "2021.02.24 21:49:15.161",
+        "bougthPrice": 0,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "LTC/BNB": {
+        "timedate": "2021.02.25 1:04:20.638",
+        "bougthPrice": 0.71,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "BCH/BNB": {
+        "timedate": "2021.02.25 2:25:27.602",
+        "bougthPrice": 2.0945,
+        "orderType": "none",
+        "buys": 1,
+        "stopLoss": false
+    },
+    "XLM/BNB": {
+        "timedate": "2021.02.24 21:49:15.167",
+        "bougthPrice": 0,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    },
+    "UNI/BNB": {
+        "timedate": "2021.02.24 21:49:15.174",
+        "bougthPrice": 0,
+        "orderType": "none",
+        "buys": 0,
+        "stopLoss": false
+    }
+}
