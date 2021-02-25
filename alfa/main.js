@@ -517,7 +517,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 }
             }
 
-            globalStopLoss = await checkGlobalStopLoss(symbol, stoploss)
+            //globalStopLoss = await checkGlobalStopLoss(symbol, stoploss)
             async function checkGlobalStopLoss(symbol, stopLoss) {
                 //make symbols
 
@@ -565,7 +565,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 globalStopLoss = false
             }
 
-            return await globalStopLoss     //stoploss
+            return await stoploss     //stoploss
         }
 
         async function change1h(priceLog, tickerInMs, price, durationInMinutes) {
