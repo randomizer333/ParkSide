@@ -333,14 +333,16 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         logMA200 = [],
         logVolMACD = [],
         logMA200second = [];
+    logDMacd = []
 
-    let MA, MA200,
-        MACD,
+    let MA, MA2, MA3, MA100, MA200,
+        MACD, MACDMA, MACDRev,
         change1hP, change24hP, change6hP,
         rang,
-        RSI, DMACD,
-        MA24hP, MAVol,
-        MACDMA, MACDVol, MA100
+        RSI,
+        MA24hP,
+        MAVol, MACDVol,
+        DMACD, DMACDRev, DMACDMA
 
     let price;      //balanceChanged
     let bid
@@ -448,7 +450,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //f.cs("lastBPrice: " + lastBPrice)
 
             if (lastBPrice > price) {
-                f.cs("Last bougth price: " + price + " was bigger than current NOT Updated: " + lastBPrice)
+                f.cs("Last bougth price: " + lastBPrice + " was bigger than current NOT Updated: " + price)
                 return lastBPrice;
             } else if (lastBPrice <= price) {
                 f.cs("Last bougth price: " + lastBPrice + " was smaller than current IS Updated: " + price)
@@ -563,6 +565,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //f.cs("globalStopLoss: " + globalStopLoss)
             if (s.fiatCurrency != quoteCurrency) {  //disable stopLoss on non fiat markets
                 globalStopLoss = false
+                stopLoss = false
             }
 
             return await stoploss     //stoploss
@@ -644,23 +647,32 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             s[5] = await f.mergeSymbol(quo[2], quo[0])  //ETH/USDT
             s[6] = await f.mergeSymbol(quo[3], quo[0])  //BNB/USDT
 
+            s[7] = await f.mergeSymbol(quo[2], quo[1])    //ETH/BTC
+            s[8] = await f.mergeSymbol(quo[3], quo[1])    //BNB/BTC
+            s[9] = await f.mergeSymbol(quo[3], quo[2])    //BNB/ETH
+
             quo = ["USDT", "BTC", "ETH", "BNB"]
 
+            /*
             f.cs("q0: " + q0)
             f.cs("q1: " + q1)
             f.cs("q2: " + q2)
-            f.cs("q3: " + q3)
+            f.cs("q3: " + q3)*/
 
-            f.cs("bpq: " + bpq)
-            f.cs("bpq.lengtght: " + bpq.length)
+            //f.cs("bpq: " + bpq)
+            f.cs("quos: " + quo)
+            //f.cs("bpq.lengtght: " + bpq.length)
             f.cs("s: " + s)
+            //f.cs("s: " + s.length)
 
             f.cs("Updating all bougth prices except active market!")
 
             //get prices check and store them
-            for (var i = 0; i < 6; i++) {
-                f.cs("q" + i + ":" + quo[i])
-                bpq[i] = await a.price(s[i])    //get
+            for (var i = 0; i < s.length; i++) {
+                //f.cs("q" + i + ":" + quo[i])
+                //f.cs("s" + i + ":" + s[i])
+
+                bpq[i] = await a.price(s[i])    //get market
                 if (bpq[i] && !(q == quo[i])) { //dont update on curent market
                     bpq4 = await m.checkNewBougthPrice(s[i], bpq[i])    //check
                     await dbms.saveBougthPrice(s[i], bpq[i])    //store
@@ -1071,28 +1083,29 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logAll = await m.loger(price, 555, logAll);
             log24hP = await m.loger(change24hP, 3, log24hP);
             logVol = await m.loger(volume, 10, logVol);
-            logMA3 = await m.loger(price, 3, logMA3);
-            logMA20 = await m.loger(price, 20, logMA20)
-            logMA30 = await m.loger(price, 30, logMA30)
-
-            logMA200 = await m.loger(price, 200, logMA200);
+            logMA200 = await m.loger(price, 200, logMA200); //for all MAs
 
             //technical analysis
-            MA3 = await TI.ma(logMA3);   //MA of last 3 prices
-            MA20 = await TI.ma(logMA20) //MA of last 30 prices
-            MA30 = await TI.ma(logMA30) //MA of last 30 prices
+            MA3 = await TI.ma(logMA200);   //MA of last 3 prices
+            MA20 = await TI.ma(logMA200) //MA of last 30 prices
+            MA30 = await TI.ma(logMA200) //MA of last 30 prices
             MA100 = await TI.ma(logMA200);  //MA of last 200 prices
             MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
             RSI = await TI.rsi(logAll); //RSI (30,70)
 
             MACD = await TI.macd(logAll);   //standard MACD
-            MACDRev = await TI.macdReverse(logAll);     //
             logMacd = await m.loger(MACD, 3, logMacd);
             MACDMA = await TI.ma(logMacd);  //MA of MACD
-            //rang = await globalRang2(MACDMA, symbol, botNumber, 3)
+            MACDRev = await TI.macdReverse(logAll);     //
 
             DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
+            logDMacd = await m.loger(MACD, 2, logMacd);
+            DMACDMA = await TI.ma(logDMacd);  //MA of DMACD
+            DMACDRev = await TI.doubleMacdReverse(logAll);     //
+
+            //rang = await globalRang2(MACDMA, symbol, botNumber, 3)
+
 
             change1hP = await m.change1h(logAll, ticker, price, 60)  //price change percentage in duration
             change6hP = await m.change1h(logAll, ticker, price, 360)  //price change percentage in duration
@@ -1112,13 +1125,15 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 uppers: {
                     MA3: MA3,
                     //MA20: MA20,
-                    MA30: MA30,
-                    MA100: MA100,
+                    //MA30: MA30,
+                    //MA100: MA100,
                     //MA200: MA200,
                     //MACD: MACD,
+                    //MACDMA: MACDMA,
+                    //MACDRev: MACDRev,
                     //DMACD: DMACD,
-                    MACDMA: MACDMA,
-                    MACDRev: MACDRev,
+                    DMACDMA: DMACDMA,
+                    DMACDRev: DMACDRev,
                     //change1hP: change1hP,
                     //change6hP:change6hP,
                     rank: rang,
@@ -1282,21 +1297,21 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 orderType = "holding good";
             } else if (purchase) {
                 /*
-                                ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2) //sim
-                                sts = await ret.status  //order finished
-                                f.cs("sts: " + sts)
-                                if (sts == "closed") {
-                                    f.cs("order filled")
-                                    f.cs("bougthPrice: " + await ret.bougthPrice)
-                                    bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
-                                    f.cs("bougthPrice: " + bougthPrice)
-                                    orderType = "sold"
-                                } else {
-                                    f.cs("order canceled")
-                                    orderType = "holding"
-                                }
-                                f.cs("orderType: " + orderType)
-                                console.log('sim end')          //sim end*/
+                ret = await a.buy(symbol, quoteBalanceInBase * portion, price / 2) //sim
+                sts = await ret.status  //order finished
+                f.cs("sts: " + sts)
+                if (sts == "closed") {
+                    f.cs("order filled")
+                    f.cs("bougthPrice: " + await ret.bougthPrice)
+                    bougthPrice = await m.checkNewBougthPrice(symbol, await ret.bougthPrice)
+                    f.cs("bougthPrice: " + bougthPrice)
+                    orderType = "sold"
+                } else {
+                    f.cs("order canceled")
+                    orderType = "holding"
+                }
+                f.cs("orderType: " + orderType)
+                console.log('sim end')          //sim end*/
 
                 //m.resetAllBougthPrice(symbol)   //dev not good
                 //m.resetAllBuys(baseCurrency)                //dev buys
