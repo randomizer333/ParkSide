@@ -1,12 +1,16 @@
 {
     "BTC": {
         "balance": 0.00000737,
-        "value": 0,
         "buys": 5,
+        "value": 0,
         "FCAprices": [],
         "FCAamounts": [],
         "FCAvalue": 15424,
-        "quotes": ["USDT"]
+        "quotes": ["USDT"],
+        "inboundMarkets":["BTC/USDT"],
+        "inboundMarketsBougthPrice":[1232],
+        "outboundMarkets":["ETH/BTC","BNB/BTC","..."],
+        "outboundMarketsBougthPrice":[1234,2134]
     },
     "ETH": {
         "balance": 0.00000737,
@@ -15,7 +19,9 @@
         "FCAprices": [],
         "FCAamounts": [],
         "FCAvalue": 15424,
-        "quotes": ["USDT","BTC"]
+        "quotes": ["USDT","BTC"],
+        "inboundMarkets":["ETH/USDT","ETH/BTC"],
+        "inboundMarketsBougthPrice":[1232],
     },
     "BNB": {
         "balance": 0.00000737,
