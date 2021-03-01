@@ -5,7 +5,7 @@
     "quotes" : ["BTC", "ETH", "BNB"],
     "fiatCurrency":"USDT",
     "strategy": "alt",
-    "enableOrders": false,
+    "enableOrders": true,
     "tickerMinutes": 3,
     "portion": 0.99,
     "minProfitP": 1.11,
