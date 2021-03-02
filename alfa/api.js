@@ -99,15 +99,26 @@ exInfos = {
 
 //ohlcv("BTC/USDT")
 async function ohlcv(symbol) {
-
-    const klines = await exchange.fetchOHLCV(symbol, "1d")
-    //resolve(klines)
-
-    //f.cs(klines)
-
-    return
-
+    try {
+        r = await exchange.fetchTicker(symbol);
+        f.cs(r);
+        return await r.open     //high,low,close
+    } catch (error) {
+        console.log("EEE: ", error);
+    }
 }
+
+async function vwap(symbol) {
+    try {
+        r = await exchange.fetchTicker(symbol);
+        //f.cs(r);
+        return await r.vwap     //calculated by exchange
+    } catch (error) {
+        console.log("EEE: ", error);
+    }
+}
+
+
 
 async function volume(symbol) {
     try {
@@ -637,6 +648,7 @@ exports.buy = buy;
 exports.price = price;
 exports.markets = markets;
 exports.cap = cap;
+exports.vwap = vwap;
 exports.filled = filled;
 ////exports.orderType = orderType;
 
