@@ -26,6 +26,17 @@ async function ma(arr) {     //trendMA between curent and last value
     }
 }
 
+async function vwap(prices,volumes){
+    let VWAP = TI.VWAP;
+    let inputVWAP = {
+        values: values,
+        period: 14   //9
+    };
+    let r = await VWAP.calculate(inputVWAP);
+    f.cs(r)
+    return await r;
+}
+
 async function rsi(values) {  //returns trndRSI   log15
     let RSI = TI.RSI;
     let inputRSI = {
