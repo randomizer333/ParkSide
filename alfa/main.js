@@ -4,6 +4,13 @@
 3.intracrypto trading trader
 */
 
+/*ToDo
+-enable pullout in bear
+-valet.json
+-sell order delay
+-implement FCA or DCA
+*/
+
 const { splitSymbol } = require("./funk");
 
 //const { db } = require("./dbms");
@@ -327,13 +334,15 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         log24hP = [],
         logVol = [],
         logMacd = [],
+        
         logMA3 = [],
         logMA20 = [],
         logMA30 = [],
+        logMA100 = [],
         logMA200 = [],
+
         logVolMACD = [],
-        logMA200second = [];
-    logDMacd = []
+        logDMacd = []
 
     let MA, MA2, MA3, MA100, MA200,
         MACD, MACDMA, MACDRev,
@@ -816,7 +825,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             totalCost
             DCAcost[buys]
 
-            return newBougthPrice
+            return valueInFiat
         }
 
         let market21a, market32a, market31a, market21b, market32b, market31b
@@ -1083,13 +1092,18 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logAll = await m.loger(price, 555, logAll);
             log24hP = await m.loger(change24hP, 3, log24hP);
             logVol = await m.loger(volume, 10, logVol);
+
+            logMA3 = await m.loger(price, 3, logMA3); //for all MAs
+            logMA20 = await m.loger(price, 20, logMA20); //for all MAs
+            logMA30 = await m.loger(price, 30, logMA30); //for all MAs
+            logMA100 = await m.loger(price, 100, logMA100); //for all MAs
             logMA200 = await m.loger(price, 200, logMA200); //for all MAs
 
             //technical analysis
-            MA3 = await TI.ma(logMA200);   //MA of last 3 prices
-            MA20 = await TI.ma(logMA200) //MA of last 30 prices
-            MA30 = await TI.ma(logMA200) //MA of last 30 prices
-            MA100 = await TI.ma(logMA200);  //MA of last 200 prices
+            MA3 = await TI.ma(logMA3);   //MA of last 3 prices
+            MA20 = await TI.ma(logMA20) //MA of last 30 prices
+            MA30 = await TI.ma(logMA30) //MA of last 30 prices
+            MA100 = await TI.ma(logMA100);  //MA of last 200 prices
             MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
             RSI = await TI.rsi(logAll); //RSI (30,70)
@@ -1097,12 +1111,12 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             MACD = await TI.macd(logAll);   //standard MACD
             logMacd = await m.loger(MACD, 3, logMacd);
             MACDMA = await TI.ma(logMacd);  //MA of MACD
-            MACDRev = await TI.macdReverse(logAll);     //
+            MACDRev = await TI.macdReverse(logAll);
 
             DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
-            logDMacd = await m.loger(MACD, 2, logMacd);
+            logDMacd = await m.loger(MACD, 3, logMacd);
             DMACDMA = await TI.ma(logDMacd);  //MA of DMACD
-            DMACDRev = await TI.doubleMacdReverse(logAll);     //
+            DMACDRev = await TI.doubleMacdReverse(logAll);
 
             //rang = await globalRang2(MACDMA, symbol, botNumber, 3)
 
@@ -1135,7 +1149,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     DMACDMA: DMACDMA,
                     DMACDRev: DMACDRev,
                     //change1hP: change1hP,
-                    //change6hP:change6hP,
+                    //change6hP: change6hP,
                     rank: rang,
                 },
                 downers: {
@@ -1159,6 +1173,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     MAVol: MAVol,
                     MACDVol: MACDVol,
                     MACDRev: MACDRev,
+                    DMACD: DMACD,
+                    DMACDMA: DMACDMA,
+                    DMACDRev: DMACDRev,
                     rank: rang,
                     //rank2: rang2,
                 }
@@ -1210,7 +1227,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         let pullOut
-        if (await indicator.uppers.MA100 <= 0) {
+        if (await indicator.all.MA100 <= 0) {    //bearish indicator
             pullOut = true  //market goes down disable buy only pulout sale
             //pullOut = s.pullOut
         } else {
