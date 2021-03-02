@@ -334,7 +334,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         log24hP = [],
         logVol = [],
         logMacd = [],
-        
+        logVwap = [],
+
         logMA3 = [],
         logMA20 = [],
         logMA30 = [],
@@ -351,7 +352,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         RSI,
         MA24hP,
         MAVol, MACDVol,
-        DMACD, DMACDRev, DMACDMA
+        DMACD, DMACDRev, DMACDMA,
+        vwapMA
 
     let price;      //balanceChanged
     let bid
@@ -1109,17 +1111,16 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             RSI = await TI.rsi(logAll); //RSI (30,70)
 
             MACD = await TI.macd(logAll);   //standard MACD
+            MACDRev = await TI.macdReverse(logAll);
             logMacd = await m.loger(MACD, 3, logMacd);
             MACDMA = await TI.ma(logMacd);  //MA of MACD
-            MACDRev = await TI.macdReverse(logAll);
 
             DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
-            logDMacd = await m.loger(MACD, 3, logMacd);
-            DMACDMA = await TI.ma(logDMacd);  //MA of DMACD
             DMACDRev = await TI.doubleMacdReverse(logAll);
+            logDMacd = await m.loger(MACD, 3, logDMacd);
+            DMACDMA = await TI.ma(logDMacd);  //MA of DMACD
 
             //rang = await globalRang2(MACDMA, symbol, botNumber, 3)
-
 
             change1hP = await m.change1h(logAll, ticker, price, 60)  //price change percentage in duration
             change6hP = await m.change1h(logAll, ticker, price, 360)  //price change percentage in duration
@@ -1135,6 +1136,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logVolMACD = await m.loger(volume, 40, logVolMACD);
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
 
+            vwap = await a.vwap(symbol)
+            logVwap = await m.loger(vwap, 3, logVwap);
+            vwapMA = await TI.ma(logVwap);    //MA of last 5 Volumes
+
             return {
                 uppers: {
                     MA3: MA3,
@@ -1148,14 +1153,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //DMACD: DMACD,
                     DMACDMA: DMACDMA,
                     DMACDRev: DMACDRev,
-                    //change1hP: change1hP,
-                    //change6hP: change6hP,
                     rank: rang,
                 },
                 downers: {
-                    MA3: MA3,
-                    //MA30: MA30,
-                    //MA200: MA200
+                    MA3: MA3
                 },
                 all: {
                     MA3: MA3,
@@ -1169,13 +1170,14 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     RSI: RSI,
                     MACD: MACD,
                     MACDMA: MACDMA,
-                    DMACD: DMACD,
                     MAVol: MAVol,
                     MACDVol: MACDVol,
                     MACDRev: MACDRev,
                     DMACD: DMACD,
                     DMACDMA: DMACDMA,
                     DMACDRev: DMACDRev,
+                    vwap: vwap,
+                    vwapMA: vwapMA,
                     rank: rang,
                     //rank2: rang2,
                 }
@@ -1227,7 +1229,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         let pullOut
-        if (await indicator.all.MA100 <= 0) {    //bearish indicator
+        if (await indicator.all.vwapMA <= 0) {    //bearish indicator
             pullOut = true  //market goes down disable buy only pulout sale
             //pullOut = s.pullOut
         } else {
@@ -1376,10 +1378,12 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 baseBalanceInQuote: baseBalanceInQuote,
                 quoteBalance: quoteBalance,
                 quoteBalanceInBase: quoteBalanceInBase,
+                ticker: tickerMinutes,
+                minProfit: s.minProfitP,
+                stopLossP: stopLossP,
                 enabled: enableOrders,
                 pullOut: pullOut,
-                ticker: tickerMinutes,
-                stopLossP: stopLossP,
+                vwapMA: indicator.all.vwapMA,
                 MrPrice: "_____________________________",
                 sellPrice: sellPrice,
                 price: price,
