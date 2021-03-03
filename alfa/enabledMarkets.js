@@ -24,7 +24,7 @@ function alts (){
         "UNI/BTC",
         "DOGE/BTC",
     
-        /*"BNB/ETH",   //intra quote
+        "BNB/ETH",   //intra quote
         //"DOT/ETH",    no market
         "XRP/ETH",
         "ADA/ETH",

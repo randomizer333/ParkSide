@@ -525,6 +525,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else {
                 if (await price <= lossPrice) {
                     stoploss = true   //sell ASAP!!!
+                    
+                    if (quoteCurrency != s.fiatCurrency) {  //disable stopLoss on non fiat markets
+                        globalStopLoss = false
+                        stopLoss = false
+                    }
                 } else {
                     stoploss = false  //hodl
                 }
@@ -574,10 +579,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
 
             //f.cs("globalStopLoss: " + globalStopLoss)
-            if (s.fiatCurrency != quoteCurrency) {  //disable stopLoss on non fiat markets
-                globalStopLoss = false
-                stopLoss = false
-            }
+
 
             return await stoploss     //stoploss
         }
