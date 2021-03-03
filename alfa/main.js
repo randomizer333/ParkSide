@@ -520,22 +520,40 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             lossPrice = await sellPrice - await absStopLoss;
             loss = await sellPrice - price;
             relativeLoss = await f.percent(loss, sellPrice);
+
+            /*
             if (!lossPrice) {
-                stoploss = false
+                f.cs("no BP")
+                stopLoss = false
             } else {
-                if (await price <= lossPrice) {
-                    stoploss = true   //sell ASAP!!!
-                    
-                    if (quoteCurrency != s.fiatCurrency) {  //disable stopLoss on non fiat markets
-                        globalStopLoss = false
-                        stopLoss = false
-                    }
+                if (quoteCurrency != s.fiatCurrency) {  //disable stopLoss on non fiat markets
+                    f.cs("not fiat")
+                    globalStopLoss = false
+                    stopLoss = false
                 } else {
-                    stoploss = false  //hodl
+                    if (await price <= lossPrice) {
+                        f.cs("loss")
+                        stopLoss = true   //sell ASAP!!!
+                    } else {
+                        f.cs("hodl")
+                        stopLoss = false  //hodl
+                    }
                 }
+            }*/
+
+            if (lossPrice &&
+                (quoteCurrency == s.fiatCurrency) &&
+                (price <= lossPrice)) {
+                //f.cs("quote: " + quoteCurrency)
+                //f.cs("fiat: " + s.fiatCurrency)
+                //f.cs("loss")
+                stopLoss = true   //sell ASAP!!!
+            } else {
+                //f.cs("hodl")
+                stopLoss = false  //hodl
             }
 
-            //globalStopLoss = await checkGlobalStopLoss(symbol, stoploss)
+            //globalStopLoss = await checkGlobalStopLoss(symbol, stopLoss)
             async function checkGlobalStopLoss(symbol, stopLoss) {
                 //make symbols
 
@@ -580,8 +598,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             //f.cs("globalStopLoss: " + globalStopLoss)
 
-
-            return await stoploss     //stoploss
+            //f.cs(stopLoss)
+            return stopLoss     //stoploss
         }
 
         async function change1h(priceLog, tickerInMs, price, durationInMinutes) {
