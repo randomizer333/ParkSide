@@ -21,7 +21,7 @@ let exchange1 = new ccxt.coinmarketcap();
 //cap()
 async function cap() {                //reurns Array of Objects bid,ask
     try {
-        r = await exchange1.fetchTickers ([ 'ETH/BTC', 'BTC/USDT' ]);
+        r = await exchange1.fetchTicker ('BTC/USDT');
         f.cs("X:::" + r)
         console.log(r)
         return r;

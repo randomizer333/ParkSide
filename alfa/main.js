@@ -343,7 +343,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         logMA200 = [],
 
         logVolMACD = [],
-        logDMacd = []
+        logDMacd = [],
+
+        logBids = [],
+        logAsks = []
+
 
     let MA, MA2, MA3, MA100, MA200,
         MACD, MACDMA, MACDRev,
@@ -353,10 +357,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         MA24hP,
         MAVol, MACDVol,
         DMACD, DMACDRev, DMACDMA,
-        vwapMA
+        vwapMA,
+        ao
 
     let price;      //balanceChanged
-    let bid
+    let bid, ask
     let bougthPrice
 
     let sellPrice;  //safeSale
@@ -509,44 +514,13 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             absStopLoss = await f.part(stopLossP, sellPrice);
 
-            /*
-            if (s.fiatCurrency == quoteCurrency) {//if market is fiat use this stoploss
-                absStopLoss = await f.part(stopLossP, sellPrice);
-            } else {
-                //DANGER!!! absStopLoss = await f.part(99, sellPrice);    
-                absStopLoss = await f.part(stopLossP, sellPrice); //use for special stoploss on alt markets
-            }*/
-
             lossPrice = await sellPrice - await absStopLoss;
             loss = await sellPrice - price;
             relativeLoss = await f.percent(loss, sellPrice);
 
-            /*
-            if (!lossPrice) {
-                f.cs("no BP")
-                stopLoss = false
-            } else {
-                if (quoteCurrency != s.fiatCurrency) {  //disable stopLoss on non fiat markets
-                    f.cs("not fiat")
-                    globalStopLoss = false
-                    stopLoss = false
-                } else {
-                    if (await price <= lossPrice) {
-                        f.cs("loss")
-                        stopLoss = true   //sell ASAP!!!
-                    } else {
-                        f.cs("hodl")
-                        stopLoss = false  //hodl
-                    }
-                }
-            }*/
-
             if (lossPrice &&
-                (quoteCurrency == s.fiatCurrency) &&
+                (quoteCurrency == s.fiatCurrency) &&    //uses stoploss only on fiat markets
                 (price <= lossPrice)) {
-                //f.cs("quote: " + quoteCurrency)
-                //f.cs("fiat: " + s.fiatCurrency)
-                //f.cs("loss")
                 stopLoss = true   //sell ASAP!!!
             } else {
                 //f.cs("hodl")
@@ -623,7 +597,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             } else {
                 price = await a.price(symbol);  //price for analysis
             }
-            return await price
+            return price
         }
 
         //determineMarketType(symbol)
@@ -1083,6 +1057,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         baseBalance = await a.balance(baseCurrency);
         quoteBalance = await a.balance(quoteCurrency);
         price = await m.determinePrice(symbol)
+        ask = await a.ask(symbol)
+        bid = await a.bid(symbol)
+
         priceFiat = await a.price(s.fiatMarket)
 
         wallet = await a.wallet();
@@ -1100,18 +1077,18 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         bougthPrice = await dbms.readBougthPrice(symbol)
         marketType = await m.determineMarketType(symbol)
 
-        let bougthAmount
-
         let buys = await dbms.readBuys(symbol)
 
         hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP, buys);
 
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice, quoteCurrency);
 
-        indicator = await indicators(price, volume, change24hP)
-        async function indicators(price, volume, change24hP) {
+        indicator = await indicators(price, volume, change24hP, bid, ask)
+        async function indicators(price, volume, change24hP, bid, ask) {
             //market data colection
             logAll = await m.loger(price, 555, logAll);
+            logBids = await m.loger(bid, 50, logBids)
+            logAsks = await m.loger(ask, 50, logAsks);
             log24hP = await m.loger(change24hP, 3, log24hP);
             logVol = await m.loger(volume, 10, logVol);
 
@@ -1160,6 +1137,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logVwap = await m.loger(vwap, 3, logVwap);
             vwapMA = await TI.ma(logVwap);    //MA of last 5 Volumes
 
+            //f.cs(logBids)
+            //f.cs(logAsks)
+            //ao = await TI.ao(logBids, logAsks)
+
             return {
                 uppers: {
                     MA3: MA3,
@@ -1170,10 +1151,13 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //MACD: MACD,
                     //MACDMA: MACDMA,
                     //MACDRev: MACDRev,
+                    RSI: RSI,
                     //DMACD: DMACD,
-                    DMACDMA: DMACDMA,
-                    DMACDRev: DMACDRev,
-                    rank: rang,
+                    //ao: ao,
+                    //vwapMA: vwapMA,
+                    //DMACDMA: DMACDMA,
+                    //DMACDRev: DMACDRev,
+                    //rank: rang,
                 },
                 downers: {
                     MA3: MA3
@@ -1250,8 +1234,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         let pullOut
         if (await indicator.all.vwapMA <= 0) {    //bearish indicator
-            pullOut = true  //market goes down disable buy only pulout sale
-            //pullOut = s.pullOut
+            //pullOut = true  //market goes down disable buy only pulout sale
+            pullOut = s.pullOut
         } else {
             pullOut = s.pullOut
         }
