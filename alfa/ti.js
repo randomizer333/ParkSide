@@ -73,6 +73,7 @@ async function rsi(values) {  //returns trndRSI   log15
     let r = await RSI.calculate(inputRSI);
     let n = r.length - 1;
     let lastRSI = r[n]; //last JSON
+    //f.cs("RSI: "+lastRSI)
     if (lastRSI > 70) {
         trendRSI = -1;  //sell coz falling 
     } else if (lastRSI < 30) {
