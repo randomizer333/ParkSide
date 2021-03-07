@@ -68,12 +68,12 @@ async function rsi(values) {  //returns trndRSI   log15
     let RSI = TI.RSI;
     let inputRSI = {
         values: values,
-        period: 14   //9
+        period: 14   //9 
     };
     let r = await RSI.calculate(inputRSI);
-    let n = r.length - 1;
-    let lastRSI = r[n]; //last JSON
-    //f.cs("RSI: "+lastRSI)
+    //f.cs(r)
+    let lastRSI = r[r.length - 1]; //last JSON
+    //f.cs(lastRSI)
     if (lastRSI > 70) {
         trendRSI = -1;  //sell coz falling 
     } else if (lastRSI < 30) {
@@ -81,6 +81,7 @@ async function rsi(values) {  //returns trndRSI   log15
     } else {
         trendRSI = 0;   //hold or park coz stationary
     };
+    //f.cs(trendRSI)
     return await trendRSI;
 }
 

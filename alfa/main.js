@@ -346,7 +346,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         logDMacd = [],
 
         logBids = [],
-        logAsks = []
+        logAsks = [],
+
+        logRSI = []
 
 
     let MA, MA2, MA3, MA100, MA200,
@@ -1091,6 +1093,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logAsks = await m.loger(ask, 50, logAsks);
             log24hP = await m.loger(change24hP, 3, log24hP);
             logVol = await m.loger(volume, 10, logVol);
+            logRSI = await m.loger(volume, 15, logRSI);
 
             logMA3 = await m.loger(price, 3, logMA3); //for all MAs
             logMA20 = await m.loger(price, 20, logMA20); //for all MAs
@@ -1105,7 +1108,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             MA100 = await TI.ma(logMA100);  //MA of last 200 prices
             MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
-            RSI = await TI.rsi(logAll); //RSI (30,70)
+            RSI = await TI.rsi(logRSI); //RSI (30,70)
 
             MACD = await TI.macd(logAll);   //standard MACD
             MACDRev = await TI.macdReverse(logAll);
