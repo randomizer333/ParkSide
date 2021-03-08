@@ -68,7 +68,7 @@ async function rsi(values) {  //returns trndRSI   log15
     let RSI = TI.RSI;
     let inputRSI = {
         values: values,
-        period: 14   //9 
+        period: 15   //9 
     };
     let r = await RSI.calculate(inputRSI);
     //f.cs(r)
