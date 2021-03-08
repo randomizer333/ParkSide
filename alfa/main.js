@@ -9,9 +9,8 @@
 -valet.json
 -sell order delay
 -implement FCA or DCA
+-buy order is market order
 */
-
-const { splitSymbol } = require("./funk");
 
 //const { db } = require("./dbms");
 
@@ -1093,7 +1092,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logAsks = await m.loger(ask, 50, logAsks);
             log24hP = await m.loger(change24hP, 3, log24hP);
             logVol = await m.loger(volume, 10, logVol);
-            logRSI = await m.loger(volume, 15, logRSI);
+            logRSI = await m.loger(volume, 16, logRSI);
 
             logMA3 = await m.loger(price, 3, logMA3); //for all MAs
             logMA20 = await m.loger(price, 20, logMA20); //for all MAs
@@ -1146,7 +1145,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             return {
                 uppers: {
-                    //MA3: MA3,
+                    MA3: MA3,
                     //MA20: MA20,
                     //MA30: MA30,
                     //MA100: MA100,
