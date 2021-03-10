@@ -39,7 +39,9 @@ let tickerMinutes,
     minProfitP,
     enableOrders,
     ticker,
-    qs
+    qs,
+    quo,
+    q0, q1, q2, q3
 
 async function init() {
     tickerMinutes = await s.tickerMinutes;    //1,3,5, for all 10,60,120
@@ -49,14 +51,16 @@ async function init() {
     enableOrders = await s.enableOrders//true;  //sim
     ticker = await f.minToMs(tickerMinutes);
     qs = s.quotes
+
+    q0 = s.fiatCurrency
+    q1 = "BTC"
+    q2 = "ETH"
+    q3 = "BNB"
+    quo = [s.fiatCurrency, "BTC", "ETH", "BNB"]
+
     return await setup();
 }
 
-let q0 = "USDT"
-let q1 = "BTC"
-let q2 = "ETH"
-let q3 = "BNB"
-let quo = ["USDT", "BTC", "ETH", "BNB"]
 
 let quotes = []
 
@@ -347,7 +351,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         logBids = [],
         logAsks = [],
 
-        logRSI = []
+        logRSI = [],
+        logRSIMA = []
 
 
     let MA, MA2, MA3, MA100, MA200,
@@ -657,7 +662,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             s[8] = await f.mergeSymbol(quo[3], quo[1])    //BNB/BTC
             s[9] = await f.mergeSymbol(quo[3], quo[2])    //BNB/ETH
 
-            quo = ["USDT", "BTC", "ETH", "BNB"]
+            quo = [s.fiatCurrency, "BTC", "ETH", "BNB"]
 
             /*
             f.cs("q0: " + q0)
@@ -1092,7 +1097,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             logAsks = await m.loger(ask, 50, logAsks);
             log24hP = await m.loger(change24hP, 3, log24hP);
             logVol = await m.loger(volume, 10, logVol);
-            logRSI = await m.loger(volume, 16, logRSI);
+            //logRSI = await m.loger(volume, 22, logRSI);
 
             logMA3 = await m.loger(price, 3, logMA3); //for all MAs
             logMA20 = await m.loger(price, 20, logMA20); //for all MAs
@@ -1107,7 +1112,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             MA100 = await TI.ma(logMA100);  //MA of last 200 prices
             MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
-            RSI = await TI.rsi(logRSI); //RSI (30,70)
+            RSI = await TI.rsi(logAll, 14); //RSI (30,70)
+
+            logRSIMA = await m.loger(MA3, 15, logRSIMA)
+            RSIMA = await TI.rsi(logRSIMA, 14); //RSI (30,70)
 
             MACD = await TI.macd(logAll);   //standard MACD
             MACDRev = await TI.macdReverse(logAll);
@@ -1116,10 +1124,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             DMACD = await TI.doubleMacd(logAll);    //double length of input MACD
             DMACDRev = await TI.doubleMacdReverse(logAll);
-            logDMacd = await m.loger(MACD, 3, logDMacd);
+            logDMacd = await m.loger(DMACD, 3, logDMacd);
             DMACDMA = await TI.ma(logDMacd);  //MA of DMACD
 
-            //rang = await globalRang2(MACDMA, symbol, botNumber, 3)
 
             change1hP = await m.change1h(logAll, ticker, price, 60)  //price change percentage in duration
             change6hP = await m.change1h(logAll, ticker, price, 360)  //price change percentage in duration
@@ -1130,6 +1137,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             //rang = await globalRang(MAVol, symbol, botNumber, 2);
             //rang = await globalRang(change1hP, symbol, botNumber, 10);
             //rang2 = await globalRang(MAVol, symbol, botNumber, 10)
+            //rang = await globalRang2(MACDMA, symbol, botNumber, 3)
             rang = await globalRang2(change1hP, symbol, botNumber, 2)
 
             logVolMACD = await m.loger(volume, 40, logVolMACD);
@@ -1137,15 +1145,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             vwap = await a.vwap(symbol)
             logVwap = await m.loger(vwap, 3, logVwap);
-            vwapMA = await TI.ma(logVwap);    //MA of last 5 Volumes
-
-            //f.cs(logBids)
-            //f.cs(logAsks)
-            //ao = await TI.ao(logBids, logAsks)
+            vwapMA = await TI.ma(logVwap) * (-1);    //MA of last 5 Volumes reversed
 
             return {
                 uppers: {
-                    MA3: MA3,
+                    //MA3: MA3,
                     //MA20: MA20,
                     //MA30: MA30,
                     //MA100: MA100,
@@ -1153,12 +1157,15 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //MACD: MACD,
                     //MACDMA: MACDMA,
                     //MACDRev: MACDRev,
-                    RSI: RSI,
+                    //RSI: RSI,
+                    RSIMA: RSIMA,
                     //DMACD: DMACD,
                     //ao: ao,
-                    //vwapMA: vwapMA,
+                    //vwap: vwap,
+                    vwapMA: vwapMA,
                     //DMACDMA: DMACDMA,
                     //DMACDRev: DMACDRev,
+                    //change1hP: change1hP,
                     //rank: rang,
                 },
                 downers: {
@@ -1389,7 +1396,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 stopLossP: stopLossP,
                 enabled: enableOrders,
                 pullOut: pullOut,
-                vwapMA: indicator.all.vwapMA,
+                vwap: indicator.all.vwap,
                 MrPrice: "_____________________________",
                 sellPrice: sellPrice,
                 price: price,
