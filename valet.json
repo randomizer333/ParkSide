@@ -6,38 +6,48 @@
         "FCAprices": [],
         "FCAamounts": [],
         "FCAvalue": 15424,
+        "currencyType":"fiat",
         "quotes": ["USDT"],
-        "inboundMarkets":["BTC/USDT"],
-        "inboundMarketsBougthPrice":[1232],
-        "outboundMarkets":["ETH/BTC","BNB/BTC","..."],
-        "outboundMarketsBougthPrice":[1234,2134]
+        "inMarkets":["BTC/USDT"],
+        "inMarketsBougthPrice":[1232]
     },
     "ETH": {
-        "balance": 0.00000737,
-        "value": 0,
-        "buys": 5,
+        "balance": 10.021,
+        "value": 2100,
+        "buys": 3,
         "FCAprices": [],
         "FCAamounts": [],
         "FCAvalue": 15424,
+        "currencyType":"quote",
         "quotes": ["USDT","BTC"],
-        "inboundMarkets":["ETH/USDT","ETH/BTC"],
-        "inboundMarketsBougthPrice":[1232],
+        "priceTime":"2021.03.02 11:58:52.869",
+        "inMarkets":["ETH/USDT","ETH/BTC"],
+        "inMarketsBougthPrice":[1232,546354]
     },
     "BNB": {
-        "balance": 0.00000737,
-        "value": 0,
-        "buys": 5,
+        "balance": 10.021,
+        "value": 2100,
+        "buys": 3,
         "FCAprices": [],
         "FCAamounts": [],
         "FCAvalue": 15424,
-        "quotes": ["USDT","BTC","ETH"]
+        "currencyType":"quote",
+        "quotes": ["USDT","BTC"],
+        "priceTime":"2021.03.02 11:58:52.869",
+        "inMarkets":["ETH/USDT","ETH/BTC","ETH/BNB"],
+        "inMarketsBougthPrice":[1232,546354]
     },
     "DOT": {
-        "balance": 0.00000737,
-        "value": 0,
-        "buys": 5,
-        "FCAprices": [],
-        "FCAamounts": [],
+        "balance": 10.021,
+        "value": 2100,
+        "buys": 3,
+        "FCAprices": [234,232,210],
+        "FCAamounts": [1,2,2],
         "FCAvalue": 15424,
-        "quotes": ["USDT","BTC","ETH","BNB"]
+        "currencyType":"alt",
+        "quotes": ["USDT","BTC","ETH","BNB"],
+        "priceTime":"2021.03.02 11:58:52.869",
+        "inMarkets":["DOT/USDT","DOT/BTC","DOT/ETH","DOT/BNB"],
+        "inMarketsBougthPrice":[1232,546354,156616,23213]
+    }
 }
