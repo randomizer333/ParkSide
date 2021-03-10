@@ -36,7 +36,7 @@ async function ao(lowsArr, highsArr) {
         fastPeriod: 5,
         slowPeriod: 34
     }
-    
+
     f.cs(inputAO)
     let r = AO.calculate(inputAO);
     f.cs(r)
@@ -64,25 +64,26 @@ async function vwap(prices, volumes) {
     return await r;
 }
 
-async function rsi(values) {  //returns trndRSI   log15
+async function rsi(values, period) {  //returns trndRSI   log15
     let RSI = TI.RSI;
     let inputRSI = {
         values: values,
-        period: 15   //9 
+        period: period   //14
     };
     let r = await RSI.calculate(inputRSI);
     //f.cs(r)
     let lastRSI = r[r.length - 1]; //last JSON
+    //f.cs("RSI:")
     //f.cs(lastRSI)
     if (lastRSI > 70) {
-        trendRSI = -1;  //sell coz falling 
+        trendRSI = lastRSI * (-1);  //sell coz falling 
     } else if (lastRSI < 30) {
-        trendRSI = 1;  //buy coz rising
+        trendRSI = lastRSI;  //buy coz rising
     } else {
         trendRSI = 0;   //hold or park coz stationary
     };
     //f.cs(trendRSI)
-    return await trendRSI;
+    return await trendRSI
 }
 
 async function macd(values) {     //log 70 should be bigger the better starts working when value = slowPeriod + signalPeriod
