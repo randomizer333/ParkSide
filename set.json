@@ -3,7 +3,7 @@
     "fiatMarket": "BTC/USDT",
     "quoteCurrency":"BTC",
     "quotes" : ["BTC", "ETH", "BNB"],
-    "fiatCurrency":"USDT",
+    "fiatCurrency":"EUR",
     "strategy": "alt",
     "enableOrders": true,
     "tickerMinutes": 3,
