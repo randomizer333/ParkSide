@@ -1112,7 +1112,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             MA100 = await TI.ma(logMA100);  //MA of last 200 prices
             MA200 = await TI.ma(logMA200);  //MA of last 200 prices
 
-            RSI = await TI.rsi(logAll, 14); //RSI (30,70)
+            RSI = await TI.rsi(logAll, 16); //RSI (30,70)
 
             logRSIMA = await m.loger(MA3, 15, logRSIMA)
             RSIMA = await TI.rsi(logRSIMA, 14); //RSI (30,70)
@@ -1145,7 +1145,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             vwap = await a.vwap(symbol)
             logVwap = await m.loger(vwap, 3, logVwap);
-            vwapMA = await TI.ma(logVwap) * (-1);    //MA of last 5 Volumes reversed
+            vwapMA = await TI.ma(logVwap);    //MA of last 5 Volumes reversed
 
             return {
                 uppers: {
@@ -1154,19 +1154,19 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //MA30: MA30,
                     //MA100: MA100,
                     //MA200: MA200,
-                    //MACD: MACD,
+                    MACD: MACD,
                     //MACDMA: MACDMA,
                     //MACDRev: MACDRev,
                     //RSI: RSI,
-                    RSIMA: RSIMA,
-                    //DMACD: DMACD,
+                    //RSIMA: RSIMA,
                     //ao: ao,
                     //vwap: vwap,
                     vwapMA: vwapMA,
+                    //DMACD: DMACD,
                     //DMACDMA: DMACDMA,
                     //DMACDRev: DMACDRev,
                     //change1hP: change1hP,
-                    //rank: rang,
+                    rank: rang,
                 },
                 downers: {
                     MA3: MA3
@@ -1242,7 +1242,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         let pullOut
-        if (await indicator.all.vwapMA <= 0) {    //bearish indicator
+        if (indicator.all.vwapMA <= 0) {    //bearish indicator
             //pullOut = true  //market goes down disable buy only pulout sale
             pullOut = s.pullOut
         } else {
