@@ -643,8 +643,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         async function updateAllBougthPrice(symbol) {
             //make symbols
 
-            let bpq = []
-            let s = []
+            var bpq = []
+            var s = []
 
             b = await f.splitSymbol(symbol, "first");
             q = await f.splitSymbol(symbol, "second");
@@ -695,14 +695,35 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         async function resetAllBougthPrice(symbol) {
+            var bpq = []
+            var s = []
 
             quoteCurrency = f.splitSymbol(symbol, "second")
             baseCurrency = f.splitSymbol(symbol, "first")
 
-            s0 = f.mergeSymbol(baseCurrency, q0)
-            s1 = f.mergeSymbol(baseCurrency, q1)
-            s2 = f.mergeSymbol(baseCurrency, q2)
-            s3 = f.mergeSymbol(baseCurrency, q3)
+            s[0] = f.mergeSymbol(baseCurrency, quo[0])
+            s[1] = f.mergeSymbol(baseCurrency, quo[1])
+            s[2] = f.mergeSymbol(baseCurrency, quo[2])
+            s[3] = f.mergeSymbol(baseCurrency, quo[3])
+
+            f.cs("Updating all bougth prices except active market!")
+
+            //get prices check and store them
+            for (var i = 0; i < s.length; i++) {
+                //f.cs("q" + i + ":" + quo[i])
+                //f.cs("s" + i + ":" + s[i])
+
+                bpq[i] = await a.price(s[i])    //get market
+                if (bpq[i]) {
+                    bpq[i] = 0
+                    await dbms.saveBougthPrice(s[i], bpq[i])    //store
+                    console.log(await s[i] + ":" + await bpq[i])
+                } else {
+                    f.cs("fail: " + bpq[i])
+                }
+            }
+
+            /*
 
             bpq0 = await a.price(s0)    //only check if market exists
             if (bpq0) {
@@ -1287,7 +1308,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     ret = await f.fOrder(symbol, baseBalance, price);   //sim
                 sts = await ret.status
                 if (sts == "closed") {
-                    bougthPrice = 0
+                    //bougthPrice = 0
+                    await dbms.saveBougthPrice(symbol, 0)
                     //await m.resetAllBougthPrice(symbol)
                     await m.resetAllBuys(baseCurrency)                //buys
                     orderType = "sold"
@@ -1303,7 +1325,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     ret = await f.fOrder(symbol, baseBalance, price);   //sim
                 sts = await ret.status
                 if (sts == "closed") {
-                    bougthPrice = 0
+                    //bougthPrice = 0
+                    await dbms.saveBougthPrice(symbol, 0)
                     //await m.resetAllBougthPrice(symbol)
                     await m.resetAllBuys(baseCurrency)                //buys
                     orderType = "lossed";
