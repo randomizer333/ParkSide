@@ -685,7 +685,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
                 bpq[i] = await a.price(s[i])    //get market
                 if (bpq[i] && !(q == quo[i])) { //dont update on curent market
-                    bpq4 = await m.checkNewBougthPrice(s[i], bpq[i])    //check
+                    bpq[i] = await m.checkNewBougthPrice(s[i], bpq[i])    //check
                     await dbms.saveBougthPrice(s[i], bpq[i])    //store
                     console.log(await s[i] + ":" + await bpq[i])
                 } else {
@@ -1144,29 +1144,39 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             MACDVol = await TI.macd(logVolMACD);    //MACD of MA5
 
             vwap = await a.vwap(symbol)
+            vwapS = await simpleVwap(vwap, price)
+            async function simpleVwap(vwap, price){
+                if(price > vwap){
+                    return vwap
+                }else{
+                    return -1 * vwap
+                }
+            }
+
             logVwap = await m.loger(vwap, 3, logVwap);
             vwapMA = await TI.ma(logVwap);    //MA of last 5 Volumes reversed
 
             return {
                 uppers: {
-                    //MA3: MA3,
+                    MA3: MA3,
                     //MA20: MA20,
                     //MA30: MA30,
                     //MA100: MA100,
                     //MA200: MA200,
                     //MACD: MACD,
-                    MACDMA: MACDMA,
-                    MACDRev: MACDRev,
+                    //MACDMA: MACDMA,
+                    //MACDRev: MACDRev,
                     //RSI: RSI,
                     //RSIMA: RSIMA,
                     //ao: ao,
                     //vwap: vwap,
-                    vwapMA: vwapMA,
+                    vwapS:vwapS,
+                    //vwapMA: vwapMA,
                     //DMACD: DMACD,
                     //DMACDMA: DMACDMA,
                     //DMACDRev: DMACDRev,
                     //change1hP: change1hP,
-                    rank: rang,
+                    //rank: rang,
                 },
                 downers: {
                     MA3: MA3
@@ -1190,6 +1200,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     DMACDMA: DMACDMA,
                     DMACDRev: DMACDRev,
                     vwap: vwap,
+                    vwapS:vwapS,
                     vwapMA: vwapMA,
                     rank: rang,
                     //rank2: rang2,
@@ -1395,8 +1406,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 minProfit: s.minProfitP,
                 stopLossP: stopLossP,
                 enabled: enableOrders,
-                pullOut: pullOut,
+                //pullOut: pullOut,
                 vwap: indicator.all.vwap,
+                change1hP: indicator.all.change1hP,
                 MrPrice: "_____________________________",
                 sellPrice: sellPrice,
                 price: price,
