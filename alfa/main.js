@@ -1176,7 +1176,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //DMACDMA: DMACDMA,
                     //DMACDRev: DMACDRev,
                     //change1hP: change1hP,
-                    //rank: rang,
+                    rank: rang,
                 },
                 downers: {
                     MA3: MA3
