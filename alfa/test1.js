@@ -44,11 +44,12 @@ async function countSeconds() {
             }, 1000);   //set frequenci
     });
 }
-/*
-bpq3 = await a.price(s3)
-if (bpq3 && (s3 == dbms.db[s3])) {
-    await dbms.saveBougthPrice(s3, 0)
-    console.log(await s3 + ": bougthPrice reset to 0")
-} else {
-    f.cs("no such market: " + bpq3)
-}//*/
+
+function name(input1, input2) {
+    //do proces
+    //call other functions
+    return {
+        output1: output1,
+        output2: output2
+    }
+}

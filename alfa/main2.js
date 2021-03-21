@@ -12,22 +12,21 @@
 -buy order is market order
 */
 
-//const { db } = require("./dbms");
 
 //requirements
 let s, a, f, TI, fs, dbms, em, alts
 req();
 async function req() {
-    s = await require("../set.json")
-    a = await require("./api.js")
-    f = await require("./funk.js")
-    TI = await require("./ti.js")
+    s = require("../set.json")
+    a = require("./api.js")
+    f = require("./funk.js")
+    TI = require("./ti.js")
     dbms = require("./dbms.js")
     em = require("./enabledMarkets.js")
 
     alts = em.alts()
 
-    fs = await require('fs') //node.js native
+    fs = require('fs') //node.js native
     return await init()
 }
 
@@ -695,11 +694,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         }
 
         async function resetAllBougthPrice(symbol) {
-
-            if (marketType == "aq") {
-                //dont reset bougthPrices update ""
-            }
-
             var bpq = []
             var s = []
 
@@ -717,6 +711,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             for (var i = 0; i < s.length; i++) {
                 //f.cs("q" + i + ":" + quo[i])
                 //f.cs("s" + i + ":" + s[i])
+
                 bpq[i] = await a.price(s[i])    //get market
                 if (bpq[i]) {
                     bpq[i] = 0
@@ -1170,10 +1165,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             vwap = await a.vwap(symbol)
             vwapS = await simpleVwap(vwap, price)
-            async function simpleVwap(vwap, price) {
-                if (price > vwap) {
+            async function simpleVwap(vwap, price){
+                if(price > vwap){
                     return vwap
-                } else {
+                }else{
                     return -1 * vwap
                 }
             }
@@ -1183,11 +1178,11 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             return {
                 uppers: {
-                    //MA3: MA3,
+                    MA3: MA3,
                     //MA20: MA20,
                     //MA30: MA30,
                     //MA100: MA100,
-                    MA200: MA200,
+                    //MA200: MA200,
                     //MACD: MACD,
                     MACDMA: MACDMA,
                     MACDRev: MACDRev,
@@ -1195,7 +1190,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //RSIMA: RSIMA,
                     //ao: ao,
                     //vwap: vwap,
-                    vwapS: vwapS,
+                    vwapS:vwapS,
                     //vwapMA: vwapMA,
                     //DMACD: DMACD,
                     //DMACDMA: DMACDMA,
@@ -1225,7 +1220,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     DMACDMA: DMACDMA,
                     DMACDRev: DMACDRev,
                     vwap: vwap,
-                    vwapS: vwapS,
+                    vwapS:vwapS,
                     vwapMA: vwapMA,
                     rank: rang,
                     //rank2: rang2,
@@ -1464,8 +1459,8 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
         //mailer
-        await mailInfo(orderType, marketInfo);
-        async function mailInfo(orderType, marketInfo) {
+        await mailInfo(orderType);
+        async function mailInfo(orderType) {
             if (await orderType == "sold") {
                 f.sendMail("Sold Info", JSON.stringify(marketInfo));
             } else if (await orderType == "bougth") {

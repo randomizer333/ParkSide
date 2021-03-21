@@ -18,11 +18,11 @@ async function ma(arr) {     //trendMA between curent and last value
     //let trendMA = ma
 
     if (trendMA > 0) {//goin UP buy coz rising
-        return trendMA
+        return ma //trendMA
     } else if (trendMA < 0) {//going DOWN hold or park coz stationary
-        return trendMA
+        return ma * (-1)//trendMA
     } else {    //all input data is the same
-        return trendMA = 0
+        return 0
     }
 }
 
