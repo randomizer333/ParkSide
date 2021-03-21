@@ -3,13 +3,20 @@
         "balance": 0.00000737,
         "buys": 5,
         "value": 0,
+        "orderType": "parked",
         "FCAprices": [],
         "FCAamounts": [],
         "FCAvalue": 15424,
-        "currencyType":"fiat",
-        "quotes": ["USDT"],
-        "inMarkets":["BTC/USDT"],
-        "inMarketsBougthPrice":[1232]
+        "currencyType": "fiat",
+        "quotes": [
+            "USDT"
+        ],
+        "inMarkets": [
+            "BTC/USDT"
+        ],
+        "inMarketsBougthPrice": [
+            1232
+        ]
     },
     "ETH": {
         "balance": 10.021,
@@ -18,36 +25,94 @@
         "FCAprices": [],
         "FCAamounts": [],
         "FCAvalue": 15424,
-        "currencyType":"quote",
-        "quotes": ["USDT","BTC"],
-        "priceTime":"2021.03.02 11:58:52.869",
-        "inMarkets":["ETH/USDT","ETH/BTC"],
-        "inMarketsBougthPrice":[1232,546354]
+        "currencyType": "quote",
+        "quotes": [
+            "USDT",
+            "BTC"
+        ],
+        "priceTime": "2021.03.02 11:58:52.869",
+        "inMarkets": [
+            "ETH/USDT",
+            "ETH/BTC"
+        ],
+        "inMarketsBougthPrice": [
+            1232,
+            546354
+        ]
     },
     "BNB": {
         "balance": 10.021,
-        "value": 2100,
         "buys": 3,
         "FCAprices": [],
         "FCAamounts": [],
         "FCAvalue": 15424,
-        "currencyType":"quote",
-        "quotes": ["USDT","BTC"],
-        "priceTime":"2021.03.02 11:58:52.869",
-        "inMarkets":["ETH/USDT","ETH/BTC","ETH/BNB"],
-        "inMarketsBougthPrice":[1232,546354]
+        "currencyType": "quote",
+        "quotes": [
+            "USDT",
+            "BTC"
+        ],
+        "priceTime": "2021.03.02 11:58:52.869",
+        "inMarkets": [
+            "ETH/USDT",
+            "ETH/BTC",
+            "ETH/BNB"
+        ],
+        "inMarketsBougthPrice": [
+            1232,
+            546354
+        ]
     },
     "DOT": {
         "balance": 10.021,
         "value": 2100,
         "buys": 3,
-        "FCAprices": [234,232,210],
-        "FCAamounts": [1,2,2],
+        "orderType": "parked",
+        "FCAprices": [
+            234,
+            232,
+            210
+        ],
+        "FCAamounts": [
+            1,
+            2,
+            2
+        ],
         "FCAvalue": 15424,
-        "currencyType":"alt",
-        "quotes": ["USDT","BTC","ETH","BNB"],
-        "priceTime":"2021.03.02 11:58:52.869",
-        "inMarkets":["DOT/USDT","DOT/BTC","DOT/ETH","DOT/BNB"],
-        "inMarketsBougthPrice":[1232,546354,156616,23213]
+        "currencyType": "alt",
+        "quotes": [
+            "USDT",
+            "BTC",
+            "ETH",
+            "BNB"
+        ],
+        "priceTime": "2021.03.02 11:58:52.869",
+        "inMarkets": [
+            "DOT/USDT",
+            "DOT/BTC",
+            "DOT/ETH",
+            "DOT/BNB"
+        ],
+        "inMarketsBougthPrice": [
+            1232,
+            546354,
+            156616,
+            23213
+        ],
+        "omniMarkets": [
+            "BTC/EUR",
+            "ETH/EUR",
+            "BNB/EUR",
+            "BTC/ETH",
+            "BTC/BNB",
+            "ETH/EUR"
+        ],
+        "omniMarketsPrices": [
+            3425,
+            352,
+            4356,
+            3254,
+            6758,
+            5674
+        ]
     }
 }
