@@ -53,12 +53,19 @@ async function ao(lowsArr, highsArr) {
     }
 }
 
-async function vwap(prices, volumes) {
+async function vwap(opens, highs, lows, closes, volumes) {
     let VWAP = TI.VWAP;
     let inputVWAP = {
-        values: values,
-        period: 14   //9
-    };
+        open: opens,
+        high: highs,
+        low: lows,
+        close: closes,
+        volume: volumes,
+    }
+    f.cs("dolžina opens: "+opens.length)
+    f.cs("dolžina high: "+high.length)
+    f.cs("dolžina lows: "+lows.length)
+    f.cs("dolžina volumes: "+volumes.length)
     let r = await VWAP.calculate(inputVWAP);
     f.cs(r)
     return await r;
@@ -263,3 +270,4 @@ exports.doubleMacd = doubleMacd;
 exports.quadMacd = quadMacd;
 exports.doubleMacdReverse = doubleMacdReverse;
 exports.ao = ao;
+exports.vwap = vwap;
