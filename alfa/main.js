@@ -1187,7 +1187,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //MA20: MA20,
                     //MA30: MA30,
                     //MA100: MA100,
-                    MA200: MA200,
+                    //MA200: MA200,
                     //MACD: MACD,
                     MACDMA: MACDMA,
                     MACDRev: MACDRev,

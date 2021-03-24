@@ -230,6 +230,7 @@ let balances = [];
 async function wallet() {   //returns Array of Objects balances of an account
     try {
         r = await exchange.fetchBalance();
+        //f.cs(r)
         curs = await Object.keys(r);
         vals = await Object.values(r.total);
         balances = await parseBalances();
