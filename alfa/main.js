@@ -1183,7 +1183,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             return {
                 uppers: {
-                    //MA3: MA3,
+                    MA3: MA3,
                     //MA20: MA20,
                     //MA30: MA30,
                     //MA100: MA100,

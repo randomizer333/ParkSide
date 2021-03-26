@@ -3,24 +3,23 @@
 let TI = require("technicalindicators");
 let f = require("./funk.js");
 
-let stor = [];     //storage for direction
 async function ma(arr) {     //trendMA between curent and last value
-    let value = arr[0];
-    let ma = await f.getAvgOfArray(arr);
-    if (stor[1] == undefined) {
-        stor[1] = value;
-        stor[0] = value;
-    };
-    stor[1] = stor[0];
-    stor[0] = value;
-    let direction = await stor[0] - ma;
-    let trendMA = await f.percent(direction, value);
-    //let trendMA = ma
+    if (arr == undefined || arr[0] == 0 || arr[1] == 0) {
+        f.cs("no valid input yet for MA")
+        return 0
+    }
+    let ma = await f.getAvgOfArray(arr);    //ma is avg of arr
+
+    //f.cs("arr: " + arr)
+    let direction = await arr[0] - ma;  //absolute trend
+    //f.cs("direction: " + direction)
+    let trendMA = await f.percent(direction, arr[0]);    //relative trend
+    //f.cs("trendMA: " + trendMA)
 
     if (trendMA > 0) {//goin UP buy coz rising
-        return ma //trendMA
+        return trendMA //trendMA
     } else if (trendMA < 0) {//going DOWN hold or park coz stationary
-        return ma * (-1)//trendMA
+        return trendMA * (-1)//trendMA
     } else {    //all input data is the same
         return 0
     }
@@ -62,10 +61,10 @@ async function vwap(opens, highs, lows, closes, volumes) {
         close: closes,
         volume: volumes,
     }
-    f.cs("dolžina opens: "+opens.length)
-    f.cs("dolžina high: "+high.length)
-    f.cs("dolžina lows: "+lows.length)
-    f.cs("dolžina volumes: "+volumes.length)
+    f.cs("dolžina opens: " + opens.length)
+    f.cs("dolžina high: " + high.length)
+    f.cs("dolžina lows: " + lows.length)
+    f.cs("dolžina volumes: " + volumes.length)
     let r = await VWAP.calculate(inputVWAP);
     f.cs(r)
     return await r;
@@ -121,7 +120,7 @@ async function macd(values) {     //log 70 should be bigger the better starts wo
             return 0;
         }
     } else {
-        return await macdHistogram;
+        return 0    //await macdHistogram;
     }
 }
 
@@ -153,7 +152,7 @@ async function macdReverse(values) {     //log 70 should be bigger the better st
             return 0;
         }
     } else {
-        return await macdHistogram;
+        return 0    //await macdHistogram;
     }
 }
 
@@ -182,7 +181,7 @@ async function doubleMacd(values) {     //log 70 should be bigger the better sta
             return 0;
         }
     } else {
-        return await macdHistogram;
+        return 0    //await macdHistogram;
     }
 }
 
@@ -211,7 +210,7 @@ async function doubleMacdReverse(values) {     //log 70 should be bigger the bet
             return 0;
         }
     } else {
-        return await macdHistogram;
+        return 0    //await macdHistogram;
     }
 }
 
@@ -241,7 +240,7 @@ async function quadMacd(values) {     //log 70 should be bigger the better start
             return 0;
         }
     } else {
-        return await macdHistogram;
+        return 0    //await macdHistogram;
     }
 }
 
