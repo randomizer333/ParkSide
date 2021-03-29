@@ -2,7 +2,7 @@ let re = []
 function alts (){
     re = [    //alt markets 
 
-        "BTC/EUR", "ETH/EUR", "BNB/EUR",//intra quote
+        "BTC/EUR", /*"ETH/EUR", "BNB/EUR",//intra quote
         "DOT/EUR",
         "XRP/EUR",
         "ADA/EUR",

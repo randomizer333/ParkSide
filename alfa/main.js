@@ -1183,7 +1183,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
             return {
                 uppers: {
-                    MA3: MA3,
+                    //MA3: MA3,
                     //MA20: MA20,
                     //MA30: MA30,
                     //MA100: MA100,
@@ -1420,7 +1420,6 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                 //absoluteProfit: absoluteProfit,
                 //absoluteProfit2: absoluteProfit2,
                 DeusGroup: "___________________________",
-                fiatPrice: priceFiat,
                 marketType: marketType,
                 //fiatProfit: (absoluteProfit * priceFiat),
                 //fiatProfit2: (absoluteProfit2 * priceFiat),
