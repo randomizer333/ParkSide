@@ -1,0 +1,15 @@
+{
+    "poloniex": {
+        "apiKey": "T9VBLSDH-QZUUNSO-GTJBKJGW-B2TPXVRH",
+        "secret": "a443906acda94c705bd0f836cc38ec5e5ee55a1f0ce920b2666b2ccaac25251613932573b2473e8e0aff13c28acc974fd765487686754683248875f393"
+    },
+    "bittrex": {
+        "apiKey": "7f65a2da88404c6e18d09d4db172",
+        "secret": "c503e4d5814749ba915568c96dfcbe"
+    },
+    "bitstamp": {
+        "apiKey": "aqrTr3zRfjz6hdtzVp1u8",
+        "secret": "C7ywTeVt2vmaQZzgUZUZDf45e4kXaIxs4ObQD",
+        "uid": "2846526"
+    }
+}

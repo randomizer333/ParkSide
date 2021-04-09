@@ -1,5 +1,5 @@
 {
-    "exchange": "binance",
+    "exchangeName": "binance",
     "fiatMarket": "BTC/USDT",
     "quoteCurrency": "BTC",
     "quotes": [
@@ -9,7 +9,7 @@
     ],
     "fiatCurrency": "EUR",
     "strategy": "alt",
-    "enableOrders": false,
+    "enableOrders": true,
     "tickerMinutes": 3,
     "portion": 0.99,
     "minProfitP": 1.11,

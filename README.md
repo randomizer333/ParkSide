@@ -6,11 +6,11 @@
 
 ### Contribution guidelines ###
 
-- code style: lean and clean
-- comment: every object and function
-- letter case: drinking camel
+- code style: LEAN, clean, use minimum characters
+- comment: every new object and function
+- letter case: drinkingCamel
+- use suffix insted of prefix for object names
 - formating same as in VSCode
-- use suffix insted of prefix
 - indent 1 TAB
 - 4 space TAB
 

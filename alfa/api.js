@@ -35,7 +35,7 @@ async function cap() {                //reurns Array of Objects bid,ask
 
 let filled;
 //let orderId = 0;
-let exchange = "binance";
+let exchange = set.exchangeName;
 switch (exchange) {     //Select exchange
     case "bitstamp":
         exchange = new ccxt.bitstamp({
