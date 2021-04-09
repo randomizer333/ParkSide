@@ -1,18 +1,15 @@
 {
     "tableName": {
         "rowPrimaryKey": {  //unique identifier name or id or row number
-            "columnHeader": "cellData"
-        }
-    },
-    "table1": {
-        "rowPrimaryKey": { 
+            "columnHeader": "cellData",
             "columnHeader0": "cellData",
             "columnHeader1": "cellData",
             "columnHeader2": "cellData"
         }
     },
-    "table2": {
-        "rowPrimaryKey": { 
+    "table1Name": {
+        "rowPrimaryKey": {  //unique identifier name or id or row number
+            "columnHeader": "cellData",
             "columnHeader0": "cellData",
             "columnHeader1": "cellData",
             "columnHeader2": "cellData"

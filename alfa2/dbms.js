@@ -21,7 +21,7 @@ async function createDB(data) {   //done
             "timedate": f.getTime(),
             "bougthPrice": 0,
             "orderType": "none",
-            "buys": 0,
+            "buys":0,
             "stopLoss": false
         }
         f.cs("working");
@@ -57,29 +57,13 @@ async function saveBougthPrice(symbol, write) {
     //console.log("data:")
     //console.log(write)
     if (db && (write || write === 0)) {
-        write == db[symbol].bougthPrice ? "" : db[symbol].timedate = f.getTime()    //dont update time if price hasnt changed
+        write == db[symbol].bougthPrice?"":db[symbol].timedate = f.getTime()    //dont update time if price hasnt changed
         db[symbol].bougthPrice = await write
         saveTable(symbol, await db[symbol])
     } else {
         console.log("NO DATA BP")
     }
 }
-
-
-async function writeToDB(table, key, column, write) {
-    //console.log("data:")
-    //console.log(write)
-    db[table].key.col
-    console.log(db[table].key.column)
-    /*if (db && (write || write === 0)) {
-        write == db[key].bougthPrice?"":db[symbol].timedate = f.getTime()    //dont update time if price hasnt changed
-        db[key].bougthPrice = await write
-        saveTable(key, await db[key])
-    } else {
-        console.log("NO DATA BP")
-    }*/
-}
-
 async function saveOrderType(symbol, write) {
     if (write) {
         let baza1 = db
