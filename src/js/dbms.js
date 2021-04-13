@@ -1,14 +1,15 @@
-let fs = require("fs")      //node.js native
-let dataBase = "../json/db.json"  //define database location
-let db = require(dataBase)
+const fs = require("fs")      //node.js native
+let database = "../json/db.json"    //define database location
+let db = require(database)  
 
 //let f = require("./funk.js")
 console.log("DBMS Loaded")
 
-//em = require("./enabledMarkets.js")
-//alts = em.alts()
 
 //create or add database,table,row
+enabledMarkets = require("./enabledMarkets.js").alts()
+//console.log(enabledMarkets)
+//alts = em.alts()
 
 //createDB(alts)
 async function createDB(data) {   //done   
@@ -31,35 +32,31 @@ async function createDB(data) {   //done
 }
 
 async function writeJSON(inputJSON) {   //done
-    input = JSON.stringify(inputJSON);
+    input = await JSON.stringify(inputJSON)
     console.log("writing")
-    await fs.writeFile(dataBase, "", function (err) {   //clear file
+    fs.writeFile(database, "", function (err) {   //clear file
         if (err) throw err;
     });
-    await fs.writeFile(dataBase, input, function (err) {    //save data
+    fs.writeFile(database, input, function (err) {    //save data
         if (err) throw err;
     });
 }
 
+
 //console.log(db)
-writeToDB("table","rowPK","col","teeeessst")
-async function writeToDB(table, key, column, write) {
-
-    //db[table].key.column
-    //console.log(db[table].key.col)
-
-
-
-    /*if (db && (write || write === 0)) {
-        write == db[key].bougthPrice?"":db[symbol].timedate = f.getTime()    //dont update time if price hasnt changed
-        db[key].bougthPrice = await write
-        saveTable(key, await db[key])
-    } else {
-        console.log("NO DATA BP")
-    }*/
-    console.log(db["table"]["rowPK"]["col"])
-    //console.log(db)
-    writeJSON(db)
+writeToDB("assets", "EUR", "balance", 56376)
+async function writeToDB(tableName, rowPK, column, data) {
+    try {
+        if (db && data) {
+            db[tableName][rowPK][column] = data   //select and set
+            console.log(db)
+            writeJSON(db)
+        } else {
+            console.log("EEE: no input data")
+        }
+    } catch (error) {
+        console.log("EEE: bad keys")
+    }
 }
 
 exports.writeToDB = writeToDB
