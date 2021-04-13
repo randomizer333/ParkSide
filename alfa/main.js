@@ -584,9 +584,13 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         async function change1h(priceLog, tickerInMs, price, durationInMinutes) {
             index1h = await (f.minToMs(durationInMinutes) / tickerInMs) - 1
+            //console.log(index1h)
             price1h = await priceLog[index1h]
             diff = await price - price1h
+            //console.log(price)
+            //console.log(price1h)
             ch1h = await f.percent(diff, price1h)
+            //console.log(ch1h)
             if (await ch1h) {
                 return ch1h
             } else {
