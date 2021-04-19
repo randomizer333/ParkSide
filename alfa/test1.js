@@ -1,7 +1,7 @@
 
 var delayTime = 1000;
 
-delayCount(delayTime)
+//delayCount(delayTime)
 async function delayCount(time) {
     //send1 = await delay(time)
     console.log(await te(Math.random(100),3))
@@ -57,3 +57,4 @@ async function te(input1, input2) {
         storage:globalVariable
     }
 }
+

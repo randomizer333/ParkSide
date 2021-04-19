@@ -91,8 +91,21 @@ exInfos = {
     feeTaker: exchange.fees.trading.taker,
 };
 
-//fetchTicker("BNB/EUR")
-async function fetchTicker(symbol) {
+test()
+async function test() {
+    //let rel = await buy("MKR/USDT", 0.05, 300)
+    //let rel = await orderInfo(3062164674, "ETH/BTC")
+
+    //fetchTicker("BNB/EUR")
+    //loadMarkets("XRP/EUR")
+    //rel = await sellMarket("DOGE/EUR", 50)
+    //let rel = await loadMarketMinAmount("BNB/EUR")
+    //let rel = await checker(401016118, "XRP/BTC")
+    console.log("DONE")
+    //console.log(rel)
+}
+
+async function fetchTicker(symbol) {//high,low,close,vwap,volume,percentage
     try {
         r = await exchange.fetchTicker(symbol);
         //console.dir(r);
@@ -101,25 +114,39 @@ async function fetchTicker(symbol) {
         console.log("EEE at fetchTicker: ", error);
     }
 }
-
-//loadMarkets("XRP/EUR")
-async function loadMarkets(symbol) {          //returns minimum amount of base allowed to buy
+async function loadMarkets() {    //returns all available markets
     try {
         r = await exchange.loadMarkets();
-        re = await r[symbol]//.limits.amount.min;
-        //console.log(re);
+        return await r
+    } catch (error) {
+        console.log("EEE: ", error);
+    }
+}
+async function loadMarketMinAmount(symbol) {    //returns minimum amount of base allowed to buy
+    try {
+        r = await exchange.loadMarkets();
+        re = await r[symbol].limits.amount.min;
         return await re
     } catch (error) {
         console.log("EEE: ", error);
     }
 }
-
+async function fetchCurrencies() {   //returns minimum amount of base allowed to buy
+    try {
+        r = await exchange.fetchCurrencies();
+        //re = await r[symbol]//.limits.amount.min;
+        //console.log(re);
+        return await r
+    } catch (error) {
+        console.log("EEE: ", error);
+    }
+}
 //console.log(fetchOrderBook("XRP/EUR"))
 async function fetchOrderBook(symbol) {//returns Array of Objects bid,ask
     try {
         r = await exchange.fetchOrderBook(symbol);
         //console.log(r)
-        r = {
+        re = {
             symbol: symbol,
             ask: r.asks[0][0],
             bid: r.bids[0][0],
@@ -129,8 +156,8 @@ async function fetchOrderBook(symbol) {//returns Array of Objects bid,ask
             price: r.asks[0][0] - ((r.asks[0][0] - r.bids[0][0]) / 2),
             time: f.getTime()
         }
-        console.log(r)
-        return r
+        console.log(re)
+        return re
     } catch (error) {
         if (error.name = 'BadSymbol') {
             console.log("Ni " + symbol + " marketa!!!")
@@ -139,29 +166,18 @@ async function fetchOrderBook(symbol) {//returns Array of Objects bid,ask
         }
     }
 }
-
-aaa()
-async function aaa() {
-    market = await loadMarkets("BNB/EUR")
-    console.log(market.limits.amount.min)
-    /*ticker = await fetchTicker("BNB/EUR")
-    console.log(ticker)
-    valet = await wallet()
-    console.log(valet)*/
-}
-
 async function wallet() {   //returns JSON of balances and assets
     try {
-        let curs,vals
+        let curs, vals
         let balances = {};
-        r = await exchange.fetchBalance();  
+        r = await exchange.fetchBalance();
         curs = Object.keys(r);
         vals = Object.values(r.total);
         balances = await parseBalances();
         async function parseBalances() {
             for (i = 0; i < curs.length; i++) {
                 if (vals[i] > 0) {
-                    balances[curs[i + 1]] = vals[i] ;
+                    balances[curs[i + 1]] = vals[i];
                 }
             }
             return balances
@@ -172,9 +188,6 @@ async function wallet() {   //returns JSON of balances and assets
     }
 
 }
-
-
-
 async function balance(currency) {          //returns Array of Objects balances of an account
     try {
         let bR = await exchange.fetchBalance();
@@ -186,83 +199,52 @@ async function balance(currency) {          //returns Array of Objects balances 
     }
 }
 
-
-
-//test()
-async function test() {
-    //let rel = await buy("MKR/USDT", 0.05, 300)
-    //let rel = await orderInfo(3062164674, "ETH/BTC")
-    let rel = await checker(401016118, "XRP/BTC")
-    console.log(rel)
-}
-
 async function checker(orderId, symbol) {
     let count = 0
+    let rsts
     async function isOpen(orderId, symbol) {
-
         console.log("sent checking: " + orderId + " on: " + symbol)
-
-        r = await orderInfo(orderId, symbol)    // 'open', 'closed', 'canceled'
-        console.log(r)
+        let r = await orderInfo(orderId, symbol)    // 'open', 'closed', 'canceled'
         const freq = 3000
+        const delaySeconds = 3
         let rounds = (ticker * 0.9) / freq
         count++
-        if (r == "open") {
+        if (r.status == "open") {
             console.log("still open")
-            /*console.log("checking order")
-            console.log(orderId)
-            console.log("symbol")
-            console.log(symbol)
-            console.log("rounds:")
-            console.log(rounds)
-            console.log("count:")
-            console.log(count)*/
             if (count > rounds) {
-                return cancel(orderId, symbol)
+                await cancel(orderId, symbol)
             } else {
-                return new Promise(resolve => {
-                    setTimeout(
-                        async () => {
-                            resolve(
-                                await isOpen(orderId, symbol)
-                            );
-                        }, freq);   //set frequenci
-                });
+                await f.delay(delaySeconds)
+                console.log("delay")
+                await isOpen(orderId, symbol)
             }
-        } else if (r == "closed") {
-            return r
-        } else if (r == 'canceled') {
-            return r
+        } else if (r.status == "closed") {
+            rsts = r.status
+            return rsts
+        } else if (r.status == 'canceled') {
+            rsts = r.status
+            return rsts
         } else {
-            console.log("checker fail")
-            return new Promise(resolve => {
-                setTimeout(
-                    async () => {
-                        resolve(
-                            await isOpen(orderId, symbol)
-                        );
-                    }, freq);   //set frequenci
-            });
-            return "failed"
+            console.log("checker failed")
+            await f.delay(delaySeconds)
+            console.log("delayed")
+            await isOpen(orderId, symbol)
         }
+        return rsts
     }
     return await isOpen(orderId, symbol)
 }
-
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
-        let r = await exchange.createLimitBuyOrder(symbol, amount, price);
         //let r = await exchange.createOrder(symbol, 'market', 'buy', amount, price)
+        let r = await exchange.createLimitBuyOrder(symbol, amount, price);
         let orderId = await r.id;
-        console.log("buy order")
-        console.log(orderId)
-        console.log("symbol")
-        console.log(symbol)
+        sts = await checker(orderId, symbol)
         return {
-            status: await checker(orderId, symbol),
+            status: await sts,
             orderId: orderId,
             orderType: "bougth",
-            bougthPrice: price,// = orderInfo(orderId)
+            price: price,// = orderInfo(orderId)
             symbol: symbol,
             side: "buy",
         }
@@ -272,13 +254,43 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
             status: "failed",
             orderId: 0,
             orderType: "failed",
-            bougthPrice: price,
+            price: price,
             symbol: symbol,
             side: "buy",
         }
     }
 }
-
+async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid 
+    try {
+        let p = await fetchTicker(symbol)
+        let cost = amountInQuote / p.close
+        let r = await exchange.createMarketBuyOrder(symbol, cost)
+        let orderId = await r.id;
+        console.log("buy order")
+        console.log(orderId)
+        console.log("symbol")
+        console.log(symbol)
+        let sts = await checker(orderId, symbol)
+        return {
+            status: sts,
+            orderId: orderId,
+            orderType: "bougth",
+            price: await r.price,// = orderInfo(orderId)
+            symbol: symbol,
+            side: "buy",
+        }
+    } catch (error) {
+        console.log("EEE in buyMarket: " + symbol, error)
+        return {
+            status: "failed",
+            orderId: 0,
+            orderType: "failed",
+            price: price,
+            symbol: symbol,
+            side: "buy",
+        }
+    }
+}
 async function sell(symbol, amount, price) {// symbol, amount, ask 
     try {
         r = await exchange.createLimitSellOrder(symbol, amount, price);
@@ -288,7 +300,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
             status: await checker(orderId, symbol),
             orderId: orderId,
             orderType: "sold",
-            bougthPrice: price,
+            price: price,
             symbol: symbol,
             side: "sell",
         }
@@ -298,56 +310,58 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
             status: "failed",
             orderId: 0,
             orderType: "canceled",
-            bougthPrice: price,
+            price: price,
             symbol: symbol,
             side: "sell",
         }
     }
 }
-
+async function sellMarket(symbol, baseAmount) { // symbol, amount, bid 
+    try {
+        let r = await exchange.createMarketSellOrder(symbol, baseAmount)
+        let orderId = await r.id;
+        console.log("sell order")
+        console.log(orderId)
+        console.log("symbol")
+        console.log(symbol)
+        let sts = await checker(orderId, symbol)
+        return {
+            status: sts,
+            orderId: orderId,
+            orderType: "sold",
+            price: await r.price,// = orderInfo(orderId)
+            symbol: symbol,
+            side: "buy",
+        }
+    } catch (error) {
+        console.log("EEE in buyMarket: " + symbol, error)
+        return {
+            status: "failed",
+            orderId: 0,
+            orderType: "failed",
+            price: price,
+            symbol: symbol,
+            side: "buy",
+        }
+    }
+}
 async function orderInfo(orderId, symbol) {  //only status returns 'open', 'closed', 'canceled'
     try {
-        /*
-                console.log("fetching order")
-                console.log(orderId)
-                console.log("symbol")
-                console.log(symbol)*/
-
         r = await exchange.fetchOrder(orderId, symbol)
-        return r.status
+        return r
     } catch (error) {
-        console.log("sent fetch: " + orderId + " on: " + symbol)
-        console.log("EEE in fetch: ", error);
-        return "failed"
+        if (error.name = 'OrderNotFound') {
+            console.log("EEE in fetch: ", error.name);
+        } else {
+            console.log("sent fetch: " + orderId + " on: " + symbol)
+            console.log("EEE in fetch: ", error);
+        }
+        return { status: "failed" }
     }
 }
-
-async function orderInfoPrice(orderId, symbol) {  //returns price
-    try {
-        /*
-                console.log("fetching order")
-                console.log(orderId)
-                console.log("symbol")
-                console.log(symbol)*/
-
-        r = await exchange.fetchOrder(orderId, symbol)
-        return r.price
-    } catch (error) {
-        console.log("sent fetch: " + orderId + " on: " + symbol)
-        console.log("EEE in fetch: ", error);
-        return "failed"
-    }
-}
-
 async function cancel(orderId, symbol) {    //cancels order with id
     try {   //order was canceled
         r = await exchange.cancelOrder(orderId, symbol);
-        /*
-                console.log("canceling order")
-                console.log(orderId)
-                console.log("symbol")
-                console.log(symbol)*/
-
         console.log(r)
         return r.status
     } catch (error) {   //could not cancel
@@ -355,8 +369,7 @@ async function cancel(orderId, symbol) {    //cancels order with id
         return "failed"
     }
 }
-
-async function markets() {                   //load all available markets on exchange
+async function loadMarkets() {                   //load all available markets on exchange
     try {
         r = await exchange.loadMarkets();
         return exchange.symbols;
@@ -364,6 +377,8 @@ async function markets() {                   //load all available markets on exc
         console.log("EEE: ", error);
     }
 }
+
+
 
 async function filterAll(markets, qus) {
 
@@ -546,19 +561,20 @@ async function microPrice(num, mainQuoteCurrency) {
 
 // Exports of this module
 
-exports.filterAll = filterAll;
-exports.filter = filter;
-exports.microPrice = microPrice;
-exports.bestbuy = bestbuy;
+exports.fetchTicker = fetchTicker
+exports.loadMarkets = loadMarkets
+exports.loadMarketMinAmount = loadMarketMinAmount
+exports.fetchCurrencies = fetchCurrencies
+exports.fetchOrderBook = fetchOrderBook
+exports.wallet = wallet
+exports.balance = balance
+exports.buy = buy
+exports.buyMarket = buyMarket 
+exports.sell = sell
+exports.sellMarket = sellMarket
+exports.orderInfo = orderInfo
+exports.loadMarkets = loadMarkets
 exports.exInfos = exInfos;
-exports.balance = balance;
-exports.wallet = wallet;
-exports.cancel = cancel;
-exports.sell = sell;
-exports.buy = buy;
-exports.markets = markets;
-exports.cap = cap;
 exports.filled = filled;
-////exports.orderType = orderType;
 
 

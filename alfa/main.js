@@ -492,7 +492,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             }
         }
 
-        let tradingFeeAbs;
+        //let tradingFeeAbs;
         async function safeSale(tradingFeeP, bougthPrice, price, minProfitP, buysN) {  //returns holding status
             totalFees = tradingFeeP * (buysN + 1);
             //f.cs("totalFees:" + totalFees);
@@ -503,7 +503,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
             sellPrice = await bougthPrice + tradingFeeAbs + minProfitAbs;         //minProfit
             //f.cs("sellPrice:" + sellPrice);
             if (!bougthPrice) {
-                return true
+                r = true
             } else {
                 if (sellPrice > price) {      //if bougthPrice is not high enough
                     r = true;    	//dont allow sell force holding
@@ -511,7 +511,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     r = false;           //allow sale of holding to parked
                 }
             }
-            return await r;
+            return {
+                "condition": r,
+                "sellPrice": sellPrice
+            }
         }
 
         async function checkStopLoss(price, stopLossP, sellPrice, quoteCurrency) {  //force sale
@@ -1114,7 +1117,9 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
 
         let buys = await dbms.readBuys(symbol)
 
-        hold = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP, buys);
+        let safeSale = await m.safeSale(tradingFeeP, bougthPrice, price, minProfitP, buys)
+        hold = await safeSale.condition;
+        sellPrice = await safeSale.sellPrice
 
         stopLoss = await m.checkStopLoss(price, stopLossP, sellPrice, quoteCurrency);
 
@@ -1191,10 +1196,10 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //MA20: MA20,
                     //MA30: MA30,
                     //MA100: MA100,
-                    MA200: MA200,
+                    //MA200: MA200,
                     //MACD: MACD,
-                    MACDMA: MACDMA,
                     MACDRev: MACDRev,
+                    MACDMA: MACDMA,
                     //RSI: RSI,
                     //RSIMA: RSIMA,
                     //ao: ao,
@@ -1205,7 +1210,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
                     //DMACDMA: DMACDMA,
                     //DMACDRev: DMACDRev,
                     change1hP: change1hP,
-                    //rank: rang,
+                    rank: rang,
                 },
                 downers: {
                     MA3: MA3
