@@ -1,5 +1,5 @@
 let re = []
-function alts (){
+function mrkts (){
     re = [    //alt markets 
 
         "BTC/EUR", "ETH/EUR", "BNB/EUR",//intra quote
@@ -58,4 +58,4 @@ function alts (){
     ]
     return re
 }
-exports.alts = alts;
+exports.mrkts = mrkts;

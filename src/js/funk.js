@@ -160,6 +160,14 @@ function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second 
         }
 }
 
+function extractBases(markets){
+        let bases = []
+        for(let i in markets){
+            bases[i] = splitSymbol(markets[i],"first")
+        }
+        return bases
+    }
+
 function boolToInitial(bool) {	//returns initial of string|bool
         var bool;
         var a = bool.toString();
@@ -176,25 +184,39 @@ function jsonToArray(json, attribute) {
 
 async function fOrder(symbol, amount, price) {
         return new Promise(resolve => {
-            setTimeout(
-                () => {
-                    resolve(
-                        {
-                            orderId: 1235342,
-                            orderStatus: "done",
-                            orderType: "canceled",
-                            side: "fake side",
-                            filled: true,
-                            bougthPrice: price,
-                            symbol: symbol,
-                            status: "canceled"
-                        }
-                    );
-                }, ticker * 0.1);
+                setTimeout(
+                        () => {
+                                resolve(
+                                        {
+                                                orderId: 1235342,
+                                                orderStatus: "done",
+                                                orderType: "canceled",
+                                                side: "fake side",
+                                                filled: true,
+                                                bougthPrice: price,
+                                                symbol: symbol,
+                                                status: "canceled"
+                                        }
+                                );
+                        }, ticker * 0.1);
         });
 }
 
+async function delay(durationInSeconds) {
+        timeMS = await durationInSeconds * 1000
+        console.log()
+        return new Promise(resolve => {
+                setTimeout(
+                        async () => {
+                                resolve(
+                                        true
+                                );
+                        }, timeMS);   //set frequenci
+        });
+}
 
+exports.extractBases = extractBases
+exports.delay = delay;
 exports.loger = loger;
 exports.cleanArray = cleanArray;
 exports.sendMail = sendMail;
