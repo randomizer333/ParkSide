@@ -22,7 +22,7 @@ function mrkts (){
         "LINK/BTC",
         "XLM/BTC",
         "UNI/BTC",
-        "DOGE/BTC",/*
+        "DOGE/BTC",
     
         "BNB/ETH",   //intra quote
         //"DOT/ETH",    no market
