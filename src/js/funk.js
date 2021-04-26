@@ -1,11 +1,11 @@
 /*
 funk.js
-is a js module for generic comonly used simple functions that should be aplicable to any data 
+is a node.js module for generic comonly used simple functions that should be aplicable to any data 
 */
 
-const set = require("../json/set.json");     //only for fOrder
-ticker = minToMs(set.tickerMinutes);    //only for fOrder
+//common functions
 
+exports.sendMail = sendMail
 function sendMail(subject, message, to) {
 
         // email account data
@@ -36,30 +36,24 @@ function sendMail(subject, message, to) {
                 }
         });
 }
-
-
-async function loger(value, length, array) {        //log FIFO to array, newest in oldest out
+exports.loger = loger
+async function loger(value, length, array) {    //log FIFO to array, newest in oldest out
         while (array.length >= length) {
                 array.pop();
         }
         array.unshift(value);
         return await array;
 }
-
-function cs(object) {    //console logs with json.stringify for console wraping
-        console.log(JSON.stringify(object));
+exports.loger2 = loger2
+async function loger2(value, array) {    //log FI to array, newest first in oldest shift
+        /*while (array.length >= length) {
+                array.pop();
+        }*/
+        array.unshift(value);
+        return await array;
 }
-
-function csD(object) {
-        text = JSON.stringify(object)
-        console.log(JSON.stringify(text + " :" + object));
-}
-function csL(object, length) {
-        for (i = 0; i <= length; i++) {  //display top 5
-                cs(object[i]);
-        }
-}
-function getTime() {     //returns time in EU format
+exports.getTime = getTime
+function getTime() {    //returns time in EU format
         let timestamp = Date.now();     // Get current time in UNIX EPOC format
         let d = new Date(timestamp),	// Convert the passed timestamp to milliseconds
                 yyyy = d.getFullYear(),
@@ -88,41 +82,51 @@ function getTime() {     //returns time in EU format
         time = yyyy + '.' + mm + '.' + dd + " " + h + ':' + min + ':' + ss + "." + ms;
         return time;
 }
-function hToMs(timeInHours) {    //return time in ms if inputed in h
+exports.hToMs = hToMs
+function hToMs(timeInHours) {   //return time in ms if inputed in h
         let r = timeInHours * 3600000;
         return r;
 }
+exports.minToMs = minToMs
 function minToMs(timeInMinutes) {
         let r = timeInMinutes * 60000;
         return r;
 }
+exports.msToMin = msToMin
 function msToMin(timeInMiliseconds) {
         var r = (timeInMiliseconds / 1000) / 60;
         return r;
 }
+exports.whole = whole
 async function whole(part, percent) {  //whole is part divided by percentage
         return await part / (await percent / 100);
 }
+exports.percent = percent
 async function percent(part, whole) {  //percent is part divided by whole
         return (await part / await whole) * 100;
 }
+exports.part = part
 async function part(percent, whole) {  //part is percent multiplied by whole
         return (await percent / 100) * await whole;
 }
-function cutArray(arr, num) {     //cuts array to length
+exports.cutArray = cutArray
+function cutArray(arr, num) {   //cuts array to length
         let result = new Array();
         for (i = 0; i < num; i++) {
                 result[i] = arr[i];
         }
         return result;
 }
-function getMinOfArray(numArray) {	//in: numericArray out: minValue
+exports.getMinOfArray = getMinOfArray
+function getMinOfArray(numArray) {      //in: numericArray out: minValue
         return Math.min.apply(null, numArray);
 }
-function getMaxOfArray(numArray) {	//in: numericArray out: maxValue
+exports.getMaxOfArray = getMaxOfArray
+function getMaxOfArray(numArray) {      //in: numericArray out: maxValue
         return Math.max.apply(null, numArray);
 }
-function getAvgOfArray(numArray) {	//in: numericArray out: avgValue
+exports.getAvgOfArray = getAvgOfArray
+function getAvgOfArray(numArray) {      //in: numericArray out: avgValue
         var numArray;
         var n = numArray.length;
         var sum = 0;
@@ -133,8 +137,8 @@ function getAvgOfArray(numArray) {	//in: numericArray out: avgValue
         }
         return avg;
 }
-
-function cleanArray(arr) {   // Will remove all falsy values: undefined, null, 0, false, NaN and "" (empty string)
+exports.cleanArray = cleanArray
+function cleanArray(arr) {      // Will remove all falsy values: undefined, null, 0, false, NaN and "" (empty string)
         var newArray = []
         for (var i = 0; i < arr.length; i++) {
                 if (arr[i]) {
@@ -143,65 +147,21 @@ function cleanArray(arr) {   // Will remove all falsy values: undefined, null, 0
         }
         return newArray;
 }
-
-function mergeSymbol(base, quote) {
-        return mergedSymbol = base + "/" + quote;
-
-}
-function splitSymbol(symbol, selectReturn) {   // BTC/USDT   ,   first | second    base | quote
-        let char = symbol.search("/");
-        first = symbol.slice(0, char);
-        second = symbol.slice(char + 1, symbol.length);
-        switch (selectReturn) {
-                case "first":
-                        return first;
-                case "second":
-                        return second;
-        }
-}
-
-function extractBases(markets){
-        let bases = []
-        for(let i in markets){
-            bases[i] = splitSymbol(markets[i],"first")
-        }
-        return bases
-    }
-
-function boolToInitial(bool) {	//returns initial of string|bool
+exports.boolToInitial = boolToInitial
+function boolToInitial(bool) {  //returns initial of string|bool
         var bool;
         var a = bool.toString();
         var b = a.charAt(0);
         return b;
 }
-
+exports.jsonToArray = jsonToArray
 function jsonToArray(json, attribute) {
         for (i = 0; i < length; i++) {
-                arr[i] = json.attribute
+                arr[i] = json[attribute]
         }
         return arr;
 }
-
-async function fOrder(symbol, amount, price) {
-        return new Promise(resolve => {
-                setTimeout(
-                        () => {
-                                resolve(
-                                        {
-                                                orderId: 1235342,
-                                                orderStatus: "done",
-                                                orderType: "canceled",
-                                                side: "fake side",
-                                                filled: true,
-                                                bougthPrice: price,
-                                                symbol: symbol,
-                                                status: "canceled"
-                                        }
-                                );
-                        }, ticker * 0.1);
-        });
-}
-
+exports.delay = delay
 async function delay(durationInSeconds) {
         timeMS = await durationInSeconds * 1000
         console.log()
@@ -215,26 +175,3 @@ async function delay(durationInSeconds) {
         });
 }
 
-exports.extractBases = extractBases
-exports.delay = delay;
-exports.loger = loger;
-exports.cleanArray = cleanArray;
-exports.sendMail = sendMail;
-exports.csL = csL;
-exports.cs = cs;
-exports.getTime = getTime;
-exports.hToMs = hToMs;
-exports.minToMs = minToMs
-exports.msToMin = msToMin;
-exports.whole = whole;
-exports.percent = percent;
-exports.part = part;
-exports.cutArray = cutArray;
-exports.getMinOfArray = getMinOfArray;
-exports.getMaxOfArray = getMaxOfArray;
-exports.getAvgOfArray = getAvgOfArray;
-exports.mergeSymbol = mergeSymbol;
-exports.splitSymbol = splitSymbol;
-exports.boolToInitial = boolToInitial;
-exports.csD = csD;
-exports.fOrder = fOrder;

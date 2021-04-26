@@ -28,8 +28,6 @@ async function cap() {                //reurns Array of Objects bid,ask
     }
 }
 
-
-let filled;
 let exchange = set.exchangeName;
 switch (exchange) {     //Select exchange
     case "bitstamp":
@@ -80,8 +78,7 @@ switch (exchange) {     //Select exchange
 
 //  Call functions of CCXT
 
-let exInfos;
-exInfos = {
+let exInfos = {
     version: ccxt.version,
     exchanges: ccxt.exchanges,
     exchange: exchange.name,
@@ -89,8 +86,8 @@ exInfos = {
     referral: exchange.urls.referral,
     feeMaker: exchange.fees.trading.maker,
     feeTaker: exchange.fees.trading.taker,
-};
-
+}
+exports.exInfos = exInfos
 test()
 async function test() {
     //let rel = await buy("MKR/USDT", 0.05, 300)
@@ -101,10 +98,10 @@ async function test() {
     //rel = await sellMarket("DOGE/EUR", 50)
     //let rel = await loadMarketMinAmount("BNB/EUR")
     //let rel = await checker(401016118, "XRP/BTC")
-    console.log("DONE")
+    //console.log("DONE")
     //console.log(rel)
 }
-
+exports.fetchTicker = fetchTicker
 async function fetchTicker(symbol) {//high,low,close,vwap,volume,percentage
     try {
         r = await exchange.fetchTicker(symbol);
@@ -114,6 +111,7 @@ async function fetchTicker(symbol) {//high,low,close,vwap,volume,percentage
         console.log("EEE at fetchTicker: ", error);
     }
 }
+exports.loadMarkets = loadMarkets
 async function loadMarkets() {    //returns all available markets
     try {
         r = await exchange.loadMarkets();
@@ -122,6 +120,7 @@ async function loadMarkets() {    //returns all available markets
         console.log("EEE: ", error);
     }
 }
+exports.loadMarketMinAmount = loadMarketMinAmount
 async function loadMarketMinAmount(symbol) {    //returns minimum amount of base allowed to buy
     try {
         r = await exchange.loadMarkets();
@@ -131,6 +130,7 @@ async function loadMarketMinAmount(symbol) {    //returns minimum amount of base
         console.log("EEE: ", error);
     }
 }
+exports.fetchCurrencies = fetchCurrencies
 async function fetchCurrencies() {   //returns minimum amount of base allowed to buy
     try {
         r = await exchange.fetchCurrencies();
@@ -141,6 +141,7 @@ async function fetchCurrencies() {   //returns minimum amount of base allowed to
         console.log("EEE: ", error);
     }
 }
+exports.fetchOrderBook = fetchOrderBook
 //console.log(fetchOrderBook("XRP/EUR"))
 async function fetchOrderBook(symbol) {//returns Array of Objects bid,ask
     try {
@@ -156,7 +157,7 @@ async function fetchOrderBook(symbol) {//returns Array of Objects bid,ask
             price: r.asks[0][0] - ((r.asks[0][0] - r.bids[0][0]) / 2),
             time: f.getTime()
         }
-        console.log(re)
+        //console.log(re)
         return re
     } catch (error) {
         if (error.name = 'BadSymbol') {
@@ -166,6 +167,7 @@ async function fetchOrderBook(symbol) {//returns Array of Objects bid,ask
         }
     }
 }
+exports.wallet = wallet
 async function wallet() {   //returns JSON of balances and assets
     try {
         let curs, vals
@@ -188,6 +190,7 @@ async function wallet() {   //returns JSON of balances and assets
     }
 
 }
+exports.balance = balance
 async function balance(currency) {          //returns Array of Objects balances of an account
     try {
         let bR = await exchange.fetchBalance();
@@ -234,6 +237,7 @@ async function checker(orderId, symbol) {
     }
     return await isOpen(orderId, symbol)
 }
+exports.buy = buy
 async function buy(symbol, amount, price) { // symbol, amount, bid 
     try {
         //let r = await exchange.createOrder(symbol, 'market', 'buy', amount, price)
@@ -260,6 +264,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
         }
     }
 }
+exports.buyMarket = buyMarket
 async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid 
     try {
         let p = await fetchTicker(symbol)
@@ -291,6 +296,7 @@ async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid
         }
     }
 }
+exports.sell = sell
 async function sell(symbol, amount, price) {// symbol, amount, ask 
     try {
         r = await exchange.createLimitSellOrder(symbol, amount, price);
@@ -316,6 +322,7 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         }
     }
 }
+exports.sellMarket = sellMarket
 async function sellMarket(symbol, baseAmount) { // symbol, amount, bid 
     try {
         let r = await exchange.createMarketSellOrder(symbol, baseAmount)
@@ -345,6 +352,7 @@ async function sellMarket(symbol, baseAmount) { // symbol, amount, bid
         }
     }
 }
+exports.orderInfo = orderInfo
 async function orderInfo(orderId, symbol) {  //only status returns 'open', 'closed', 'canceled'
     try {
         r = await exchange.fetchOrder(orderId, symbol)
@@ -359,6 +367,7 @@ async function orderInfo(orderId, symbol) {  //only status returns 'open', 'clos
         return { status: "failed" }
     }
 }
+exports.cancel = cancel
 async function cancel(orderId, symbol) {    //cancels order with id
     try {   //order was canceled
         r = await exchange.cancelOrder(orderId, symbol);
@@ -369,6 +378,7 @@ async function cancel(orderId, symbol) {    //cancels order with id
         return "failed"
     }
 }
+exports.loadMarkets = loadMarkets
 async function loadMarkets() {                   //load all available markets on exchange
     try {
         r = await exchange.loadMarkets();
@@ -559,22 +569,5 @@ async function microPrice(num, mainQuoteCurrency) {
     return bests;
 }
 
-// Exports of this module
-
-exports.fetchTicker = fetchTicker
-exports.loadMarkets = loadMarkets
-exports.loadMarketMinAmount = loadMarketMinAmount
-exports.fetchCurrencies = fetchCurrencies
-exports.fetchOrderBook = fetchOrderBook
-exports.wallet = wallet
-exports.balance = balance
-exports.buy = buy
-exports.buyMarket = buyMarket 
-exports.sell = sell
-exports.sellMarket = sellMarket
-exports.orderInfo = orderInfo
-exports.loadMarkets = loadMarkets
-exports.exInfos = exInfos;
-exports.filled = filled;
 
 

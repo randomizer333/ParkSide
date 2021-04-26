@@ -1,66 +1,68 @@
 //init
-const fs = require("fs")      //node.js native
-const database = "../json/db.json"    //define database location
-const templateDB = "../json/templateDB.json"    //define database location
-const db = require(database)
-const tdb = require("../json/templateDB.json")
-const f = require("../js/funk.js")
-const enabledMarkets = require("./enabledMarkets.js").mrkts()
+let fs, templateDB, tdb, f, enabledMarkets
 
-//exports
-exports.db = db
-exports.writeToDB = writeToDB
-
-console.log("DBMS Loaded")
-
-//create or add database,table,row
+req()
+function req() {
+    fs = require("fs")      //node.js native
+    db = require("../json/db.json")
+    exports.db = db
+    templateDB = require("../json/dbModel.json")
+    tdb = require("../json/dbModel.json")//define database location
+    f = require("../js/funk.js")
+    m = require("../js/modul.js")
+    enabledMarkets = require("./enabledMarkets.js").mrkts()
+    fiatCurrency = "EUR"
+}
 
 //createDB(enabledMarkets)
 async function createDB(enabledMarkets) {   //done   
     let baza = {}
     console.dir("Creating DB:")
-
     for (let i in await tdb.db) {     //create top level table names
         baza[tdb.db[i]] = {
         }
     }
-
     for (let i in await enabledMarkets) {     //create table1
         baza[tdb.db.table1][enabledMarkets[i]] = tdb[tdb.db.table1]
     }
-
-    currencies = f.extractBases(enabledMarkets)
+    let currencies = await m.extractBases(enabledMarkets)
+    currencies[currencies.length] = fiatCurrency    //add fiat currency
+    console.log(currencies)
     for (let i in await currencies) {     //create table2
         baza[tdb.db.table2][currencies[i]] = tdb[tdb.db.table2]
     }
+    writeJSON(baza)
+}
 
-    console.dir(baza)
-    await writeJSON(baza) 
-}
+exports.writeJSON = writeJSON
 async function writeJSON(inputJSON) {   //done
-    input = await JSON.stringify(inputJSON)
-    console.log("writing")
-    fs.writeFile(database, "", function (err) {   //clear file
+    let input = await JSON.stringify(inputJSON)
+    let dbURL = "./json/db.json"   //define database location
+    //console.log("writing")
+    //console.log(inputJSON)
+    await fs.writeFile(dbURL, "{}", function (err) {    //save data
         if (err) throw err;
     });
-    fs.writeFile(database, input, function (err) {    //save data
+    await fs.writeFile(dbURL, input, function (err) {    //save data
         if (err) throw err;
     });
 }
-//console.log(writeToDB("tabela", "ključ", "stolpec", 55555)) 
+
+exports.writeToDB = writeToDB
 async function writeToDB(tableName, rowPK, column, data) {  //done
     try {
         if (db && data) {
             db[tableName][rowPK][column] = data   //select and set
-            console.log(db)
+            db[tableName][rowPK]["time"] = f.getTime()   //select and set
+            //console.log(f.getTime())
             writeJSON(db)
-            return true
+            return data
         } else {
             console.log("EEE: no input data")
             return false
         }
     } catch (error) {
-        console.log("EEE: bad keys")
+        console.log("EEE: no such path in db")
         return false
     }
 }
@@ -181,3 +183,5 @@ async function createNew1(tableName, rowPK, column) {
         console.log("EEE: cant create ")
     }
 }
+
+//console.log("dbms loaded")

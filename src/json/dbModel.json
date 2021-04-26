@@ -1,0 +1,34 @@
+{
+    "db": {
+        "table1": "Markets",
+        "table2": "Assets"
+    },
+    "Markets": {
+        "orderType": "none",
+        "marketType": "none",
+        "prices": [0,0,0,0,0,0,0],
+        "time": "",
+        "opens":[0,0,0,0,0,0,0],
+        "highs":[0,0,0,0,0,0,0],
+        "lows":[0,0,0,0,0,0,0],
+        "closes":[0,0,0,0,0,0,0],
+        "volumes":[0,0,0,0,0,0,0],
+        "changes":[0,0,0,0,0,0,0],
+        "award":false
+    },
+    "Assets": {
+        "balance": 0,
+        "value": 0,
+        "buys": 0,
+        "sale": false,
+        "purchase": false,
+        "time": "",
+        "FCAPrices": [0,0,0,0],
+        "FCAAmounts": [0,0,0,0],
+        "FCAValue": 0,
+        "currencyType": "alt",
+        "inMarkets": ["","","",""],
+        "inMarketsBougthPrice": [0,0,0,0],
+        "omniMarketsPrices": [0,0,0,0,0]
+    }
+}
