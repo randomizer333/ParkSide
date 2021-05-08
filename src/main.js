@@ -40,7 +40,6 @@ async function init() {
         "risk": s.stopLossP,
         "reward": s.minProfitP,
     })
-    f.delay(20)
     enableOrders ? f.sendMail("Restart", "RUN! at " + f.getTime() + "\n") : ""
     await setup()
 }
@@ -391,9 +390,9 @@ async function proces(symbol, tickerTime, number) {
             if (quoteFiatPrice == 0) {
                 console.log("no marketaaasdsd")
                 FCAI = {
-                    "value":0,
-                    "price":0,
-                    "amount":balanceQuote,
+                    "value": 0,
+                    "price": 0,
+                    "amount": balanceQuote,
                 }
                 FCAPricesQuote = [FCAI.price]  //log
                 FCAAmountsQuote = [FCAI.amount]   //log
@@ -422,6 +421,7 @@ async function proces(symbol, tickerTime, number) {
                 "number": number,
                 "time": f.getTime(),
                 "baseFiatPrice": baseFiatPrice + " " + fiat,
+                "quoteFiatPrice": quoteFiatPrice + " " + quote,
                 "symbol": symbol,
                 "price": price,
                 "signal": signal,
@@ -455,7 +455,7 @@ async function proces(symbol, tickerTime, number) {
             console.log(info)
         }
 
-        return 
+        return
     }
 }
 

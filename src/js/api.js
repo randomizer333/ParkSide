@@ -134,7 +134,6 @@ async function fetchCurrencies() {
     }
 }
 exports.fetchOrderBook = fetchOrderBook
-//console.log(fetchOrderBook("XRP/EUR"))
 async function fetchOrderBook(symbol) {//returns Array of Objects bid,ask
     try {
         r = await exchange.fetchOrderBook(symbol);
@@ -153,7 +152,7 @@ async function fetchOrderBook(symbol) {//returns Array of Objects bid,ask
         return re
     } catch (error) {
         if (error.name = 'BadSymbol') {
-            console.log("Ni " + symbol + " marketa!!!")
+            //console.log("Ni " + symbol + " marketa!!!")
             re = {
                 symbol: symbol,
                 ask: 0,
@@ -282,7 +281,7 @@ async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid
         console.log(orderId)
         console.log("symbol")
         console.log(symbol)
-        let chk = await checker(orderId, symbol)//skiped for market order
+        //let chk = await checker(orderId, symbol)//skiped for market order
         return {
             "status": r.status,
             "amount": r.amount,
@@ -340,7 +339,7 @@ async function sellMarket(symbol, baseAmount) { // symbol, amount, bid
         console.log(orderId)
         console.log("symbol")
         console.log(symbol)
-        let sts = await checker(orderId, symbol)    //skiped for market order
+        //let sts = await checker(orderId, symbol)    //skiped for market order
         return {
             "status": r.status,
             "amount": r.amount,
