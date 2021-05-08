@@ -1475,7 +1475,7 @@ async function bot(symbol, ticker, stopLossP, botNumber) {
         await mailInfo(orderType, marketInfo);
         async function mailInfo(orderType, marketInfo) {
             if (await orderType == "sold") {
-                f.sendMail("Sold Info", JSON.stringify(marketInfo));
+                f.sendMail("Sold Info", JSON.stringify(marketInfo))
             } else if (await orderType == "bougth") {
                 //f.sendMail("Bougth Info", JSON.stringify(marketInfo));
             } else if (await orderType == "lossed") {

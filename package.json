@@ -9,10 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ccxt": "^1.26.51",
+    "ccxt": "^1.49.61",
     "mysql": "^2.18.1",
     "nodemailer": "^4.7.0",
     "technicalindicators": "^1.1.13",
-    "websocket": "^1.0.31"
+    "websocket": "^1.0.34"
   }
 }
