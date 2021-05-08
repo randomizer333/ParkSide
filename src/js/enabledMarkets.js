@@ -2,6 +2,7 @@ let re = []
 function mrkts (){
     re = [    //alt markets 
 
+        //"ETH/BTC","BNB/BTC","BNB/ETH",// triangular
         "BTC/EUR", "ETH/EUR", "BNB/EUR",//intra quote
         "DOT/EUR",
         "XRP/EUR",

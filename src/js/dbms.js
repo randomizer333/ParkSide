@@ -36,13 +36,13 @@ async function createDB(enabledMarkets) {   //done
 
 exports.writeJSON = writeJSON
 async function writeJSON(inputJSON) {   //done
-    let input = await JSON.stringify(inputJSON)
+    let input = JSON.stringify(inputJSON)
     let dbURL = "./json/db.json"   //define database location
-    //console.log("writing")
+    //console.log("!")
     //console.log(inputJSON)
-    await fs.writeFile(dbURL, "{}", function (err) {    //save data
+    /*await fs.writeFile(dbURL, "{}", function (err) {    //save data
         if (err) throw err;
-    });
+    });*/
     await fs.writeFile(dbURL, input, function (err) {    //save data
         if (err) throw err;
     });
@@ -51,14 +51,14 @@ async function writeJSON(inputJSON) {   //done
 exports.writeToDB = writeToDB
 async function writeToDB(tableName, rowPK, column, data) {  //done
     try {
-        if (db && data) {
+        if (db /*&& data*/) {
             db[tableName][rowPK][column] = data   //select and set
             db[tableName][rowPK]["time"] = f.getTime()   //select and set
             //console.log(f.getTime())
             writeJSON(db)
             return data
         } else {
-            console.log("EEE: no input data")
+            console.log("EEE: no input data to writeToDB")
             return false
         }
     } catch (error) {
