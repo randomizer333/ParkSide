@@ -213,6 +213,7 @@ async function sender(info, order) {
 		switch (order) {
 			case "bougth":
 				//console.log("bougth")
+				f.sendMail("Bougth Info", JSON.stringify(info))
 				break;
 			case "sold":
 				//console.log("sold")

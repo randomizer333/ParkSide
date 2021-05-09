@@ -38,7 +38,7 @@ exports.writeJSON = writeJSON
 async function writeJSON(inputJSON) {   //done
     let input = JSON.stringify(inputJSON)
     let dbURL = "./json/db.json"   //define database location
-    //console.log("!")
+    console.log("---------------Writing------------------")
     //console.log(inputJSON)
     /*await fs.writeFile(dbURL, "{}", function (err) {    //save data
         if (err) throw err;
