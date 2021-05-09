@@ -277,30 +277,26 @@ async function proces(symbol, tickerTime, number) {
 
         //console.log(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal)
 
+        let order = { "status": "still none" }
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal)
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal) {
             if (purchase && !sale && upSignal && award) {//buy 
-                //order = await a.buy(symbol, quoteBalanceInBase * portion, price) //limit order
-                enableOrders ? order = await a.buyMarket(symbol, balanceQuote * portion) : fakeBuy()
+                enableOrders ? order = await a.buyMarket(symbol, balanceQuote * portion) : order = await fakeBuy()
                 if (order.status == "closed") {
-                    await bougth(order)
-                    orderType = "bougth"
+                    orderType = await bougth(order)//"bougth"
                 } else {
                     orderType = "parked"
                 }
             } else if (sale && !hold && !stopLoss && downSignal) {//sell good
-                //order = await a.sell(symbol, quoteBalanceInBase * portion, price) //limit order
-                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : fakeSell()
-                if (order.sts == "closed") {
-                    await sold(order)
-                    orderType = "sold"
+                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order = await fakeSell()
+                if (order.status == "closed") {
+                    orderType = await sold(order)//"sold"
                 } else {
                     orderType = "holding"
                 }
             } else if (sale && hold && stopLoss && downSignal) {//sell bad stopLoss
-                //order = await a.sell(symbol, quoteBalanceInBase * portion, price) //limit order
-                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : fakeSell()
-                if (order.sts == "closed") {
+                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order= await fakeSell()
+                if (order.status == "closed") {
                     await sold(order)
                     orderType = "lossed"
                 } else {
@@ -309,17 +305,16 @@ async function proces(symbol, tickerTime, number) {
             } else if (sale && hold && !stopLoss) { //holding fee NOT covered
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
-                orderType = "holding good";
+                orderType = "holding good"
             } else if (purchase) {
-                orderType = "parked";
+                orderType = "parked"
             } else {
-                orderType = "still none";
+                orderType = "still none"
             }
             return orderType
         }
 
         //post proces after order
-        await postProces()
         //await fakeBuy()
         async function fakeBuy() {
             f.delay(10)
@@ -328,7 +323,7 @@ async function proces(symbol, tickerTime, number) {
                 "price": price,
                 "amount": Math.floor((Math.random() * 100) + 1),
             }
-            await bougth(orderR, baseFiatMarket, quoteFiatMarket)
+            return { "status": "bougth" }
         }
         //await fakeSell()
         async function fakeSell() {
@@ -338,7 +333,7 @@ async function proces(symbol, tickerTime, number) {
                 "price": price,
                 "amount": Math.floor((Math.random() * 100) + 1),
             }
-            sold(orderR, baseFiatMarket, quoteFiatMarket)
+            return { "status": "sold" }
         }
 
         async function bougth(orderR, baseFiatMarket, quoteFiatMarket) {
@@ -368,6 +363,7 @@ async function proces(symbol, tickerTime, number) {
             console.log("FCAO")
             console.log(FCAO)
             await postProces()
+            return "bougth"
         }
         async function sold(orderR, baseFiatMarket, quoteFiatMarket) {
             let baseFiatOrderBook = await a.fetchOrderBook(baseFiatMarket)
@@ -408,14 +404,15 @@ async function proces(symbol, tickerTime, number) {
             }
             console.log("FCAI")
             console.log(FCAI)
+            return "sold"
         }
 
         //update stacks
         stackBase = !FCAPricesBase ? 0 : FCAPricesBase.length
         stackQuote = !FCAPricesQuote ? 0 : FCAPricesQuote.length
 
-        async function postProces() {
-            console.log("Writing")
+        await postProces(orderType)
+        async function postProces(orderType) {
             await dbms.writeJSON(db)    //write
             let info = {    //output
                 "number": number,
@@ -432,6 +429,7 @@ async function proces(symbol, tickerTime, number) {
                 //"prices": prices,
                 "pricesLength": prices.length,
                 "orderType": orderType,
+                "orderStatus": order.status,
                 "AllSafe": "______________________________",
                 "balanceBase": balanceBase + " " + base,
                 "balanceQuote": balanceQuote + " " + quote,
@@ -454,8 +452,6 @@ async function proces(symbol, tickerTime, number) {
             await m.sender(info, orderType)
             console.log(info)
         }
-
-        return
     }
 }
 
