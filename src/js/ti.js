@@ -333,7 +333,7 @@ async function indicators(prices, vwaps, changes, volumes, macds, dmacds, ticker
     MA100 = await ma(logMA100);  //MA of last 200 prices
     MA200 = await ma(logMA200);  //MA of last 200 prices
 
-    change1hP = await change1h(logAll, tickerTime, price, 6)    //dev
+    change1hP = await change1h(logAll, tickerTime, price, 60)    //dev
     change6hP = await change1h(logAll, tickerTime, price, 360)
 
     //primary indicators

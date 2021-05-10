@@ -239,8 +239,8 @@ async function proces(symbol, tickerTime, number) {
         //Assets preparation(Private API)-----------------------------------
 
         let balanceBase = dbms.db["Assets"][base].balance
-        let balanceQuote = dbms.db["Assets"][quote].balance
         let balanceBaseInQuote = m.baseToQuote(balanceBase, price)
+        let balanceQuote = dbms.db["Assets"][quote].balance
         let balanceQuoteInBase = m.quoteToBase(balanceQuote, price)
         //let fiatBaseValue = balanceBase * baseFiatPrice
         //let fiatQuoteValue = balanceQuote * quoteFiatPrice

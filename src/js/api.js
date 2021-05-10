@@ -274,7 +274,7 @@ exports.buyMarket = buyMarket
 async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid 
     try {
         let p = await fetchTicker(symbol)
-        let cost = amountInQuote / p.close
+        let costInBase = amountInQuote / p.close
         let r = await exchange.createMarketBuyOrder(symbol, cost)
         let orderId = await r.id;
         console.log("Buy order made:")
@@ -287,16 +287,16 @@ async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid
             "amount": r.amount,
             "orderId": orderId,
             "orderType": "bougth",
-            "price": await r.price,// = orderInfo(orderId)
+            "price": r.price,// = orderInfo(orderId)
         }
     } catch (error) {
         console.log("EEE in buyMarket: " + symbol, error)
         return {
             "status": "closed",
-            "amount": amountInQuote,
-            "orderId": orderId,
+            "amount": r.amount,
+            "orderId": none,
             "orderType": "bougth",
-            "price": price,
+            "price": r.price,
         }
     }
 }
@@ -341,16 +341,16 @@ async function sellMarket(symbol, baseAmount) { // symbol, amount, bid
             "amount": r.amount,
             "orderId": orderId,
             "orderType": "sold",
-            "price": await r.price,// = orderInfo(orderId)
+            "price": r.price,// = orderInfo(orderId)
         }
     } catch (error) {
         console.log("EEE in buyMarket: " + symbol, error)
         return {
             "status": "closed",
-            "amount": baseAmount,
-            "orderId": orderId,
+            "amount": r.amount,
+            "orderId": none,
             "orderType": "sold",
-            "price": price,
+            "price": r.price,
         }
     }
 }
