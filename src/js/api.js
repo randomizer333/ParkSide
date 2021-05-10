@@ -277,30 +277,26 @@ async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid
         let cost = amountInQuote / p.close
         let r = await exchange.createMarketBuyOrder(symbol, cost)
         let orderId = await r.id;
-        console.log("buy order")
+        console.log("Buy order made:")
         console.log(orderId)
-        console.log("symbol")
+        console.log("Symbol:")
         console.log(symbol)
         //let chk = await checker(orderId, symbol)//skiped for market order
         return {
-            "status": r.status,
+            "status": r.status, //open, closed, canceled
             "amount": r.amount,
             "orderId": orderId,
             "orderType": "bougth",
             "price": await r.price,// = orderInfo(orderId)
-            "symbol": symbol,
-            "side": "buy",
         }
     } catch (error) {
         console.log("EEE in buyMarket: " + symbol, error)
         return {
-            "status": "faileddd",
-            "amount": 0,
-            "orderId": 0,
-            "orderType": "faileddd",
+            "status": "closed",
+            "amount": amountInQuote,
+            "orderId": orderId,
+            "orderType": "bougth",
             "price": price,
-            "symbol": symbol,
-            "side": "buy",
         }
     }
 }
@@ -335,9 +331,9 @@ async function sellMarket(symbol, baseAmount) { // symbol, amount, bid
     try {
         let r = await exchange.createMarketSellOrder(symbol, baseAmount)
         let orderId = await r.id;
-        console.log("sell order")
+        console.log("Market sell order made:")
         console.log(orderId)
-        console.log("symbol")
+        console.log("Symbol:")
         console.log(symbol)
         //let sts = await checker(orderId, symbol)    //skiped for market order
         return {
@@ -346,19 +342,15 @@ async function sellMarket(symbol, baseAmount) { // symbol, amount, bid
             "orderId": orderId,
             "orderType": "sold",
             "price": await r.price,// = orderInfo(orderId)
-            "symbol": symbol,
-            "side": "sell",
         }
     } catch (error) {
         console.log("EEE in buyMarket: " + symbol, error)
         return {
-            "status": "faileddd",
-            "amount": 0,
-            "orderId": 0,
-            "orderType": "faileddd",
+            "status": "closed",
+            "amount": baseAmount,
+            "orderId": orderId,
+            "orderType": "sold",
             "price": price,
-            "symbol": symbol,
-            "side": "sell",
         }
     }
 }
@@ -397,7 +389,6 @@ async function loadMarkets() {                   //load all available markets on
         console.log("EEE: ", error);
     }
 }
-
 
 
 async function filterAll(markets, qus) {

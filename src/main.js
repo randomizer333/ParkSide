@@ -37,8 +37,8 @@ async function init() {
         "FeeM": a.exInfos.feeMaker,
         "FeeT": a.exInfos.feeTaker,
         "TradingEnabled": s.enableOrders,
-        "risk": s.stopLossP,
-        "reward": s.minProfitP,
+        "Risk": s.stopLossP,
+        "Reward": s.minProfitP,
     })
     enableOrders ? f.sendMail("Restart", "RUN! at " + f.getTime() + "\n") : ""
     await setup()
@@ -185,7 +185,7 @@ async function proces(symbol, tickerTime, number) {
         volumes = await f.loger(volume, logLength, volumes)
 
         globalAward(enabledMarkets, 3)
-        let award = dbms.db["Markets"][symbol].award
+        let award = await dbms.db["Markets"][symbol].award
         function globalAward(symbols, number) {
             let syms = clearAwards(symbols)
             function clearAwards(toClear) {
@@ -218,13 +218,14 @@ async function proces(symbol, tickerTime, number) {
             function podium(arr) {
                 let podium = f.cutArray(arr, number)
                 for (let i in podium) {
-                    if (podium.value > 0) { //not for negative ones
+                    if (podium[i].value > 0) { //not for negative ones
+                        //console.log("awrdsing")
                         dbms.db["Markets"][podium[i].symbol].award = true //write awards
                     }
                 }
                 return podium
             }
-            //console.log(awards)
+            console.log(awards)
             return awards
         }
 
@@ -273,11 +274,12 @@ async function proces(symbol, tickerTime, number) {
         let stopLoss = limitLoss.stopLoss
         let lossPrice = limitLoss.lossPrice
 
+        let order = { "status": "still none" }
+
         f.delay(5)  //fake delay makeOrder()
 
         //console.log(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal)
 
-        let order = { "status": "still none" }
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal)
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal) {
             if (purchase && !sale && upSignal && award) {//buy 
@@ -295,7 +297,7 @@ async function proces(symbol, tickerTime, number) {
                     orderType = "holding"
                 }
             } else if (sale && hold && stopLoss && downSignal) {//sell bad stopLoss
-                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order= await fakeSell()
+                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order = await fakeSell()
                 if (order.status == "closed") {
                     await sold(order)
                     orderType = "lossed"
@@ -319,21 +321,21 @@ async function proces(symbol, tickerTime, number) {
         async function fakeBuy() {
             f.delay(10)
             orderR = {  //fake return od makeOrder()
-                "orderType": "bougth",
+                "status": "closed",
                 "price": price,
                 "amount": Math.floor((Math.random() * 100) + 1),
             }
-            return { "status": "bougth" }
+            return orderR
         }
         //await fakeSell()
         async function fakeSell() {
             f.delay(10)
             orderR = {  //fake return od makeOrder()
-                "orderType": "sold",
+                "status": "closed",
                 "price": price,
                 "amount": Math.floor((Math.random() * 100) + 1),
             }
-            return { "status": "sold" }
+            return orderR
         }
 
         async function bougth(orderR, baseFiatMarket, quoteFiatMarket) {
@@ -362,7 +364,6 @@ async function proces(symbol, tickerTime, number) {
             FCAAmountsQuote = FCAO.amount
             console.log("FCAO")
             console.log(FCAO)
-            await postProces()
             return "bougth"
         }
         async function sold(orderR, baseFiatMarket, quoteFiatMarket) {
@@ -393,14 +394,12 @@ async function proces(symbol, tickerTime, number) {
                 FCAPricesQuote = [FCAI.price]  //log
                 FCAAmountsQuote = [FCAI.amount]   //log
                 FCAValueQuote = FCAI.value
-                await postProces()
             } else {
                 console.log("je market")
                 FCAPricesQuote.unshift(quoteFiatPrice)  //log
                 FCAAmountsQuote.unshift(amount)   //log
                 FCAI = await m.FCAIn(FCAPricesQuote, FCAAmountsQuote)   //dca
                 FCAValueQuote = FCAI.value
-                await postProces()
             }
             console.log("FCAI")
             console.log(FCAI)
@@ -415,16 +414,20 @@ async function proces(symbol, tickerTime, number) {
         async function postProces(orderType) {
             await dbms.writeJSON(db)    //write
             let info = {    //output
-                "number": number,
+                //"number": number,
                 "time": f.getTime(),
-                "baseFiatPrice": baseFiatPrice + " " + fiat,
-                "quoteFiatPrice": quoteFiatPrice + " " + quote,
                 "symbol": symbol,
                 "price": price,
-                "signal": signal,
+                "baseFiatPrice": baseFiatPrice + " " + fiat,
+                "quoteFiatPrice": quoteFiatPrice + " " + quote,
+                //"signal": signal,
+                "award": award,
+                "upSignal": signal.upSignal,
+                "uppers": signal.uppers,
+                "downers": signal.downers,
+                "downSignal": signal.downSignal,
                 "vwap": vwap,
                 "change": change,
-                "award": award,
                 //"volume": volume,
                 //"prices": prices,
                 "pricesLength": prices.length,
