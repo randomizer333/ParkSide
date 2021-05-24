@@ -63,7 +63,7 @@ async function loger(value, length, array) {    //log FIFO to array, newest in o
 exports.loger2 = loger2
 async function loger2(value, array) {    //log FI to array, newest first in oldest shift
 	while (array.length >= length) {
-			array.pop();
+		array.pop();
 	}
 	array.unshift(value);
 	return await array;
@@ -155,12 +155,16 @@ function getAvgOfArray(numArray) {      //in: numericArray out: avgValue
 }
 exports.sumOfArray = sumOfArray
 function sumOfArray(arr) {
-	//console.log(arr)
 	let sum = 0
 	for (let i in arr) {
 		sum += arr[i]
 	}
-	//console.log(sum)
+	/*if (arr.length > 1) {
+		for (let i in arr) {
+		}
+	} else {
+		sum = arr
+	}*/
 	return sum
 }
 exports.cleanArray = cleanArray

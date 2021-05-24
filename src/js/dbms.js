@@ -36,7 +36,7 @@ async function createDB(enabledMarkets) {   //done
 
 exports.writeJSON = writeJSON
 async function writeJSON(inputJSON) {   //done
-    let input = JSON.stringify(inputJSON)
+    let input = JSON.stringify(inputJSON, null, 2)
     let dbURL = "./json/db.json"   //define database location
     console.log("---------------Writing------------------")
     //console.log(inputJSON)

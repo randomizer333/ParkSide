@@ -219,36 +219,92 @@ async function sender(info, order) {
 				//console.log("sold")
 				f.sendMail("Sold Info", JSON.stringify(info))
 				break;
+			case "lossed":
+				//console.log("sold")
+				f.sendMail("Lossed Info", JSON.stringify(info))
+				break;
 			default:
 			//console.log("park or hodl")
 		}
 	}
 }
 
+exports.CAIn = CAIn
+async function CAIn(price, amount, costs, ownedAmount) {//4in 3out 2return
+	console.log("Moved: " + amount + " at: " + price)
+	console.log("Old amount: " + ownedAmount + " costed: " + costs)
+	let cost = costs / ownedAmount
+	cost ? "" : cost = 0
+	let CAprices = [price, cost]
+	let CAAmounts = [amount, ownedAmount]
+	let CACosts = [0]   //cost = price * amount
+	for (let i in CAprices) {
+		CACosts[i] = CAprices[i] * CAAmounts[i]
+	}
+	let costsSum = f.sumOfArray(CACosts)
+	let amountsSum = f.sumOfArray(CAAmounts)
+	let CAPrice = costsSum / amountsSum	//nothing is free
+	CAPrice ? "" : CAPrice = 0
+	//return
+	r = {
+		"CAPrice": CAPrice,
+		"CACost": costsSum,
+		//"CAAmount": amountsSum,	//total actual balance of base asset
+	}
+	//console.log(r)
+	return r		//primary output
+}
+
+//CAOut(0.018, 100, 4.2, 300)
+exports.CAOut = CAOut
+async function CAOut(price, amount, costs, ownedAmount) {//4in 3out 2return
+	console.log("CAOut: Bougth: " + amount + " at: " + price)
+	console.log("CAOut: Cost:" + costs + " Old amount: " + ownedAmount)
+	let cost = costs / ownedAmount
+	let CAprices = [price, cost]
+	let CAAmounts = [-amount, ownedAmount]	//deduct
+	let CACosts = [0]   //cost = price * amount
+	for (let i in CAprices) {
+		CACosts[i] = CAprices[i] * CAAmounts[i]
+	}
+	let costsSum = f.sumOfArray(CACosts)
+	let amountsSum = f.sumOfArray(CAAmounts)
+	let CAPrice = costsSum / amountsSum	//nothing is free
+	!CAPrice ? CAPrice = 0 : ""
+	//return
+	r = {
+		"CAPrice": CAPrice,	//avgPrice
+		"CACost": costsSum,	//total payed for owned
+		"CAAmount": amountsSum,	//total actual balance of base asset
+	}
+	console.log(r)
+	return r		//primary output
+}
+
 exports.FCAIn = FCAIn
 async function FCAIn(FCAPrices, FCAAmounts) {
-	//console.log(FCAPrices)
+	console.log("FCAPrices")
+	console.log(FCAPrices)
+	console.log("FCAAmounts")
+	console.log(FCAAmounts)
 	let FCACosts = []   //cost = price * amount
-	for (let i in FCAPrices) {
-		FCACosts[i] = FCAPrices[i] * FCAAmounts[i]
-	}
-	let amountsSum = f.sumOfArray(FCAAmounts)
-	let costsSum = f.sumOfArray(FCACosts)
-	let avgPrice = costsSum / amountsSum
-
-	if ((avgPrice == 0) || !avgPrice) {	//nothing is free
-		return {
-			"value": 0,
-			"price": 0,
-			"amount": 0,
+	if (FCAPrices.length > 1) {
+		console.log("arraying")
+		for (let i in FCAPrices) {
+			FCACosts[i] = FCAPrices[i] * FCAAmounts[i]
 		}
 	} else {
-		return {
-			"value": avgPrice,
-			"price": FCAPrices[0],
-			"amount": FCAAmounts[0],
-		}
+		console.log("varing")
+		return FCAPrices
 	}
+
+	let costsSum = f.sumOfArray(FCACosts)
+	let amountsSum = f.sumOfArray(FCAAmounts)
+	let avgPrice = costsSum / amountsSum	//nothing is free
+	console.log(amountsSum)
+	console.log(costsSum)
+	console.log(realPrice)
+	return avgPrice		//primary output of total value
 }
 
 exports.FCAOut = FCAOut
@@ -273,6 +329,7 @@ async function FCAOut(price, amount, FCAAmounts) {	//clear logs to one amount an
 
 }
 
+
 exports.FCA = FCA
 async function FCA(FCAPrices, FCAAmounts) {
 	let FCACosts = []   //cost = price * amount
@@ -288,6 +345,26 @@ async function FCA(FCAPrices, FCAAmounts) {
 	} else {
 		return avgPrice
 	}
+}
+exports.fakeBuy = fakeBuy
+async function fakeBuy() {
+	await f.delay(5)
+	orderR = {  //fake return od makeOrder()
+		"status": "closed",
+		"price": price,
+		"amount": Math.floor((Math.random() * 100) + 1),
+	}
+	return orderR
+}
+exports.fakeSell = fakeSell
+async function fakeSell() {
+	await f.delay(5)
+	orderR = {  //fake return od makeOrder()
+		"status": "closed",
+		"price": price,
+		"amount": Math.floor((Math.random() * 100) + 1),
+	}
+	return orderR
 }
 
 

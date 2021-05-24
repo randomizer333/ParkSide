@@ -1,1 +1,1457 @@
-{"Markets":{"BTC/EUR":{"orderType":"none","marketType":"none","prices":[47909.96],"time":"","volumes":[2918.274296],"changes":[150.59],"change1h":[],"vwaps":[47848.0258778],"macds":[],"dmacds":[],"award":false},"ETH/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"BNB/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"DOT/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"XRP/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"ADA/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"LTC/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"BCH/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"LINK/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"XLM/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"DOGE/EUR":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"ETH/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"BNB/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"DOT/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"XRP/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"ADA/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"LTC/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"BCH/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"LINK/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"XLM/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"UNI/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"DOGE/BTC":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"BNB/ETH":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"XRP/ETH":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"ADA/ETH":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"LTC/ETH":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"LINK/ETH":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"XLM/ETH":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"DOT/BNB":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"XRP/BNB":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"ADA/BNB":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"LTC/BNB":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"BCH/BNB":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"XLM/BNB":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false},"UNI/BNB":{"orderType":"none","marketType":"none","prices":[],"time":"","volumes":[],"changes":[],"change1h":[],"vwaps":[],"macds":[],"dmacds":[],"award":false}},"Assets":{"BTC":{"balance":0.00001936,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.799","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["BTC/EUR"],"outMarkets":["ETH/BTC","BNB/BTC","DOT/BTC","XRP/BTC","ADA/BTC","LTC/BTC","BCH/BTC","LINK/BTC","XLM/BTC","UNI/BTC","DOGE/BTC"]},"ETH":{"balance":0.00738478,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.806","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["ETH/EUR","ETH/BTC"],"outMarkets":["BNB/ETH","XRP/ETH","ADA/ETH","LTC/ETH","LINK/ETH","XLM/ETH"]},"BNB":{"balance":0.00000343,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.814","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["BNB/EUR","BNB/BTC","BNB/ETH"],"outMarkets":["DOT/BNB","XRP/BNB","ADA/BNB","LTC/BNB","BCH/BNB","XLM/BNB","UNI/BNB"]},"DOT":{"balance":0,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.817","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["DOT/EUR","DOT/BTC","DOT/BNB"],"outMarkets":[]},"XRP":{"balance":1.0162688,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.818","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["XRP/EUR","XRP/BTC","XRP/ETH","XRP/BNB"],"outMarkets":[]},"ADA":{"balance":0,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.818","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["ADA/EUR","ADA/BTC","ADA/ETH","ADA/BNB"],"outMarkets":[]},"LTC":{"balance":0,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.819","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["LTC/EUR","LTC/BTC","LTC/ETH","LTC/BNB"],"outMarkets":[]},"BCH":{"balance":0.08145846,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.820","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["BCH/EUR","BCH/BTC","BCH/BNB"],"outMarkets":[]},"LINK":{"balance":0,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.816","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["LINK/EUR","LINK/BTC","LINK/ETH"],"outMarkets":[]},"XLM":{"balance":40.1598,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.820","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["XLM/EUR","XLM/BTC","XLM/ETH","XLM/BNB"],"outMarkets":[]},"DOGE":{"balance":0.0877,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.813","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["DOGE/EUR","DOGE/BTC"],"outMarkets":[]},"UNI":{"balance":0,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.821","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":["UNI/BTC","UNI/BNB"],"outMarkets":[]},"EUR":{"balance":2473.60386869,"sale":false,"purchase":false,"time":"2021.05.10 11:35:51.821","FCAValue":0,"FCAPrices":[],"FCAAmounts":[],"currencyType":"alt","inMarkets":[],"outMarkets":["BTC/EUR","ETH/EUR","BNB/EUR","DOT/EUR","XRP/EUR","ADA/EUR","LTC/EUR","BCH/EUR","LINK/EUR","XLM/EUR","DOGE/EUR"]}}}
+{
+  "Markets": {
+    "BTC/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        31015.625,
+        31006.55,
+        30657.66,
+        30619.300000000003,
+        30566.315
+      ],
+      "time": "2021.05.24 13:26:03.638",
+      "volumes": [
+        11651.487119,
+        11617.538198,
+        11573.700813,
+        11570.098258,
+        11570.282521
+      ],
+      "changes": [
+        1708.3,
+        1840.8,
+        1493.28,
+        1357.53,
+        1146.41
+      ],
+      "change1h": [],
+      "vwaps": [
+        28204.38565607,
+        28193.81872414,
+        28181.25846163,
+        28178.31165826,
+        28175.37367062
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 30576.52,
+      "CACost": 31.072165389200002
+    },
+    "ETH/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        1926.76,
+        1926.3200000000002,
+        1892.35,
+        1891.355,
+        1893.1
+      ],
+      "time": "2021.05.24 13:26:08.826",
+      "volumes": [
+        223036.97971,
+        222626.23511,
+        221962.77912,
+        221901.68848,
+        221944.63618
+      ],
+      "changes": [
+        167.01,
+        175.26,
+        135.81,
+        118.23,
+        124.52
+      ],
+      "change1h": [],
+      "vwaps": [
+        1682.83115311,
+        1682.16477551,
+        1681.26137123,
+        1681.03519578,
+        1680.86239157
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 1892.79,
+      "CACost": 0.7283077362
+    },
+    "BNB/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        253.13,
+        253.905,
+        250.64999999999998,
+        250.31,
+        248.16000000000003
+      ],
+      "time": "2021.05.24 13:26:13.973",
+      "volumes": [
+        320979.4487,
+        320063.4251,
+        318634.2155,
+        317940.1212,
+        317263.0593
+      ],
+      "changes": [
+        35.75,
+        39.23,
+        36.19,
+        33.34,
+        30.82
+      ],
+      "change1h": [],
+      "vwaps": [
+        214.1617789,
+        213.9893113,
+        213.75095211,
+        213.60533786,
+        213.46248701
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 248.22,
+      "CACost": 43.5276928926
+    },
+    "DOT/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        17.005000000000003,
+        16.7035,
+        16.772,
+        16.6515
+      ],
+      "time": "",
+      "volumes": [
+        1438014.152,
+        1433049.586,
+        1434020.058,
+        1436946.242
+      ],
+      "changes": [
+        1.204,
+        0.842,
+        0.76,
+        0.635
+      ],
+      "change1h": [],
+      "vwaps": [
+        14.40221185,
+        14.3918329,
+        14.39196119,
+        14.39436312
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "XRP/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.7201,
+        0.70835,
+        0.7101500000000001,
+        0.7052499999999999
+      ],
+      "time": "2021.05.24 13:26:24.232",
+      "volumes": [
+        59697766.19,
+        59352450.84,
+        59357267.43,
+        59343326.94
+      ],
+      "changes": [
+        0.0669,
+        0.0515,
+        0.0462,
+        0.0429
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.62867901,
+        0.62811322,
+        0.62805168,
+        0.62793682
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.7056,
+      "CACost": 0.71707926528
+    },
+    "ADA/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        1.2218,
+        1.2088,
+        1.20915,
+        1.2016
+      ],
+      "time": "",
+      "volumes": [
+        102065734.87,
+        101983469.37,
+        102021029.82,
+        102070022.27
+      ],
+      "changes": [
+        0.1582,
+        0.1376,
+        0.1284,
+        0.1209
+      ],
+      "change1h": [],
+      "vwaps": [
+        1.04071191,
+        1.0403584,
+        1.04024872,
+        1.04016479
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "LTC/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        135.735,
+        134.35000000000002,
+        134.08499999999998,
+        133.375
+      ],
+      "time": "",
+      "volumes": [
+        84699.6152,
+        84356.395,
+        84272.8351,
+        84362.4675
+      ],
+      "changes": [
+        11.79,
+        9.97,
+        9.14,
+        9.03
+      ],
+      "change1h": [],
+      "vwaps": [
+        116.93546759,
+        116.84519295,
+        116.81427738,
+        116.81627493
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "BCH/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        533.085,
+        530,
+        529.025,
+        522.77
+      ],
+      "time": "2021.05.24 13:26:39.653",
+      "volumes": [
+        10468.59928,
+        10442.13853,
+        10500.65468,
+        10484.16698
+      ],
+      "changes": [
+        65.51,
+        59.81,
+        51.53,
+        44.07
+      ],
+      "change1h": [],
+      "vwaps": [
+        448.57888168,
+        448.21677584,
+        448.31935301,
+        448.14481616
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 522.91,
+      "CACost": 0.7626433185999999
+    },
+    "LINK/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        19.979,
+        19.713,
+        19.7315,
+        19.5865
+      ],
+      "time": "",
+      "volumes": [
+        840917.517,
+        838033.876,
+        838843.835,
+        839666.342
+      ],
+      "changes": [
+        3.751,
+        3.427,
+        3.337,
+        3.182
+      ],
+      "change1h": [],
+      "vwaps": [
+        15.71890388,
+        15.70081225,
+        15.6967921,
+        15.69528288
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "XLM/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.35828499999999996,
+        0.35424,
+        0.35667,
+        0.35162000000000004
+      ],
+      "time": "2021.05.24 13:26:50.588",
+      "volumes": [
+        20253526.6,
+        20209122.4,
+        20192342,
+        20174178.3
+      ],
+      "changes": [
+        0.0736,
+        0.06934,
+        0.07026,
+        0.0662
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.30208513,
+        0.3019232,
+        0.30183454,
+        0.30175906
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.3525,
+      "CACost": 0.40882949999999996
+    },
+    "DOGE/EUR": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.2742,
+        0.270735,
+        0.271555,
+        0.26892
+      ],
+      "time": "2021.05.24 13:26:55.084",
+      "volumes": [
+        423567114,
+        422318161.2,
+        421981884.1,
+        421281301.4
+      ],
+      "changes": [
+        0.00999,
+        0.00657,
+        0.00543,
+        0.00258
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.24569003,
+        0.24560649,
+        0.2455808,
+        0.24553845
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.26884,
+      "CACost": 0.023577268000000002
+    },
+    "ETH/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.06214,
+        0.0620085,
+        0.061865500000000004,
+        0.0619185
+      ],
+      "time": "2021.05.24 13:26:09.100",
+      "volumes": [
+        508784.566,
+        508518.706,
+        508721.875,
+        509633.061
+      ],
+      "changes": [
+        0.002104,
+        0.001754,
+        0.00146,
+        0.001777
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.05938285,
+        0.05937784,
+        0.05937619,
+        0.0593769
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.061915000000000005,
+      "CACost": 0.0000238236537
+    },
+    "BNB/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.0082145,
+        0.0081965,
+        0.008217,
+        0.008144499999999999
+      ],
+      "time": "2021.05.24 13:26:14.260",
+      "volumes": [
+        1111734.42,
+        1109241.22,
+        1107867.71,
+        1111220.76
+      ],
+      "changes": [
+        0.000833,
+        0.000803,
+        0.000809,
+        0.000756
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00747254,
+        0.00747,
+        0.00746768,
+        0.00746445
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.008119,
+      "CACost": 0.00142374240027
+    },
+    "DOT/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.0005489049999999999,
+        0.000547135,
+        0.0005494600000000001,
+        0.000546335
+      ],
+      "time": "",
+      "volumes": [
+        9879359,
+        9874665.4,
+        9874950.1,
+        9889341.7
+      ],
+      "changes": [
+        0.00000421,
+        0.00000271,
+        0.00000471,
+        6.5e-7
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00050858,
+        0.00050856,
+        0.00050855,
+        0.00050861
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "XRP/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.00002323,
+        0.0000232,
+        0.000023175,
+        0.000023145
+      ],
+      "time": "2021.05.24 13:26:24.513",
+      "volumes": [
+        265552673,
+        265513791,
+        265923357,
+        265876757
+      ],
+      "changes": [
+        7.8e-7,
+        7.7e-7,
+        6.2e-7,
+        5.6e-7
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00002203,
+        0.00002203,
+        0.00002203,
+        0.00002202
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.00002308,
+      "CACost": 0.000023455483904
+    },
+    "ADA/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.000039405,
+        0.00003942,
+        0.000039504999999999995,
+        0.00003944
+      ],
+      "time": "",
+      "volumes": [
+        223544356,
+        223246777,
+        223141325,
+        223111617
+      ],
+      "changes": [
+        0.00000282,
+        0.00000293,
+        0.00000269,
+        0.00000261
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00003688,
+        0.00003687,
+        0.00003687,
+        0.00003687
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "LTC/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.004361,
+        0.004387500000000001,
+        0.0043755,
+        0.004369
+      ],
+      "time": "",
+      "volumes": [
+        662388.62,
+        661536.8,
+        661554.3,
+        662870.74
+      ],
+      "changes": [
+        0.000116,
+        0.000144,
+        0.000126,
+        0.000112
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00412178,
+        0.00412134,
+        0.0041212,
+        0.00412145
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "BCH/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.017179,
+        0.017298,
+        0.017307,
+        0.017161
+      ],
+      "time": "2021.05.24 13:26:39.936",
+      "volumes": [
+        73089.276,
+        73053.501,
+        73416.714,
+        73073.126
+      ],
+      "changes": [
+        0.001089,
+        0.001257,
+        0.001058,
+        0.000846
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.01606212,
+        0.01605841,
+        0.01605502,
+        0.01604809
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.017128,
+      "CACost": 0.00002498050288
+    },
+    "LINK/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.00064207,
+        0.00064402,
+        0.000646625,
+        0.000643295
+      ],
+      "time": "",
+      "volumes": [
+        5941327.1,
+        5948294.1,
+        5942774.8,
+        5942615
+      ],
+      "changes": [
+        0.00008448,
+        0.00008853,
+        0.00008808,
+        0.00008505
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00056606,
+        0.00056591,
+        0.00056574,
+        0.00056559
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "XLM/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.000011465,
+        0.00001155,
+        0.000011555,
+        0.00001152
+      ],
+      "time": "2021.05.24 13:26:50.860",
+      "volumes": [
+        128861817,
+        128729759,
+        128652823,
+        128398014
+      ],
+      "changes": [
+        0.00000175,
+        0.00000182,
+        0.0000018,
+        0.00000178
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00001078,
+        0.00001077,
+        0.00001077,
+        0.00001077
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.00001152,
+      "CACost": 0.000013360895999999998
+    },
+    "UNI/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.000533595,
+        0.0005332799999999999,
+        0.00053,
+        0.0005298550000000001
+      ],
+      "time": "",
+      "volumes": [
+        2498822.3,
+        2495098.6,
+        2503569.6,
+        2503693.9
+      ],
+      "changes": [
+        0.00003059,
+        0.00003313,
+        0.00002992,
+        0.00002634
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.0004676,
+        0.00046749,
+        0.00046758,
+        0.00046756
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "DOGE/BTC": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.0000088,
+        0.000008815,
+        0.000008815,
+        0.000008795
+      ],
+      "time": "2021.05.24 13:26:55.363",
+      "volumes": [
+        744005978,
+        743292568,
+        742415430,
+        742082823
+      ],
+      "changes": [
+        -2.3e-7,
+        -2.5e-7,
+        -2.6e-7,
+        -2.8e-7
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00000876,
+        0.00000876,
+        0.00000876,
+        0.00000876
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.0000088,
+      "CACost": 7.7176e-7
+    },
+    "BNB/ETH": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.131995,
+        0.13199,
+        0.132365,
+        0.13189
+      ],
+      "time": "2021.05.24 13:26:14.534",
+      "volumes": [
+        296099.156,
+        295422.658,
+        295229.376,
+        294974.401
+      ],
+      "changes": [
+        0.00882,
+        0.00909,
+        0.00994,
+        0.00915
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.12437976,
+        0.12434284,
+        0.12430807,
+        0.12427906
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.13103,
+      "CACost": 0.022977333009900004
+    },
+    "XRP/ETH": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.00037272499999999997,
+        0.00037333,
+        0.000374195,
+        0.00037406500000000003
+      ],
+      "time": "2021.05.24 13:26:24.798",
+      "volumes": [
+        19988199,
+        19995486,
+        20027134,
+        20031152
+      ],
+      "changes": [
+        -0.00000171,
+        0.00000146,
+        5.9e-7,
+        -9.8e-7
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00036883,
+        0.00036883,
+        0.00036884,
+        0.00036884
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.00037215,
+      "CACost": 0.00037820443392
+    },
+    "ADA/ETH": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.000633345,
+        0.00063473,
+        0.000637355,
+        0.000638245
+      ],
+      "time": "",
+      "volumes": [
+        31236284,
+        31148899,
+        31146890,
+        31153345
+      ],
+      "changes": [
+        0.00002273,
+        0.00002719,
+        0.0000293,
+        0.00002846
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00061835,
+        0.0006183,
+        0.00061826,
+        0.00061824
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "LTC/ETH": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.070025,
+        0.07052,
+        0.07067,
+        0.07063
+      ],
+      "time": "",
+      "volumes": [
+        57903.197,
+        57824.006,
+        57787.299,
+        57897.843
+      ],
+      "changes": [
+        0.00028,
+        -0.00002
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.06922177,
+        0.06922136,
+        0.06922013,
+        0.06922221
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "LINK/ETH": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.0102935,
+        0.010374,
+        0.0104335,
+        0.010405
+      ],
+      "time": "",
+      "volumes": [
+        1303399.62,
+        1302155.64,
+        1301063.16,
+        1301481.51
+      ],
+      "changes": [
+        0.001006,
+        0.001128,
+        0.001213,
+        0.001169
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00942886,
+        0.00942641,
+        0.00942448,
+        0.00942154
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "XLM/ETH": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.000184215,
+        0.00018584,
+        0.000187045,
+        0.00018662
+      ],
+      "time": "2021.05.24 13:26:51.133",
+      "volumes": [
+        19828548,
+        19812610,
+        19820749,
+        19789367
+      ],
+      "changes": [
+        0.00002253,
+        0.00002427,
+        0.00002506,
+        0.00002513
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00018085,
+        0.00018084,
+        0.00018082,
+        0.00018081
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.00018567,
+      "CACost": 0.000215340066
+    },
+    "DOT/BNB": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.066735,
+        0.06687,
+        0.06675,
+        0.067125
+      ],
+      "time": "",
+      "volumes": [
+        1862745.8,
+        1860914.3,
+        1858984.5,
+        1857655.1
+      ],
+      "changes": [
+        -0.00687,
+        -0.00682,
+        -0.00705,
+        -0.00654
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.06891712,
+        0.06892602,
+        0.06893329,
+        0.06894207
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "XRP/BNB": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.0028345,
+        0.002829,
+        0.002822,
+        0.0028385
+      ],
+      "time": "2021.05.24 13:26:25.086",
+      "volumes": [
+        25093959.9,
+        25062555.6,
+        25051184.4,
+        24998819.5
+      ],
+      "changes": [
+        -0.000194,
+        -0.000215,
+        -0.000231,
+        -0.000216
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00297514,
+        0.00297567,
+        0.0029759,
+        0.00297636
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.00284,
+      "CACost": 0.002886203392
+    },
+    "ADA/BNB": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.004821499999999999,
+        0.004809000000000001,
+        0.004816,
+        0.004835
+      ],
+      "time": "",
+      "volumes": [
+        18520373,
+        18339164,
+        18373057,
+        18342198
+      ],
+      "changes": [
+        -0.000121,
+        -0.000131,
+        -0.000153,
+        -0.00014
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00497965,
+        0.00498146,
+        0.0049816,
+        0.00498217
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "LTC/BNB": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.5323,
+        0.5341,
+        0.5333000000000001,
+        0.53535
+      ],
+      "time": "",
+      "volumes": [
+        52401.779,
+        52461.336,
+        52482.032,
+        52457.263
+      ],
+      "changes": [
+        -0.0396,
+        -0.0389,
+        -0.0419,
+        -0.0399
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.55942753,
+        0.55950269,
+        0.5595328,
+        0.55964834
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    },
+    "BCH/BNB": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        2.092,
+        2.1025,
+        2.1025,
+        2.0995
+      ],
+      "time": "2021.05.24 13:26:40.210",
+      "volumes": [
+        2862.511,
+        2850.242,
+        2857.651,
+        2882.985
+      ],
+      "changes": [
+        -0.09,
+        -0.066,
+        -0.094,
+        -0.088
+      ],
+      "change1h": [],
+      "vwaps": [
+        2.17739305,
+        2.17790706,
+        2.17805967,
+        2.17814158
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 2.105,
+      "CACost": 0.0030700582999999997
+    },
+    "XLM/BNB": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.0013985,
+        0.0014060000000000001,
+        0.0014115,
+        0.001414
+      ],
+      "time": "2021.05.24 13:26:51.424",
+      "volumes": [
+        8882868,
+        8880168,
+        8857804,
+        8851603
+      ],
+      "changes": [
+        0.000086,
+        0.000087,
+        0.000089,
+        0.000098
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.00143038,
+        0.00143026,
+        0.0014303,
+        0.00143026
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0.001416,
+      "CACost": 0.0016422767999999999
+    },
+    "UNI/BNB": {
+      "orderType": "none",
+      "marketType": "none",
+      "prices": [
+        0.06512000000000001,
+        0.0648,
+        0.064745,
+        0.064965
+      ],
+      "time": "",
+      "volumes": [
+        621976,
+        620923.6,
+        621138.5,
+        623190.3
+      ],
+      "changes": [
+        -0.00268,
+        -0.0031,
+        -0.00348,
+        -0.00297
+      ],
+      "change1h": [],
+      "vwaps": [
+        0.06442568,
+        0.06442693,
+        0.06443204,
+        0.06444817
+      ],
+      "macds": [],
+      "dmacds": [],
+      "award": false,
+      "CAPrice": 0,
+      "CACost": 0
+    }
+  },
+  "Assets": {
+    "BTC": {
+      "balance": 0.00101621,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:03.359",
+      "currencyType": "alt",
+      "inMarkets": [
+        "BTC/EUR"
+      ],
+      "outMarkets": [
+        "ETH/BTC",
+        "BNB/BTC",
+        "DOT/BTC",
+        "XRP/BTC",
+        "ADA/BTC",
+        "LTC/BTC",
+        "BCH/BTC",
+        "LINK/BTC",
+        "XLM/BTC",
+        "UNI/BTC",
+        "DOGE/BTC"
+      ]
+    },
+    "ETH": {
+      "balance": 0.00038478,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:08.547",
+      "currencyType": "alt",
+      "inMarkets": [
+        "ETH/EUR",
+        "ETH/BTC"
+      ],
+      "outMarkets": [
+        "BNB/ETH",
+        "XRP/ETH",
+        "ADA/ETH",
+        "LTC/ETH",
+        "LINK/ETH",
+        "XLM/ETH"
+      ]
+    },
+    "BNB": {
+      "balance": 0.17535933,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:13.690",
+      "currencyType": "alt",
+      "inMarkets": [
+        "BNB/EUR",
+        "BNB/BTC",
+        "BNB/ETH"
+      ],
+      "outMarkets": [
+        "DOT/BNB",
+        "XRP/BNB",
+        "ADA/BNB",
+        "LTC/BNB",
+        "BCH/BNB",
+        "XLM/BNB",
+        "UNI/BNB"
+      ]
+    },
+    "DOT": {
+      "balance": 0,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:03.063",
+      "currencyType": "alt",
+      "inMarkets": [
+        "DOT/EUR",
+        "DOT/BTC",
+        "DOT/BNB"
+      ],
+      "outMarkets": []
+    },
+    "XRP": {
+      "balance": 1.0162688,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:23.955",
+      "currencyType": "alt",
+      "inMarkets": [
+        "XRP/EUR",
+        "XRP/BTC",
+        "XRP/ETH",
+        "XRP/BNB"
+      ],
+      "outMarkets": []
+    },
+    "ADA": {
+      "balance": 0,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:03.065",
+      "currencyType": "alt",
+      "inMarkets": [
+        "ADA/EUR",
+        "ADA/BTC",
+        "ADA/ETH",
+        "ADA/BNB"
+      ],
+      "outMarkets": []
+    },
+    "LTC": {
+      "balance": 0,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:03.066",
+      "currencyType": "alt",
+      "inMarkets": [
+        "LTC/EUR",
+        "LTC/BTC",
+        "LTC/ETH",
+        "LTC/BNB"
+      ],
+      "outMarkets": []
+    },
+    "BCH": {
+      "balance": 0.00145846,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:39.380",
+      "currencyType": "alt",
+      "inMarkets": [
+        "BCH/EUR",
+        "BCH/BTC",
+        "BCH/BNB"
+      ],
+      "outMarkets": []
+    },
+    "LINK": {
+      "balance": 0,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:03.061",
+      "currencyType": "alt",
+      "inMarkets": [
+        "LINK/EUR",
+        "LINK/BTC",
+        "LINK/ETH"
+      ],
+      "outMarkets": []
+    },
+    "XLM": {
+      "balance": 1.1598,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:50.299",
+      "currencyType": "alt",
+      "inMarkets": [
+        "XLM/EUR",
+        "XLM/BTC",
+        "XLM/ETH",
+        "XLM/BNB"
+      ],
+      "outMarkets": []
+    },
+    "DOGE": {
+      "balance": 0.0877,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:54.806",
+      "currencyType": "alt",
+      "inMarkets": [
+        "DOGE/EUR",
+        "DOGE/BTC"
+      ],
+      "outMarkets": []
+    },
+    "UNI": {
+      "balance": 0,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:03.069",
+      "currencyType": "alt",
+      "inMarkets": [
+        "UNI/BTC",
+        "UNI/BNB"
+      ],
+      "outMarkets": []
+    },
+    "EUR": {
+      "balance": 2473.60386869,
+      "sale": false,
+      "purchase": false,
+      "buys": 0,
+      "time": "2021.05.24 13:26:03.070",
+      "currencyType": "alt",
+      "inMarkets": [],
+      "outMarkets": [
+        "BTC/EUR",
+        "ETH/EUR",
+        "BNB/EUR",
+        "DOT/EUR",
+        "XRP/EUR",
+        "ADA/EUR",
+        "LTC/EUR",
+        "BCH/EUR",
+        "LINK/EUR",
+        "XLM/EUR",
+        "DOGE/EUR"
+      ]
+    }
+  }
+}
