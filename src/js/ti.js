@@ -364,6 +364,7 @@ async function indicators(prices, vwaps, changes, volumes, macds, dmacds, ticker
     //MACDVol = await macd(logVolMACD);    //MACD of MA5
 
     vwapS = await simpleVwap(vwaps[0], price)
+    let vwapSR = -1 * vwapS
 
     //logVwap = await f.loger(vwap, 3, logVwap);
     //vwapMA = await ma(logVwap);    //MA of last 5 Volumes reversed
@@ -375,11 +376,12 @@ async function indicators(prices, vwaps, changes, volumes, macds, dmacds, ticker
             //MA30: MA30,
             //MA100: MA100,
             //MA200: MA200,
-            MACD: MACD,
-            //MACDRev: MACDRev,
-            //MACDMA: MACDMA,
+            //MACD: MACD,
+            MACDRev: MACDRev,
+            MACDMA: MACDMA,
             //vwap: vwap,
             vwapS: vwapS,
+            //vwapSR: vwapSR,
             //vwapMA: vwapMA,
             //DMACD: DMACD,
             //DMACDRev: DMACDRev,

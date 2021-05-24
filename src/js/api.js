@@ -294,7 +294,7 @@ async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid
         return {
             "status": "closed",
             "amount": r.amount,
-            "orderId": none,
+            "orderId": "none",
             "orderType": "bougth",
             "price": r.price,
         }
@@ -348,7 +348,7 @@ async function sellMarket(symbol, baseAmount) { // symbol, amount, bid
         return {
             "status": "closed",
             "amount": r.amount,
-            "orderId": none,
+            "orderId": "none",
             "orderType": "sold",
             "price": r.price,
         }

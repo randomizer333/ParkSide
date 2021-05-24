@@ -1,4 +1,4 @@
-//init
+//init const
 const dbms = require("./js/dbms")
 //const db = "./json/db.json"    //define database location
 const f = require("./js/funk")
@@ -10,7 +10,7 @@ const mrkts = require("./js/enabledMarkets")
 
 const enabledMarkets = mrkts.mrkts()
 const fiat = s.fiatCurrency
-const quotes = s.quotes
+//const quotes = s.quotes
 const bases = m.extractBases(enabledMarkets)
 const tickerTime = f.minToMs(s.tickerMinutes)
 const minProfitP = s.minProfitP
@@ -31,7 +31,7 @@ async function init() {
         "Version": a.exInfos.version,
         "Exchanges": a.exInfos.exchanges.length,
         "Selected": a.exInfos.exchange,
-        "Url": a.exInfos.url,
+        //"Url": a.exInfos.url,
         //"referral": a.exInfos.referral,
         "Markets": r.length,
         "FeeM": a.exInfos.feeMaker,
@@ -45,19 +45,20 @@ async function init() {
 }
 
 async function setup() {//setup runs only once on start
-    populateDB()
+    await populateDB()
     async function populateDB() {
         let valet = await a.wallet()
-        populateBalances(valet)
+        await populateBalances(valet)
         async function populateBalances(valet) {
             let owned = Object.keys(valet)
-            console.log(owned)
             for (let i in owned) {
                 try {
                     if (dbms.db["Assets"][owned[i]].balance == 0) {
-                        console.log(dbms.db["Assets"][owned[i]].balance)
+                        //console.log(dbms.db["Assets"][owned[i]].balance)
                         dbms.writeToDB("Assets", owned[i], "balance", valet[owned[i]])
                         console.log("Updating balance of " + owned[i])
+                        console.log(valet[owned[i]])
+                        //update oalso
                     } else if (
                         (valet[owned[i]] != dbms.db["Assets"][owned[i]].balance)
                         && (dbms.db["Assets"][owned[i]].balance != 0)) {
@@ -72,7 +73,8 @@ async function setup() {//setup runs only once on start
             }
             return true
         }
-        popMarkets(curencies)
+
+        await popMarkets(curencies)
         function popMarkets(curencies) {
             //console.log(curencies)
             for (let i in curencies) {
@@ -111,8 +113,9 @@ async function setup() {//setup runs only once on start
             dbms.writeToDB("Assets", currency, "outMarkets", markets)
             return markets    //arr
         }
+
     }
-    setBots(enabledMarkets, tickerTime)
+    await setBots(enabledMarkets, tickerTime)
     async function setBots(enabledMarkets, tickerTime) {
         numOfBots = await enabledMarkets.length;
         delay = (tickerTime / numOfBots);
@@ -133,35 +136,74 @@ async function setup() {//setup runs only once on start
 }
 
 async function proces(symbol, tickerTime, number) {
-    //loop  //market
+    //init-----------------------------------------
+    let base = m.splitSymbol(symbol, "first")   //name of base currency
+    let quote = m.splitSymbol(symbol, "second")
+    let baseFiatMarket = m.mergeSymbol(base, fiat)
+    let quoteFiatMarket = m.mergeSymbol(quote, fiat)
+
+    //read and set variables and values
+    let prices = dbms.db["Markets"][symbol].prices
+    let vwaps = dbms.db["Markets"][symbol].vwaps
+    let changes = dbms.db["Markets"][symbol].changes
+    let volumes = dbms.db["Markets"][symbol].volumes
+    let change1h = dbms.db["Markets"][symbol].change1h
+    let macds = dbms.db["Markets"][symbol].macds
+    let dmacds = dbms.db["Markets"][symbol].dmacds
+    let orderType = dbms.db["Markets"][symbol].orderType
+
+    let award = await dbms.db["Markets"][symbol].award
+
+    //read FCA
+    let CAPrice = await dbms.db["Markets"][symbol].CAPrice
+    let CACost = await dbms.db["Markets"][symbol].CACost
+
+    let inMarkets = dbms.db["Assets"][base].inMarkets
+    let inMarketsQuote = dbms.db["Assets"][quote].inMarkets
+    let buys = dbms.db["Assets"][base].buys
+
+    let initCA = await checkCAS()
+    async function checkCAS() {
+        let balance = await a.balance(base)
+        if ((!CAPrice) && (balance !== 0)) { //update 
+            console.log(base)
+            await dbms.writeToDB("Assets", base, "balance", balance)
+            await updateInMarkets(inMarkets)
+            async function updateInMarkets(inMarkets) {
+                for (let i in inMarkets) {
+                    let ticker = await a.fetchTicker(inMarkets[i])
+                    let price = ticker.close
+                    r = await m.CAIn(price, balance, 0, 0)
+                    console.log(r)
+                    let CAP = r.CAPrice
+                    let CAC = r.CACost
+                    await dbms.writeToDB("Markets", inMarkets[i], "CAPrice", CAP)
+                    await dbms.writeToDB("Markets", inMarkets[i], "CACost", CAC)
+                }
+            }
+        } else {
+            console.log("balance OK")
+        }
+        return r
+    }
+
+    //market
     loop(symbol, number) //run once
     bot[number] = setInterval(function () { loop(symbol, number) }, tickerTime)
     async function loop(symbol, number) {
-        //read and set variables and values
-        let base = m.splitSymbol(symbol, "first")   //name of base currency
-        let quote = m.splitSymbol(symbol, "second") //
-        let prices = dbms.db["Markets"][symbol].prices
-        let vwaps = dbms.db["Markets"][symbol].vwaps
-        let changes = dbms.db["Markets"][symbol].changes
-        let volumes = dbms.db["Markets"][symbol].volumes
-        let change1h = dbms.db["Markets"][symbol].change1h
-        let macds = dbms.db["Markets"][symbol].macds
-        let dmacds = dbms.db["Markets"][symbol].dmacds
-        let orderType = dbms.db["Markets"][symbol].orderType
-
         //get values
 
-        let baseFiatMarket = m.mergeSymbol(base, fiat)
+        CAPrice = dbms.db["Markets"][symbol].CAPrice  //second look
+        CACost = dbms.db["Markets"][symbol].CACost    //second look
+
+        let balanceQuote = dbms.db["Assets"][quote].balance
+        let balanceBase = dbms.db["Assets"][base].balance   //same as CAAmount
+
         let baseFiatOrderBook = await a.fetchOrderBook(baseFiatMarket)
         let baseFiatPrice = baseFiatOrderBook.price
-        //console.log("baseFiatPrice")
-        //console.log(baseFiatPrice)
 
-        let quoteFiatMarket = m.mergeSymbol(quote, fiat)
         let quoteFiatOrderBook = await a.fetchOrderBook(quoteFiatMarket)
         let quoteFiatPrice = quoteFiatOrderBook.price
-        //console.log("quoteFiatPrice")
-        //console.log(quoteFiatPrice)
 
         let orderBook = await a.fetchOrderBook(symbol)
         let price = orderBook.price
@@ -177,6 +219,21 @@ async function proces(symbol, tickerTime, number) {
         let low = ticker.low
         let close = ticker.close
 
+        let FCost
+        FCA()
+        function FCA() {
+            try {
+                FCost = dbms.db["Markets"][quoteFiatMarket].CACost
+                FCost = CACost * quoteFiatPrice
+            } catch (error) {
+                FCost = 0
+            }
+        }
+
+        let part = price - CAPrice
+        let profitRelative = await f.percent(part, CAPrice)
+        profitRelative == Infinity ? profitRelative = 0 : ""
+
         //update logs
         let logLength = 200
         prices = await f.loger(price, logLength, prices)
@@ -185,7 +242,6 @@ async function proces(symbol, tickerTime, number) {
         volumes = await f.loger(volume, logLength, volumes)
 
         globalAward(enabledMarkets, 3)
-        let award = await dbms.db["Markets"][symbol].award
         function globalAward(symbols, number) {
             let syms = clearAwards(symbols)
             function clearAwards(toClear) {
@@ -225,7 +281,7 @@ async function proces(symbol, tickerTime, number) {
                 }
                 return podium
             }
-            console.log(awards)
+            //console.log(awards)
             return awards
         }
 
@@ -236,37 +292,22 @@ async function proces(symbol, tickerTime, number) {
         macds = await f.loger(signal.all.MACD, logLength, macds)
         dmacds = await f.loger(signal.all.DMACD, logLength, dmacds)
 
-        //Assets preparation(Private API)-----------------------------------
+        //Assets preparation(Private API)-------------------------
 
-        let balanceBase = dbms.db["Assets"][base].balance
         let balanceBaseInQuote = m.baseToQuote(balanceBase, price)
-        let balanceQuote = dbms.db["Assets"][quote].balance
         let balanceQuoteInBase = m.quoteToBase(balanceQuote, price)
-        //let fiatBaseValue = balanceBase * baseFiatPrice
-        //let fiatQuoteValue = balanceQuote * quoteFiatPrice
+
         let minAmount = await a.loadMarketMinAmount(symbol)
-
-        //read FCA
-        let FCAValueBase = await dbms.db["Assets"][base].FCAValue
-        let FCAPricesBase = await dbms.db["Assets"][base].FCAPrices
-        let FCAAmountsBase = await dbms.db["Assets"][base].FCAAmounts
-
-        let FCAValueQuote = await dbms.db["Assets"][quote].FCAValue
-        let FCAPricesQuote = await dbms.db["Assets"][quote].FCAPrices
-        let FCAAmountsQuote = await dbms.db["Assets"][quote].FCAAmounts
-
-        let stackBase = !FCAPricesBase.length ? 0 : FCAPricesBase.length
-        let stackQuote = !FCAPricesQuote.length ? 0 : FCAPricesQuote.length
-
         let fee = a.exInfos.feeMaker * 100
-        //let feeTaker = a.exInfos.feeTaker * 100
+        let feeTaker = a.exInfos.feeTaker * 100
 
-        //old
-        let conditions = m.selectSide(balanceBase, balanceQuote, minAmount, balanceBaseInQuote, balanceQuoteInBase)
+        /*let conditions = m.selectSide(balanceBase, balanceQuote, minAmount, balanceBaseInQuote, balanceQuoteInBase)
         let purchase = conditions.purchase
-        let sale = conditions.sale
+        let sale = conditions.sale*/
+        let purchase = balanceQuoteInBase > minAmount
+        let sale =  balanceBase > minAmount
 
-        let safeSale = await m.safeSale(fee, FCAValueBase, price, minProfitP, stackBase)
+        let safeSale = await m.safeSale(fee, CAPrice, price, minProfitP, buys)
         let hold = safeSale.hold
         let sellPrice = safeSale.sellPrice
 
@@ -274,32 +315,30 @@ async function proces(symbol, tickerTime, number) {
         let stopLoss = limitLoss.stopLoss
         let lossPrice = limitLoss.lossPrice
 
+
         let order = { "status": "still none" }
-
-        f.delay(5)  //fake delay makeOrder()
-
-        //console.log(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal)
-
         orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal)
         async function makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal) {
-            if (purchase && !sale && upSignal && award) {//buy 
-                enableOrders ? order = await a.buyMarket(symbol, balanceQuote * portion) : order = await fakeBuy()
-                if (order.status == "closed") {
-                    orderType = await bougth(order)//"bougth"
+            if (purchase && upSignal && award) {//buy 
+                enableOrders && !pullOut ? order = await a.buyMarket(symbol, balanceQuote * portion) : order = await m.fakeBuy()
+                if (order.status == "closed") {//"bougth"
+                    await updateCA()
+                    orderType = "bougth"
                 } else {
                     orderType = "parked"
                 }
             } else if (sale && !hold && !stopLoss && downSignal) {//sell good
-                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order = await fakeSell()
+                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order = await m.fakeSell()
                 if (order.status == "closed") {
-                    orderType = await sold(order)//"sold"
+                    await updateCA()
+                    orderType = "sold"
                 } else {
                     orderType = "holding"
                 }
             } else if (sale && hold && stopLoss && downSignal) {//sell bad stopLoss
-                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order = await fakeSell()
+                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order = await m.fakeSell()
                 if (order.status == "closed") {
-                    await sold(order)
+                    await updateCA()
                     orderType = "lossed"
                 } else {
                     orderType = "holding"
@@ -308,149 +347,94 @@ async function proces(symbol, tickerTime, number) {
                 orderType = "holding";
             } else if (sale && !hold && !stopLoss) {//holding fee covered
                 orderType = "holding good"
-            } else if (purchase) {
+            } else if (purchase) {//waiting signal
                 orderType = "parked"
+                //order = await m.fakeBuy() //sim
+                //orderType = await bougth(order.amount, quote) //sim
             } else {
                 orderType = "still none"
             }
             return orderType
         }
-
         //post proces after order
-        //await fakeBuy()
-        async function fakeBuy() {
-            f.delay(10)
-            orderR = {  //fake return od makeOrder()
-                "status": "closed",
-                "price": price,
-                "amount": Math.floor((Math.random() * 100) + 1),
-            }
-            return orderR
-        }
-        //await fakeSell()
-        async function fakeSell() {
-            f.delay(10)
-            orderR = {  //fake return od makeOrder()
-                "status": "closed",
-                "price": price,
-                "amount": Math.floor((Math.random() * 100) + 1),
-            }
-            return orderR
-        }
 
-        async function bougth(orderR, baseFiatMarket, quoteFiatMarket) {
-            //get fresh prices
-            let baseFiatOrderBook = await a.fetchOrderBook(baseFiatMarket)
-            let baseFiatPrice = baseFiatOrderBook.price
-            let quoteFiatOrderBook = await a.fetchOrderBook(quoteFiatMarket)
-            let quoteFiatPrice = quoteFiatOrderBook.price
-            let amount = orderR.amount
-            let price = orderR.price
-
-            //on purchase write and calculate
-            //buy base/sell quote sequence
+        //update FCA on local assets base and quote and all inMarkets
+        async function updateCA() {
             //base in
-            FCAPricesBase.unshift(baseFiatPrice)  //log
-            FCAAmountsBase.unshift(amount)   //log
-            let FCAI = await m.FCAIn(FCAPricesBase, FCAAmountsBase)   //dca
-            FCAValueBase = FCAI.value
-            console.log("FCAI")
-            console.log(FCAI)
-
-            //quote out
-            let FCAO = await m.FCAOut(quoteFiatPrice, amount, FCAAmountsQuote)   //dca
-            FCAValueQuote = FCAO.value  //log it 
-            FCAPricesQuote = FCAO.price
-            FCAAmountsQuote = FCAO.amount
-            console.log("FCAO")
-            console.log(FCAO)
-            return "bougth"
+            await updateInMarkets(base)
+            //quote out, cost of quote falls
+            await updateInMarkets(quote)
         }
-        async function sold(orderR, baseFiatMarket, quoteFiatMarket) {
-            let baseFiatOrderBook = await a.fetchOrderBook(baseFiatMarket)
-            let baseFiatPrice = baseFiatOrderBook.price
-            let quoteFiatOrderBook = await a.fetchOrderBook(quoteFiatMarket)
-            let quoteFiatPrice = quoteFiatOrderBook.price
-            let amount = orderR.amount
-
-            //on sale
-            //base out
-            let FCAO = await m.FCAOut(baseFiatPrice, amount, FCAAmountsBase)   //dca
-            FCAValueBase = FCAO.value  //log it 
-            FCAPricesBase = FCAO.price
-            FCAAmountsBase = FCAO.amount
-            console.log("FCAO")
-            console.log(FCAO)
-
-            //quote in
-            let FCAI
-            if (quoteFiatPrice == 0) {
-                console.log("no marketaaasdsd")
-                FCAI = {
-                    "value": 0,
-                    "price": 0,
-                    "amount": balanceQuote,
+        //FCA repeat for all inMarkets assets
+        //updateInMarkets(base)
+        async function updateInMarkets(asset) {
+            let inMarkets = await dbms.db["Assets"][asset].inMarkets
+            let oldBalance = await dbms.db["Assets"][asset].balance
+            let balance = await a.balance(asset)    //negative for sell
+            let amount = balance - oldBalance
+            if (amount !== 0) {
+                for (let i in inMarkets) {
+                    let ticker = await a.fetchTicker(inMarkets[i])
+                    let price = ticker.close
+                    let CAC = dbms.db["Markets"][symbol].CACost
+                    r = await m.CAIn(price, amount, CAC, oldBalance)
+                    console.log(r)
+                    CAP = r.CAPrice
+                    CAC = r.CACost
+                    await dbms.writeToDB("Markets", inMarkets[i], "CAPrice", CAP)
+                    await dbms.writeToDB("Markets", inMarkets[i], "CACost", CAC)
                 }
-                FCAPricesQuote = [FCAI.price]  //log
-                FCAAmountsQuote = [FCAI.amount]   //log
-                FCAValueQuote = FCAI.value
             } else {
-                console.log("je market")
-                FCAPricesQuote.unshift(quoteFiatPrice)  //log
-                FCAAmountsQuote.unshift(amount)   //log
-                FCAI = await m.FCAIn(FCAPricesQuote, FCAAmountsQuote)   //dca
-                FCAValueQuote = FCAI.value
+                console.log("no realization")
             }
-            console.log("FCAI")
-            console.log(FCAI)
-            return "sold"
+            await dbms.writeToDB("Assets", asset, "balance", balance)
         }
 
-        //update stacks
-        stackBase = !FCAPricesBase ? 0 : FCAPricesBase.length
-        stackQuote = !FCAPricesQuote ? 0 : FCAPricesQuote.length
-
+        await dbms.writeJSON(db)    //write
         await postProces(orderType)
         async function postProces(orderType) {
-            await dbms.writeJSON(db)    //write
             let info = {    //output
-                //"number": number,
+                "No": number,
                 "time": f.getTime(),
-                "symbol": symbol,
-                "price": price,
-                "baseFiatPrice": baseFiatPrice + " " + fiat,
-                "quoteFiatPrice": quoteFiatPrice + " " + quote,
+                "market": symbol,
+                "baseFiatPrice": baseFiatPrice + " " + baseFiatMarket,
+                "quoteFiatPrice": quoteFiatPrice + " " + quoteFiatMarket,
                 //"signal": signal,
                 "award": award,
                 "upSignal": signal.upSignal,
                 "uppers": signal.uppers,
                 "downers": signal.downers,
                 "downSignal": signal.downSignal,
-                "vwap": vwap,
-                "change": change,
+                //"vwap": vwap,
+                //"change": change,
                 //"volume": volume,
                 //"prices": prices,
                 "pricesLength": prices.length,
                 "orderType": orderType,
                 "orderStatus": order.status,
-                "AllSafe": "______________________________",
+                "AllSafe": "-----------------------------",
                 "balanceBase": balanceBase + " " + base,
                 "balanceQuote": balanceQuote + " " + quote,
-                "purchase": purchase,
                 "sale": sale,
+                "purchase": purchase,
+                "minAmount" : minAmount,
                 "hold": hold,
+                "buys": buys,
                 "stopLoss": stopLoss,
-                "sellPrice": sellPrice,
-                "lossPrice": lossPrice,
-                "FCAValueBase": FCAValueBase,
-                "FCAPricesBase": FCAPricesBase,
-                "FCAAmountsBase": FCAAmountsBase,
-                "stackBase": stackBase,
-                "Related": "_______________________________",
-                "FCAValueQuote": FCAValueQuote,
-                "FCAPricesQuote": FCAPricesQuote,
-                "FCAAmountsQuote": FCAAmountsQuote,
-                "stackQuote": stackQuote,
+                "sellPrice": sellPrice + " " + symbol,
+                "price--": price + " " + symbol,
+                "lossPrice": lossPrice + " " + symbol,
+                "Market_CA": "---------------------------",
+                "CAPrice": CAPrice + " " + symbol,
+                "CACost": CACost + " " + quote,
+                //"CAAmount": CAAmount + " " + base,
+                /*"Token": "_________________________________",
+                "FCAPB": FCAPriceBase + " " + baseFiatMarket,
+                "FCACB": FCACostBase + " " + fiat,*/
+                "QFCost": FCost + " " + fiat,
+                "RP": profitRelative.toFixed(2) + " %",
+                //"FCAPQ": FCAPriceQuote + " " + quoteFiatMarket,
+                //"FCACQ": FCACostQuote + " " + fiat,
             }
             await m.sender(info, orderType)
             console.log(info)

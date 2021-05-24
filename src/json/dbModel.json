@@ -10,20 +10,20 @@
         "time": "",
         "volumes": [],
         "changes": [],
-        "change1h":[],
+        "change1h": [],
         "vwaps": [],
         "macds": [],
         "dmacds": [],
-        "award": false
+        "award": false,
+        "CAPrice": 0,
+        "CACost": 0
     },
     "Assets": {
         "balance": 0,
         "sale": false,
         "purchase": false,
+        "buys": 0,
         "time": "",
-        "FCAValue": 0,
-        "FCAPrices": [],
-        "FCAAmounts": [],
         "currencyType": "alt",
         "inMarkets": [],
         "outMarkets": []
