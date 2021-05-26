@@ -9,14 +9,16 @@ const s = require("./json/set.json")
 const mrkts = require("./js/enabledMarkets")
 
 const enabledMarkets = mrkts.mrkts()
+const pullOut = s.pullOut
 const fiat = s.fiatCurrency
 //const quotes = s.quotes
 const bases = m.extractBases(enabledMarkets)
 const tickerTime = f.minToMs(s.tickerMinutes)
-const minProfitP = s.minProfitP
-const stopLossP = s.stopLossP
+const minProfitP = s.reward
+const stopLossP = s.risk
 const enableOrders = s.enableOrders
 const portion = s.portion
+const sellPortion = s.sellPortion
 
 const curencies = bases
 curencies.push(fiat)
@@ -36,9 +38,9 @@ async function init() {
         "Markets": r.length,
         "FeeM": a.exInfos.feeMaker,
         "FeeT": a.exInfos.feeTaker,
-        "TradingEnabled": s.enableOrders,
-        "Risk": s.stopLossP,
-        "Reward": s.minProfitP,
+        "TradingEnabled": enableOrders,
+        "Reward": minProfitP,
+        "Risk": stopLossP,
     })
     enableOrders ? f.sendMail("Restart", "RUN! at " + f.getTime() + "\n") : ""
     await setup()
@@ -162,8 +164,8 @@ async function proces(symbol, tickerTime, number) {
     let inMarketsQuote = dbms.db["Assets"][quote].inMarkets
     let buys = dbms.db["Assets"][base].buys
 
-    let initCA = await checkCAS()
-    async function checkCAS() {
+    let initCA = await checkCAs()
+    async function checkCAs() {
         let balance = await a.balance(base)
         if ((!CAPrice) && (balance !== 0)) { //update 
             console.log(base)
@@ -219,20 +221,23 @@ async function proces(symbol, tickerTime, number) {
         let low = ticker.low
         let close = ticker.close
 
+        //console.log(quoteFiatPrice,CACost)
         let FCost
-        FCA()
-        function FCA() {
-            try {
-                FCost = dbms.db["Markets"][quoteFiatMarket].CACost
-                FCost = CACost * quoteFiatPrice
-            } catch (error) {
-                FCost = 0
+        FCost = await FCA(quoteFiatPrice, CACost)
+        async function FCA(quoteFiatPrice, CACost) {
+            if (quoteFiatPrice == 0 ) {
+                return CACost
+            } else {
+                return CACost * quoteFiatPrice
             }
         }
 
         let part = price - CAPrice
         let profitRelative = await f.percent(part, CAPrice)
         profitRelative == Infinity ? profitRelative = 0 : ""
+        let ap = await f.part(profitRelative, balanceBase)
+        absoluteProfit = ap * baseFiatPrice
+
 
         //update logs
         let logLength = 200
@@ -290,6 +295,8 @@ async function proces(symbol, tickerTime, number) {
         let downSignal = signal.downSignal
         change1h = await f.loger(signal.all.change1hP, logLength, change1h)
         macds = await f.loger(signal.all.MACD, logLength, macds)
+        //console.log("macds")
+        //console.log(macds)
         dmacds = await f.loger(signal.all.DMACD, logLength, dmacds)
 
         //Assets preparation(Private API)-------------------------
@@ -305,7 +312,7 @@ async function proces(symbol, tickerTime, number) {
         let purchase = conditions.purchase
         let sale = conditions.sale*/
         let purchase = balanceQuoteInBase > minAmount
-        let sale =  balanceBase > minAmount
+        let sale = balanceBase > minAmount
 
         let safeSale = await m.safeSale(fee, CAPrice, price, minProfitP, buys)
         let hold = safeSale.hold
@@ -328,7 +335,7 @@ async function proces(symbol, tickerTime, number) {
                     orderType = "parked"
                 }
             } else if (sale && !hold && !stopLoss && downSignal) {//sell good
-                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order = await m.fakeSell()
+                enableOrders ? order = await a.sellMarket(symbol, balanceBase * sellPortion) : order = await m.fakeSell()
                 if (order.status == "closed") {
                     await updateCA()
                     orderType = "sold"
@@ -336,7 +343,7 @@ async function proces(symbol, tickerTime, number) {
                     orderType = "holding"
                 }
             } else if (sale && hold && stopLoss && downSignal) {//sell bad stopLoss
-                enableOrders ? order = await a.sellMarket(symbol, balanceBase * portion) : order = await m.fakeSell()
+                enableOrders ? order = await a.sellMarket(symbol, balanceBase * sellPortion) : order = await m.fakeSell()
                 if (order.status == "closed") {
                     await updateCA()
                     orderType = "lossed"
@@ -376,10 +383,10 @@ async function proces(symbol, tickerTime, number) {
                 for (let i in inMarkets) {
                     let ticker = await a.fetchTicker(inMarkets[i])
                     let price = ticker.close
-                    let CAC = dbms.db["Markets"][symbol].CACost
-                    r = await m.CAIn(price, amount, CAC, oldBalance)
+                    let CAC = dbms.db["Markets"][inMarkets[i]].CACost
+                    let r = await m.CAIn(price, amount, CAC, oldBalance)
                     console.log(r)
-                    CAP = r.CAPrice
+                    let CAP = r.CAPrice
                     CAC = r.CACost
                     await dbms.writeToDB("Markets", inMarkets[i], "CAPrice", CAP)
                     await dbms.writeToDB("Markets", inMarkets[i], "CACost", CAC)
@@ -399,6 +406,7 @@ async function proces(symbol, tickerTime, number) {
                 "market": symbol,
                 "baseFiatPrice": baseFiatPrice + " " + baseFiatMarket,
                 "quoteFiatPrice": quoteFiatPrice + " " + quoteFiatMarket,
+                "enabled": enableOrders,
                 //"signal": signal,
                 "award": award,
                 "upSignal": signal.upSignal,
@@ -417,7 +425,7 @@ async function proces(symbol, tickerTime, number) {
                 "balanceQuote": balanceQuote + " " + quote,
                 "sale": sale,
                 "purchase": purchase,
-                "minAmount" : minAmount,
+                "minAmount": minAmount,
                 "hold": hold,
                 "buys": buys,
                 "stopLoss": stopLoss,
@@ -427,14 +435,9 @@ async function proces(symbol, tickerTime, number) {
                 "Market_CA": "---------------------------",
                 "CAPrice": CAPrice + " " + symbol,
                 "CACost": CACost + " " + quote,
-                //"CAAmount": CAAmount + " " + base,
-                /*"Token": "_________________________________",
-                "FCAPB": FCAPriceBase + " " + baseFiatMarket,
-                "FCACB": FCACostBase + " " + fiat,*/
-                "QFCost": FCost + " " + fiat,
+                "QFCost": FCost.toFixed(2) + " " + fiat,
+                "AP": absoluteProfit.toFixed(2) + " " + fiat,
                 "RP": profitRelative.toFixed(2) + " %",
-                //"FCAPQ": FCAPriceQuote + " " + quoteFiatMarket,
-                //"FCACQ": FCACostQuote + " " + fiat,
             }
             await m.sender(info, orderType)
             console.log(info)
