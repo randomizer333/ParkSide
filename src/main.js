@@ -295,8 +295,6 @@ async function proces(symbol, tickerTime, number) {
         let downSignal = signal.downSignal
         change1h = await f.loger(signal.all.change1hP, logLength, change1h)
         macds = await f.loger(signal.all.MACD, logLength, macds)
-        //console.log("macds")
-        //console.log(macds)
         dmacds = await f.loger(signal.all.DMACD, logLength, dmacds)
 
         //Assets preparation(Private API)-------------------------
@@ -308,9 +306,6 @@ async function proces(symbol, tickerTime, number) {
         let fee = a.exInfos.feeMaker * 100
         let feeTaker = a.exInfos.feeTaker * 100
 
-        /*let conditions = m.selectSide(balanceBase, balanceQuote, minAmount, balanceBaseInQuote, balanceQuoteInBase)
-        let purchase = conditions.purchase
-        let sale = conditions.sale*/
         let purchase = balanceQuoteInBase > minAmount
         let sale = balanceBase > minAmount
 
@@ -364,7 +359,6 @@ async function proces(symbol, tickerTime, number) {
             return orderType
         }
         //post proces after order
-
         //update FCA on local assets base and quote and all inMarkets
         async function updateCA() {
             //base in
@@ -448,6 +442,7 @@ async function proces(symbol, tickerTime, number) {
 //initialize entities
 //set/get atributes
 //proces data
+//save to db
 //report results
 
 /*
