@@ -123,7 +123,7 @@ async function loadMarketMinAmount(symbol) {    //returns minimum amount of base
     }
 }
 exports.fetchCurrencies = fetchCurrencies
-async function fetchCurrencies() { 
+async function fetchCurrencies() {
     try {
         r = await exchange.fetchCurrencies();
         //re = await r[symbol]//.limits.amount.min;
@@ -216,7 +216,7 @@ async function checker(orderId, symbol) {
         const delaySeconds = 3
         let rounds = (ticker * 0.9) / freq
         count++
-        rsts = r.status 
+        rsts = r.status
         if (rsts == "open") {
             console.log("still open")
             if (count > rounds) {
@@ -275,7 +275,7 @@ async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid
     try {
         let p = await fetchTicker(symbol)
         let costInBase = amountInQuote / p.close
-        let r = await exchange.createMarketBuyOrder(symbol, cost)
+        let r = await exchange.createMarketBuyOrder(symbol, costInBase)
         let orderId = await r.id;
         console.log("Buy order made:")
         console.log(orderId)
@@ -291,12 +291,22 @@ async function buyMarket(symbol, amountInQuote) { // symbol, amount, bid
         }
     } catch (error) {
         console.log("EEE in buyMarket: " + symbol, error)
-        return {
-            "status": "closed",
-            "amount": r.amount,
-            "orderId": "none",
-            "orderType": "bougth",
-            "price": r.price,
+        if (error.name = "Filter failure: MIN_NOTIONAL") {
+            return {
+                "status": "failed",
+                "amount": r.amount,
+                "orderId": "none",
+                "orderType": "bougth",
+                "price": r.price,
+            }
+        } else {
+            return {
+                "status": "closed",
+                "amount": r.amount,
+                "orderId": "none",
+                "orderType": "bougth",
+                "price": r.price,
+            }
         }
     }
 }
@@ -344,13 +354,23 @@ async function sellMarket(symbol, baseAmount) { // symbol, amount, bid
             "price": r.price,// = orderInfo(orderId)
         }
     } catch (error) {
-        console.log("EEE in buyMarket: " + symbol, error)
-        return {
-            "status": "closed",
-            "amount": r.amount,
-            "orderId": "none",
-            "orderType": "sold",
-            "price": r.price,
+        if (error.name = "Filter failure: MIN_NOTIONAL") {
+            return {
+                "status": "failed",
+                "amount": r.amount,
+                "orderId": "none",
+                "orderType": "sold",
+                "price": r.price,
+            }
+        } else {
+        console.log("EEE in sellMarket: " + symbol, error)
+            return {
+                "status": "closed",
+                "amount": r.amount,
+                "orderId": "none",
+                "orderType": "bougth",
+                "price": r.price,
+            }
         }
     }
 }
