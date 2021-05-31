@@ -9,7 +9,7 @@ function mrkts (){
         "ADA/EUR",
         "LTC/EUR",
         "BCH/EUR",
-        "LINK/EUR",
+        //"LINK/EUR",   faulty price
         "XLM/EUR",
         //"UNI/EUR",    no market
         "DOGE/EUR",
@@ -20,7 +20,7 @@ function mrkts (){
         "ADA/BTC",
         "LTC/BTC",
         "BCH/BTC",
-        "LINK/BTC",
+        //"LINK/BTC",
         "XLM/BTC",
         "UNI/BTC",
         "DOGE/BTC",
@@ -31,7 +31,7 @@ function mrkts (){
         "ADA/ETH",
         "LTC/ETH",
         //"BCH/ETH",    no market
-        "LINK/ETH",
+        //"LINK/ETH",
         "XLM/ETH",
         //"UNI/ETH",    no market
     

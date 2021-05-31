@@ -235,7 +235,7 @@ async function proces(symbol, tickerTime, number) {
         let part = price - CAPrice
         let profitRelative = await f.percent(part, CAPrice)
         profitRelative == Infinity ? profitRelative = 0 : ""
-        let ap = await f.part(profitRelative, balanceBase)
+        let ap = await f.part(Math.abs(profitRelative), balanceBase)
         absoluteProfit = ap * baseFiatPrice
 
 
