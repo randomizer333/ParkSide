@@ -237,7 +237,7 @@ async function checker(orderId, symbol) {
             await isOpen(orderId, symbol)
         }
         return {
-            "status": rsts,
+            "status": await rsts,
             "amount": r.filled
         }
     }
@@ -254,7 +254,7 @@ async function buy(symbol, amount, price) { // symbol, amount, bid
             status: await sts,
             orderId: orderId,
             orderType: "bougth",
-            price: price,// = orderInfo(orderId)
+            price: price,   // = orderInfo(orderId)
             symbol: symbol,
             side: "buy",
         }
@@ -326,6 +326,8 @@ async function sell(symbol, amount, price) {// symbol, amount, ask
         }
     } catch (error) {
         console.log("EEE in sell: ", error.name)
+        console.log("EEE in sell: ", error)
+        console.log("EEE in sell: ", symbol, amount, price)
         return {
             status: "failed",
             orderId: 0,
@@ -409,7 +411,6 @@ async function loadMarkets() {                   //load all available markets on
         console.log("EEE: ", error);
     }
 }
-
 
 async function filterAll(markets, qus) {
 

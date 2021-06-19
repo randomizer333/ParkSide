@@ -229,20 +229,27 @@ async function sender(info, order) {
 	}
 }
 
+//CAIn(3, -1, 4, 2)
 exports.CAIn = CAIn
 async function CAIn(price, amount, costs, ownedAmount) {//4in 3out 2return
 	console.log("Moved: " + amount + " at: " + price)
-	console.log("Old amount: " + ownedAmount + " costed: " + costs)
-	let cost = costs / ownedAmount
-	cost ? "" : cost = 0
-	let CAprices = [price, cost]
+	console.log("Owned cost: " + costs + " Old amount: " + ownedAmount)
+	let ownedPrice = costs / ownedAmount
+	ownedPrice ? "" : ownedPrice = 0
+	let CAprices = [price, ownedPrice]
 	let CAAmounts = [amount, ownedAmount]
+	console.log("CAprices " + CAprices)
+	console.log("CAAmounts " + CAAmounts)
 	let CACosts = [0]   //cost = price * amount
 	for (let i in CAprices) {
 		CACosts[i] = CAprices[i] * CAAmounts[i]
+		console.log(CACosts)
 	}
 	let costsSum = f.sumOfArray(CACosts)
 	let amountsSum = f.sumOfArray(CAAmounts)
+	//parseInt(amountsSum)
+	console.log("costsSum " + costsSum)
+	console.log("amountsSum " + amountsSum)
 	let CAPrice = costsSum / amountsSum	//nothing is free
 	CAPrice ? "" : CAPrice = 0
 	//return
@@ -251,7 +258,7 @@ async function CAIn(price, amount, costs, ownedAmount) {//4in 3out 2return
 		"CACost": costsSum,
 		//"CAAmount": amountsSum,	//total actual balance of base asset
 	}
-	//console.log(r)
+	console.log(r)
 	return r		//primary output
 }
 

@@ -55,23 +55,21 @@ async function ao(lowsArr, highsArr) {
     }
 }
 
-exports.vwap = vwap;
-async function vwap(opens, highs, lows, closes, volumes) {
+exports.vwap2 = vwap2;
+async function vwap2(opens, highs, lows, closes, volumes, lngth) {//13,20
     let VWAP = TI.VWAP;
     let inputVWAP = {
-        open: opens,
-        high: highs,
-        low: lows,
-        close: closes,
-        volume: volumes,
+        open: f.cutArray(opens, lngth),
+        high: f.cutArray(highs, lngth),
+        low: f.cutArray(lows, lngth),
+        close: f.cutArray(closes, lngth),
+        volume: f.cutArray(volumes, lngth),
     }
-    f.cs("dolžina opens: " + opens.length)
-    f.cs("dolžina high: " + high.length)
-    f.cs("dolžina lows: " + lows.length)
-    f.cs("dolžina volumes: " + volumes.length)
-    let r = await VWAP.calculate(inputVWAP);
-    f.cs(r)
-    return await r;
+    let r = VWAP.calculate(inputVWAP)
+    //console.log(r)
+    //console.log("vwapLogLength", r.length)
+    r = await simpleVwap(r[0], await closes[0])
+    return r
 }
 
 exports.rsi = rsi;
@@ -309,7 +307,7 @@ async function simpleVwap(vwap, price) {
 }
 
 exports.indicators = indicators
-async function indicators(prices, vwaps, changes, volumes, macds, dmacds, tickerTime) {
+async function indicators(prices, opens, highs, lows, closes, volumes, vwaps, changes, macds, dmacds, tickerTime) {
     //market data colection
     /*logAll = await m.loger(price, 555, logAll);
     logBids = await m.loger(bid, 50, logBids)
@@ -318,20 +316,17 @@ async function indicators(prices, vwaps, changes, volumes, macds, dmacds, ticker
 
     price = prices[0]
     logAll = prices
-    logMA3 = f.cutArray(logAll, 3)
-    logMA20 = f.cutArray(logAll, 20)
-    logMA30 = f.cutArray(logAll, 30)
-    logMA100 = f.cutArray(logAll, 100)
-    logMA200 = f.cutArray(logAll, 200)
     //logVol = await m.loger(volume, 10, logVol);
     //logRSI = await m.loger(volume, 22, logRSI);
 
     //technical analysis
-    MA3 = await ma(logMA3);   //MA of last 3 prices
-    MA20 = await ma(logMA20) //MA of last 20 prices
-    MA30 = await ma(logMA30) //MA of last 30 prices
-    MA100 = await ma(logMA100);  //MA of last 200 prices
-    MA200 = await ma(logMA200);  //MA of last 200 prices
+    MA3 = await ma(f.cutArray(logAll, 3));   //MA of last 3 prices
+    MA20 = await ma(f.cutArray(logAll, 20)) //MA of last 20 prices
+    MA30 = await ma(f.cutArray(logAll, 30)) //MA of last 30 prices
+    MA100 = await ma(f.cutArray(logAll, 100));  //MA of last 200 prices
+    MA200 = await ma(f.cutArray(logAll, 200));  //MA of last 200 prices
+
+    let vwapR = await vwap2(opens, highs, lows, closes, volumes, 20)
 
     change1hP = await change1h(logAll, tickerTime, price, 60)    //dev
     change6hP = await change1h(logAll, tickerTime, price, 360)
@@ -355,11 +350,8 @@ async function indicators(prices, vwaps, changes, volumes, macds, dmacds, ticker
     DMACDMA = await ma(dmacdsMA3);  //MA of MACD
 
     //MA3change24hP = await ma(log24hP);  //MA3 of 24h price change
-
     //MAVol = await ma(logVol);    //MA of last 5 Volumes
-
     //rang = await globalRang3(change1hP, symbol, botNumber, 3)
-
     //logVolMACD = await f.loger(volume, 40, logVolMACD);
     //MACDVol = await macd(logVolMACD);    //MACD of MA5
 
@@ -373,13 +365,14 @@ async function indicators(prices, vwaps, changes, volumes, macds, dmacds, ticker
         uppers: {
             //MA3: MA3,
             //MA20: MA20,
-            //MA30: MA30,
+            MA30: MA30,
             //MA100: MA100,
             //MA200: MA200,
             //MACD: MACD,
             MACDRev: MACDRev,
             MACDMA: MACDMA,
             //vwap: vwap,
+            vwapR:vwapR,
             vwapS: vwapS,
             //vwapSR: vwapSR,
             //vwapMA: vwapMA,
@@ -413,6 +406,7 @@ async function indicators(prices, vwaps, changes, volumes, macds, dmacds, ticker
             //DMACDMA: DMACDMA,
             //DMACDRev: DMACDRev,
             //vwap: vwap,
+            //vwapR:vwapR,
             vwapS: vwapS,
             //vwapMA: vwapMA,
             //rank: rang,
@@ -439,8 +433,8 @@ async function down(downers) {  //confirm signals below 0 with AND
     return conds.every(condition)
 }
 exports.signal = signal
-async function signal(prices, vwaps, changes, volumes, macds, dmacds, tickerTime) {
-    let inds = await indicators(prices, vwaps, changes, volumes, macds, dmacds, tickerTime)
+async function signal(prices, opens, highs, lows, closes, volumes, vwaps, changes, macds, dmacds, tickerTime) {
+    let inds = await indicators(prices, opens, highs, lows, closes, volumes, vwaps, changes, macds, dmacds, tickerTime)
     let upS = await up(inds.uppers);
     let downS = await down(inds.downers);
     return {

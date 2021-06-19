@@ -146,6 +146,10 @@ async function proces(symbol, tickerTime, number) {
 
     //read and set variables and values
     let prices = dbms.db["Markets"][symbol].prices
+    let opens = dbms.db["Markets"][symbol].opens
+    let highs = dbms.db["Markets"][symbol].highs
+    let lows = dbms.db["Markets"][symbol].lows
+    let closes = dbms.db["Markets"][symbol].closes
     let vwaps = dbms.db["Markets"][symbol].vwaps
     let changes = dbms.db["Markets"][symbol].changes
     let volumes = dbms.db["Markets"][symbol].volumes
@@ -225,7 +229,7 @@ async function proces(symbol, tickerTime, number) {
         let FCost
         FCost = await FCA(quoteFiatPrice, CACost)
         async function FCA(quoteFiatPrice, CACost) {
-            if (quoteFiatPrice == 0 ) {
+            if (quoteFiatPrice == 0) {
                 return CACost
             } else {
                 return CACost * quoteFiatPrice
@@ -242,12 +246,16 @@ async function proces(symbol, tickerTime, number) {
         //update logs
         let logLength = 200
         prices = await f.loger(price, logLength, prices)
+        opens = await f.loger(open, logLength, opens)
+        highs = await f.loger(high, logLength, highs)
+        lows = await f.loger(low, logLength, lows)
+        closes = await f.loger(close, logLength, closes)
         vwaps = await f.loger(vwap, logLength, vwaps)
         changes = await f.loger(change, logLength, changes)
         volumes = await f.loger(volume, logLength, volumes)
 
         globalAward(enabledMarkets, 3)
-        function globalAward(symbols, number) {
+        function globalAward(symbols, number) { //change1h
             let syms = clearAwards(symbols)
             function clearAwards(toClear) {
                 for (let i in toClear) {  //clear awards
@@ -290,7 +298,7 @@ async function proces(symbol, tickerTime, number) {
             return awards
         }
 
-        let signal = await t.signal(prices, vwaps, changes, volumes, macds, dmacds, tickerTime)
+        let signal = await t.signal(prices, opens, highs, lows, closes, volumes, vwaps, changes, macds, dmacds, tickerTime)
         let upSignal = signal.upSignal
         let downSignal = signal.downSignal
         change1h = await f.loger(signal.all.change1hP, logLength, change1h)
@@ -308,6 +316,11 @@ async function proces(symbol, tickerTime, number) {
 
         let purchase = balanceQuoteInBase > minAmount
         let sale = balanceBase > minAmount
+        //console.log(sale)
+        let balanceBaseInFiat = balanceBase * baseFiatPrice
+        //console.log(balanceBaseInFiat)
+        sale = balanceBaseInFiat > 10 //10 EUR
+        //console.log(sale)
 
         let safeSale = await m.safeSale(fee, CAPrice, price, minProfitP, buys)
         let hold = safeSale.hold
@@ -319,29 +332,35 @@ async function proces(symbol, tickerTime, number) {
 
 
         let order = { "status": "still none" }
-        orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal)
-        async function makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal) {
+        orderType = await makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal, price)
+        async function makeOrder(purchase, sale, stopLoss, hold, symbol, balanceBase, balanceQuote, portion, award, upSignal, downSignal, price) {
             if (purchase && upSignal && award) {//buy 
-                enableOrders && !pullOut ? order = await a.buyMarket(symbol, balanceQuote * portion) : order = await m.fakeBuy()
+                enableOrders && !pullOut ? order = await a.buy(symbol, balanceQuote * portion, price) : order = await m.fakeBuy()
+                /*enableOrders && !pullOut ? order = await a.buyMarket(symbol, balanceQuote * portion) : order = await m.fakeBuy()*/
                 if (order.status == "closed") {//"bougth"
-                    await updateCA()
-                    orderType = "bougth"
+                    let orderR = await updateCA()
+                    orderR ? orderType = "bougth" : orderType = "parked"
+                    //orderType = "bougth"
                 } else {
                     orderType = "parked"
                 }
             } else if (sale && !hold && !stopLoss && downSignal) {//sell good
-                enableOrders ? order = await a.sellMarket(symbol, balanceBase * sellPortion) : order = await m.fakeSell()
+                enableOrders ? order = await a.sell(symbol, balanceBase * sellPortion, price) : order = await m.fakeSell()
+                /*enableOrders ? order = await a.sellMarket(symbol, balanceBase * sellPortion) : order = await m.fakeSell()*/
                 if (order.status == "closed") {
-                    await updateCA()
-                    orderType = "sold"
+                    let orderR = await updateCA()
+                    orderR ? orderType = "sold" : orderType = "holding"
+                    //orderType = "sold"
                 } else {
                     orderType = "holding"
                 }
             } else if (sale && hold && stopLoss && downSignal) {//sell bad stopLoss
-                enableOrders ? order = await a.sellMarket(symbol, balanceBase * sellPortion) : order = await m.fakeSell()
+                enableOrders ? order = await a.sell(symbol, balanceBase * sellPortion, price) : order = await m.fakeSell()
+                /*enableOrders ? order = await a.sellMarket(symbol, balanceBase * sellPortion) : order = await m.fakeSell()*/
                 if (order.status == "closed") {
-                    await updateCA()
-                    orderType = "lossed"
+                    let orderR = await updateCA()
+                    orderR ? orderType = "lossed" : orderType = "holding"
+                    //orderType = "lossed"
                 } else {
                     orderType = "holding"
                 }
@@ -371,9 +390,16 @@ async function proces(symbol, tickerTime, number) {
         async function updateInMarkets(asset) {
             let inMarkets = await dbms.db["Assets"][asset].inMarkets
             let oldBalance = await dbms.db["Assets"][asset].balance
-            let balance = await a.balance(asset)    //negative for sell
-            let amount = balance - oldBalance
-            if (amount !== 0) {
+            let balance = await a.balance(asset)    
+            let amount = balance - oldBalance   //negative for sell
+
+            if ((amount == 0) && enableOrders ) {
+                //sim
+
+                //sim end
+                console.log("no realization")
+                return false
+            } else {
                 for (let i in inMarkets) {
                     let ticker = await a.fetchTicker(inMarkets[i])
                     let price = ticker.close
@@ -385,10 +411,9 @@ async function proces(symbol, tickerTime, number) {
                     await dbms.writeToDB("Markets", inMarkets[i], "CAPrice", CAP)
                     await dbms.writeToDB("Markets", inMarkets[i], "CACost", CAC)
                 }
-            } else {
-                console.log("no realization")
+                await dbms.writeToDB("Assets", asset, "balance", balance)
+                return true
             }
-            await dbms.writeToDB("Assets", asset, "balance", balance)
         }
 
         await dbms.writeJSON(db)    //write
@@ -402,11 +427,11 @@ async function proces(symbol, tickerTime, number) {
                 "quoteFiatPrice": quoteFiatPrice + " " + quoteFiatMarket,
                 "enabled": enableOrders,
                 //"signal": signal,
-                "award": award,
-                "upSignal": signal.upSignal,
                 "uppers": signal.uppers,
-                "downers": signal.downers,
+                "upSignal": signal.upSignal,
+                "awardmmm": award,
                 "downSignal": signal.downSignal,
+                "downers": signal.downers,
                 //"vwap": vwap,
                 //"change": change,
                 //"volume": volume,
@@ -417,6 +442,7 @@ async function proces(symbol, tickerTime, number) {
                 "AllSafe": "-----------------------------",
                 "balanceBase": balanceBase + " " + base,
                 "balanceQuote": balanceQuote + " " + quote,
+                "risk/reward": stopLossP + "/" + minProfitP,
                 "sale": sale,
                 "purchase": purchase,
                 "minAmount": minAmount,
@@ -424,10 +450,10 @@ async function proces(symbol, tickerTime, number) {
                 "buys": buys,
                 "stopLoss": stopLoss,
                 "sellPrice": sellPrice + " " + symbol,
-                "price--": price + " " + symbol,
+                "Priceeeee": price + " " + symbol,
                 "lossPrice": lossPrice + " " + symbol,
-                "Market_CA": "---------------------------",
-                "CAPrice": CAPrice + " " + symbol,
+                //"Market_CA": "---------------------------",
+                "CAPriceee": CAPrice + " " + symbol,
                 "CACost": CACost + " " + quote,
                 "QFCost": FCost.toFixed(2) + " " + fiat,
                 "AP": absoluteProfit.toFixed(2) + " " + fiat,
