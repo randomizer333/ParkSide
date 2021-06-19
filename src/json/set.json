@@ -1,0 +1,12 @@
+{
+    "exchangeName": "binance",
+    "fiatCurrency": "EUR",
+    "strategy": "alt",
+    "enableOrders": true,
+    "tickerMinutes": 3,
+    "portion": 0.1,
+    "sellPortion": 1,
+    "reward": 2,
+    "risk": 2,
+    "pullOut": false
+}

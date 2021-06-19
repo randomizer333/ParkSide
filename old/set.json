@@ -1,0 +1,18 @@
+{
+    "exchangeName": "binance",
+    "fiatMarket": "BTC/USDT",
+    "quoteCurrency": "BTC",
+    "quotes": [
+        "BTC",
+        "ETH",
+        "BNB"
+    ],
+    "fiatCurrency": "EUR",
+    "strategy": "alt",
+    "enableOrders": false,
+    "tickerMinutes": 3,
+    "portion": 0.99,
+    "minProfitP": 1.11,
+    "stopLossP": 99,
+    "pullOut": false
+}
