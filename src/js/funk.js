@@ -193,7 +193,7 @@ function jsonToArray(json, attribute) {
 }
 exports.delay = delay
 async function delay(durationInSeconds) {
-	timeMS = await durationInSeconds * 1000
+	let timeMS = await durationInSeconds * 1000
 	console.log("----------------Delay--------------------")
 	return new Promise(resolve => {
 		setTimeout(

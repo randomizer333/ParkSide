@@ -138,7 +138,7 @@ async function setup() {//setup runs only once on start
 }
 
 async function proces(symbol, tickerTime, number) {
-    //init-----------------------------------------
+    //init//runs once-----------------------------------------
     let base = m.splitSymbol(symbol, "first")   //name of base currency
     let quote = m.splitSymbol(symbol, "second")
     let baseFiatMarket = m.mergeSymbol(base, fiat)
@@ -194,7 +194,7 @@ async function proces(symbol, tickerTime, number) {
     }
 
     //market
-    loop(symbol, number) //run once
+    loop(symbol, number) 
     bot[number] = setInterval(function () { loop(symbol, number) }, tickerTime)
     async function loop(symbol, number) {
         //get values
@@ -240,6 +240,7 @@ async function proces(symbol, tickerTime, number) {
         let profitRelative = await f.percent(part, CAPrice)
         profitRelative == Infinity ? profitRelative = 0 : ""
         let ap = await f.part(Math.abs(profitRelative), balanceBase)
+        //let ap = await f.part(profitRelative, balanceBase)
         absoluteProfit = ap * baseFiatPrice
 
 
@@ -384,16 +385,17 @@ async function proces(symbol, tickerTime, number) {
             await updateInMarkets(base)
             //quote out, cost of quote falls
             await updateInMarkets(quote)
+            return true
         }
         //FCA repeat for all inMarkets assets
         //updateInMarkets(base)
         async function updateInMarkets(asset) {
             let inMarkets = await dbms.db["Assets"][asset].inMarkets
             let oldBalance = await dbms.db["Assets"][asset].balance
-            let balance = await a.balance(asset)    
+            let balance = await a.balance(asset)
             let amount = balance - oldBalance   //negative for sell
 
-            if ((amount == 0) && enableOrders ) {
+            if ((amount == 0) && enableOrders) {    //asset losssold
                 //sim
 
                 //sim end
@@ -409,6 +411,7 @@ async function proces(symbol, tickerTime, number) {
                     let CAP = r.CAPrice
                     CAC = r.CACost
                     await dbms.writeToDB("Markets", inMarkets[i], "CAPrice", CAP)
+                    //CACost = CAC
                     await dbms.writeToDB("Markets", inMarkets[i], "CACost", CAC)
                 }
                 await dbms.writeToDB("Assets", asset, "balance", balance)
