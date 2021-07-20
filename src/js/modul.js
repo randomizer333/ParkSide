@@ -229,30 +229,44 @@ async function sender(info, order) {
 	}
 }
 
-//CAIn(3, -1, 4, 2)
+//CAIn(8, -1.876, 20, 2)
 exports.CAIn = CAIn
 async function CAIn(price, amount, costs, ownedAmount) {//4in 3out 2return
+	let r
 	console.log("Moved: " + amount + " at: " + price)
 	console.log("Owned cost: " + costs + " Old amount: " + ownedAmount)
 	let ownedPrice = costs / ownedAmount
 	ownedPrice ? "" : ownedPrice = 0
-	let CAprices = [price, ownedPrice]
-	let CAAmounts = [amount, ownedAmount]
-	console.log("CAprices " + CAprices)
-	console.log("CAAmounts " + CAAmounts)
-	let CACosts = [0]   //cost = price * amount
-	for (let i in CAprices) {
-		CACosts[i] = CAprices[i] * CAAmounts[i]
-		console.log(CACosts)
+
+	let CAprices
+	let CAPrice
+	let costsSum
+	if ((amount < 0) /*&& (price < ownedPrice)*/) {	//owned amount is real
+		let leftover = ownedAmount + amount
+		CAPrice = price
+		costsSum = price * leftover
+		console.log("leftover " + leftover)
+		console.log("CAPrice " + CAPrice)
+		console.log("costsSum " + costsSum)
+	} else {	//oridinary CA
+		CAprices = [price, ownedPrice]
+		let CAAmounts = [amount, ownedAmount]
+		console.log("CAprices " + CAprices)
+		console.log("CAAmounts " + CAAmounts)
+		let CACosts = [0]   //cost = price * amount
+		for (let i in CAprices) {
+			CACosts[i] = CAprices[i] * CAAmounts[i]
+			//console.log(CACosts)
+		}
+		//Math.abs(CACosts)
+		costsSum = f.sumOfArray(CACosts)
+		let amountsSum = f.sumOfArray(CAAmounts)
+		console.log("costsSum " + costsSum)
+		console.log("amountsSum " + amountsSum)
+		CAPrice = costsSum / amountsSum	//nothing is free
+		CAPrice ? "" : CAPrice = 0
 	}
-	let costsSum = f.sumOfArray(CACosts)
-	let amountsSum = f.sumOfArray(CAAmounts)
-	//parseInt(amountsSum)
-	console.log("costsSum " + costsSum)
-	console.log("amountsSum " + amountsSum)
-	let CAPrice = costsSum / amountsSum	//nothing is free
-	CAPrice ? "" : CAPrice = 0
-	//return
+
 	r = {
 		"CAPrice": CAPrice,
 		"CACost": costsSum,

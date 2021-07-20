@@ -10,21 +10,26 @@ async function ma(arr) {     //trendMA between curent and avarage
         console.log("no valid input yet for MA")
         return 0
     }
-    let ma = await f.getAvgOfArray(arr);    //ma is avg of arr
+    let ma = f.getAvgOfArray(arr);    //ma is avg of arr
+    !ma ? ma = 0 : ""
 
-    //f.cs("arr: " + arr)
+    //console.log("ma: " + ma)
+    //console.log("arr: " + arr)
     let direction = await arr[0] - ma;  //absolute trend
     //f.cs("direction: " + direction)
     let trendMA = await f.percent(direction, arr[0]);    //relative trend
     //f.cs("trendMA: " + trendMA)
 
-    if (trendMA > 0) {//goin UP buy coz rising
+    /*if (trendMA > 0) {//goin UP buy coz rising
         return trendMA //trendMA
     } else if (trendMA < 0) {//going DOWN hold or park coz stationary
         return trendMA //trendMA
     } else {    //all input data is the same
         return 0
-    }
+    }*/
+
+    r = await simpleUpDown(ma, arr[0])
+    return r
 }
 
 exports.ao = ao;
@@ -68,7 +73,7 @@ async function vwap2(opens, highs, lows, closes, volumes, lngth) {//13,20
     let r = VWAP.calculate(inputVWAP)
     //console.log(r)
     //console.log("vwapLogLength", r.length)
-    r = await simpleVwap(r[0], await closes[0])
+    r = await simpleUpDown(r[0], await closes[0])
     return r
 }
 
@@ -298,11 +303,11 @@ async function change1h(priceLog, tickerInMs, price, durationInMinutes) {
         return 0
     }
 }
-async function simpleVwap(vwap, price) {
-    if (price > vwap) {
-        return vwap
+async function simpleUpDown(techValue, price) {
+    if (price > techValue) {
+        return techValue
     } else {
-        return -1 * vwap
+        return -1 * techValue
     }
 }
 
@@ -355,7 +360,7 @@ async function indicators(prices, opens, highs, lows, closes, volumes, vwaps, ch
     //logVolMACD = await f.loger(volume, 40, logVolMACD);
     //MACDVol = await macd(logVolMACD);    //MACD of MA5
 
-    vwapS = await simpleVwap(vwaps[0], price)
+    vwapS = await simpleUpDown(vwaps[0], price)
     let vwapSR = -1 * vwapS
 
     //logVwap = await f.loger(vwap, 3, logVwap);
@@ -368,11 +373,11 @@ async function indicators(prices, opens, highs, lows, closes, volumes, vwaps, ch
             MA30: MA30,
             //MA100: MA100,
             //MA200: MA200,
-            //MACD: MACD,
-            MACDRev: MACDRev,
-            MACDMA: MACDMA,
+            MACD: MACD,
+            //MACDRev: MACDRev,
+            //MACDMA: MACDMA,
             //vwap: vwap,
-            vwapR:vwapR,
+            vwapR: vwapR,
             vwapS: vwapS,
             //vwapSR: vwapSR,
             //vwapMA: vwapMA,
